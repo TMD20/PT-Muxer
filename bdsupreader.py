@@ -33,91 +33,74 @@ class BDSupReader:
     def __init__(self, filePath, bufferSize=1024*1024, verbose=False):
         self.filePath = filePath
         self.bufferSize = bufferSize
-        self.verbose = verbose
-        self._segments = None
-
-    def iterSegments(self):
-        if self._segments is None:
-            segments = []
+        self.startSegment = None
+        self.endSegment = None
+    
+    @property
+    def segments(self):
+        if self.startSegment is None:
             with open(self.filePath, 'r+b', buffering = self.bufferSize) as _:
                 if not hasattr(self, '_size'):
                     self._size = os.fstat(_.fileno()).st_size
                 self._stream = BufferedRandomPlus(_)
                 stream = self._stream
+                # Get start segment
+                segment = Segment(stream)
+                self.startSegment = segment
                 while stream.offset < self._size:
+                    prevSegment = segment
                     segment = Segment(stream)
-                    segments.append(segment)
-                    yield segment
-            self._segments = segments
-        else:
-            for segment in self._segments:
+                    prevSegment.next = segment
+                    segment.prev = prevSegment
+                    yield prevSegment
+                self.endSegment = segment
                 yield segment
-
-    def iterDisplaySets(self):
-        ds = []
-        dsObj = None
-        prevDsObj = None
-        for segment in self.iterSegments():
-            ds.append(segment)
-            if segment.type == SEGMENT_TYPE.END:
-                prevDsObj = dsObj
-                dsObj = DisplaySet(ds)
-                dsObj.prev = prevDsObj
-                if prevDsObj is not None:
-                    prevDsObj.next = dsObj
-                yield dsObj
-                ds = []
-        if ds:
-            print('Warning: [Read Stream] The last display set lacks END segment')
-            prevDsObj = dsObj
-            dsObj = DisplaySet(ds)
-            dsObj.prev = prevDsObj
-            if prevDsObj is not None:
-                prevDsObj.next = dsObj
-            yield dsObj
-
-    def iterEpochs(self):
-        ep = []
-        for displaySet in self.iterDisplaySets():
-            if ep and displaySet.pcsSegment.data.compositionState == COMPOSITION_STATE.EPOCH_START:
-                yield Epoch(ep)
-                ep = []
-            ep.append(displaySet)
-        yield Epoch(ep)
-
-    def iterSubPictures(self):
-        subPicture = None
-        for displaySet in self.iterDisplaySets():
-            if displaySet.pcsSegment.data.numberOfCompositionObjects > 0:
-                if subPicture is not None:
-                    yield subPicture
-                subPicture = SubPicture(displaySet)
-            else:
-                if subPicture is not None:
-                    yield subPicture
-                    subPicture = None
-        if subPicture:
-            print('Warning: [Read Stream] The last sub picture lacks end time')
-            yield subPicture
-
-    @property
-    def segments(self):
-        if self._segments is None:
-            return list(self.iterSegments())
-        return self._segments
-
+        else:
+            segment = self.startSegment
+            while segment is not self.endSegment:
+                yield segment
+                segment = segment.next
+            yield segment
+    
     @property
     def displaySets(self):
-        return list(self.iterDisplaySets())
-
+        segments = self.segments
+        startSegment = next(segments)
+        for segment in segments:
+            if segment.type == SEGMENT_TYPE.END:
+                yield DisplaySet(startSegment, segment)
+                startSegment = segment.next
+        if segment is not startSegment:
+            print('Warning: [Read Stream] The last display set lacks END segment')
+            yield DisplaySet(startSegment, segment)
+ 
     @property
     def epochs(self):
-        return list(self.iterEpochs())
+        displaySets = self.displaySets
+        startDisplaySet = next(displaySets)
+        for displaySet in displaySets:
+            if displaySet.pcsSegment.data.compositionState == COMPOSITION_STATE.EPOCH_START:
+                yield Epoch(startDisplaySet, displaySet.prev)
+                startDisplaySet = displaySet
+        yield(startDisplaySet, displaySet)
 
     @property
     def subPictures(self):
-        return list(self.iterSubPictures())
-    
+        displaySets = self.displaySets
+        startDisplaySet = None
+        for displaySet in displaySets:
+            if displaySet.pcsSegment.data.numberOfCompositionObjects > 0:
+                if startDisplaySet is not None:
+                    yield SubPicture(startDisplaySet, startDisplaySet)
+                startDisplaySet = displaySet
+            else:
+                if startDisplaySet is not None:
+                    yield SubPicture(startDisplaySet, displaySet)
+                    startDisplaySet = None
+        if startDisplaySet:
+            print('Warning: [Read Stream] The last sub picture lacks end time')
+            yield SubPicture(subPicture, subPicture)
+
     def shift(self, value):
         for segment in self.segments:
             segment.pts += value
@@ -506,9 +489,36 @@ class Segment:
         self.type = SEGMENT_TYPE(stream.readByte())
         self.size = stream.readUShort()
         self.data = self.OPTION[self.type](stream, self)
+        
+        self.prev = self
+        self.next = self
+        self._displaySet = None
 
     def __len__(self):
         return self.size
+    
+    def getDisplaySet(self, forward):
+        if self._displaySet is None:
+            if forward and self.next is not self:
+                return self.getDisplaySet(True)
+            elif not forward and self.prev is not self:
+                return self.getDisplaySet(False)
+        return self._displaySet
+
+    @property
+    def displaySet(self):
+        h = self.getDisplaySet(True)
+        t = self.getDisplaySet(False)
+        if h is t:
+            if h is None:
+                print('Warning: [Segment Display Set] First and last segments lack display set parents')
+        else:
+            print('Warning: [Segment Display Set] Start and stop segments have different display set parents')
+            return None
+        return h
+    @displaySet.setter
+    def displaySet(self, value):
+        self._displaySet = value
 
     @property
     def raw(self):
@@ -563,10 +573,52 @@ class Segment:
 
 class DisplaySet:
 
-    def __init__(self, segments):
-        self.segments = segments
-        self.prev = self
-        self.next = self
+    def __init__(self, startSegment, stopSegment):
+        self.startSegment = startSegment
+        self.stopSegment = stopSegment
+        self.startSegment.displaySet = self.stopSegment.displaySet = self
+    
+        self._epoch = None
+        self.subPicture = None
+        
+    def getEpoch(self, forward):
+        if self._epoch is None:
+            if forward and self.next is not self:
+                return self.getEpoch(True)
+            elif not forward and self.prev is not self:
+                return self.getEpoch(False)
+        return self._epoch
+
+    @property
+    def epoch(self):
+        h = self.getEpoch(True)
+        t = self.getEpoch(False)
+        if h is t:
+            if h is None:
+                print('Warning: [Display Set Epoch] First and last display sets lack epoch parents')
+        else:
+            print('Warning: [Display Set Epoch] Start and stop display sets have different epoch parents')
+            return None
+        return h
+    @epoch.setter
+    def epoch(self, value):
+        self._epoch = value
+
+    @property
+    def prev(self):
+        return self.startSegment.prev.displaySet
+
+    @property
+    def next(self):
+        return self.stopSegment.next.displaySet
+
+    @property
+    def segments(self):
+        segment = self.startSegment
+        while segment is not self.stopSegment:
+            yield segment
+            segment = segment.next
+        yield segment
 
     @property
     def raw(self):
@@ -574,104 +626,91 @@ class DisplaySet:
 
     @property
     def pcsSegment(self):
-        if not hasattr(self, '_pcsSegment'):
+        pcs = self.startSegment
+        if pcs.type is not SEGMENT_TYPE.PCS:
+            print('Warning: [Display Set] PCS is not the first segment')
             pcs = next((s for s in self.getType(SEGMENT_TYPE.PCS)), None)
-            self._pcsSegment = pcs
-            if pcs is not self.segments[0]:
-                print('Warning: [Display Set] PCS is not the first segment')
-        return self._pcsSegment
+            # May need to handle segments !!!
+        return pcs
 
     @property
     def RLE(self):
-        if not hasattr(self, '_RLE'):
-            RLE = []
-            seed = b''
-            prevID = -1
-            for ods in self.getType(SEGMENT_TYPE.ODS):
-                data = ods.data
-                currID = data.objectID
-                # Different object ID, so there're two different objects
-                if currID != prevID and prevID != -1:
-                    RLE.append({'id': prevID, 'data': seed})
-                    seed = b''
-                # Same object ID, so we have to combine the image data together
-                prevID = currID
-                seed += data.imgData
-            # One display set may have more than one objects, they have different object IDs
-            # The number of objects is also indicated at PCS segment's number of composition objects field
-            if prevID != -1:
+        RLE = []
+        seed = b''
+        prevID = -1
+        for ods in self.getType(SEGMENT_TYPE.ODS):
+            data = ods.data
+            currID = data.objectID
+            # Different object ID, so there're different objects
+            if currID != prevID and prevID != -1:
                 RLE.append({'id': prevID, 'data': seed})
-            
-            if self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL and self.prev is not self:
-                prevRLE = self.prev.RLE
-                ids = [r['id'] for r in RLE]
-                RLE.extend(r for r in prevRLE if r['id'] not in ids)
-            
-            self._RLE = sorted(RLE, key = lambda k: k['id'])
-
-        return self._RLE
+                seed = b''
+            # Same object ID, so we have to combine the image data together
+            prevID = currID
+            seed += data.imgData
+        if prevID != -1:
+            RLE.append({'id': prevID, 'data': seed})
+        # Normal type composition state display set may use composition objects of the previous display set
+        if self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL and self.prev is not self:
+            prevRLE = self.prev.RLE
+            ids = [r['id'] for r in RLE]
+            RLE.extend(r for r in prevRLE if r['id'] not in ids)
+        return RLE
 
     @property
     def pix(self):
-        if not hasattr(self, '_pix'):
-            self._pix = [{'id': RLE['id'], 'data': RLEDecode(RLE['data'])} for RLE in self.RLE]
-        return self._pix
+        return [{'id': RLE['id'], 'data': RLEDecode(RLE['data'])} for RLE in self.RLE]
     
     @property
     def image(self):
-        if not hasattr(self, '_image'):
-            self._image = [{'id': pix['id'], 'data': self.makeImage(pix['data'])} for pix in self.pix]
-        return self._image
+        return [{'id': pix['id'], 'data': self.makeImage(pix['data'])} for pix in self.pix]
+    
+    def getPds(self, paletteID):
+        pds = next((p.data for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
+        if pds is None and self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
+        and self.prev is not self:
+            pds = self.prev.getPds(paletteID)
+        return pds
 
     @property
     def pds(self):
-        if not hasattr(self, '_pds'):
-            self._pds = next((p.data for p in self.getType(SEGMENT_TYPE.PDS)
-                if p.data.paletteID == self.getType(SEGMENT_TYPE.PCS)[0].data.paletteID), None)
-            if self._pds is None and self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL and self.prev is not self:
-                self._pds = self.prev.pds
-        return self._pds
+        paletteID = self.pcsSegment.data.paletteID
+        return self.getPds(paletteID)
     
     @property
     def RGB(self):
-        if not hasattr(self, '_RGB'):
-            self._RGB = self.pds.RGB
-        return self._RGB
+        return self.pds.RGB
     
     @property
     def alpha(self):
-        if not hasattr(self, '_alpha'):
-            self._alpha = self.pds.alpha
-        return self._alpha
+        return self.pds.alpha
     
     @property
     def screenImage(self):
-        if not hasattr(self, '_screenImage'):
-            if self.pcsSegment.data.numberOfCompositionObjects > 0:
-                transparentEntryPoint = next(i for i, a in enumerate(self.alpha) if a == 0)
-                background = np.full((self.pcsSegment.data.height, self.pcsSegment.data.width), transparentEntryPoint, dtype = np.uint8)
-                for obj in self.pcsSegment.data.compositionObjects:
-                    pix = next(p['data'] for p in self.pix if p['id'] == obj.objectID)
-                    windowID = next(c.windowID for c in self.pcsSegment.data.compositionObjects if c.objectID == obj.objectID)
-                    wobj = next(w for w in self.getType(SEGMENT_TYPE.WDS)[0].data.windowObjects if w.windowID == windowID)
-                    xPos, yPos, (height, width) = obj.xPos, obj.yPos, pix.shape
-                    windowXPos, windowYPos, windowWidth, windowHeight = wobj.xPos, wobj.yPos, wobj.width, wobj.height
-                    cropXPos, cropYPos, cropWidth, cropHeight = obj.cropXPos or 0, obj.cropYPos or 0, obj.cropWidth or width, obj.cropHeight or height
+        if self.pcsSegment.data.numberOfCompositionObjects > 0:
+            transparentEntryPoint = next(i for i, a in enumerate(self.alpha) if a == 0)
+            background = np.full((self.pcsSegment.data.height, self.pcsSegment.data.width), transparentEntryPoint, dtype = np.uint8)
+            for obj in self.pcsSegment.data.compositionObjects:
+                pix = next(p['data'] for p in self.pix if p['id'] == obj.objectID)
+                windowID = next(c.windowID for c in self.pcsSegment.data.compositionObjects if c.objectID == obj.objectID)
+                wobj = next(w for w in next(self.getType(SEGMENT_TYPE.WDS)).data.windowObjects if w.windowID == windowID)
+                xPos, yPos, (height, width) = obj.xPos, obj.yPos, pix.shape
+                windowXPos, windowYPos, windowWidth, windowHeight = wobj.xPos, wobj.yPos, wobj.width, wobj.height
+                cropXPos, cropYPos, cropWidth, cropHeight = obj.cropXPos or 0, obj.cropYPos or 0, obj.cropWidth or width, obj.cropHeight or height
 
-                    xStart = max(cropXPos, 0)
-                    yStart = max(cropYPos, 0)
-                    xEnd = min(cropXPos + cropWidth, width)
-                    yEnd = min(cropYPos + cropHeight, height)
-                    height = yEnd - yStart
-                    width = xEnd - xStart
-                    croppedPix = pix[yStart:yEnd, xStart:xEnd]
-                    background[yPos:(yPos + height), xPos:(xPos + width)] = croppedPix
-                    background[yPos:windowYPos, xPos:windowXPos] = transparentEntryPoint
-                    background[(windowYPos + windowHeight):(yPos + height), (windowXPos + windowWidth):(xPos + width)] = transparentEntryPoint
-                self._screenImage = self.makeImage(background)
-            else:
-                self._screenImage = None
-        return self._screenImage
+                xStart = max(cropXPos, 0)
+                yStart = max(cropYPos, 0)
+                xEnd = min(cropXPos + cropWidth, width)
+                yEnd = min(cropYPos + cropHeight, height)
+                height = yEnd - yStart
+                width = xEnd - xStart
+                croppedPix = pix[yStart:yEnd, xStart:xEnd]
+                background[yPos:(yPos + height), xPos:(xPos + width)] = croppedPix
+                background[yPos:windowYPos, xPos:windowXPos] = transparentEntryPoint
+                background[(windowYPos + windowHeight):(yPos + height), (windowXPos + windowWidth):(xPos + width)] = transparentEntryPoint
+            return self.makeImage(background)
+        else:
+            return None
 
     def makeImage(self, pixelLayer):
         alphaLayer = self.alpha[pixelLayer]
@@ -682,60 +721,121 @@ class DisplaySet:
         RGBAImage = pixelImage.convert('RGB')
         RGBAImage.putalpha(alphaImage)
         return RGBAImage
-
-    def hasType(self, sType):
-        return sType in self.segmentTypes
     
+    @property
+    def pts(self):
+        return self.pcsSegment.pts
+    @pts.setter
+    def pts(self, value):
+        for s in self.segments:
+            s.pts = value
+    
+    @property
+    def dts(self):
+        return self.pcsSegment.dts
+    @dts.setter
+    def dts(self, value):
+        for s in self.segments:
+            s.dts = value
+
+    @property
+    def ptsms(self):
+        return self.pcsSegment.ptsms
+    @ptsms.setter
+    def ptsms(self, value):
+        for s in self.segments:
+            s.ptsms = value
+    
+    @property
+    def dtsms(self):
+        return self.pcsSegment.dtsms
+    @dtsms.setter
+    def dtsms(self, value):
+        for s in self.segments:
+            s.dtsms = value
+
     def getType(self, sType):
-        return [s for s in self.segments if s.type == sType]
+        return (s for s in self.segments if s.type == sType)
 
 class Epoch:
 
-    def __init__(self, displaySets):
-        self.displaySets = displaySets
+    def __init__(self, startDisplaySet, stopDisplaySet):
+        self.startDisplaySet = startDisplaySet
+        self.stopDisplaySet = stopDisplaySet
+        self.startDisplaySet.epoch = self.stopDisplaySet.epoch = self
     
     @property
     def raw(self):
         return b''.join(ds.raw for ds in self.displaySets)
+    
+    @property
+    def displaySets(self):
+        displaySet = self.startDisplaySet
+        while displaySet is not self.stopDisplaySet:
+            yield displaySet
+            displaySet = displaySet.next
+        yield displaySet
+    
+    @property
+    def next(self):
+        return self.stopDisplaySet.next.epoch
+    
+    @property
+    def prev(self):
+        return self.startDisplaySet.prev.epoch
 
     @property
     def segments(self):
-        if not hasattr(self, '_segments'):
-            self._segments = list(itertools.chain(*[ds.segments for ds in self.displaySets]))
-        return self._segments
+        for ds in self.displaySets:
+            yield from ds.segments
 
 class SubPicture:
 
-    def __init__(self, displaySet):
-        self.displaySet = displaySet
+    def __init__(self, startDisplaySet, stopDisplaySet):
+        self.startDisplaySet = startDisplaySet
+        self.stopDisplaySet = stopDisplaySet
+        self.startDisplaySet.subPicture = self.stopDisplaySet.subPicture = self
 
     @property
     def raw(self):
-        return self.displaySet.raw
+        return b''.join(ds.raw for ds in self.displaySets)
+    
+    @property
+    def displaySets(self):
+        displaySet = self.startDisplaySet
+        while displaySet is not self.stopDisplaySet:
+            yield displaySet
+            displaySet = displaySet.next
+        yield displaySet
+
+    @property
+    def next(self):
+        return self.stopDisplaySet.next.subPicture
+    
+    @property
+    def prev(self):
+        return self.startDisplaySet.prev.subPicture
 
     @property
     def segments(self):
-        if not hasattr(self, '_segments'):
-            self._segments = self.displaySet.segments
-        return self._segments
+        for ds in self.displaySets:
+            yield from ds.segments
 
     @property
     def startTime(self):
-        return self.displaySet.pcsSegment.pts
+        return self.startDisplaySet.pts
     @startTime.setter
     def startTime(self, value):
-        for s in self.displaySet.segments:
-            s.pts = value
-            s.dts = 0
+        self.startDisplaySet.pts = value
+        self.startDisplaySet.dts = 0
 
     @property
     def startTimems(self):
-        return self.displaySet.pcsSegment.ptsms
+        return self.startDisplaySet.ptsms
     @startTimems.setter
     def startTimems(self, value):
-        for s in self.displaySet.segments:
-            s.ptsms = value
-            s.dts = 0
+        self.startDisplaySet.ptsms = value
+        self.startDisplaySet.dts = 0
 
     @property
     def startTimehmsx(self):
@@ -753,21 +853,19 @@ class SubPicture:
 
     @property
     def endTime(self):
-        return self.displaySet.next.pcsSegment.pts
+        return self.startDisplaySet.next.pts
     @endTime.setter
     def endTime(self, value):
-        for s in self.displaySet.next.segments:
-            s.pts = value
-            s.dts = 0
+        self.startDisplaySet.next.pts = value
+        self.startDisplaySet.next.dts = 0
 
     @property
     def endTimems(self):
-        return self.displaySet.next.pcsSegment.ptsms
+        return self.startDisplaySet.next.ptsms
     @endTimems.setter
     def endTimems(self, value):
-        for s in self.displaySet.next.segments:
-            s.ptsms = value
-            s.dts = 0
+        self.startDisplaySet.next.ptsms = value
+        self.startDisplaySet.next.dts = 0
 
     @property
     def endTimehmsx(self):
@@ -813,15 +911,15 @@ class SubPicture:
 
     @property
     def maxAlpha(self):
-        return max(self.displaySet.alpha)
+        return max(self.startDisplaySet.alpha)
 
     @property
     def image(self):
-        return self.displaySet.image
+        return self.startDisplaySet.image
 
     @property
     def screenImage(self):
-        return self.displaySet.screenImage
+        return self.startDisplaySet.screenImage
 
 def ms2Str(ms):
     return hmsx2Str(*ms2hmsxInt(ms))
