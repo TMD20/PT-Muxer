@@ -1,32 +1,15 @@
-import io, os, itertools
+import os, logging
 import numpy as np
-from enum import Enum
-from PIL import Image
 from bufferedrandomplus import BufferedRandomPlus
+from imageutil import *
+from timeutil import *
+from enumerations import *
+
+logging.basicConfig(level = logging.INFO)
+logger = logging.getLogger(__name__)
 
 class InvalidSegmentError(Exception):
     pass
-
-class SEGMENT_TYPE(Enum):
-
-    PDS = b'\x14'
-    ODS = b'\x15'
-    PCS = b'\x16'
-    WDS = b'\x17'
-    END = b'\x80'
-
-class COMPOSITION_STATE(Enum):
-
-    NORMAL = b'\x00'
-    ACQUISITION_POINT = b'\x40'
-    EPOCH_START = b'\x80'
-    EPOCH_CONTINUE = b'\xC0'
-    
-class SEQUENCE(Enum):
-
-    FIRST = b'\x40'
-    LAST = b'\x80'
-    FIRST_LAST = b'\xC0'
 
 class BDSupReader:
     
@@ -35,7 +18,8 @@ class BDSupReader:
         self.bufferSize = bufferSize
         self.startSegment = None
         self.endSegment = None
-    
+        self.verbose = verbose
+
     @property
     def segments(self):
         if self.startSegment is None:
@@ -71,7 +55,7 @@ class BDSupReader:
                 yield DisplaySet(startSegment, segment)
                 startSegment = segment.next
         if segment is not startSegment:
-            print('Warning: [Read Stream] The last display set lacks END segment')
+            logger.warning('[Read Stream] The last display set lacks END segment')
             yield DisplaySet(startSegment, segment)
  
     @property
@@ -98,7 +82,7 @@ class BDSupReader:
                     yield SubPicture(startDisplaySet, displaySet)
                     startDisplaySet = None
         if startDisplaySet:
-            print('Warning: [Read Stream] The last sub picture lacks end time')
+            logger.warning('[Read Stream] The last sub picture lacks end time')
             yield SubPicture(subPicture, subPicture)
 
     def shift(self, value):
@@ -212,7 +196,7 @@ class PresentationCompositionSegment:
             comps.append(self.CompositionObject(stream, self))
         numberOfCompositionObjects = len(comps)
         if numberOfCompositionObjects != self.numberOfCompositionObjects:
-            print('Warning: [PCS] Number of composition objects asserted ({:d}) '
+            logger.warning('[PCS] Number of composition objects asserted ({:d}) '
                     'does not match the amount found ({:d}). '
                     'The attribute will be reassigned'
                     .format(self.numberOfCompositionObjects, numberOfCompositionObjects))
@@ -282,7 +266,7 @@ class WindowDefinitionSegment:
             windows.append(self.WindowObject(stream, self))
         numberOfWindows = len(windows)
         if numberOfWindows != self.numberOfWindows:
-            print('Warning: [WDS] Number of windows asserted ({:d}) '
+            logger.warning('[WDS] Number of windows asserted ({:d}) '
                     'does not match the amount found ({:d}). '
                     'The attribute will be reassigned'
                     .format(self.numberOfWindows, numberOfWindows))
@@ -301,10 +285,6 @@ class WindowDefinitionSegment:
 
 class PaletteDefinitionSegment:
 
-    xForm = np.array([[255/219, 255/224*1.402, 0],
-        [255/219, -255/224*1.402*0.299/0.587, -255/224*1.772*0.114/0.587], 
-        [255/219, 0, 255/224*1.772]], dtype = np.float)
-    
     def __init__(self, stream, parent):
         self._parent = parent
         self.paletteID = stream.readUChar()
@@ -327,24 +307,7 @@ class PaletteDefinitionSegment:
                 self.paletteTable[rowIndices, 1:] = p
             else:
                 self.paletteTable = np.vstack((self.paletteTable, [entry, *p]))
-
-    def YCrCb2RGB(self, YCrCb):
-        RGB = np.asarray(YCrCb, dtype = np.float)
-        RGB -= [16, 128, 128]
-        RGB = RGB.dot(self.xForm.T)
-        np.putmask(RGB, RGB > 255, 255)
-        np.putmask(RGB, RGB < 0, 0)
-        return np.uint8(RGB)
     
-    def RGB2YCrCb(self, RGB):
-        YCrCb = np.asarray(RGB, dtype = np.float)
-        YCrCb = np.linalg.solve(self.xForm.T, YCrCb)
-        YCrCb += [16, 128, 128]
-        np.putmask(YCrCb, YCrCb < 16, 16)
-        np.putmask(YCrCb[:, 0], YCrCb[:, 0] > 235, 235)
-        np.putmask(YCrCb[:, 1:3], YCrCb[:, 1:3] > 240, 240)
-        return np.uint8(YCrCb)
-
     @property
     def raw(self):
         result = bytes([self.paletteID, self.version]) + \
@@ -379,10 +342,10 @@ class PaletteDefinitionSegment:
 
     @property
     def RGB(self):
-        return self.YCrCb2RGB(self.YCrCb)
+        return YCrCb2RGB(self.YCrCb)
     @RGB.setter
     def RGB(self, value):
-        self.YCrCb = self.RGB2YCrCb(value)
+        self.YCrCb = RGB2YCrCb(value)
 
     @property
     def parent(self):
@@ -416,7 +379,7 @@ class ObjectDefinitionSegment:
         
         # Single Fragment Correction
         if self.first and self.last and dataLength != self.dataLength:
-            print('Warning: [ODS] Length of image data asserted ({:d}) '
+            logger.warning('[ODS] Length of image data asserted ({:d}) '
                     'does not match the amount found ({:d}). '
                     'The attribute will be reassigned'
                     .format(self.dataLength, dataLength))
@@ -511,9 +474,9 @@ class Segment:
         t = self.getDisplaySet(False)
         if h is t:
             if h is None:
-                print('Warning: [Segment Display Set] First and last segments lack display set parents')
+                logger.warning('[Segment Display Set] First and last segments lack display set parents')
         else:
-            print('Warning: [Segment Display Set] Start and stop segments have different display set parents')
+            logger.warning('[Segment Display Set] Start and stop segments have different display set parents')
             return None
         return h
     @displaySet.setter
@@ -537,12 +500,12 @@ class Segment:
     @pts.setter
     def pts(self, value):
         if value > 4294967295:
-            print('Warning: [Set PTS] Time is larger than 4 bytes, 2^32 - 1 is used')
+            logger.warning(f'[Set PTS] Time ({value}) is larger than 4 bytes, 2^32 - 1 is used')
             value = 4294967295
         elif value < 0:
-            print('Warning: [Set PTS] Time cannot be negative, 0 is used')
+            logger.warning(f'[Set PTS] Time ({value}) cannot be negative, 0 is used')
             value = 0
-        self._pts = value
+        self._pts = int(round(value))
     
     @property
     def dts(self):
@@ -550,26 +513,26 @@ class Segment:
     @pts.setter
     def dts(self, value):
         if value > 4294967295:
-            print('Warning: [Set DTS] Time is larger than 4 bytes, 2^32 - 1 is used')
+            logger.warning(f'[Set DTS] Time ({value}) is larger than 4 bytes, 2^32 - 1 is used')
             value = 4294967295
         elif value < 0:
-            print('Warning: [Set DTS] Time cannot be negative, 0 is used')
+            logger.warning(f'[Set DTS] Time ({value}) cannot be negative, 0 is used')
             value = 0
-        self._dts = value
+        self._dts = int(round(value))
 
     @property
     def ptsms(self):
         return self.pts / 90
     @ptsms.setter
     def ptsms(self, value):
-        self.pts = round(value * 90)
+        self.pts = value * 90
 
     @property
     def dtsms(self):
         return self.dts / 90
     @dtsms.setter
     def dtsms(self, value):
-        self.dts = round(value * 90)
+        self.dts = value * 90
 
 class DisplaySet:
 
@@ -595,9 +558,9 @@ class DisplaySet:
         t = self.getEpoch(False)
         if h is t:
             if h is None:
-                print('Warning: [Display Set Epoch] First and last display sets lack epoch parents')
+                logger.warning('[Display Set Epoch] First and last display sets lack epoch parents')
         else:
-            print('Warning: [Display Set Epoch] Start and stop display sets have different epoch parents')
+            logger.warning('[Display Set Epoch] Start and stop display sets have different epoch parents')
             return None
         return h
     @epoch.setter
@@ -628,7 +591,7 @@ class DisplaySet:
     def pcsSegment(self):
         pcs = self.startSegment
         if pcs.type is not SEGMENT_TYPE.PCS:
-            print('Warning: [Display Set] PCS is not the first segment')
+            logger.warning('[Display Set] PCS is not the first segment')
             pcs = next((s for s in self.getType(SEGMENT_TYPE.PCS)), None)
             # May need to handle segments !!!
         return pcs
@@ -663,7 +626,7 @@ class DisplaySet:
     
     @property
     def image(self):
-        return [{'id': pix['id'], 'data': self.makeImage(pix['data'])} for pix in self.pix]
+        return [{'id': pix['id'], 'data': makeImage(pix['data'], self.RGB, self.alpha)} for pix in self.pix]
     
     def getPds(self, paletteID):
         pds = next((p.data for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
@@ -709,20 +672,10 @@ class DisplaySet:
                 background[yPos:(yPos + height), xPos:(xPos + width)] = croppedPix
                 background[yPos:windowYPos, xPos:windowXPos] = transparentEntryPoint
                 background[(windowYPos + windowHeight):(yPos + height), (windowXPos + windowWidth):(xPos + width)] = transparentEntryPoint
-            return self.makeImage(background)
+            return makeImage(background, self.RGB, self.alpha)
         else:
             return None
 
-    def makeImage(self, pixelLayer):
-        alphaLayer = self.alpha[pixelLayer]
-        RGBPalette = self.RGB
-        alphaImage = Image.fromarray(alphaLayer, mode='L')
-        pixelImage = Image.fromarray(pixelLayer, mode='P')
-        pixelImage.putpalette(RGBPalette)
-        RGBAImage = pixelImage.convert('RGB')
-        RGBAImage.putalpha(alphaImage)
-        return RGBAImage
-    
     @property
     def pts(self):
         return self.pcsSegment.pts
@@ -921,72 +874,3 @@ class SubPicture:
     @property
     def screenImage(self):
         return self.startDisplaySet.screenImage
-
-def ms2Str(ms):
-    return hmsx2Str(*ms2hmsxInt(ms))
-
-def str2ms(string):
-    return hmsx2ms(*str2hmsx(string))
-
-def hmsx2Str(h, m, s, x):
-    return '{:02.0f}:{:02.0f}:{:02.0f}.{:03.0f}'.format(h, m, s, x)
-
-def str2hmsx(string):
-    return tuple(float(n) for n in string.replace(',', ':').replace('.', ':').split(':'))
-
-def ms2hmsx(ms):
-    x = ms % 1000
-    s = (ms // 1000) % 60
-    m = (ms // 60000) % 60
-    h = ms // 3600000
-    return h, m ,s, x
-
-def hmsx2ms(h, m, s, x):
-    return x + s * 1000 + m * 60 * 1000 + h * 3600 * 1000
-
-def ms2hmsxInt(ms):
-    return ms2hmsx(round(ms))
-
-def RLEDecode(RLEData):
-    lineBuilder = []
-    pixels = []
-    offset = 0
-    length = len(RLEData)
-
-    while offset < length:
-        first = RLEData[offset]
-        if first:
-            entry = first
-            repeat = 1
-            skip = 1
-        else:
-            second = RLEData[offset + 1]
-            if second == 0:
-                entry = 0
-                repeat = 0
-                pixels.append(lineBuilder)
-                lineBuilder = []
-                skip = 2
-            elif second < 64:
-                entry = 0
-                repeat = second
-                skip = 2
-            elif second < 128:
-                entry = 0
-                repeat = ((second - 64) << 8) + RLEData[offset + 2]
-                skip = 3
-            elif second < 192:
-                entry = RLEData[offset + 2]
-                repeat = second - 128
-                skip = 3
-            else:
-                entry = RLEData[offset + 3]
-                repeat = ((second - 192) << 8) + RLEData[offset + 2]
-                skip = 4
-        lineBuilder.extend([entry] * repeat)
-        offset += skip
-
-    if lineBuilder:
-        print(f'Warning: [RLE] Hanging pixels without line ending: {lineBuilder}')
-
-    return np.asarray(pixels, dtype = np.uint8)
