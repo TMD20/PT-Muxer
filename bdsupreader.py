@@ -689,7 +689,8 @@ class DisplaySet:
     def screenImage(self):
         if self.pcsSegment.data.numberOfCompositionObjects > 0:
             transparentEntryPoint = next(i for i, a in enumerate(self.alpha) if a == 0)
-            background = np.full((self.pcsSegment.data.height, self.pcsSegment.data.width), transparentEntryPoint, dtype = np.uint8)
+            canvasHeight, canvasWidth = self.pcsSegment.data.height, self.pcsSegment.data.width
+            background = np.full((canvasHeight, canvasWidth), transparentEntryPoint, dtype = np.uint8)
             for obj in self.pcsSegment.data.compositionObjects:
                 pix = next(p['data'] for p in self.pix if p['id'] == obj.objectID)
                 windowID = next(c.windowID for c in self.pcsSegment.data.compositionObjects if c.objectID == obj.objectID)
@@ -700,8 +701,8 @@ class DisplaySet:
 
                 xStart = max(cropXPos, 0)
                 yStart = max(cropYPos, 0)
-                xEnd = min(cropXPos + cropWidth, width)
-                yEnd = min(cropYPos + cropHeight, height)
+                xEnd = min(cropXPos + cropWidth, width, canvasWidth)
+                yEnd = min(cropYPos + cropHeight, height, canvasHeight)
                 height = yEnd - yStart
                 width = xEnd - xStart
                 croppedPix = pix[yStart:yEnd, xStart:xEnd]
