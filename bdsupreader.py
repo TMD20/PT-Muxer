@@ -292,60 +292,28 @@ class PaletteDefinitionSegment:
         self.paletteTable = np.asarray(list(stream.readBytes(len(self.parent) - 2)), dtype = np.uint8).reshape((-1, 5))
 
     @property
-    def palette(self):
-        # (Y, Cr, Cb) = (235, 128, 128) is white
-        p = np.array([[235, 128, 128, 0]], dtype = np.uint8).repeat(256, axis = 0)
-        for row in self.paletteTable:
-            p[row[0]] = row[1:]
-        return p
-    @palette.setter
-    def palette(self, value):
-        for entry, p in enumerate(value):
-            rowIndices = np.where(self.paletteTable[:, 0] == entry)
-            count = len(rowIndices[0])
-            if count:
-                self.paletteTable[rowIndices, 1:] = p
-            else:
-                self.paletteTable = np.vstack((self.paletteTable, [entry, *p]))
-    
-    @property
     def raw(self):
         result = bytes([self.paletteID, self.version]) + \
                 self.paletteTable.tobytes()
         return result
     
     @property
-    def YCrCb(self):
-        return self.palette[:, 0:3]
-    @YCrCb.setter
-    def YCrCb(self, value):
-        for entry, c in enumerate(value):
-            rowIndices = np.where(self.paletteTable[:, 0] == entry)
-            count = len(rowIndices[0])
-            if count:
-                self.paletteTable[rowIndices, 1:4] = c
-            else:
-                self.paletteTable = np.vstack((self.paletteTable, [entry, *c, 0]))
-
+    def YCrCbAPalette(self):
+        # (Y, Cr, Cb) = (235, 128, 128) is white
+        p = np.array([[235, 128, 128, 0]], dtype = np.uint8).repeat(256, axis = 0)
+        for row in self.paletteTable:
+            p[row[0]] = row[1:]
+        return p
+    @YCrCbAPalette.setter
+    def YCrCbAPalette(self, value):
+        self.paletteTable = np.column_stack((range(len(value)), value))
+    
     @property
-    def alpha(self):
-        return self.palette[:, 3]
-    @alpha.setter
-    def alpha(self, value):
-        for entry, a in enumerate(value):
-            rowIndices = np.where(self.paletteTable[:, 0] == entry)
-            count = len(rowIndices[0])
-            if count:
-                self.paletteTable[rowIndices, 4] = a
-            else:
-                self.paletteTable = np.vstack((self.paletteTable, [entry, 235, 128, 128, a]))
-
-    @property
-    def RGB(self):
-        return YCrCb2RGB(self.YCrCb)
-    @RGB.setter
-    def RGB(self, value):
-        self.YCrCb = RGB2YCrCb(value)
+    def RGBAPalette(self):
+        return YCrCbA2RGBA(self.YCrCbAPalette)
+    @RGBAPalette.setter
+    def RGBAPalette(self, value):
+        self.YCrCbAPalette = RGBA2YCrCbA(value)
 
     @property
     def parent(self):
@@ -595,24 +563,30 @@ class DisplaySet:
             pcs = next((s for s in self.getType(SEGMENT_TYPE.PCS)), None)
             # May need to handle segments !!!
         return pcs
-
+    
     @property
     def RLE(self):
         RLE = []
         seed = b''
         prevID = -1
+        width = None
+        height = None
         for ods in self.getType(SEGMENT_TYPE.ODS):
             data = ods.data
             currID = data.objectID
             # Different object ID, so there're different objects
             if currID != prevID and prevID != -1:
-                RLE.append({'id': prevID, 'data': seed})
+                RLE.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
                 seed = b''
             # Same object ID, so we have to combine the image data together
             prevID = currID
             seed += data.imgData
+            if data.width is not None:
+                width = data.width
+            if data.height is not None:
+                height = data.height
         if prevID != -1:
-            RLE.append({'id': prevID, 'data': seed})
+            RLE.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
         # Normal type composition state display set may use composition objects of the previous display set
         if self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL and self.prev is not self:
             prevRLE = self.prev.RLE
@@ -622,11 +596,11 @@ class DisplaySet:
 
     @property
     def pix(self):
-        return [{'id': RLE['id'], 'data': RLEDecode(RLE['data'])} for RLE in self.RLE]
+        return [{'id': RLE['id'], 'data': RLEDecode(RLE['data'], RLE['width'], RLE['height'])} for RLE in self.RLE]
     
     @property
     def image(self):
-        return [{'id': pix['id'], 'data': makeImage(pix['data'], self.RGB, self.alpha)} for pix in self.pix]
+        return [{'id': pix['id'], 'data': makeImage(pix['data'], self.RGBAPalette)} for pix in self.pix]
     
     def getPds(self, paletteID):
         pds = next((p.data for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
@@ -641,17 +615,23 @@ class DisplaySet:
         return self.getPds(paletteID)
     
     @property
-    def RGB(self):
-        return self.pds.RGB
-    
+    def RGBAPalette(self):
+        return self.pds.RGBAPalette
+    @RGBAPalette.setter
+    def RGBAPalette(self, value):
+        self.pds.RGBAPalette = value
+
     @property
-    def alpha(self):
-        return self.pds.alpha
+    def YCrCbAPalette(self):
+        return self.pds.YCrCbAPalette
+    @YCrCbAPalette.setter
+    def YCrCbAPalette(self, value):
+        self.pds.YCrCbAPalette = value
     
     @property
     def screenImage(self):
         if self.pcsSegment.data.numberOfCompositionObjects > 0:
-            transparentEntryPoint = next(i for i, a in enumerate(self.alpha) if a == 0)
+            transparentEntryPoint = next(i for i, p in enumerate(self.YCrCbAPalette) if p[-1] == 0)
             canvasHeight, canvasWidth = self.pcsSegment.data.height, self.pcsSegment.data.width
             background = np.full((canvasHeight, canvasWidth), transparentEntryPoint, dtype = np.uint8)
             for obj in self.pcsSegment.data.compositionObjects:
@@ -672,7 +652,7 @@ class DisplaySet:
                 background[yPos:(yPos + height), xPos:(xPos + width)] = croppedPix
                 background[yPos:windowYPos, xPos:windowXPos] = transparentEntryPoint
                 background[(windowYPos + windowHeight):(yPos + height), (windowXPos + windowWidth):(xPos + width)] = transparentEntryPoint
-            return makeImage(background, self.RGB, self.alpha)
+            return makeImage(background, self.RGBAPalette)
         else:
             return None
 
@@ -865,7 +845,7 @@ class SubPicture:
 
     @property
     def maxAlpha(self):
-        return max(self.startDisplaySet.alpha)
+        return max(self.startDisplaySet.YCrCbAPalette[:, -1])
 
     @property
     def image(self):
