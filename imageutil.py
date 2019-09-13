@@ -4,7 +4,7 @@ import logging
 import ctypes
 import os
 path = os.path.dirname(os.path.realpath(__file__))
-libRLE = ctypes.CDLL(f'{path}/RLE.so')
+libRL = ctypes.CDLL(f'{path}/RunLength.so')
 
 logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger(__name__)
@@ -49,51 +49,57 @@ def splitImage(pillowImage):
     RGBAPalette = np.frombuffer(RGBAImage.palette.palette, dtype = np.uint8).reshape(-1, 4)
     return (pixelLayer, RGBAPalette)
 
-def RLEDecode(RLEData, width = None, height = None):
+def RLEncode(pixels):
+    height, width = np.shape(pixels)
+    RLData = (ctypes.c_uint8 * (height * round(1.5 * width + 2)))()
+    pixels = (ctypes.c_uint8 * (width * height))(*np.ravel(pixels))
+    length = libRL.RLEncode(pixels, width, height, RLData)
+    return bytes(RLData[:length])
+
+def RLDecode(RLData, width = None, height = None):
     if width is not None and height is not None:
         pix = (ctypes.c_byte * width * height)()
-        libRLE.RLEDecode(RLEData, len(RLEData), pix, height)
+        libRL.RLDecode(RLData, len(RLData), pix, height)
         return np.array(pix, dtype = np.uint8).reshape(height, width)
     else:
         lineBuilder = []
         pixels = []
         offset = 0
-        length = len(RLEData)
+        length = len(RLData)
  
         while offset < length:
-            first = RLEData[offset]
+            first = RLData[offset]
             if first:
                 entry = first
                 repeat = 1
-                skip = 1
+                offset += 1
             else:
-                second = RLEData[offset + 1]
+                second = RLData[offset + 1]
                 if second == 0:
                     entry = 0
                     repeat = 0
                     pixels.append(lineBuilder)
                     lineBuilder = []
-                    skip = 2
+                    offset += 2
                 elif second < 64:
                     entry = 0
                     repeat = second
-                    skip = 2
+                    offset += 2
                 elif second < 128:
                     entry = 0
-                    repeat = ((second - 64) << 8) + RLEData[offset + 2]
-                    skip = 3
+                    repeat = ((second - 64) << 8) + RLData[offset + 2]
+                    offset += 3
                 elif second < 192:
-                    entry = RLEData[offset + 2]
+                    entry = RLData[offset + 2]
                     repeat = second - 128
-                    skip = 3
+                    offset += 3
                 else:
-                    entry = RLEData[offset + 3]
-                    repeat = ((second - 192) << 8) + RLEData[offset + 2]
-                    skip = 4
+                    entry = RLData[offset + 3]
+                    repeat = ((second - 192) << 8) + RLData[offset + 2]
+                    offset += 4
             lineBuilder.extend([entry] * repeat)
-            offset += skip
  
         if lineBuilder:
-            logger.warning(f'[RLE] Hanging pixels without line ending: {lineBuilder}')
+            logger.warning(f'[RLDecode] Hanging pixels without line ending: {lineBuilder}')
  
         return np.array(pixels, dtype = np.uint8)

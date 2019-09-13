@@ -565,8 +565,8 @@ class DisplaySet:
         return pcs
     
     @property
-    def RLE(self):
-        RLE = []
+    def RLData(self):
+        RLData = []
         seed = b''
         prevID = -1
         width = None
@@ -576,7 +576,7 @@ class DisplaySet:
             currID = data.objectID
             # Different object ID, so there're different objects
             if currID != prevID and prevID != -1:
-                RLE.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
+                RLData.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
                 seed = b''
             # Same object ID, so we have to combine the image data together
             prevID = currID
@@ -586,17 +586,17 @@ class DisplaySet:
             if data.height is not None:
                 height = data.height
         if prevID != -1:
-            RLE.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
+            RLData.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
         # Normal type composition state display set may use composition objects of the previous display set
         if self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL and self.prev is not self:
-            prevRLE = self.prev.RLE
-            ids = [r['id'] for r in RLE]
-            RLE.extend(r for r in prevRLE if r['id'] not in ids)
-        return RLE
+            prevRLData = self.prev.RLData
+            ids = [r['id'] for r in RLData]
+            RLData.extend(r for r in prevRLData if r['id'] not in ids)
+        return RLData
 
     @property
     def pix(self):
-        return [{'id': RLE['id'], 'data': RLEDecode(RLE['data'], RLE['width'], RLE['height'])} for RLE in self.RLE]
+        return [{'id': RLData['id'], 'data': RLDecode(RLData['data'], RLData['width'], RLData['height'])} for RLData in self.RLData]
     
     @property
     def image(self):
