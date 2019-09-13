@@ -1,5 +1,5 @@
 def ms2Str(ms):
-    return hmsx2Str(*ms2hmsxInt(ms))
+    return hmsx2Str(*ms2hmsxRound(ms))
 
 def str2ms(string):
     return hmsx2ms(*str2hmsx(string))
@@ -20,5 +20,5 @@ def ms2hmsx(ms):
 def hmsx2ms(h, m, s, x):
     return x + s * 1000 + m * 60 * 1000 + h * 3600 * 1000
 
-def ms2hmsxInt(ms):
+def ms2hmsxRound(ms):
     return ms2hmsx(round(ms))
