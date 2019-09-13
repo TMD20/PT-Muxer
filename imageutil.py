@@ -47,7 +47,7 @@ def splitImage(pillowImage):
     width, height = img.size
     pixelLayer = np.array(RGBAImage.getdata(), dtype = np.uint8).reshape(height, width)
     RGBAPalette = np.frombuffer(RGBAImage.palette.palette, dtype = np.uint8).reshape(-1, 4)
-    return (pixelLayer, RGBAPalette)
+    return pixelLayer, RGBAPalette
 
 def RLEncode(pixels):
     height, width = np.shape(pixels)
