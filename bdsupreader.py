@@ -66,7 +66,7 @@ class BDSupReader:
             if displaySet.pcsSegment.data.compositionState == COMPOSITION_STATE.EPOCH_START:
                 yield Epoch(startDisplaySet, displaySet.prev)
                 startDisplaySet = displaySet
-        yield(startDisplaySet, displaySet)
+        yield Epoch(startDisplaySet, displaySet)
 
     @property
     def subPictures(self):
