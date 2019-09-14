@@ -610,7 +610,10 @@ class DisplaySet:
             ids = [r['id'] for r in RLData]
             RLData.extend(r for r in prevRLData if r['id'] not in ids)
         return RLData
-
+    @RLData.setter
+    def RLData(self, value):
+        pass
+    
     @property
     def pix(self):
         return [{'id': RLData['id'], 'data': RLDecode(RLData['data'], RLData['width'], RLData['height'])} for RLData in self.RLData]
@@ -618,7 +621,15 @@ class DisplaySet:
     @property
     def image(self):
         return [{'id': pix['id'], 'data': makeImage(pix['data'], self.RGBAPalette)} for pix in self.pix]
-    
+    @image.setter
+    def image(self, value):
+        RLData = []
+        pixelsList, self.RGBAPalette = splitImages([image['data'] for image in value])
+        for i, pixels in enumerate(pixelsList):
+            height, width = np.shape(pixels)
+            RLData.append({'id': value[i]['id'], 'data': RLEncode(pixels), 'width': width, 'height': height})
+        self.RLData = RLData
+
     def getPds(self, paletteID):
         pds = next((p.data for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
         if pds is None and self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL \

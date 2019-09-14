@@ -42,12 +42,26 @@ def makeImage(pixelLayer, RGBAPalette):
     RGBAImage.putalpha(alphaImage)
     return RGBAImage
 
+def splitImages(pillowImages):
+    widthsAndHeights = list(zip(*[image.size for image in pillowImages]))
+    maxWidth = sum(widthsAndHeights[0])
+    maxHeight = max(widthsAndHeights[1])
+    background = Image.new('RGBA', (maxWidth, maxHeight), color = (255, 255, 255, 0))
+    splitPositions = np.cumsum(([0] + list(widthsAndHeights[0]))[:-1])
+    for i, w in enumerate(splitPositions):
+        background.paste(pillowImages[i], box = (w, 0))
+    pixels, RGBAPalette = splitImage(background)
+    pixelsList = []
+    for i, w in enumerate(splitPositions):
+        pixelsList.append(pixels[:widthsAndHeights[1][i], w:(w + widthsAndHeights[0][i])])
+    return pixelsList, RGBAPalette
+
 def splitImage(pillowImage):
     try:
         RGBAImage = pillowImage.convert('RGBA').quantize(method = 3, dither = 1)
     except Exception as e:
         RGBAImage = pillowImage.convert('RGBA').quantize(method = 2, dither = 1)
-    width, height = RGBAImage.size
+    width, height = RGBAImage.size 
     pixelLayer = np.array(RGBAImage.getdata(), dtype = np.uint8).reshape(height, width)
     RGBAPalette = np.frombuffer(RGBAImage.palette.palette, dtype = np.uint8).reshape(-1, 4)
     return pixelLayer, RGBAPalette
