@@ -43,7 +43,10 @@ def makeImage(pixelLayer, RGBAPalette):
     return RGBAImage
 
 def splitImage(pillowImage):
-    RGBAImage = pillowImage.convert('RGBA').quantize(dither = 0)
+    try:
+        RGBAImage = pillowImage.convert('RGBA').quantize(method = 3, dither = 1)
+    except Exception as e:
+        RGBAImage = pillowImage.convert('RGBA').quantize(method = 2, dither = 1)
     width, height = RGBAImage.size
     pixelLayer = np.array(RGBAImage.getdata(), dtype = np.uint8).reshape(height, width)
     RGBAPalette = np.frombuffer(RGBAImage.palette.palette, dtype = np.uint8).reshape(-1, 4)
