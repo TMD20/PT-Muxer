@@ -52,15 +52,38 @@ def splitImage(pillowImage):
     RGBAPalette = np.frombuffer(RGBAImage.palette.palette, dtype = np.uint8).reshape(-1, 4)
     return pixelLayer, RGBAPalette
 
-def RLEncode(pixels):
-    height, width = np.shape(pixels)
-    RLData = (ctypes.c_uint8 * (height * round(1.5 * width + 2)))()
-    pixels = (ctypes.c_uint8 * (width * height))(*np.ravel(pixels))
-    length = libRL.RLEncode(pixels, width, height, RLData)
-    return bytes(RLData[:length])
+def RLEncode(pixels, cLib = True):
+    if cLib:
+        height, width = np.shape(pixels)
+        RLData = (ctypes.c_uint8 * (height * round(1.5 * width + 2)))()
+        pixels = (ctypes.c_uint8 * (width * height))(*np.ravel(pixels))
+        length = libRL.RLEncode(pixels, width, height, RLData)
+        return bytes(RLData[:length])
+    else:
+        return b''.join([b''.join([RLEncodeHelper(*group) \
+                for group in zip(*np.unique(row, return_counts = True))]) + b'\x00\x00' \
+                for row in pixels])
 
-def RLDecode(RLData, width = None, height = None):
-    if width is not None and height is not None:
+    def RLEncodeHelper(pix, repeat):
+        if repeat == 1 and pix != 0:
+            return bytes([pix])
+        elif repeat == 2 and pix != 0:
+            return bytes([pix, pix])
+        elif repeat < 64:
+            if pix == 0:
+                return bytes([0, repeat])
+            else:
+                return bytes([0, repeat + 128, pix])
+        elif repeat < 16384:
+            if pix == 0:
+                return bytes([0, (repeat >> 8) + 64, repeat & 0xFF])
+            else:
+                return bytes([0, (repeat >> 8) + 192, repeat & 0xFF, pix])
+        else:
+            return RLEncodeHelper(pix, 16383) + RLEncodeHelper(pix, repeat - 16383)
+
+def RLDecode(RLData, width = None, height = None, cLib = True):
+    if width is not None and height is not None and cLib:
         pix = (ctypes.c_byte * width * height)()
         libRL.RLDecode(RLData, len(RLData), pix, height)
         return np.array(pix, dtype = np.uint8).reshape(height, width)
