@@ -84,6 +84,23 @@ class BDSupReader:
         if startDisplaySet:
             logger.warning('[Read Stream] The last sub picture lacks end time')
             yield SubPicture(subPicture, subPicture)
+    
+    def getVector(self, frequency = 100, alpha = False):
+
+        def sample(t):
+            return round(t * frequency / 90000)
+
+        vector = []
+        end = 0
+        for subPicture in self.subPictures:
+            start = sample(subPicture.startTime)
+            vector.extend([0] * (start - end))
+            end = sample(subPicture.endTime)
+            if alpha:
+                vector.extend([subPicture.maxAlpha] * (end - start))
+            else:
+                vector.extend([255] * (end - start))
+        return np.array(vector, dtype = np.uint8)
 
     def shift(self, value):
         for segment in self.segments:
