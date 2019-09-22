@@ -328,7 +328,7 @@ class PaletteDefinitionSegment:
         return p
     @YCrCbAPalette.setter
     def YCrCbAPalette(self, value):
-        self.paletteTable = np.column_stack((range(len(value)), value))
+        self.paletteTable = np.column_stack((range(len(value)), value)).astype(np.uint8, copy = False)
     
     @property
     def RGBAPalette(self):
