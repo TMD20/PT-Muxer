@@ -63,7 +63,7 @@ class BDSupReader:
         displaySets = self.displaySets
         startDisplaySet = next(displaySets)
         for displaySet in displaySets:
-            if displaySet.pcsSegment.data.compositionState == COMPOSITION_STATE.EPOCH_START:
+            if displaySet.PCSegment.data.compositionState == COMPOSITION_STATE.EPOCH_START:
                 yield Epoch(startDisplaySet, displaySet.prev)
                 startDisplaySet = displaySet
         yield Epoch(startDisplaySet, displaySet)
@@ -73,7 +73,7 @@ class BDSupReader:
         displaySets = self.displaySets
         startDisplaySet = None
         for displaySet in displaySets:
-            if displaySet.pcsSegment.data.numberOfCompositionObjects > 0:
+            if displaySet.PCSegment.data.numberOfCompositionObjects > 0:
                 if startDisplaySet is not None:
                     yield SubPicture(startDisplaySet, startDisplaySet)
                 startDisplaySet = displaySet
@@ -101,6 +101,11 @@ class BDSupReader:
             else:
                 vector.extend([255] * (end - start))
         return np.array(vector, dtype = np.uint8)
+    
+    def imageFilter(self, ft):
+        for s in self.subPictures:
+            s.imageFilter(ft)
+        return self
 
     def shift(self, value):
         for segment in self.segments:
@@ -338,54 +343,92 @@ class PaletteDefinitionSegment:
 
 class ObjectDefinitionSegment:
 
-    def __init__(self, stream, parent):
+    def __init__(self, stream = None, parent = None):
         self._parent = parent
-        self.objectID = stream.readUShort()
-        self.version = stream.readUChar()
-        self.sequence = stream.readByte()
-        
-        # First Fragment: has data Length, width and height fields
-        if self.first:
-            self.dataLength = int.from_bytes(stream.readBytes(3), byteorder = 'big')
-            self.width = stream.readUShort()
-            self.height = stream.readUShort()
-            # Data length includes width and height (2 bytes each, 4 bytes total)
-            dataLength = len(self.parent) - 7
-            self.imgData = stream.readBytes(dataLength - 4)
-        # Consequent Fragments: no data Length, width or height field
+        if stream is not None:
+            self.objectID = stream.readUShort()
+            self.version = stream.readUChar()
+            self.sequence = stream.readByte()
+            self.remains = stream.readBytes(len(self.parent) - 4)
         else:
-            # Data Length uses 3 bytes, so we need to minus 4 not 7
-            dataLength = len(self.parent) - 4
-            self.dataLength = dataLength
-            # No width or height, so we don't need to minus 4
-            self.width = None
-            self.height = None
-            self.imgData = stream.readBytes(dataLength)
-        
-        # Single Fragment Correction
-        if self.first and self.last and dataLength != self.dataLength:
-            logger.warning('[ODS] Length of image data asserted ({:d}) '
-                    'does not match the amount found ({:d}). '
-                    'The attribute will be reassigned'
-                    .format(self.dataLength, dataLength))
-            self.dataLength = dataLength
-    
+            self.objectID = None
+            self.version = 0
+            self.sequence = b'\x00'
+            self.remains = None
+
+    @property
+    def dataLength(self):
+        if self.first:
+            return int.from_byte(self.remains[:3], byteorder = 'big')
+        else:
+            if self.parent.prev is not self.parent:
+                return self.parent.prev.data.dataLength
+    @dataLength.setter
+    def dataLength(self, value):
+        if self.first:
+            self.remains = value.to_bytes(3, byteorder = 'big') + self.remains[3:]
+        else:
+            if self.parent.prev is not self.parent:
+                self.parent.prev.data.dataLength = value
+
+    @property
+    def width(self):
+        if self.first:
+            return int.from_bytes(self.remains[3:5], byteorder = 'big')
+        else:
+            if self.parent.prev is not self.parent:
+                return self.parent.prev.data.width
+    @width.setter
+    def width(self, value):
+        if self.first:
+            self.remains = self.remains[:3] + value.to_bytes(2, byteorder = 'big') + self.remains[5:]
+        else:
+            if self.parent.prev is not self.parent:
+                self.parent.prev.data.width = value
+            
+    @property
+    def height(self):
+        if self.first:
+            return int.from_bytes(self.remains[5:7], byteorder = 'big')
+        else:
+            if self.parent.prev is not self.parent:
+                return self.parent.prev.data.height
+    @height.setter
+    def height(self, value):
+        if self.first:
+            self.remains = self.remains[:5] + value.to_bytes(2, byteorder = 'big') + self.remains[7:]
+        else:
+            if self.parent.prev is not self.parent:
+                self.parent.prev.data.height = value
+
+    @property
+    def RLDataFragment(self):
+        if self.first:
+            return self.remains[3:]
+        else:
+            return self.remains
+    @RLDataFragment.setter
+    def RLDataFragment(self, value):
+        if self.first:
+            dataLength = len(value)
+            self.remains = self.remains[:3] + value
+            if self.dataLength != dataLength:
+                self.dataLength = dataLength
+        else:
+            self.remains = value
+
     @property
     def raw(self):
         result = self.objectID.to_bytes(2, byteorder = 'big') + \
                 bytes([self.version]) + \
-                self.sequence
-        if self.first:
-            result += self.dataLength.to_bytes(3, byteorder = 'big') + \
-                    self.width.to_bytes(2, byteorder = 'big') + \
-                    self.height.to_bytes(2, byteorder = 'big')
-        result += self.imgData
+                self.sequence + \
+                self.remains
         return result
 
     @property
     def parent(self):
         return self._parent
-    
+ 
     @property
     def first(self):
         return self.sequence[0] & 128 == 128
@@ -429,14 +472,21 @@ class Segment:
         SEGMENT_TYPE.END: EndSegment
     }
 
-    def __init__(self, stream):
-        if stream.readWord() != b'PG':
-            raise InvalidSegmentError
-        self._pts = stream.readUInt()
-        self._dts = stream.readUInt()
-        self.type = SEGMENT_TYPE(stream.readByte())
-        self.size = stream.readUShort()
-        self.data = self.OPTION[self.type](stream, self)
+    def __init__(self, stream = None):
+        if stream is None:
+            self._pts = None
+            self._dts = None
+            self.type = None
+            self.size = None
+            self.data = None
+        else:
+            if stream.readWord() != b'PG':
+                raise InvalidSegmentError
+            self._pts = stream.readUInt()
+            self._dts = stream.readUInt()
+            self.type = SEGMENT_TYPE(stream.readByte())
+            self.size = stream.readUShort()
+            self.data = self.OPTION[self.type](stream, self)
         
         self.prev = self
         self.next = self
@@ -444,7 +494,7 @@ class Segment:
 
     def __len__(self):
         return self.size
-    
+
     def getDisplaySet(self, forward):
         if self._displaySet is None:
             if forward and self.next is not self:
@@ -536,7 +586,7 @@ class DisplaySet:
             elif not forward and self.prev is not self:
                 return self.getEpoch(False)
         return self._epoch
-
+    
     @property
     def epoch(self):
         h = self.getEpoch(True)
@@ -573,120 +623,171 @@ class DisplaySet:
         return b''.join(s.raw for s in self.segments)
 
     @property
-    def pcsSegment(self):
-        pcs = self.startSegment
-        if pcs.type is not SEGMENT_TYPE.PCS:
+    def PCSegment(self):
+        PCS = self.startSegment
+        if PCS.type is not SEGMENT_TYPE.PCS:
             logger.warning('[Display Set] PCS is not the first segment')
-            pcs = next((s for s in self.getType(SEGMENT_TYPE.PCS)), None)
+            PCS = next((s for s in self.getType(SEGMENT_TYPE.PCS)), None)
             # May need to handle segments !!!
-        return pcs
+        return PCS
+    
+    def getPDSByID(self, paletteID):
+        PDS = next((p for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
+        if PDS is None and self.PCSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
+        and self.prev is not self:
+            PDS = self.prev.getPDSByID(paletteID)
+        return PDS
+
+    @property
+    def PDSegment(self):
+        paletteID = self.PCSegment.data.paletteID
+        return self.getPDSByID(paletteID)
+    
+    def getODSByID(self, objectID):
+        ODS = next((o for o in self.getType(SEGMENT_TYPE.ODS) if o.data.objectID == objectID), None)
+        if ODS is None and self.PCSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
+        and self.prev is not self:
+            ODS = self.prev.getODSByID(objectID)
+        return ODS
+    
+    def getRLDataByID(self, objectID):
+        RLData = b''
+        ODS = self.getODSByID(objectID)
+        while ODS.type is SEGMENT_TYPE.ODS and ODS.data.objectID == objectID:
+            RLData += ODS.data.RLDataFragment
+            if ODS.next is not ODS:
+                ODS = ODS.next
+            else:
+                break
+        return RLData
+    
+    def setRLDataByID(self, objectID, RLData):
+        def getNextSegment(startODS):
+            nextSegment = startODS.next
+            if nextSegment.type is SEGMENT_TYPE.ODS and nextSegment.data.objectID == objectID:
+                return getNextSegment(nextSegment)
+            return nextSegment
+
+        startODS = self.getODSByID(objectID)
+        _pts = startODS._pts
+        _dts = startODS._dts
+        prevSegment = startODS.prev
+        nextSegment = getNextSegment(startODS)
+
+        dataLength = len(RLData)
+        RLDataFragments = [RLData[:65528]]
+        if dataLength > 65528:
+            RLDataFragments.extend([RLData[i:i + 65531] for i in range(65528, dataLength, 65531)])
+        for i, f in enumerate(RLDataFragments):
+            segment = Segment()
+            prevSegment.next = segment
+            segment.prev = prevSegment
+            segment.displaySet = self
+            ODSData = ObjectDefinitionSegment(parent = segment)
+            ODSData.objectID = objectID
+            if i == 0:
+                ODSData.first = True
+                ODSData.remains = dataLength.to_bytes(3, byteorder = 'big') + f
+            else:
+                ODSData.remains = f
+            segment._pts = _pts
+            segment._dts = _dts
+            segment.type = SEGMENT_TYPE.ODS
+            segment.data = ODSData
+            segment.size = len(segment.data.raw)
+            prevSegment = segment
+        ODSData.last = True
+        segment.next = nextSegment
+        nextSegment.prev = segment
     
     @property
     def RLData(self):
-        RLData = []
-        seed = b''
-        prevID = -1
-        width = None
-        height = None
-        for ods in self.getType(SEGMENT_TYPE.ODS):
-            data = ods.data
-            currID = data.objectID
-            # Different object ID, so there're different objects
-            if currID != prevID and prevID != -1:
-                RLData.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
-                seed = b''
-            # Same object ID, so we have to combine the image data together
-            prevID = currID
-            seed += data.imgData
-            if data.width is not None:
-                width = data.width
-            if data.height is not None:
-                height = data.height
-        if prevID != -1:
-            RLData.append({'id': prevID, 'data': seed, 'width': width, 'height': height})
-        # Normal type composition state display set may use composition objects of the previous display set
-        if self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL and self.prev is not self:
-            prevRLData = self.prev.RLData
-            ids = [r['id'] for r in RLData]
-            RLData.extend(r for r in prevRLData if r['id'] not in ids)
-        return RLData
+        return [{'id': o.objectID, 'data': self.getRLDataByID(o.objectID)} \
+                for o in self.PCSegment.data.compositionObjects]
     @RLData.setter
     def RLData(self, value):
-        pass
-    
+        for r in value:
+            self.setRLDataByID(r['id'], r['data'])
+
+    def getPixByID(self, objectID):
+        return RLDecode(self.getRLDataByID(objectID))
+    def setPixByID(self, objectID, pix):
+        self.setRLDataByID(RLEncode(pix))
+
     @property
     def pix(self):
-        return [{'id': RLData['id'], 'data': RLDecode(RLData['data'], RLData['width'], RLData['height'])} for RLData in self.RLData]
-    
+        return [{'id': r['id'], 'data': RLDecode(r['data'])} \
+                for r in self.RLData]
+    @pix.setter
+    def pix(self, value):
+        self.RLData = [{'id': p['id'], 'data': RLEncode(p['data'])} \
+                for p in value]
+
+    def getImageByID(self, objectID):
+        return makeImage(self.getPixByID(objectID), self.RGBAPalette)
+    def setImageByID(self, objectID, image):
+        images = self.image
+        for i in images:
+            if i['id'] == objectID:
+                i['data'] = image
+        self.image = images
+
     @property
     def image(self):
-        return [{'id': pix['id'], 'data': makeImage(pix['data'], self.RGBAPalette)} for pix in self.pix]
+        return [{'id': p['id'], 'data': makeImage(p['data'], self.RGBAPalette)} \
+                for p in self.pix]
     @image.setter
     def image(self, value):
-        RLData = []
-        pixelsList, self.RGBAPalette = splitImages([image['data'] for image in value])
-        for i, pixels in enumerate(pixelsList):
-            height, width = np.shape(pixels)
-            RLData.append({'id': value[i]['id'], 'data': RLEncode(pixels), 'width': width, 'height': height})
-        self.RLData = RLData
+        pixList, RGBAPalette = splitImages([i['data'] for i in value])
+        self.pix = [{'id': value[i]['id'], 'data': p} for i, p in enumerate(pixList)]
+        self.RGBAPalette = RGBAPalette
 
-    def getPds(self, paletteID):
-        pds = next((p.data for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
-        if pds is None and self.pcsSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
-        and self.prev is not self:
-            pds = self.prev.getPds(paletteID)
-        return pds
-
-    @property
-    def pds(self):
-        paletteID = self.pcsSegment.data.paletteID
-        return self.getPds(paletteID)
-    
     @property
     def RGBAPalette(self):
-        return self.pds.RGBAPalette
+        return self.PDSegment.data.RGBAPalette
     @RGBAPalette.setter
     def RGBAPalette(self, value):
-        self.pds.RGBAPalette = value
+        self.PDSegment.data.RGBAPalette = value
 
     @property
     def YCrCbAPalette(self):
-        return self.pds.YCrCbAPalette
+        return self.PDSegment.data.YCrCbAPalette
     @YCrCbAPalette.setter
     def YCrCbAPalette(self, value):
-        self.pds.YCrCbAPalette = value
+        self.PDSegment.data.YCrCbAPalette = value
     
     @property
     def screenImage(self):
-        if self.pcsSegment.data.numberOfCompositionObjects > 0:
-            transparentEntryPoint = next(i for i, p in enumerate(self.YCrCbAPalette) if p[-1] == 0)
-            canvasHeight, canvasWidth = self.pcsSegment.data.height, self.pcsSegment.data.width
-            background = np.full((canvasHeight, canvasWidth), transparentEntryPoint, dtype = np.uint8)
-            for obj in self.pcsSegment.data.compositionObjects:
-                pix = next(p['data'] for p in self.pix if p['id'] == obj.objectID)
-                windowID = next(c.windowID for c in self.pcsSegment.data.compositionObjects if c.objectID == obj.objectID)
+        if self.PCSegment.data.numberOfCompositionObjects > 0:
+            canvasHeight, canvasWidth = self.PCSegment.data.height, self.PCSegment.data.width
+            background = Image.new('RGBA', (canvasWidth, canvasHeight), color = (255, 255, 255, 0))
+            for obj in self.PCSegment.data.compositionObjects:
+                pix = self.getPixByID(obj.objectID)
+                windowID = next(c.windowID for c in self.PCSegment.data.compositionObjects if c.objectID == obj.objectID)
                 wobj = next(w for w in next(self.getType(SEGMENT_TYPE.WDS)).data.windowObjects if w.windowID == windowID)
                 xPos, yPos, (height, width) = obj.xPos, obj.yPos, pix.shape
                 windowXPos, windowYPos, windowWidth, windowHeight = wobj.xPos, wobj.yPos, wobj.width, wobj.height
                 cropXPos, cropYPos, cropWidth, cropHeight = obj.cropXPos or 0, obj.cropYPos or 0, obj.cropWidth or width, obj.cropHeight or height
-
                 xStart = max(cropXPos, 0)
                 yStart = max(cropYPos, 0)
-                xEnd = min(cropXPos + cropWidth, width, canvasWidth)
-                yEnd = min(cropYPos + cropHeight, height, canvasHeight)
-                height = yEnd - yStart
-                width = xEnd - xStart
+                xEnd = min(cropXPos + cropWidth, width)
+                yEnd = min(cropYPos + cropHeight, height)
                 croppedPix = pix[yStart:yEnd, xStart:xEnd]
-                background[yPos:(yPos + height), xPos:(xPos + width)] = croppedPix
-                background[yPos:windowYPos, xPos:windowXPos] = transparentEntryPoint
-                background[(windowYPos + windowHeight):(yPos + height), (windowXPos + windowWidth):(xPos + width)] = transparentEntryPoint
-            return makeImage(background, self.RGBAPalette)
+                width = xEnd - xStart
+                height = yEnd - yStart
+                pasteXStart = max(windowXPos, xPos)
+                pasteYStart = max(windowYPos, yPos)
+                pasteXStop = min(windowXPos + windowWidth, xPos + width)
+                pasteYStop = min(windowYPos + windowHeight, yPos + height)
+                croppedPixNew = croppedPix[(pasteYStart - yPos):(pasteYStop - yPos), (pasteXStart - xPos):(pasteXStop - xPos)]
+                background.paste(makeImage(croppedPixNew, self.RGBAPalette), box = (pasteXStart, pasteYStart)) 
+            return background
         else:
             return None
 
     @property
     def pts(self):
-        return self.pcsSegment.pts
+        return self.PCSegment.pts
     @pts.setter
     def pts(self, value):
         for s in self.segments:
@@ -694,7 +795,7 @@ class DisplaySet:
     
     @property
     def dts(self):
-        return self.pcsSegment.dts
+        return self.PCSegment.dts
     @dts.setter
     def dts(self, value):
         for s in self.segments:
@@ -702,7 +803,7 @@ class DisplaySet:
 
     @property
     def ptsms(self):
-        return self.pcsSegment.ptsms
+        return self.PCSegment.ptsms
     @ptsms.setter
     def ptsms(self, value):
         for s in self.segments:
@@ -710,7 +811,7 @@ class DisplaySet:
     
     @property
     def dtsms(self):
-        return self.pcsSegment.dtsms
+        return self.PCSegment.dtsms
     @dtsms.setter
     def dtsms(self, value):
         for s in self.segments:
@@ -761,7 +862,7 @@ class SubPicture:
     @property
     def raw(self):
         return b''.join(ds.raw for ds in self.displaySets)
-    
+ 
     @property
     def displaySets(self):
         displaySet = self.startDisplaySet
@@ -878,6 +979,13 @@ class SubPicture:
     @property
     def image(self):
         return self.startDisplaySet.image
+    @image.setter
+    def image(self, value):
+        self.startDisplaySet.image = value
+
+    def imageFilter(self, ft):
+        self.image = [{'id': img['id'], 'data': img['data'].filter(ft)} for img in self.image]
+        return self
 
     @property
     def screenImage(self):

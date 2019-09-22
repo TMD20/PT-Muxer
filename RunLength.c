@@ -2,11 +2,15 @@
 #include <stdlib.h>
 #include "RunLength.h"
 
-unsigned int RLEncode(unsigned char * pixels, unsigned int width, unsigned int height, unsigned char * RLData){
+unsigned int RLEncode(unsigned char * pixels, unsigned short width, unsigned short height, unsigned char * RLData){
     unsigned char curr;
-    unsigned int i, j;
+    unsigned short i, j;
     unsigned int repeat = 0;
-    unsigned int offset = 0;
+    unsigned int offset = 4;
+    RLData[0] = (unsigned char) ((width & 0xFF00) >> 8);
+    RLData[1] = (unsigned char) (width & 0x00FF);
+    RLData[2] = (unsigned char) ((height & 0xFF00) >> 8);
+    RLData[3] = (unsigned char) (height & 0x00FF);
     for (j = 0; j < height; ++j) {
         for (i = 0; i < width; ++i) {
             curr = pixels[j * width + i];
@@ -63,11 +67,13 @@ unsigned int RLEncode(unsigned char * pixels, unsigned int width, unsigned int h
     return offset;
 }
 
-void RLDecode(unsigned char * RLData, unsigned int length, unsigned char * pixels, unsigned int height){
-    unsigned int offset = 0;
+void RLDecode(unsigned char * RLData, unsigned int length, unsigned char * pixels){
+    unsigned int offset = 4;
     unsigned char entry, first, second;
     unsigned int repeat;
     unsigned int i = 0, j = 0, k;
+    unsigned short width = (((unsigned short)RLData[0]) << 8) + RLData[1];
+    unsigned short height = (((unsigned short)RLData[2]) << 8) + RLData[3];
     while (offset < length) {
         first = RLData[offset];
         if (first > 0) {
@@ -80,10 +86,11 @@ void RLDecode(unsigned char * RLData, unsigned int length, unsigned char * pixel
             if (second == 0) {
                 entry = 0;
                 repeat = 0;
-                offset += 2;
-                if (++i == height) {
+                ++i;
+                if (i == height) {
                     break;
                 }
+                offset += 2;
             }
             else if (second < 64) {
                 entry = 0;
@@ -112,6 +119,6 @@ void RLDecode(unsigned char * RLData, unsigned int length, unsigned char * pixel
         j = k;
     }
     if (i < height) {
-        fprintf(stderr, "Warning: [RLDecode] Hanging pixels without line ending\n");
+        fprintf(stderr, "Warning: [RLDecode] Hanging pixels without line ending (expected: %d, actual: %d)\n", height, i);
     }
 }

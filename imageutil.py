@@ -3,6 +3,7 @@ import numpy as np
 import logging
 import ctypes
 import os
+from itertools import groupby
 path = os.path.dirname(os.path.realpath(__file__))
 libRL = ctypes.CDLL(f'{path}/RunLength.so')
 
@@ -20,18 +21,18 @@ def YCrCbA2RGBA(YCrCbA):
     RGBA = RGBA.dot(YCrCbA2RGBAxForm.T)
     np.putmask(RGBA, RGBA > 255, 255)
     np.putmask(RGBA, RGBA < 0, 0)
-    return np.uint8(RGBA)
+    return np.uint8(np.around(RGBA))
 
 def RGBA2YCrCbA(RGBA):
     YCrCbA = np.asarray(RGBA, dtype = np.float)
-    YCrCbA = np.linalg.solve(YCrCbA2RGBAxForm.T, YCrCbA)
+    YCrCbA = np.linalg.solve(YCrCbA2RGBAxForm, YCrCbA.T).T
     YCrCbA += [16, 128, 128, 0]
-    np.putmask(YCrCbA[:, :3], YCrCbA < 16, 16)
+    np.putmask(YCrCbA[:, :3], YCrCbA[:, :3] < 16, 16)
     np.putmask(YCrCbA[:, 0], YCrCbA[:, 0] > 235, 235)
     np.putmask(YCrCbA[:, 1:3], YCrCbA[:, 1:3] > 240, 240)
-    np.putmask(YCrCbA[:, -1] > 255, 255)
-    np.putmask(YCrCbA[:, -1] < 0, 0)
-    return np.uint8(YCrCbA)
+    np.putmask(YCrCbA[:, -1], YCrCbA[:, -1] > 255, 255)
+    np.putmask(YCrCbA[:, -1], YCrCbA[:, -1] < 0, 0)
+    return np.uint8(np.around(YCrCbA))
 
 def makeImage(pixelLayer, RGBAPalette):
     alphaLayer = RGBAPalette[pixelLayer, -1]
@@ -44,16 +45,16 @@ def makeImage(pixelLayer, RGBAPalette):
 
 def splitImages(pillowImages):
     widthsAndHeights = list(zip(*[image.size for image in pillowImages]))
-    maxWidth = sum(widthsAndHeights[0])
-    maxHeight = max(widthsAndHeights[1])
+    maxWidth = max(widthsAndHeights[0])
+    maxHeight = sum(widthsAndHeights[1])
     background = Image.new('RGBA', (maxWidth, maxHeight), color = (255, 255, 255, 0))
-    splitPositions = np.cumsum(([0] + list(widthsAndHeights[0]))[:-1])
-    for i, w in enumerate(splitPositions):
-        background.paste(pillowImages[i], box = (w, 0))
+    splitPositions = np.cumsum(([0] + list(widthsAndHeights[1]))[:-1])
+    for i, h in enumerate(splitPositions):
+        background.paste(pillowImages[i], box = (0, h))
     pixels, RGBAPalette = splitImage(background)
     pixelsList = []
-    for i, w in enumerate(splitPositions):
-        pixelsList.append(pixels[:widthsAndHeights[1][i], w:(w + widthsAndHeights[0][i])])
+    for i, h in enumerate(splitPositions):
+        pixelsList.append(pixels[h:(h + widthsAndHeights[1][i]), :widthsAndHeights[0][i]])
     return pixelsList, RGBAPalette
 
 def splitImage(pillowImage):
@@ -67,17 +68,6 @@ def splitImage(pillowImage):
     return pixelLayer, RGBAPalette
 
 def RLEncode(pixels, cLib = True):
-    if cLib:
-        height, width = np.shape(pixels)
-        RLData = (ctypes.c_uint8 * (height * round(1.5 * width + 2)))()
-        pixels = (ctypes.c_uint8 * (width * height))(*np.ravel(pixels))
-        length = libRL.RLEncode(pixels, width, height, RLData)
-        return bytes(RLData[:length])
-    else:
-        return b''.join([b''.join([RLEncodeHelper(*group) \
-                for group in zip(*np.unique(row, return_counts = True))]) + b'\x00\x00' \
-                for row in pixels])
-
     def RLEncodeHelper(pix, repeat):
         if repeat == 1 and pix != 0:
             return bytes([pix])
@@ -95,16 +85,31 @@ def RLEncode(pixels, cLib = True):
                 return bytes([0, (repeat >> 8) + 192, repeat & 0xFF, pix])
         else:
             return RLEncodeHelper(pix, 16383) + RLEncodeHelper(pix, repeat - 16383)
+    
+    height, width = np.shape(pixels)
+    if cLib:
+        RLData = (ctypes.c_uint8 * (4 + height * round(1.5 * width + 2)))()
+        pixels = (ctypes.c_uint8 * (width * height))(*np.ravel(pixels))
+        length = libRL.RLEncode(pixels, width, height, RLData)
+        return bytes(RLData[:length])
+    else:
+        return width.to_bytes(2, byteorder = 'big') + \
+                height.to_bytes(2, byteorder = 'big') + \
+                b''.join([b''.join([RLEncodeHelper(k, len(list(g))) \
+                for k, g in groupby(row)]) + \
+                b'\x00\x00' \
+                for row in pixels])
 
-def RLDecode(RLData, width = None, height = None, cLib = True):
-    if width is not None and height is not None and cLib:
+def RLDecode(RLData, cLib = True):
+    width, height = int.from_bytes(RLData[:2], byteorder = 'big'), int.from_bytes(RLData[2:4], byteorder = 'big')
+    if cLib:
         pix = (ctypes.c_byte * width * height)()
-        libRL.RLDecode(RLData, len(RLData), pix, height)
+        libRL.RLDecode(RLData, len(RLData), pix)
         return np.array(pix, dtype = np.uint8).reshape(height, width)
     else:
         lineBuilder = []
         pixels = []
-        offset = 0
+        offset = 4
         length = len(RLData)
  
         while offset < length:
