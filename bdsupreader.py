@@ -498,9 +498,9 @@ class Segment:
     def getDisplaySet(self, forward):
         if self._displaySet is None:
             if forward and self.next is not self:
-                return self.getDisplaySet(True)
+                return self.next.getDisplaySet(True)
             elif not forward and self.prev is not self:
-                return self.getDisplaySet(False)
+                return self.prev.getDisplaySet(False)
         return self._displaySet
 
     @property
@@ -631,9 +631,9 @@ class DisplaySet:
             # May need to handle segments !!!
         return PCS
     
-    def getPDSByID(self, paletteID):
+    def getPDSByID(self, paletteID, strict=False):
         PDS = next((p for p in self.getType(SEGMENT_TYPE.PDS) if p.data.paletteID == paletteID), None)
-        if PDS is None and self.PCSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
+        if strict and PDS is None and self.PCSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
         and self.prev is not self:
             PDS = self.prev.getPDSByID(paletteID)
         return PDS
@@ -642,18 +642,23 @@ class DisplaySet:
     def PDSegment(self):
         paletteID = self.PCSegment.data.paletteID
         return self.getPDSByID(paletteID)
+
+    @property
+    def selfPDSegment(self):
+        paletteID = self.PCSegment.data.paletteID
+        return self.getPDSByID(paletteID, True)
     
-    def getODSByID(self, objectID):
+    def getODSByID(self, objectID, strict=False):
         ODS = next((o for o in self.getType(SEGMENT_TYPE.ODS) if o.data.objectID == objectID), None)
-        if ODS is None and self.PCSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
+        if strict and ODS is None and self.PCSegment.data.compositionState == COMPOSITION_STATE.NORMAL \
         and self.prev is not self:
-            ODS = self.prev.getODSByID(objectID)
+            ODS = self.prev.getODSByID(objectID, strict)
         return ODS
     
-    def getRLDataByID(self, objectID):
+    def getRLDataByID(self, objectID, strict=False):
         RLData = b''
-        ODS = self.getODSByID(objectID)
-        while ODS.type is SEGMENT_TYPE.ODS and ODS.data.objectID == objectID:
+        ODS = self.getODSByID(objectID, strict)
+        while ODS and ODS.type is SEGMENT_TYPE.ODS and ODS.data.objectID == objectID:
             RLData += ODS.data.RLDataFragment
             if ODS.next is not ODS:
                 ODS = ODS.next
@@ -668,7 +673,9 @@ class DisplaySet:
                 return getNextSegment(nextSegment)
             return nextSegment
 
-        startODS = self.getODSByID(objectID)
+        startODS = self.getODSByID(objectID, True)
+        if startODS is None:
+            return
         _pts = startODS._pts
         _dts = startODS._dts
         prevSegment = startODS.prev
@@ -712,7 +719,7 @@ class DisplaySet:
     def getPixByID(self, objectID):
         return RLDecode(self.getRLDataByID(objectID))
     def setPixByID(self, objectID, pix):
-        self.setRLDataByID(RLEncode(pix))
+        self.setRLDataByID(objectID, RLEncode(pix))
 
     @property
     def pix(self):
@@ -851,6 +858,39 @@ class Epoch:
     def segments(self):
         for ds in self.displaySets:
             yield from ds.segments
+
+    def imageFilter(self, ft):
+        ODSList = []
+        PDS = None
+        for s in self.segments:
+            if s.type is SEGMENT_TYPE.PDS:
+                if PDS and len(ODSList) > 0:
+                    imageList = []
+                    prevObjectID = -1
+                    for ODS in ODSList:
+                        currObjectID = ODS.data.objectID
+                        if currObjectID != prevObjectID:
+                            imageList.append(makeImage(ODS.displaySet.getPixByID(currObjectID), PDS.data.RGBAPalette).filter(ft))
+                        prevObjectID = currObjectID
+                    pixList, PDS.data.RGBAPalette = splitImages(imageList)
+                    for ind, pix in enumerate(pixList):
+                        ODSList[ind].displaySet.setPixByID(ODSList[ind].data.objectID, pix)
+                    PDS = None
+                    ODSList = []
+                PDS = s
+            elif s.type is SEGMENT_TYPE.ODS:
+                ODSList.append(s)
+        if PDS and len(ODSList) > 0:
+            imageList = []
+            prevObjectID = -1
+            for ODS in ODSList:
+                currObjectID = ODS.data.objectID
+                if currObjectID != prevObjectID:
+                    imageList.append(makeImage(ODS.displaySet.getPixByID(currObjectID), PDS.data.RGBAPalette).filter(ft))
+                prevObjectID = currObjectID
+            pixList, PDS.data.RGBAPalette = splitImages(imageList)
+            for ind, pix in enumerate(pixList):
+                ODSList[ind].displaySet.setPixByID(ODSList[ind].data.objectID, pix)
 
 class SubPicture:
 
