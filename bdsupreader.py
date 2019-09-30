@@ -103,8 +103,8 @@ class BDSupReader:
         return np.array(vector, dtype = np.uint8)
     
     def imageFilter(self, ft):
-        for s in self.subPictures:
-            s.imageFilter(ft)
+        for ep in self.epochs:
+            ep.imageFilter(ft)
         return self
 
     def shift(self, value):
@@ -654,33 +654,47 @@ class DisplaySet:
         and self.prev is not self:
             ODS = self.prev.getODSByID(objectID, strict)
         return ODS
-    
+
+    def getRLDataByODS(self, ODS):
+        RLData = ODS.data.RLDataFragment
+        objectID = ODS.data.objectID
+        prevSegment = ODS.prev
+        nextSegment = ODS.next
+        if prevSegment is not ODS:
+            while prevSegment.type is SEGMENT_TYPE.ODS and prevSegment.data.objectID == objectID:
+                RLData = prevSegment.data.RLDataFragment + RLData
+                if prevSegment.prev is not prevSegment:
+                    prevSegment = prevSegment.prev
+                else:
+                    break
+        if nextSegment is not ODS:
+            while nextSegment.type is SEGMENT_TYPE.ODS and nextSegment.data.objectID == objectID:
+                RLData += nextSegment.data.RLDataFragment
+                if nextSegment.next is not nextSegment:
+                    nextSegment = nextSegment.next
+                else:
+                    break
+        return RLData, prevSegment, nextSegment
+
     def getRLDataByID(self, objectID, strict=False):
         RLData = b''
         ODS = self.getODSByID(objectID, strict)
-        while ODS and ODS.type is SEGMENT_TYPE.ODS and ODS.data.objectID == objectID:
+        if ODS is None:
+            return None, None, None
+        prevSegment = ODS.prev
+        while ODS.type is SEGMENT_TYPE.ODS and ODS.data.objectID == objectID:
             RLData += ODS.data.RLDataFragment
             if ODS.next is not ODS:
                 ODS = ODS.next
             else:
                 break
-        return RLData
+        nextSegment = ODS
+        return RLData, prevSegment, nextSegment
     
-    def setRLDataByID(self, objectID, RLData):
-        def getNextSegment(startODS):
-            nextSegment = startODS.next
-            if nextSegment.type is SEGMENT_TYPE.ODS and nextSegment.data.objectID == objectID:
-                return getNextSegment(nextSegment)
-            return nextSegment
-
-        startODS = self.getODSByID(objectID, True)
-        if startODS is None:
-            return
-        _pts = startODS._pts
-        _dts = startODS._dts
-        prevSegment = startODS.prev
-        nextSegment = getNextSegment(startODS)
-
+    def setRLDataByBoundary(self, RLData, prevSegment, nextSegment):
+        pts = prevSegment.next.pts
+        dts = prevSegment.next.dts
+        objectID = prevSegment.next.data.objectID 
         dataLength = len(RLData)
         RLDataFragments = [RLData[:65528]]
         if dataLength > 65528:
@@ -697,8 +711,8 @@ class DisplaySet:
                 ODSData.remains = dataLength.to_bytes(3, byteorder = 'big') + f
             else:
                 ODSData.remains = f
-            segment._pts = _pts
-            segment._dts = _dts
+            segment.pts = pts
+            segment.dts = dts
             segment.type = SEGMENT_TYPE.ODS
             segment.data = ODSData
             segment.size = len(segment.data.raw)
@@ -706,62 +720,66 @@ class DisplaySet:
         ODSData.last = True
         segment.next = nextSegment
         nextSegment.prev = segment
-    
+        return prevSegment.next, segment
+
     @property
-    def RLData(self):
-        return [{'id': o.objectID, 'data': self.getRLDataByID(o.objectID)} \
-                for o in self.PCSegment.data.compositionObjects]
-    @RLData.setter
-    def RLData(self, value):
-        for r in value:
-            self.setRLDataByID(r['id'], r['data'])
+    def RLDataList(self):
+        RLDataList = []
+        for o in self.PCSegment.data.compositionObjects:
+            objectID = o.objectID
+            RLData, prevSegment, nextSegment = self.getRLDataByID(objectID)
+            RLDataList.append({
+                'id': objectID,
+                'data': RLData,
+                'prev': prevSegment,
+                'next': nextSegment
+            })
+        return RLDataList
 
     def getPixByID(self, objectID):
-        return RLDecode(self.getRLDataByID(objectID))
-    def setPixByID(self, objectID, pix):
-        self.setRLDataByID(objectID, RLEncode(pix))
+        RLData, prevSegment, nextSegment = self.getRLDataByID(objectID)
+        return RLDecode(RLData), prevSegment, nextSegment
+    
+    def getPixByODS(self, ODS):
+        RLData, prevSegment, nextSegment = self.getRLDataByODS(ODS)
+        return RLDecode(RLData), prevSegment, nextSegment
+
+    def setPixByBoundary(self, pix, prevSegment, nextSegment):
+        return self.setRLDataByBoundary(RLEncode(pix), prevSegment, nextSegment)
 
     @property
-    def pix(self):
-        return [{'id': r['id'], 'data': RLDecode(r['data'])} \
-                for r in self.RLData]
-    @pix.setter
-    def pix(self, value):
-        self.RLData = [{'id': p['id'], 'data': RLEncode(p['data'])} \
-                for p in value]
+    def pixList(self):
+        return [{
+            'id': r['id'],
+            'data': RLDecode(r['data']), 
+            'prev': r['prev'], 
+            'next': r['next']
+        } for r in self.RLDataList]
 
     def getImageByID(self, objectID):
-        return makeImage(self.getPixByID(objectID), self.RGBAPalette)
-    def setImageByID(self, objectID, image):
-        images = self.image
-        for i in images:
-            if i['id'] == objectID:
-                i['data'] = image
-        self.image = images
+        pix, prevSegment, nextSegment = self.getPixByID(objectID)
+        return makeImage(pix, self.RGBAPalette), prevSegment, nextSegment
+
+    def getImageByODS(self, ODS):
+        pix, prevSegment, nextSegment = self.getPixByODS(ODS)
+        return makeImage(pix, self.RGBAPalette), prevSegment, nextSegment
 
     @property
-    def image(self):
-        return [{'id': p['id'], 'data': makeImage(p['data'], self.RGBAPalette)} \
-                for p in self.pix]
-    @image.setter
-    def image(self, value):
-        pixList, RGBAPalette = splitImages([i['data'] for i in value])
-        self.pix = [{'id': value[i]['id'], 'data': p} for i, p in enumerate(pixList)]
-        self.RGBAPalette = RGBAPalette
+    def imageList(self):
+        return [{
+            'id': p['id'],
+            'data': makeImage(p['data'], self.RGBAPalette),
+            'prev': p['prev'],
+            'next': p['next']
+        } for p in self.pixList]
 
     @property
     def RGBAPalette(self):
         return self.PDSegment.data.RGBAPalette
-    @RGBAPalette.setter
-    def RGBAPalette(self, value):
-        self.PDSegment.data.RGBAPalette = value
 
     @property
     def YCrCbAPalette(self):
         return self.PDSegment.data.YCrCbAPalette
-    @YCrCbAPalette.setter
-    def YCrCbAPalette(self, value):
-        self.PDSegment.data.YCrCbAPalette = value
     
     @property
     def screenImage(self):
@@ -860,37 +878,55 @@ class Epoch:
             yield from ds.segments
 
     def imageFilter(self, ft):
-        ODSList = []
-        PDS = None
-        for s in self.segments:
-            if s.type is SEGMENT_TYPE.PDS:
-                if PDS and len(ODSList) > 0:
-                    imageList = []
-                    prevObjectID = -1
-                    for ODS in ODSList:
-                        currObjectID = ODS.data.objectID
-                        if currObjectID != prevObjectID:
-                            imageList.append(makeImage(ODS.displaySet.getPixByID(currObjectID), PDS.data.RGBAPalette).filter(ft))
-                        prevObjectID = currObjectID
-                    pixList, PDS.data.RGBAPalette = splitImages(imageList)
-                    for ind, pix in enumerate(pixList):
-                        ODSList[ind].displaySet.setPixByID(ODSList[ind].data.objectID, pix)
-                    PDS = None
-                    ODSList = []
-                PDS = s
-            elif s.type is SEGMENT_TYPE.ODS:
-                ODSList.append(s)
-        if PDS and len(ODSList) > 0:
+
+        def processImage(PDS, ODSList):
             imageList = []
+            prevList = []
+            nextList = []
             prevObjectID = -1
             for ODS in ODSList:
                 currObjectID = ODS.data.objectID
                 if currObjectID != prevObjectID:
-                    imageList.append(makeImage(ODS.displaySet.getPixByID(currObjectID), PDS.data.RGBAPalette).filter(ft))
+                    pix, prevSegment, nextSegment = ODS.displaySet.getPixByODS(ODS)
+                    imageList.append(makeImage(pix, PDS.data.RGBAPalette).filter(ft))
+                    prevList.append(prevSegment)
+                    nextList.append(nextSegment)
                 prevObjectID = currObjectID
             pixList, PDS.data.RGBAPalette = splitImages(imageList)
             for ind, pix in enumerate(pixList):
-                ODSList[ind].displaySet.setPixByID(ODSList[ind].data.objectID, pix)
+                ODS = ODSList[ind]
+                prevInds = [i for i, o in enumerate(prevList) if ODS is o]
+                nextInds = [i for i, o in enumerate(nextList) if ODS is o]
+                start, end = ODSList[ind].displaySet.setPixByBoundary(pix, prevList[ind], nextList[ind])
+                for i in prevInds:
+                    prevList[i] = end
+                for i in nextInds:
+                    nextList[i] = start
+        
+        def transformPDS(PDS):
+            # Transform PDS (Interpolant)
+            pass
+
+        ODSList = []
+        PDS = None
+        for s in self.segments:
+            if s.type is SEGMENT_TYPE.PDS:
+                if PDS:
+                    if len(ODSList) > 0:
+                        processImage(PDS, ODSList)
+                        PDS = None
+                        ODSList = []
+                    else:
+                        transformPDS(PDS)
+                        PDS = None
+                PDS = s
+            elif s.type is SEGMENT_TYPE.ODS:
+                ODSList.append(s)
+        if PDS:
+            if len(ODSList) > 0:
+                processImage(PDS, ODSList)
+            else:
+                transformPDS(PDS)
 
 class SubPicture:
 
@@ -1017,15 +1053,8 @@ class SubPicture:
         return max(self.startDisplaySet.YCrCbAPalette[:, -1])
 
     @property
-    def image(self):
-        return self.startDisplaySet.image
-    @image.setter
-    def image(self, value):
-        self.startDisplaySet.image = value
-
-    def imageFilter(self, ft):
-        self.image = [{'id': img['id'], 'data': img['data'].filter(ft)} for img in self.image]
-        return self
+    def imageList(self):
+        return self.startDisplaySet.imageList
 
     @property
     def screenImage(self):
