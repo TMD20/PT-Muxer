@@ -83,7 +83,7 @@ class BDSupReader:
                     startDisplaySet = None
         if startDisplaySet:
             logger.warning('[Read Stream] The last sub picture lacks end time')
-            yield SubPicture(subPicture, subPicture)
+            yield SubPicture(startDisplaySet, startDisplaySet)
     
     def getVector(self, frequency = 100, alpha = False):
 
@@ -359,7 +359,7 @@ class ObjectDefinitionSegment:
     @property
     def dataLength(self):
         if self.first:
-            return int.from_byte(self.remains[:3], byteorder = 'big')
+            return int.from_bytes(self.remains[:3], byteorder = 'big')
         else:
             if self.parent.prev is not self.parent:
                 return self.parent.prev.data.dataLength
@@ -545,7 +545,7 @@ class Segment:
     @property
     def dts(self):
         return self._dts
-    @pts.setter
+    @dts.setter
     def dts(self, value):
         if value > 4294967295:
             logger.warning(f'[Set DTS] Time ({value}) is larger than 4 bytes, 2^32 - 1 is used')
@@ -787,7 +787,7 @@ class DisplaySet:
             canvasHeight, canvasWidth = self.PCSegment.data.height, self.PCSegment.data.width
             background = Image.new('RGBA', (canvasWidth, canvasHeight), color = (255, 255, 255, 0))
             for obj in self.PCSegment.data.compositionObjects:
-                pix = self.getPixByID(obj.objectID)
+                pix, _, _ = self.getPixByID(obj.objectID)
                 windowID = next(c.windowID for c in self.PCSegment.data.compositionObjects if c.objectID == obj.objectID)
                 wobj = next(w for w in next(self.getType(SEGMENT_TYPE.WDS)).data.windowObjects if w.windowID == windowID)
                 xPos, yPos, (height, width) = obj.xPos, obj.yPos, pix.shape

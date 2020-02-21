@@ -60,7 +60,7 @@ def splitImages(pillowImages):
 def splitImage(pillowImage):
     try:
         RGBAImage = pillowImage.convert('RGBA').quantize(method = 3, dither = 1)
-    except Exception as e:
+    except Exception as _:
         RGBAImage = pillowImage.convert('RGBA').quantize(method = 2, dither = 1)
     width, height = RGBAImage.size 
     pixelLayer = np.array(RGBAImage.getdata(), dtype = np.uint8).reshape(height, width)
