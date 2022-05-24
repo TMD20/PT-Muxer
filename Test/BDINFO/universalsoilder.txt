@@ -1,0 +1,38 @@
+
+Peers	 2  0 3 times View Peers View History		
+1 Thanks
+0 Comments
+2/3 Legends
+MediaInfo/BDInfo
+Disc Title:     Universal Soldier 1992 Uncut 1080p CZE Blu-ray VC-1 DTS-HD MA 5.1 
+Disc Size:      24 979 727 920 bytes 
+Protection:     AACS 
+BD-Java:        No 
+Extras:         50Hz Content 
+BDInfo:         0.5.8 
+
+PLAYLIST REPORT: 
+
+Name:                   00000.MPLS 
+Length:                 1:43:44.509 (h:m:s.ms) 
+Size:                   22 919 202 816 bytes 
+Total Bitrate:          29,46 Mbps 
+
+VIDEO: 
+
+Codec                   Bitrate             Description     
+-----                   -------             ------     
+VC-1 Video              19005 kbps          1080p / 23,976 fps / 16:9 / Advanced Profile 3 
+
+AUDIO: 
+
+Codec                           Language        Bitrate         Description     
+-----                           ------        -------         ------     
+DTS-HD Master Audio             Czech           4165 kbps       5.1 / 48 kHz / 4165 kbps / 24-bit (DTS Core: 5.1 / 48 kHz / 1509 kbps / 24-bit) 
+DTS-HD Master Audio             English         4379 kbps       5.1 / 48 kHz / 4379 kbps / 24-bit (DTS Core: 5.1 / 48 kHz / 1509 kbps / 24-bit / DN -4dB) 
+
+SUBTITLES: 
+
+Codec                           Language        Bitrate         Description     
+-----                           ------        -------         ------     
+Presentation Graphics           Czech           147,475 kbps
