@@ -1,55 +1,66 @@
 
 
 import json
-import re
-import itertools
+import subprocess
+import os
+import tempfile
 
-import remux.helper as remuxHelper
+import tools.muxHelpers as remuxHelper
 import mediadata.movieData as movieData
 import mediatools.mkvtoolnix as mkvTool
+import sites.pickers.siteMuxPicker as muxPicker
 
 
-def Remux(args):
+
+def Remux(args):               
+    muxGenerator = muxPicker.pickSite(args.site)
     remuxConfig = None
-    demuxList = remuxHelper.getOutputList(args.path)
-    remuxConfigPath=remuxHelper.pickOutput(demuxList)
+    tempdir = tempfile.TemporaryDirectory()
+    mediainfo = os.path.join(tempdir.name,"media.txt")
+
+ 
+
+
+    remuxConfigPath = remuxHelper.pickOutput(
+        remuxHelper.getOutputList(args.inpath))
+   
+
     with open(remuxConfigPath, "r") as p:
         remuxConfig = json.loads(p.read())
-    sources=remuxHelper.getSources(remuxConfig)
+  
+    sources = remuxHelper.getSources(remuxConfig)
     if len(sources) == 0:
         print("No Sources")
-    movieName = movieData.getMovieName(sources)
-    year = movieData.getYear(sources)
-    movieTitle = f"{movieName} ({year})"
+        quit()
+    movie = movieData.matchMovie(sources)
+  
+  
+
+    
+    movieName = movieData.getMovieName(movie)
+   
+    movieYear = movieData.getMovieYear(movie)
+    movieTitle = f"{movieName} ({movieYear})"
     chapters = remuxHelper.getChapterFile(remuxConfig)
-    print(movieTitle)
-    kind = movieData.getKind(movieTitle)
+    kind = movieData.getKind(movie)
+    mediatype=mkvTool.getMediaType(remuxConfig)
+    hdr = mkvTool.getHDR(remuxConfig)
     videoCodec = mkvTool.getVideo(remuxConfig)
     audioCodec = mkvTool.getAudio(remuxConfig)
     audioChannel = mkvTool.getAudioChannel(remuxConfig)
-    videoRes =  mkvTool.getVideoResolution(remuxConfig)
-    fileName = None
-    if kind == "movie":
-        fileName = f"{movieName}.{year}.{videoRes}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-TMS.mkv"
-        fileName = re.sub(" +", ".", fileName)
-
-    tracks = [None,None,None]
-    tracks[1] = mkvTool.addAudioTracks(remuxConfig)
-    tracks[0] = mkvTool.addVideoTracks(remuxConfig)
-    tracks[2]=mkvTool.addSubTracks(remuxConfig)
-    tracks=list(itertools.chain.from_iterable(tracks))
-    mkvTool.createMKV(movieTitle, chapters, fileName, tracks)
-
-
+    videoRes = mkvTool.getVideoResolution(remuxConfig)
+    fileName = muxGenerator.getFileName(
+        kind,mediatype,hdr, args.outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel)
+    muxGenerator.generateMuxData(remuxConfig)
+ 
+    muxGenerator.createMKV(movieTitle, chapters, fileName, remuxConfig)
   
+    
+            
 
-
-
-
-
-
-
-
+            
+ 
+   
 
 
 

@@ -2,10 +2,12 @@ import itertools
 import re
 import subprocess
 
+from guessit import guessit
+
 
 def getVideo(data):
     key = str(data["Enabled_Tracks"]["Video"][0])
-    codec = data["Tracks_Details"]["Video"][key]["bdinfo"]
+    codec = data["Tracks_Details"]["Video"][key]["bdinfo_title"]
     if re.search("AVC", codec) != None:
         return "AVC"
     elif re.search("VC-1", codec) != None:
@@ -18,8 +20,8 @@ def getVideo(data):
 
 def getAudio(data):
     key = str(data["Enabled_Tracks"]["Audio"][0])
-    codec = data["Tracks_Details"]["Audio"][key]["bdinfo"]
-    if re.search("LPCM", codec) != None:
+    codec = data["Tracks_Details"]["Audio"][key]["site_title"]
+    if re.search("FLAC", codec) != None:
         return "FLAC"
     elif re.search("ATMOS", codec) != None:
         return "ATMOS"
@@ -28,62 +30,34 @@ def getAudio(data):
     elif re.search("TrueHD", codec) != None:
         return "TrueHD"
 
+
 def getAudioChannel(data):
     key = str(data["Enabled_Tracks"]["Audio"][0])
-    trackinfo = data["Tracks_Details"]["Audio"][key]["bdinfo"]
+    trackinfo = data["Tracks_Details"]["Audio"][key]["bdinfo_title"]
     return re.search("/ (.*?) /", trackinfo).group(1)
 
 
 def getVideoResolution(data):
     key = str(data["Enabled_Tracks"]["Video"][0])
-    trackinfo = data["Tracks_Details"]["Video"][key]["bdinfo"]
+    trackinfo = data["Tracks_Details"]["Video"][key]["bdinfo_title"]
     return re.search("[0-9]{3,4}p", trackinfo).group(0)
 
 
-def addVideoTracks(remuxConfig):
-    out = []
-    langcodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
-    langcode=remuxConfig["Tracks_Details"]["Audio"][langcodeKey]["langcode"]
-    for key in remuxConfig["Enabled_Tracks"]["Video"]:
-        key=str(key)
-        trackjson = remuxConfig["Tracks_Details"]["Video"][key]
-        name = trackjson["title"]
-        file = trackjson["file"]
-        temp = ["--language", f"0:{langcode}",
-                "--track-name", f"0:{name}", file]
-        out.append(temp)
-    return list(itertools.chain.from_iterable(out))
+def getMediaType(data):
+    key = str(data["Enabled_Tracks"]["Video"][0])
+    trackinfo = data["Tracks_Details"]["Video"][key]["sourceDir"]
+    if guessit(trackinfo).get("source") == "Ultra HD Blu-ray":
+        return "UHD.BluRay"
+    else:
+        return "BluRay"
 
 
-def addAudioTracks(remuxConfig):
-    out = []
-    for key in remuxConfig["Enabled_Tracks"]["Audio"]:
-        key=str(key)
-        trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
-        langcode = trackjson["langcode"]
-        name = trackjson["title"]
-        file = trackjson["file"]
-        temp = ["--language", f"0:{langcode}", "--track-name", f"0:{name}", file]
-        out.append(temp)
-    return list(itertools.chain.from_iterable(out))
+def getHDR(data):
+    key = str(data["Enabled_Tracks"]["Video"][0])
+    title = data["Tracks_Details"]["Video"][key]["bdinfo_title"]
+    if re.search("BT.2020", title):
+        return "HDR"
+    else:
+        return "SDR"
 
 
-def addSubTracks(remuxConfig):
-    out = []
-    for key in remuxConfig["Enabled_Tracks"]["Sub"]:
-        key=str(key)
-
-        trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
-        langcode = trackjson["langcode"]
-        file = trackjson["file"]
-        temp = ["--language", f"0:{langcode}", file]
-        out.append(temp)
-    return list(itertools.chain.from_iterable(out))
-
-def createMKV(movieTitle,chapters,fileName,tracks):
-    command = list(itertools.chain.from_iterable(
-    [["/usr/bin/mkvmerge", "--title", movieTitle, "--chapters", chapters, "--output", fileName], tracks]))
-    with subprocess.Popen(command, universal_newlines=True,stdout=subprocess.PIPE,bufsize=1) as p:
-        for line in p.stdout:
-            print(line, end='')
-  

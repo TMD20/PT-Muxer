@@ -5,7 +5,7 @@ import os
 
 import langcodes
 
-import general.util as util
+import tools.general as util
 import tempfile
 
 
@@ -22,10 +22,11 @@ class Bdinfo():
 
     def process(self, parent, subfolder):
         show = util.getShowName(subfolder)
-        self.set_bdinfoPath(parent, show)
+        self.setBdinfoPath(parent, show)
+
         self.set_mediaDir(subfolder)
         self._generate_playlists()
-        bdinfo=self._bdinfo()
+        bdinfo = self._bdinfo()
         self._writeBdinfo(bdinfo)
         return self.parse_bdinfo(bdinfo)
 
@@ -68,9 +69,9 @@ class Bdinfo():
     def set_mediaDir(self, ele):
         self._mediaDir = re.sub("/BDMV/STREAM", "", ele)
 
-    def set_bdinfoPath(self, dir, show):
+    def setBdinfoPath(self, output, show):
         self._bdinfoPath = os.path.join(
-            dir, show, "output_logs", f"BDINFO.{show}.txt")
+            output, "output_logs", f"BDINFO.{show}.txt")
 
     '''
     Private Functions
@@ -104,8 +105,8 @@ class Bdinfo():
             file = open(os.path.join(temp.name, os.listdir(temp.name)[0]), "r")
             return file.read()
 
-    def _writeBdinfo(self,data):
+    def _writeBdinfo(self, data):
         util.mkdirSafe(os.path.dirname(self._bdinfoPath))
+
         file = open(self._bdinfoPath, "w")
         file.write(data)
-

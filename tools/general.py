@@ -5,10 +5,24 @@ import re
 import functools
 
 def mkdirSafe(target):
-    if not os.path.exists(target):
-            os.mkdir(target)
+    if len(os.path.splitext(target)[1])>0:
+        target=os.path.dirname(target)
+    directories=[target]
+
+    while target!= "/":
+        target = os.path.dirname(target)
+        directories.append(target)
+    directories.reverse()
+    for ele in directories:
+        if not os.path.exists(ele):
+            os.mkdir(ele)
+    
+
+
+
+    
 def getShowName(path):
-        return os.path.basename(re.sub("/BDMV/STREAM","",path))    
+    return re.sub(" ","",os.path.basename(re.sub("/BDMV/STREAM", "", path)))
 
 def findFiles(path,string):
     matchlist=[]

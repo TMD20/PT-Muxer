@@ -3,22 +3,6 @@ import argparse
 import os
 
 
-
-
-from tmdbv3api import TMDb, Movie, TV
-from pymediainfo import MediaInfo
-from pymediainfo import MediaInfo
-import imdb
-
-
-
-from simple_term_menu import TerminalMenu
-from nested_lookup import nested_lookup
-from prompt_toolkit import prompt as input
-from prompt_toolkit.completion import WordCompleter
-import humanize
-import xmltodict
-
 import demux.demux as demuxAction
 import remux.remux as remuxAction
 
@@ -36,7 +20,7 @@ import remux.remux as remuxAction
 def main():
     parser = argparse.ArgumentParser()
     group = parser.add_argument_group("group")
-    group.add_argument('path')
+    group.add_argument('inpath')
     group.add_argument('outpath', default=os.getcwd())
 
     mux = parser.add_mutually_exclusive_group()
@@ -45,13 +29,14 @@ def main():
 
     parser.add_argument('-sl', '--sublang', nargs='?')
     parser.add_argument('-al', '--audiolang', nargs='?')
-    parser.add_argument('-s', '--site', default="beyondhd")
+    parser.add_argument('-s', '--site', default="blu")
     parser.add_argument('-p', '--pref', default="largest")
 
     parser.add_argument('-u', '--useorder', action='store_true')
     args = parser.parse_args()
    
     if args.demux:
+        os.chdir(args.outpath)
         demuxAction.Demux(args)
 
     if args.remux:
