@@ -30,7 +30,7 @@ Creates a mux folder with everything generated during the programs run
 JSON Example: 
 *  https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
 
-## 3 Main Sections JSON Sections
+## 3 Main JSON Sections
 
 ### 1. Sources
 
