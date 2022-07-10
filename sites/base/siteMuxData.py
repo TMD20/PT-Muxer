@@ -37,14 +37,15 @@ class MuxHelper():
             file = trackjson["file"]
 
 
-            temp = ["--language", f"0:{langcode}",
-                    "--track-name", f"0:{name}", "--compression", f"0:None"]
+            temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            if name:
+                temp.extend(["--track-name", f"0:{name}"])
             default=["--default-track-flag", "0:0"]
             if i==0:
-                default = ["--default-track-flag", "0:1"]      
-            
+                default = ["--default-track-flag", "0:1"]  
+            if trackjson.get("default") == True:
+                default = ["--default-track-flag", "0:1"]
             temp.extend(default)
-            
             temp.append(file)
             out.append(temp)
         self._video=list(itertools.chain.from_iterable(out))
@@ -59,10 +60,13 @@ class MuxHelper():
             langcode = trackjson["langcode"]
             name = trackjson["site_title"]
             file = trackjson["file"]
-            temp = ["--language", f"0:{langcode}",
-                    "--track-name", f"0:{name}", "--compression", f"0:None"]
+            temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            if name:
+                temp.extend(["--track-name", f"0:{name}"])
             default = ["--default-track-flag", "0:0"]
             if i == 0:
+                default = ["--default-track-flag", "0:1"]
+            if trackjson.get("default")==True:
                 default = ["--default-track-flag", "0:1"]
             temp.extend(default)
             if re.search("commentary", name, re.IGNORECASE):
@@ -81,6 +85,7 @@ class MuxHelper():
         for i in range(len(remuxConfig["Enabled_Tracks"]["Sub"])):
             key =remuxConfig["Enabled_Tracks"]["Sub"][i]
             key = str(key)
+            
 
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
@@ -89,11 +94,13 @@ class MuxHelper():
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             default = ["--default-track-flag", "0:0"]
+            
             if langcode != audiocode and langcode == "en":
                 default=["--default-track-flag", "0:1"]
             if name and re.search("forced", name, re.IGNORECASE):
                 default = ["--default-track-flag", "0:1"]
-                temp.extend(["--remove-dialog-normalization-gain", "0"])
+            if trackjson.get("default")==True:
+                default = ["--default-track-flag", "0:1"]
             temp.extend(default)
             
     

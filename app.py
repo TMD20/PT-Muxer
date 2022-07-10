@@ -31,8 +31,6 @@ def main():
     parser.add_argument('-al', '--audiolang', nargs='?')
     parser.add_argument('-s', '--site', default="blu")
     parser.add_argument('-p', '--pref', default="largest")
-
-    parser.add_argument('-u', '--useorder', action='store_true')
     args = parser.parse_args()
    
     if args.demux:
