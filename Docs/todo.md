@@ -5,9 +5,12 @@ Not every thing in the list will be possible to accomplish in a automated way
 1. xml file
 2. Find way to filter similar tracks bluray.com/or track properties
 2. imdb and tmdb in mediainfo
-3. Video Original Source ID, not sure how common this is
-4. Video Original Source medium
-5. Embedded forced subtitles
+3. ALlow passing addition mkvmerge track arguments
+4. Allow mkvmerge command output
+5. Documentation on Track Naming Etc
+6. Video Original Source ID, not sure how common this is
+7. Video Original Source medium
+8. Embedded forced subtitles
    If the eac3to log mentions that the English subtitle track contains forced portions, these must be extracted with BDSup2Sub and provided as a separate track.
    Import the subtitle into BDSup2Sub.
    Set the Target FPS to the desired FPS to correctly align the timestamps.
