@@ -1,6 +1,6 @@
-## **How to Use** 
+# **How to Use** 
 
-Required
+## Required
   * python modules via requirements.txt 
   * mkvmerge
   * eac3to
@@ -8,61 +8,78 @@ Required
   * Linux
   * mediainfo
 
-Recommanded
-*Installing modules and running python3 via virtualenv
+## Recommended
 
-Modes: Demux Mode Creates a mux folder with everything generated during the programs run
-Including all tracks from all sources, Extracted via eac3to
-BDINFO File for all Sources
-Eac3to Log for all Sources
-General Output.txt JSON file with Configurable Options
+* Installing modules and running python3 via virtualenv
+* udevil for non-sudo ISO extractions
 
-Remux Mode: 
-Reads JSON file runs mkvmerge based on data extracted from file, and the site the remux is intented for
+## Modes: 
+
+### Demux Mode
+
+Creates a mux folder with everything generated during the programs run
+* Including all tracks from all sources, Extracted via eac3to
+* BDINFO File for all Sources
+* Eac3to Log for all Sources
+* General Output.txt JSON file with Configurable Options
+
+### Remux Mode: 
+
+* Reads JSON file runs mkvmerge based on data extracted from file, and the site the remux is intented for
 
 JSON Example: 
-https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
+*  https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
 
-3 Sections
-1. Sources
+## 3 Sections
+
+### 1. Sources
+
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
 
-2. Enabled Tracks
+### 2. Enabled Tracks
+
 Displays which Tracks will be added during the mkvmerge Process. To See more details about a track match the number to the here to the Track Details Sections.
 
 Changes that can be made with effect
-Remove Tracks to remove them from final mkvmerge
+* Remove Tracks to remove them from final mkvmerge
+* Reorder Tracks to change how they appear in mkvmerge, and in the final mkv file
 
-Reorder Tracks to change how they appear in mkvmerge, and in the final mkv file
+### 3. Track Details
 
-
-
-3. Track Details
 Some Details about Each Track
 Including Language
 
 Changes that can be made with effect
-Changing the language code to change the language of the track
+* Changing the language code to change the language of the track
+* Changing the title to change the title of the track
 
-Changing the title to change the title of the track
 
+## Commands:
 
-command:
 Demux Mode
 python3 /path/to/app.py -demux sourcepath outputpath 
 
-optional
- — —site blutopia/blu/bhd/beyondhd
-default=blu
-- - pref largest/first
-default=largest
+Required
+* source=path where you keep all your bdmv and or iso files are
+* outpath= Where you want the mux folder to be outputed to
+
+
+Optional
+ * --site blutopia/blu/bhd/beyondhd [default=blu]
+ * --pref largest/first [default=largest]
+
 
 
 Remux Mode
-python3 /path/to/app.py -demux sourcepath outputpath
+
+* python3 /path/to/app.py -demux sourcepath outputpath
+
+required:
+* source=path where you your mux folder are generated
+* outpath= Where you want the final mkv to be outputed to 
 
 Optional:
-None Currently 
+ * --site blutopia/blu/bhd/beyondhd [default=blu]
 
 
 
