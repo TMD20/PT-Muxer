@@ -56,34 +56,104 @@ Changes that can be made with effect
 
 ## Commands:
 
-Demux Mode
-python3 /path/to/app.py -demux sourcepath outputpath 
+### Demux Mode
+python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 
-Required
-* source=path where you keep all your bdmv and or iso files are
-* outpath= Where you want the mux folder to be outputed to
+#### Required
+
+```
+ sourcepath 
+ 
+ where you keep all your bdmv and or iso files.
+ You can pick multiple sources if you desire, just make sure they are all for the same movie
+```
 
 
-Optional
- * --site blutopia/blu/bhd/beyondhd [default=blu]
- * --pref largest/first [default=largest]
+```
+  outpath
+ 
+  Where you want the mux folder to be outputed to. A Folder with the following struture will be created
+  mux.randomstring.basenamefirstfolder
+```
+
+
+#### Optional
+
+```
+--site blutopia/blu/bhd/beyondhd [default=blu]
+
+This will Effect
+* Order of Tracks
+* Track Names
+* Which Tracks are Included by default
+* ETC
+For More Details on Different Sites and their effects on The final Output Please Read the Site Section
+Track Order and Tracks Picked can be overwritten see Filtering Tracks section
+```
+
+```
+ --pref size/order [default=size]
+ 
+Whether tracks should be sorted by size or Large
+This will effect which Tracks are picked see Filtering Tracks section
+```
+
+
+```
+ --pref audiolang 
+ 
+ Which Track Language you want to enable for the current demux
+ This will overwrite any site configuraton. You can call this argument multiple times, note the order of the calls 
+ is the order you want the tracks toappear
+ see Filtering Tracks section
+```
+ 
+ ```
+ --pref sublang 
+ 
+ Which Track Language you want to enable for the current demux
+ This will overwrite any site configuraton. You can call this argument multiple times, note the order of the calls is the 
+ order you want the tracks to    appear
+see Filtering Tracks section
+```
+ 
 
 
 
-Remux Mode
+### Remux Mode
 
 * python3 /path/to/app.py -demux sourcepath outputpath
 
-required:
-* source=path where you your mux folder are generated
-* outpath= Where you want the final mkv to be outputed to 
+#### Required
+```
+  sourcepath 
+ 
+ The mux folder created during the demux process
+ This holds all your configurations, and is what will be used to generate the mkv file
+```
 
-Optional:
- * --site blutopia/blu/bhd/beyondhd [default=blu]
+
+```
+  outpath
+  
+  The folder you want the final MKV to be outputted to
+```
+#### Optional
+
+```
+--site blutopia/blu/bhd/beyondhd [default=blu]
+
+This will Effect mainly effect the final track name
+See Sites Section for more detail
+```
 
 
 
+# Sites
+Coming Soon
 
+# Filtering Tracks
+Coming Soon
 
 
 
@@ -95,6 +165,10 @@ basically you should make a virtual env, and install all the required modules wi
 Windows Support is planned but it might take me a while, and would be done when I feel like the main program is supported
 
 Subtitles will be forced if they have forced anywhere in the site title
+
+
+
+
 
 
 
