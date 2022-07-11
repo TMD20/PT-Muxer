@@ -27,10 +27,10 @@ def main():
     mux.add_argument('-d', '--demux', action='store_true')
     mux.add_argument('-r', '--remux', action='store_true')
 
-    parser.add_argument('-sl', '--sublang', nargs='?')
-    parser.add_argument('-al', '--audiolang', nargs='?')
+    parser.add_argument('-sl', '--sublang', nargs='?',default=[])
+    parser.add_argument('-al', '--audiolang', nargs='?',default=[])
     parser.add_argument('-s', '--site', default="blu")
-    parser.add_argument('-p', '--pref', default="largest")
+    parser.add_argument('-p', '--sortpref', default="size")
     args = parser.parse_args()
    
     if args.demux:

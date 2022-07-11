@@ -95,7 +95,6 @@ class CheckAudioTrackConversions(Check, SectionId, IsCommentaryTrack):
                         mediainfo_audio_title = self.mediainfo["audio"][i][
                             "title"
                         ].strip()
-                        print(mediainfo_audio_title)
 
 
                         (
@@ -103,7 +102,6 @@ class CheckAudioTrackConversions(Check, SectionId, IsCommentaryTrack):
                             _,
                             _,
                         ) = self.remove_until_first_codec.remove(mediainfo_audio_title)
-                        print(mediainfo_audio_title)
                         bdinfo_audio_title = " / ".join(bdinfo_audio_parts_converted)
                         bdinfo_audio_titles = [bdinfo_audio_title]
                         if optionally_flac:
@@ -143,11 +141,7 @@ class CheckAudioTrackConversions(Check, SectionId, IsCommentaryTrack):
                             )
                         else:
                             is_bad_audio_format = False
-                            print(re.search(r"(\d+)\skbps", mediainfo_audio_title),"dd")
-                            print(self.bdinfo["audio"][i],"dddd")
-                            print(self.mediainfo["audio"][i],"sd")
-                            print(mediainfo_audio_title,"dss")
-                            print("\n\n")
+                           
                           
 
                             # use bitrate from mediainfo audio title

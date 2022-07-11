@@ -22,7 +22,10 @@ def mkdirSafe(target):
 
     
 def getShowName(path):
-    return re.sub(" ","",os.path.basename(re.sub("/BDMV/STREAM", "", path)))
+    show=re.sub(" +"," ",os.path.basename(re.sub("/BDMV/STREAM", "", path)))
+    show = re.sub(" ", ".", show)
+    return show
+
 
 def findFiles(path,string):
     matchlist=[]

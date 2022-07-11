@@ -1,6 +1,9 @@
 
+import copy
 import os
 import re
+
+from app import main
 
 
 class siteSorter():
@@ -16,9 +19,9 @@ class siteSorter():
     Public Functions
     """
 
-    def sortTracks(self, pref):
+    def sortTracks(self, movieLangs, audioPrefs, subPrefs, sortPrefs):
         self._groupTracks()
-        self._sortTracksHelper(pref)
+        self._sortTracksHelper(movieLangs, audioPrefs, subPrefs, sortPrefs)
 
     """
     Setters/Getters
@@ -77,70 +80,143 @@ class siteSorter():
                     self._unSortedSub.append(track)
 
     #####################################################################################################################
-    #       Sort Track Helper
+    #       Sort Track Helpers
     ################################################################################################################
 
-    def _sortTracksHelper(self, pref):
-        self._sortAudio(pref)
+    def _sortTracksHelper(self, movieLangs, audioPrefs, subPrefs, sortPrefs):
+
+   
+        self._unSortedAudio = self._removeDupes(self._unSortedAudio)
+        self._unSortedVideo = self._removeDupes(self._unSortedVideo)
+        self._unSortedSub = self._removeDupes(self._unSortedSub)
+       
+
+        self._sortAudio(movieLangs, audioPrefs, sortPrefs)
         self._sortCompatAudio()
-        self._sortSub()
-        self._sortVideo(pref)
+        self._sortSub(subPrefs)
+        self._sortVideo(sortPrefs)
+
+    def _removeDupes(self, tracks):
+        output = []
+        for track in tracks:
+            dupe = False
+            for match in output:
+                if match["langcode"]!=track["langcode"]:
+                    continue
+                if match["site_title"] != track["site_title"]:
+                    continue
+                if match["bdinfo_title"] != track["bdinfo_title"]:
+                    continue
+                if match["langcode"] != track["bdinfo_title"]:
+                    continue
+                # Greater then 10MB difference in size
+                if os.path.getsize(match["file"])-os.path.getsize(track["file"]) > 10000000:
+                    continue
+                dupe = True
+            if dupe == False:
+                output.append(track)
+        return output
 
     ################################################################################################################
     #       These Functions Will make a best effort to sort Tracks in a way that fits within site rules
     #        Because Every Site has different Rules about What Track to Put First, and which ones not to include this
     #        will have to be overwritten based on Site.
     ############################################
-    def _sortAudio(self, pref):
-        # Sort/Filter
-        # Based on Prioritizing English/ 
-        # Secondly the Main Track Language if English Not availbile
-        # Either Order or Size of Track
-        # Include All English Tracks
-        mainTracks = [ele for ele in self._unSortedAudio if ele["lang"]
-                      == "English" and ele["compat"] == False]
-        if len(mainTracks) == 0:
-            mainTracks = [ele for ele in self._unSortedAudio if ele["lang"]
-                          == self._unSortedAudio[0]["lang"] and ele["compat"] == False]
-        if pref == "largest":
-            self._enabledAudio.extend(
-                sorted(mainTracks, key=self._AudioRankingSize, reverse=True))
+
+    def _sortAudio(self, movieLangs, audioPrefs, sortPref):
+        mainTracks = []
+        if len(audioPrefs) != 0:
+            for lang in audioPrefs:
+                # Get All Tracks That Match This Language
+                newTracks = [ele for ele in self._unSortedAudio if ele["lang"]
+                             == lang and ele["compat"] == False]
+                if len(newTracks) == 0:
+                    continue
+                if sortPref == "size":
+                    newTracks = sorted(
+                        newTracks, key=self._AudioRankingSize, reverse=True)
+                # Add Every English Track
+                if lang == "English":
+                    mainTracks.extend(newTracks)
+                    continue
+                # Add only First Track of Other Lang
+                mainTracks.append(newTracks[0])
+
         else:
-            self._enabledAudio.extend(mainTracks)
+            # Priotize Main Movie Languages
+            for lang in movieLangs:
+                # Get All Tracks That Match This Language
+                newTracks = [ele for ele in self._unSortedAudio if ele["lang"]
+                             == lang and ele["compat"] == False]
+                if len(newTracks) == 0:
+                    continue
+                if lang == "English":
+                    continue
+                if sortPref == "size":
+                    newTracks = sorted(
+                        newTracks, key=self._AudioRankingSize, reverse=True)
+                # Add First Track of Every Language
+                mainTracks.append(newTracks[0])
+
+            # Add Every English Track
+            newTracks = [ele for ele in self._unSortedAudio if ele["lang"]
+                         == "English" and ele["compat"] == False]
+            if sortPref == "size":
+                newTracks = sorted(
+                    newTracks, key=self._AudioRankingSize, reverse=True)
+            mainTracks.extend(newTracks)
+        self._enabledAudio.extend(mainTracks)
 
     def _sortCompatAudio(self):
+        # Get all compat tracks
         tracks = list(
             filter(lambda x: x["compat"] == True, self._unSortedAudio))
         # Filter out things like DTS Core which will have no title
         tracks = list(
             filter(lambda x: x["site_title"] != None == True, tracks))
+        # Add Every Compat Track with Matching Parent
+        for track in tracks:
+            for i in len(self._enabledAudio):
+                match = self._enabledAudio[i]
+                if match["bdinfo_title"] == track["parent"]:
+                    # insert Right After current matching track
+                    self._enabledAudio.insert(track, i+1)
+                    break
 
-        indexes = list(map(lambda x: x["index"], self._enabledAudio))
-        sources = list(map(lambda x: x["sourceDir"], self._enabledAudio))
-        for i in range(0, len(indexes)):
-            tracksData = list(map(lambda x: x["index"] == indexes[i], tracks))
-            tracksData = list(
-                map(lambda x: x["sourceDir"] == sources[i], tracksData))
-            self._enabledAudio.extend(tracksData)
-
-    def _sortSub(self):
-        # Sort Subs By Language
-        #Special Tracks Will have to be added later
-        #Add First and Only First Subtrack for each language
-        langSet = set()
-        for track in self._unSortedSub:
-            if track["lang"] not in langSet:
-                self._enabledSub.append(track)
+    def _sortSub(self, subPrefs):
+        # User Passed language prefs
+        mainTracks=[]
+        if subPrefs:
+            # Add First Track For Every Sublanguage
+            for lang in subPrefs:
+                newTracks = [ele for ele in self._unSortedSub if ele["lang"]
+                             == lang and ele["compat"] == False]
+                mainTracks.append(newTracks[0])
+        # AutoGenerate Order
+        else:
+            # Add Every English Track
+            langSet = set()
+            newTracks = [ele for ele in self._unSortedAudio if ele["lang"]
+                         == "English" and ele["compat"] == False]
+            mainTracks.extend(newTracks)
+            # Add First Track For everyother Language
+            for track in self._unSortedAudio:
+                if track["lang"] in langSet:
+                    continue
+                if track["lang"] == "English":
+                    continue
                 langSet.add(track["lang"])
-        self._enabledSub = sorted(self._enabledSub, key=self._SubBdinfoOrder)
+        # Sort Semi Alphabetically with English Track First
+        mainTracks = sorted(mainTracks, key=self._subAlphaOrder)
+        self._enabledSub.extend(mainTracks)
 
-    def _sortVideo(self, pref):
-        langSet = set()
-        if pref == "first":
-            self._enabledVideo.append(self._unSortedVideo[0])
-        elif pref == "largest":
-            self._enabledVideo.append(sorted(self._unSortedVideo,
-                                             key=self._VideoRankingSize, reverse=True)[0])
+    def _sortVideo(self, sortPref):
+        newTracks = copy.deepcopy(self._unSortedVideo)
+        if sortPref == "size":
+            newTracks = sorted(newTracks,
+                               key=self._VideoRankingSize, reverse=True)
+        self._enabledVideo.append(newTracks[0])
+
     #########################################################################################
     # Helper Functions to Rank Tracks
     #
@@ -160,7 +236,8 @@ class siteSorter():
         size = os.path.getsize(track["file"])
         return size
 
-    def _SubBdinfoOrder(self, track):
-        ranking=track["lang"]
-        if track["lang"]=="English":
-            ranking=10000000
+    def _subAlphaOrder(self, track):
+        ranking = track["lang"]
+        if track["lang"] == "English":
+            ranking = 10000000
+        return ranking
