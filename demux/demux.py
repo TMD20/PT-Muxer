@@ -24,10 +24,6 @@ def Demux(args):
     extractBdinfo(sources, demuxData)
     extractTracks(demuxData)
     finalizeOutput(muxSorter, demuxData, movie, args)
-   
-
- 
-
 
 
 def getSources(options, inpath):
@@ -44,9 +40,8 @@ def extractBdinfo(sources, demuxData):
     # Generate Bdinfo/TrackInfo for Each Source
     for source in sources:
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
-    
-        os.chdir(output)
 
+        os.chdir(output)
 
         bdObj = bdinfo.Bdinfo()
         quickSum = bdObj.process(output, source)
@@ -65,45 +60,35 @@ def extractTracks(demuxData):
             eac3to_list.append(track["eac3to"])
             if track.get("eac3to_extras"):
                 eac3to_list.extend(track["eac3to_extras"])
-     
+
         eac3to.process(trackoutdict["sourceDir"], trackoutdict["outputDir"],
                        eac3to_list, trackoutdict["playlistNum"])
-    
-
-
-
-
-
-
-
-
-
-
 
 
 def finalizeOutput(muxSorter, demuxData, movie, args):
     # Sort/enable Tracks Based on Site
     muxSorter.tracksDataObj = demuxData
-    muxSorter.sortTracks(movie["languages"],args.sublang,args.audiolang,args.sortpref)
+    muxSorter.sortTracks(movie["languages"],
+                         args.sublang, args.audiolang, args.sortpref)
 
     # Export
-    #Movie Info Section
+    # Movie Info Section
     outdict = {}
-    outdict["movie"] = {}
-    outdict["movie"]["year"] = movie["year"]
-    outdict["movie"]["imdb"] = movie["imdbID"]
-    outdict["movie"]["langs"] = movie["languages"]
+    outdict["Movie"] = {}
+    outdict["Movie"]["year"] = movie["year"]
+    outdict["Movie"]["imdb"] = movie["imdbID"]
+    outdict["Movie"]["langs"] = movie["languages"]
 
-    #Sources Section
-    outdict["sources"] = {}
+    # Sources Section
+    outdict["Sources"] = {}
     for key in demuxData.sources:
         trackObj = demuxData.filterBySource(key)
-        outdict["sources"][key] = {}
-        outdict["sources"][key]["outputDir"] = trackObj["outputDir"]
-        outdict["sources"][key]["sourceDir"] = trackObj["sourceDir"]
-        outdict["sources"][key]["playlistNum"] = trackObj["playlistNum"]
-    
-    #Enabled Track Section
+        outdict["Sources"][key] = {}
+        outdict["Sources"][key]["outputDir"] = trackObj["outputDir"]
+        outdict["Sources"][key]["sourceDir"] = trackObj["sourceDir"]
+        outdict["Sources"][key]["playlistNum"] = trackObj["playlistNum"]
+
+    # Enabled Track Section
     outdict["Enabled_Tracks"] = {}
     outdict["Enabled_Tracks"]["Video"] = list(
         map(lambda x: x["key"], muxSorter.enabledVideo))
@@ -111,13 +96,13 @@ def finalizeOutput(muxSorter, demuxData, movie, args):
         map(lambda x: x["key"], muxSorter.enabledAudio))
     outdict["Enabled_Tracks"]["Sub"] = list(
         map(lambda x: x["key"], muxSorter.enabledSub))
-    
-    #Track List Section
-    outdict["Tracks_Details"] = {}  
+
+    # Track List Section
+    outdict["Tracks_Details"] = {}
     outdict["Tracks_Details"]["Audio"] = {}
     outdict["Tracks_Details"]["Sub"] = {}
     outdict["Tracks_Details"]["Video"] = {}
-  
+
     for track in muxSorter.unSortedAudio:
         key = track["key"]
         track.pop("key")
@@ -126,7 +111,7 @@ def finalizeOutput(muxSorter, demuxData, movie, args):
         key = track["key"]
         track.pop("key")
         outdict["Tracks_Details"]["Sub"][key] = track
-    
+
     for track in muxSorter.unSortedVideo:
         key = track["key"]
         track.pop("key")

@@ -136,15 +136,15 @@ def pickOutput(demuxList):
 
 
 def getSources(remuxConfig):
-    list = [key for key in remuxConfig["sources"]]
+    list = [key for key in remuxConfig["Sources"]]
     return list
 
 
 def getChapterFile(remuxConfig):
-    keys = list(remuxConfig["sources"].keys())
+    keys = list(remuxConfig["Sources"].keys())
     print("Which Source Has The proper Chapter File")
     key = keys[TerminalMenu(keys).show()]
-    return os.path.join(remuxConfig["sources"][key]["outputDir"], "chapters.txt")
+    return os.path.join(remuxConfig["Sources"][key]["outputDir"], "chapters.txt")
 
 
 def getBdinfo(remuxConfig):

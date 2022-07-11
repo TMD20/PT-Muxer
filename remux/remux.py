@@ -11,56 +11,43 @@ import mediatools.mkvtoolnix as mkvTool
 import sites.pickers.siteMuxPicker as muxPicker
 
 
-
-def Remux(args):               
+def Remux(args):
     muxGenerator = muxPicker.pickSite(args.site)
-    remuxConfig = None
-    tempdir = tempfile.TemporaryDirectory()
-    mediainfo = os.path.join(tempdir.name,"media.txt")
-
- 
-
-
-    remuxConfigPath = remuxHelper.pickOutput(
-        remuxHelper.getOutputList(args.inpath))
-   
-
-    with open(remuxConfigPath, "r") as p:
-        remuxConfig = json.loads(p.read())
-  
+    remuxConfig = getRemuxConfig(args.inpath)
+    
     sources = remuxHelper.getSources(remuxConfig)
     if len(sources) == 0:
         print("No Sources")
         quit()
-    movie = movieData.matchMovie(sources)
-  
-  
+    chapters = remuxHelper.getChapterFile(remuxConfig)
+    Process(remuxConfig,muxGenerator,chapters,args.outpath,)
 
+def getRemuxConfig(inpath):
+    remuxConfig = None
     
-    movieName = movieData.getMovieName(movie)
+    remuxConfigPath = remuxHelper.pickOutput(
+        remuxHelper.getOutputList(inpath))
+
+    with open(remuxConfigPath, "r") as p:
+        remuxConfig = json.loads(p.read())
+    return remuxConfig
    
+def Process(remuxConfig,muxGenerator,chapters,outpath):
+    movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
+
+    movieName = movieData.getMovieName(movie)
+
     movieYear = movieData.getMovieYear(movie)
     movieTitle = f"{movieName} ({movieYear})"
-    chapters = remuxHelper.getChapterFile(remuxConfig)
     kind = movieData.getKind(movie)
-    mediatype=mkvTool.getMediaType(remuxConfig)
+    mediatype = mkvTool.getMediaType(remuxConfig)
     hdr = mkvTool.getHDR(remuxConfig)
     videoCodec = mkvTool.getVideo(remuxConfig)
     audioCodec = mkvTool.getAudio(remuxConfig)
     audioChannel = mkvTool.getAudioChannel(remuxConfig)
     videoRes = mkvTool.getVideoResolution(remuxConfig)
     fileName = muxGenerator.getFileName(
-        kind,mediatype,hdr, args.outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel)
+        kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel)
     muxGenerator.generateMuxData(remuxConfig)
- 
+
     muxGenerator.createMKV(movieTitle, chapters, fileName, remuxConfig)
-  
-    
-            
-
-            
- 
-   
-
-
-
