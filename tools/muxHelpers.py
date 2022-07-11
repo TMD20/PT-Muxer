@@ -39,7 +39,6 @@ def addSources(paths):
 def createParentDemuxFolder(sources, outpath):
     if len(sources) > 0:
         folder = f"Mux.{os.urandom(7).hex()}.{util.getShowName(list(dict.fromkeys(sources))[0])}"
-
         parentDemux = os.path.join(outpath, folder)
         os.mkdir(parentDemux)
         return parentDemux
@@ -50,6 +49,8 @@ def createParentDemuxFolder(sources, outpath):
 def createChildDemuxFolder(parentDir, show):
     os.chdir(parentDir)
     show = util.getShowName(show)
+  
+
     show = re.sub(" ", ".", show)
     os.mkdir(show)
     return os.path.join(parentDir, show)

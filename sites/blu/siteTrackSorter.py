@@ -10,8 +10,8 @@ class Blu(siteSorter):
     def __init__(self):
         super().__init__()
 
-    def sortTracks(self, pref):
-        super().sortTracks(pref)
+    def sortTracks(self, movieLangs, audioPrefs, subPrefs, sortPrefs):
+        super().sortTracks(movieLangs, audioPrefs, subPrefs, sortPrefs)
         i = 1
         ####
         # Check to see if we should go with a FLAC converted Track/ Or the original
@@ -26,8 +26,8 @@ class Blu(siteSorter):
             output = os.path.dirname(track["file"])
             t = None
             # guard clases
-            if track["site_title"]==None:
-                i=i+1
+            if track["site_title"] == None:
+                i = i+1
                 continue
             if not re.search("flac", track["site_title"], re.IGNORECASE):
                 i = i+1
@@ -38,15 +38,11 @@ class Blu(siteSorter):
 
             with open(eac3to.set_eac3toPath(output, util.getShowName(track["sourceDir"])), "r") as p:
                 t = p.read()
-            print(t, "\n\n")
-            print(track, "\n\n", prevTrack, "\n\n")
+           
 
             prevSource = prevTrack["sourceKey"]
-            print(re.search(f"Creating file \"{filename}\"...\nDecoding FLAC", t,
-                            flags=re.IGNORECASE | re.DOTALL))
             print(f"Creating file \"{filename}\".*Decoding FLAC", "\n\n")
-            print(self._enabledAudio, "\n\n")
-            
+
             group = re.search(
                 f"(\[.*\]) Creating file \"{filename}\"", t).group(1)
             match1 = re.search(f"{group}.*Superfluous zero bytes", t)
@@ -58,7 +54,6 @@ class Blu(siteSorter):
                 remove.append(track["key"])
             i = i+1
         i = 0
-        print(remove, "\n\n")
         while i < len(self._enabledAudio):
             track = self._enabledAudio[i]
             if track["key"] in remove:

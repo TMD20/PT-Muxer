@@ -28,16 +28,20 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
     success = False
     command1 = [["/usr/bin/wine", "/usr/local/bin/eac3to/eac3to.exe",
                 getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", f"-log={eac3toPath}"]]
+    
     command2 = [["/usr/bin/wine", "/usr/local/bin/eac3to/eac3to.exe",
                 getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]
   
+  
     with subprocess.Popen(list(itertools.chain.from_iterable(
             command1)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
+        print("test1")
         for line in p.stdout:
             print(line, end='')
         for line in p.stderr:
             print(line, end='')
         success = True
+        p.wait()
     
 
     if success == False:
@@ -48,6 +52,7 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
                 print(line, end='')
             for line in p.stdout:
                 print(line, end='')
+            p.wait()
            
 
 

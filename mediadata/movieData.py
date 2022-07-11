@@ -21,14 +21,17 @@ def matchMovie(sources):
     if len(results) == 0:
         print("Unable to find imdb")
         id = input("Enter imdb: ")
-        return ia.get_movie(re.sub("tt", "", id))
+        result=ia.get_movie(re.sub("tt", "", id))
     else:
         titles = list(map(lambda x: x["long imdb title"], results))
         menu = TerminalMenu(titles)
         index = None
         while index == None:
             index = menu.show()
-        return results[index]
+        result= results[index]
+    ia.update(result, info=['main'])
+    return result
+
 
 
 def getKind(movie):
