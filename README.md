@@ -1,4 +1,4 @@
-# **How to Use** 
+# **How to Install/Get Started** 
 
 ## Required
   * python modules via requirements.txt 
@@ -13,9 +13,9 @@
 * Installing modules and running python3 via virtualenv
 * udevil for non-sudo ISO extractions
 
-## Modes: 
+# Modes: 
 
-### Demux Mode
+## Demux Mode
 
 Creates a mux folder with everything generated during the programs run
 * Including all tracks from all sources, Extracted via eac3to
@@ -23,20 +23,20 @@ Creates a mux folder with everything generated during the programs run
 * Eac3to Log for all Sources
 * General Output.txt JSON file with Configurable Options
 
-### Remux Mode: 
+## Remux Mode: 
 
 * Reads JSON file runs mkvmerge based on data extracted from file, and the site the remux is intented for
 
 JSON Example: 
 *  https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
 
-## 3 Main JSON Sections
+# 3 Main JSON Sections
 
-### 1. Sources
+## 1. Sources
 
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
 
-### 2. Enabled Tracks
+## 2. Enabled Tracks
 
 Displays which Tracks will be added during the mkvmerge Process. To See more details about a track match the number to the here to the Track Details Sections.
 
@@ -44,7 +44,7 @@ Changes that can be made with effect
 * Remove Tracks to remove them from final mkvmerge
 * Reorder Tracks to change how they appear in mkvmerge, and in the final mkv file
 
-### 3. Track Details
+## 3. Track Details
 
 Some Details about Each Track
 Including Language
@@ -54,12 +54,12 @@ Changes that can be made with effect
 * Changing the title to change the title of the track
 
 
-## Commands:
+# Commands:
 
-### Demux Mode
+## Demux Mode
 python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 
-#### Required
+### Required
 
 ```
  sourcepath 
@@ -77,7 +77,7 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 ```
 
 
-#### Optional
+### Optional
 
 ```
 --site blutopia/blu/bhd/beyondhd [default=blu]
@@ -120,11 +120,11 @@ see Filtering Tracks section
 
 
 
-### Remux Mode
+## Remux Mode
 
 * python3 /path/to/app.py -demux sourcepath outputpath
 
-#### Required
+### Required
 ```
   sourcepath 
  
@@ -138,7 +138,7 @@ see Filtering Tracks section
   
   The folder you want the final MKV to be outputted to
 ```
-#### Optional
+### Optional
 
 ```
 --site blutopia/blu/bhd/beyondhd [default=blu]
