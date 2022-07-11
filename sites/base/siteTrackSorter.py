@@ -196,11 +196,11 @@ class siteSorter():
         else:
             # Add Every English Track
             langSet = set()
-            newTracks = [ele for ele in self._unSortedAudio if ele["lang"]
+            newTracks = [ele for ele in self._unSortedSub if ele["lang"]
                          == "English" and ele["compat"] == False]
             mainTracks.extend(newTracks)
             # Add First Track For everyother Language
-            for track in self._unSortedAudio:
+            for track in self._unSortedSub:
                 if track["lang"] in langSet:
                     continue
                 if track["lang"] == "English":

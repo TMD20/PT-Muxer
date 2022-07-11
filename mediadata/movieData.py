@@ -11,6 +11,8 @@ ia = imdb()
 def getMovieName(movie):
     return guessit(movie["title"])["title"]
 
+def getByID(id):
+    return ia.get_movie(id)
 
 def getMovieYear(movie):
     return movie["year"]
