@@ -5,6 +5,7 @@ Not every thing in the list will be possible to accomplish in a automated way
 1. xml file
 2. Find way to filter similar tracks bluray.com/or track properties
 2. imdb and tmdb in mediainfo
+3. Add Ability To Add mkvmerge extra commands
 3. ALlow passing addition mkvmerge track arguments
 4. Allow mkvmerge command output
 5. Configure other options like language
