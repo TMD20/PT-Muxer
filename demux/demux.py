@@ -39,6 +39,7 @@ def extractBdinfo(sources, demuxData):
 
     # Generate Bdinfo/TrackInfo for Each Source
     for source in sources:
+        print("\n",source,"\n")
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
 
         os.chdir(output)
