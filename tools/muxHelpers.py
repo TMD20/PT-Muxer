@@ -20,17 +20,25 @@ def getFiles(path):
     return list1
 
 
+ 
+
+
+
 def addSources(paths):
     # duple check this works
     sources = []
-    menu = TerminalMenu(paths)
-    addsource = True
-    validinputs = ["yes", "y", "Y", "YES", True]
-    while addsource in validinputs:
-        menu_index = menu.show()
-        dir = paths[menu_index]
+    user_options=["YES","NO"]
+
+    source_menu = TerminalMenu(paths)
+    user_menu=TerminalMenu(user_options)
+    
+
+    addsource = "YES"
+    while addsource=="YES":
+        dir = paths[source_menu.show()]
         sources.append(dir)
-        addsource = input("Add Another Sources for this Release?: ")
+        print("Add Another Source?\n")
+        addsource = user_options[user_menu.show()]
     res = []
     [res.append(x) for x in sources if x not in res]
     return res

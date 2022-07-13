@@ -2,8 +2,7 @@ import itertools
 import re
 import os
 import subprocess
-
-
+from simple_term_menu import TerminalMenu
 from prompt_toolkit import prompt as input
 
 class MuxHelper():
@@ -118,15 +117,18 @@ class MuxHelper():
        
 
     def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel):
-        validinputs = ["yes", "y", "Y", "YES", True]
+        inputs = ["YES","NO"]
 
         if kind == "movie":
             fileName = f"{movieName}.{year}.{videoRes}.{mediatype}.REMUX.{hdr}.{videoCodec}.{audioCodec}.{audioChannel}-TMS.mkv"
             fileName = re.sub(" +", ".", fileName)
-        check = input(f"Is this FileName Correct: {fileName} ")
-        while check not in validinputs:
+        print(f"Is this FileName Correct: {fileName}\n")
+        menu = TerminalMenu(inputs)
+        choice = inputs[menu.show()]
+        while choice !="YES":
             fileName = input("Enter New Name: ", default=fileName)
-            check = input(f"Is this FileName Correct: {fileName} ")
+            print("Is the File Correct Now\n")
+            choice = inputs[menu.show()]
         return os.path.join(output, fileName)
 
     def createMKV(self, movieTitle, chapters, fileName, remuxConfig):
