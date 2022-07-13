@@ -38,17 +38,18 @@ def getSources(options, inpath):
 def extractBdinfo(sources, demuxData):
 
     # Generate Bdinfo/TrackInfo for Each Source
+    bdObjs=[]
     for source in sources:
         print("\n",source,"\n")
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
-
         os.chdir(output)
-
         bdObj = bdinfo.Bdinfo()
-        quickSum = bdObj.process(output, source)
-
-        demuxData.addTracks(quickSum, bdObj.playlistNum, source, output)
+        bdObj.setup(output, source)
+        bdObjs.append(bdObj)
         os.chdir("..")
+    for bdObj in bdObjs:
+        demuxData.addTracks(bdObj.process(), bdObj.playlistNum, source, output)
+        
 
 
 def extractTracks(demuxData):

@@ -20,15 +20,18 @@ class Bdinfo():
     Public Functions
     '''
 
-    def process(self, parent, subfolder):
+    def setup(self, parent, subfolder):
         show = util.getShowName(subfolder)
         self.setBdinfoPath(parent, show)
-
         self.set_mediaDir(subfolder)
         self._generate_playlists()
+        self._playListSelect()
+    
+    def process(self):
         bdinfo = self._bdinfo()
         self._writeBdinfo(bdinfo)
         return self.parse_bdinfo(bdinfo)
+      
 
     def parse_bdinfo(self, data):
         lines = data.splitlines()
@@ -92,9 +95,12 @@ class Bdinfo():
         self._playlist = subprocess.run(["sudo", "bdinfo", "-l", self._mediaDir, "."],
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
 
-    def _bdinfo(self):
+    def _playListSelect(self):
         print(self._playlist)
         self._getIndex()
+   
+   
+    def _bdinfo(self):
         selection = self._playlist.splitlines()[2+int(self._playlistNum)]
         match = re.search("[0-9]+.MPLS", selection)
         if match != None:
