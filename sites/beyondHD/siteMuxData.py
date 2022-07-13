@@ -1,6 +1,7 @@
 from sites.base.siteMuxData import MuxHelper
 import os
 import re
+from simple_term_menu import TerminalMenu
 from prompt_toolkit import prompt as input
 
 
@@ -9,13 +10,16 @@ class BeyondHD(MuxHelper):
         super().__init__()
     #Overwrite Filename
     def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel):
-        validinputs = ["yes", "y", "Y", "YES", True]
+        inputs = ["YES", "NO"]
 
         if kind == "movie":
             fileName = f"{movieName}.{year}.{mediatype}.{videoRes}.{audioCodec}.{audioChannel}.{videoCodec}.{hdr}.REMUX-TMS.mkv"
             fileName = re.sub(" +", ".", fileName)
-        check = input(f"Is this FileName Correct: {fileName} ")
-        while check not in validinputs:
-            fileName = input("Enter New Name: ",default=fileName)
-            check = input(f"Is this FileName Correct: {fileName} ")
+        print(f"Is this FileName Correct: {fileName}\n")
+        menu = TerminalMenu(inputs)
+        choice = inputs[menu.show()]
+        while choice !="YES":
+            fileName = input("Enter New Name: ", default=fileName)
+            print("Is the File Correct Now\n")
+            choice = inputs[menu.show()]
         return os.path.join(output, fileName)
