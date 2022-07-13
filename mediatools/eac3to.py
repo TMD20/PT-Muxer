@@ -26,10 +26,21 @@ def process(source, output,outputs_list, playlistNum):
 
 def extract_files(source, playlistNum, outputs_list, eac3toPath):
     success = False
-    command1 = [["/usr/bin/wine", "/usr/local/bin/eac3to/eac3to.exe",
+    eactoBin = "/usr/local/bin/eac3to/eac3to.exe"
+    wineBin= "/usr/bin/wine"
+  
+
+    if not os.path.isfile(eactoBin):
+        currentdir = os.path.abspath(".")
+        os.chdir(os.path.dirname(os.path.realpath(__file__)))
+        eactoBin = os.path.abspath("../binaries/eac3to/eac3to.exe")
+        os.chdir(currentdir)
+
+
+    command1 = [[wineBin, eactoBin,
                 getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", f"-log={eac3toPath}"]]
     
-    command2 = [["/usr/bin/wine", "/usr/local/bin/eac3to/eac3to.exe",
+    command2 = [[wineBin, eactoBin,
                 getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]
   
   
@@ -56,7 +67,8 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
 
 
 def getwinepath(folder):
-    return subprocess.run(["/usr/bin/winepath", "-w", folder], cwd="/", stdout=subprocess.PIPE).stdout.decode('utf8', 'strict').replace('\n', '')
+    winePath = "/usr/bin/winepath"
+    return subprocess.run([winePath, "-w", folder], cwd="/", stdout=subprocess.PIPE).stdout.decode('utf8', 'strict').replace('\n', '')
 
 
 def set_eac3toPath(output,show):
