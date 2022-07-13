@@ -132,9 +132,22 @@ class MuxHelper():
         return os.path.join(output, fileName)
 
     def createMKV(self, movieTitle, chapters, fileName, remuxConfig):
+        mkvmergeBin="/usr/bin/mkvmerge"
+      
+      
+        if not os.path.isfile(mkvmergeBin):
+            currentdir=os.path.abspath(".")
+            os.chdir(os.path.dirname(os.path.realpath(__file__)))
+            mkvmergeBin = os.path.abspath("../../binaries/mkvmerge")
+            os.chdir(currentdir)
+
+    
+
+                
+
 
         command = list(itertools.chain.from_iterable(
-            [["/usr/bin/mkvmerge", "--title", movieTitle, "--chapters", chapters, "--output", fileName], self._out]))
+            [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName], self._out]))
   
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
