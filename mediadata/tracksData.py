@@ -1,7 +1,7 @@
-import random
-import os
+
 import re
 
+import xxhash
 import langcodes
 
 import tools.general as util
@@ -25,7 +25,7 @@ class TracksData():
         tracks = []
         for index, currline in enumerate(trackStrs):
             index = index+2
-            self._appendTrack(currline, index, tracks)
+            self._appendTrack(currline, index, tracks,source)
         for track in tracks:
             track["sourceDir"] = source
             track["sourceKey"] = util.getShowName(source)
@@ -135,7 +135,7 @@ class TracksData():
         ###### Adds Track to List                                                                                     #
         ################################################################################################################
 
-    def _appendTrack(self, currline, index, tracks):
+    def _appendTrack(self, currline, index, tracks,source):
         tempdict = None
         tempdict2 = None
         match = re.search("([a-z|A-Z]*?):", currline, re.IGNORECASE).group(1)
@@ -146,15 +146,16 @@ class TracksData():
             tempdict2 = self._audioCompatParser(currline)
         elif match == "Subtitle":
             tempdict = self._subParser(currline)
-
-        key = random.randint(100000, 999999)
-        tempdict["key"] = key
+        #Try to Get Unique Key Values
+        tempdict["key"] = xxhash.xxh32_hexdigest(
+            tempdict["bdinfo_title"]+util.getShowName(source))
         tempdict["index"] = index
         tempdict["parent"]=None
         tempdict["child"]=None
         tracks.append(tempdict)
         if tempdict2 != None:
-            key = random.randint(100000, 999999)
+            key = tempdict["key"] = xxhash.xxh32_hexdigest(
+                tempdict["bdinfo_title"]+util.getShowName(source))
             tempdict2["key"] = key
             tempdict2["index"] = index
             tempdict2["child"] =None
