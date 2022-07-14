@@ -43,7 +43,9 @@ def getSources(options, inpath):
 def extractBdinfo(sources, demuxData):
 
     # Generate Bdinfo/TrackInfo for Each Source
+    
     bdObjs=[]
+    outputs=[]
     for source in sources:
         print("\n",source,"\n")
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
@@ -51,16 +53,20 @@ def extractBdinfo(sources, demuxData):
         bdObj = bdinfo.Bdinfo()
         bdObj.setup(output, source)
         bdObjs.append(bdObj)
+        outputs.append(output)
         os.chdir("..")
-    for bdObj in bdObjs:
-        demuxData.addTracks(bdObj.process(), bdObj.playlistNum, source, output)
-        
+    
+    for i,bdObj in enumerate(bdObjs):
+        print(f"Extracting BDINFO from {sources[i]}")
+        demuxData.addTracks(bdObj.process(), bdObj.playlistNum, sources[i], outputs[i])
+    
+
 
 
 def extractTracks(demuxData):
     
     # Extract Using eac3to
-    print("Extract Tracks using Eac3to")
+    print("Running Eac3to on all sources")
     for key in demuxData.sources:
         trackoutdict = demuxData.filterBySource(key)
         eac3to_list = []
@@ -68,7 +74,7 @@ def extractTracks(demuxData):
             eac3to_list.append(track["eac3to"])
             if track.get("eac3to_extras"):
                 eac3to_list.extend(track["eac3to_extras"])
-
+        print(f"Extracting Files From {key}")
         eac3to.process(trackoutdict["sourceDir"], trackoutdict["outputDir"],
                        eac3to_list, trackoutdict["playlistNum"])
    
