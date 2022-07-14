@@ -112,6 +112,7 @@ class TracksData():
         tempdict["compat"] = False
         tempdict["default"] = False
         tempdict["machine_parse"] = []
+        tempdict["length"] = None
         return tempdict
 
         ################################################################################################################

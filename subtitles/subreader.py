@@ -31,6 +31,7 @@ def subreader(tracks,maxLines=None,langs=None):
                     f"SUBPARSER_LAST_LINE = {lastline}")
                 #Add Special Message about last line since that can contain the track dialetic
                 track["machine_parse"] = lines
+                track["length"] = len(files)
                 
 
       
