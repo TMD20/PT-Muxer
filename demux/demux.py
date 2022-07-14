@@ -10,6 +10,7 @@ import tools.muxHelpers as demuxHelper
 import sites.pickers.sitedataPicker as siteDataPicker
 import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
+import subtitles.subreader as subreader
 
 
 def Demux(args):
@@ -23,7 +24,11 @@ def Demux(args):
     movie = movieData.matchMovie(sources)
     extractBdinfo(sources, demuxData)
     extractTracks(demuxData)
-    finalizeOutput(muxSorter, demuxData, movie, args)
+    sortTracks(muxSorter, demuxData, movie, args)
+    machineReader(muxSorter,args,movie)
+
+    
+    finalizeOutput(muxSorter, demuxData, movie)
 
 
 def getSources(options, inpath):
@@ -69,12 +74,32 @@ def extractTracks(demuxData):
    
 
 
-def finalizeOutput(muxSorter, demuxData, movie, args):
+
+def sortTracks(muxSorter, demuxData, movie, args):
     # Sort/enable Tracks Based on Site
     muxSorter.tracksDataObj = demuxData
     muxSorter.sortTracks(movie["languages"],
                          args.sublang, args.audiolang, args.sortpref)
 
+
+def machineReader(muxSorter,args,movie):
+    #Add OCR for Subtitles
+    if args.ocr=="disabled":
+        return
+    elif args.ocr=="enabled":
+        subreader.subreader(muxSorter.enabledSub)
+    elif args.ocr=="default":
+        subreader.subreader(muxSorter.unSortedSub, movie["languages"])
+    elif args.ocr=="sublang":
+        subreader.subreader(muxSorter.unSortedSub,args.sublang)
+    elif args.ocr=="english":
+        subreader.subreader(muxSorter.unSortedSub, ["English"])
+    else:
+        subreader.subreader(muxSorter.unSortedSub)
+    
+
+
+def finalizeOutput(muxSorter, demuxData, movie):
     # Export
     # Movie Info Section
     outdict = {}

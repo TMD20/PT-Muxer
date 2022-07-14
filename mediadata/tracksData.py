@@ -111,6 +111,7 @@ class TracksData():
         tempdict["lang"] = lang
         tempdict["compat"] = False
         tempdict["default"] = False
+        tempdict["machine_parse"] = []
         return tempdict
 
         ################################################################################################################
