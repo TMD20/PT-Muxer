@@ -86,6 +86,7 @@ def sortTracks(muxSorter, demuxData, movie, args):
     muxSorter.tracksDataObj = demuxData
     muxSorter.sortTracks(movie["languages"],
                          args.sublang, args.audiolang, args.sortpref)
+    muxSorter.addForcedSubs(movie["languages"],args.audiolang)
 
 
 def machineReader(muxSorter,args,movie):

@@ -63,6 +63,15 @@ def requiredClassAttribute(*required):
                 return wrapper
         return requiredAttributeHelper
 
+def removeDupesList(list):
+    dupe=set()
+    res=[]
+    for ele in list:
+        if ele not in set:
+            res.append(ele)
+            dupe.add(ele)
+    return res
+
         
         
         
