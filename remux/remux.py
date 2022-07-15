@@ -20,7 +20,7 @@ def Remux(args):
         print("No Sources")
         quit()
     chapters = remuxHelper.getChapterFile(remuxConfig)
-    Process(remuxConfig,muxGenerator,chapters,args.outpath,)
+    Process(remuxConfig,muxGenerator,chapters,args.outpath,args.group)
 
 def getRemuxConfig(inpath):
     remuxConfig = None
@@ -32,7 +32,7 @@ def getRemuxConfig(inpath):
         remuxConfig = json.loads(p.read())
     return remuxConfig
    
-def Process(remuxConfig,muxGenerator,chapters,outpath):
+def Process(remuxConfig,muxGenerator,chapters,outpath,group):
     movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
 
     movieName = movieData.getMovieName(movie)
@@ -47,7 +47,8 @@ def Process(remuxConfig,muxGenerator,chapters,outpath):
     audioChannel = mkvTool.getAudioChannel(remuxConfig)
     videoRes = mkvTool.getVideoResolution(remuxConfig)
     fileName = muxGenerator.getFileName(
-        kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel,args.group)
+        kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel,group)
     muxGenerator.generateMuxData(remuxConfig)
 
     muxGenerator.createMKV(movieTitle, chapters, fileName, remuxConfig)
+    print(f"New File Finished at: {fileName}")
