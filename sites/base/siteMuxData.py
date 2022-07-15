@@ -39,9 +39,8 @@ class MuxHelper():
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
+
             default=["--default-track-flag", "0:0"]
-            if i==0:
-                default = ["--default-track-flag", "0:1"]  
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
             temp.extend(default)
@@ -63,8 +62,6 @@ class MuxHelper():
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
             default = ["--default-track-flag", "0:0"]
-            if i == 0:
-                default = ["--default-track-flag", "0:1"]
             if trackjson.get("default")==True:
                 default = ["--default-track-flag", "0:1"]
             temp.extend(default)
@@ -78,8 +75,6 @@ class MuxHelper():
         
 
     def _addSubTracks(self,remuxConfig):
-        audiocodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
-        audiocode = remuxConfig["Tracks_Details"]["Audio"][audiocodeKey]["langcode"]
         out=[]
         for i in range(len(remuxConfig["Enabled_Tracks"]["Sub"])):
             key =remuxConfig["Enabled_Tracks"]["Sub"][i]
@@ -93,16 +88,15 @@ class MuxHelper():
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             default = ["--default-track-flag", "0:0"]
+            forced = ["--forced-display-flag", "0:0"]
             
-            if langcode != audiocode and langcode == "en":
-                default=["--default-track-flag", "0:1"]
-            if name and re.search("forced", name, re.IGNORECASE):
-                default = ["--default-track-flag", "0:1"]
             if trackjson.get("default")==True:
                 default = ["--default-track-flag", "0:1"]
-            temp.extend(default)
             
-    
+            if trackjson.get("forced") == True:
+                forced = ["--forced-display-flag", "0:1"]
+            temp.extend(default)
+            temp.extend(forced)
 
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
@@ -116,11 +110,11 @@ class MuxHelper():
         self._sub=(list(itertools.chain.from_iterable(out)))
        
 
-    def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel):
+    def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel,group):
         inputs = ["YES","NO"]
 
         if kind == "movie":
-            fileName = f"{movieName}.{year}.{videoRes}.{mediatype}.REMUX.{hdr}.{videoCodec}.{audioCodec}.{audioChannel}-TMS.mkv"
+            fileName = f"{movieName}.{year}.{videoRes}.{mediatype}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             fileName = re.sub(" +", ".", fileName)
         print(f"Is this FileName Correct: {fileName}\n")
         menu = TerminalMenu(inputs)

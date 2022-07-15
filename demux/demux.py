@@ -24,7 +24,7 @@ def Demux(args):
     movie = movieData.matchMovie(sources)
     extractBdinfo(sources, demuxData)
     extractTracks(demuxData)
-    sortTracks(muxSorter, demuxData, movie, args)
+    sortTracks(muxSorter, demuxData, movie, args)    
     machineReader(muxSorter,args,movie)
 
     
