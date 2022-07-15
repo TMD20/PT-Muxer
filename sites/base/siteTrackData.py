@@ -149,10 +149,11 @@ class siteTrackData(TracksData):
         elif re.search("AC3 Embedded:", bdinfo):
             match = re.search(".*?:.*?([0-9].*(bit|kbps))", bdinfo).group(1)
             site_title=f"Compatibility Track / Dolby Digital Audio / {match}"
-        return re.sub("  .*", " ",site_title ).rstrip().lstrip()
+        site_title = re.sub("\/.*DN", "", site_title)
+        return re.sub("  .*", " ",site_title ).strip()
 
     def _getNormalTrack(self, bdinfo):
-        bdinfo = bdinfo.rstrip().lstrip()
+        bdinfo = bdinfo.strip()
         codec = re.search(".*?(?= /)", bdinfo).group(0)
         other = re.search(".*([0-9]\.[0-9].*)", bdinfo).group(1)
 

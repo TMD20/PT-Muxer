@@ -29,6 +29,8 @@ def main():
     parser.add_argument('-p', '--sortpref', default="size",
                         choices=['size', 'order'])
     parser.add_argument('-o', '--ocr', default="disabled", choices=['enabled', 'subpref','default',"all","disabled","english"])
+    parser.add_argument('-g', '--group', default="Unknown")
+
     args = parser.parse_args()
    
     if args.demux:

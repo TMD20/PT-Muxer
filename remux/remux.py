@@ -47,7 +47,7 @@ def Process(remuxConfig,muxGenerator,chapters,outpath):
     audioChannel = mkvTool.getAudioChannel(remuxConfig)
     videoRes = mkvTool.getVideoResolution(remuxConfig)
     fileName = muxGenerator.getFileName(
-        kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel)
+        kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel,args.group)
     muxGenerator.generateMuxData(remuxConfig)
 
     muxGenerator.createMKV(movieTitle, chapters, fileName, remuxConfig)
