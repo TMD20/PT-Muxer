@@ -113,7 +113,7 @@ class TracksData():
         tempdict["default"] = False
         tempdict["forced"] = False
         tempdict["machine_parse"] = []
-        tempdict["length"] = None
+        tempdict["length"]=None
         return tempdict
 
         ################################################################################################################
@@ -148,14 +148,15 @@ class TracksData():
             tempdict = self._subParser(currline)
         #Try to Get Unique Key Values
         tempdict["key"] = xxhash.xxh32_hexdigest(
-            tempdict["bdinfo_title"]+util.getShowName(source))
+            tempdict["bdinfo_title"]+util.getShowName(source)+str(index))+"_"+(tempdict
+            ["langcode"] or "vid")
         tempdict["index"] = index
         tempdict["parent"]=None
         tempdict["child"]=None
         tracks.append(tempdict)
         if tempdict2 != None:
-            key = tempdict["key"] = xxhash.xxh32_hexdigest(
-                tempdict["bdinfo_title"]+util.getShowName(source))
+            key  = xxhash.xxh32_hexdigest(
+                tempdict2["bdinfo_title"]+util.getShowName(source) + str(index))+"_"+(tempdict2["langcode"] or "vid")
             tempdict2["key"] = key
             tempdict2["index"] = index
             tempdict2["child"] =None

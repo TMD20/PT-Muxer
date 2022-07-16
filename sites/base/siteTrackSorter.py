@@ -34,6 +34,7 @@ class siteSorter():
             audioLangs=["English"]
         # In cause We need More then one Forced Sub
         otherForcedSubs = []
+        allforced=[]
         if not os.path.isfile(bdSubBin):
             currentdir = os.path.abspath(".")
             os.chdir(os.path.dirname(os.path.realpath(__file__)))
@@ -47,6 +48,7 @@ class siteSorter():
                 continue
             oldFile = oldTrack["file"]
             newFile = re.sub("\.sup", ".forced.sup", oldFile)
+            newEac3to = re.sub("\.sup", ".forced.sup", oldTrack["eac3to"])
 
             command = [wineBin, bdSubBin,  oldFile,
                        "-o", newFile, "--forced-only"]
@@ -67,6 +69,7 @@ class siteSorter():
 
                 newTrack = copy.deepcopy(oldTrack)
                 newTrack["file"] = newFile
+                newTrack["eac3to"] = newEac3to
 
                
         
@@ -76,16 +79,22 @@ class siteSorter():
                     newTrack["default"]=True
                     newTrack["forced"]=True
                     newList.extend(self._enabledSub)
-                    #Check 
-                  
                     self._enabledSub = newList
+                    allforced.append(newTrack)
+                    
                 # We need to Sort by language later
                 else:
+                    newTrack["default"] = True
+                    newTrack["forced"]=True
                     otherForcedSubs.append(newTrack)
+                    allforced.append(newTrack)
+
+            
 
         sorted(otherForcedSubs,
                key=lambda x: audioLangs.index(newTrack["lang"]))
         self._enabledSub.extend(otherForcedSubs)
+        self._unSortedSub.extend(allforced)
 
     """
     Setters/Getters
@@ -155,6 +164,7 @@ class siteSorter():
         # sanitize prefs
         audioLang = self._getAudioPrefs(movieLangs, audioPrefs)
         subPrefs = util.removeDupesList(subPrefs)
+        
 
 
         self._sortAudio(audioTracks, audioLang, sortPref)

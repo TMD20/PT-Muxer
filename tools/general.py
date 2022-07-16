@@ -27,6 +27,8 @@ def getShowName(path):
     return show
 
 
+'/home/main/Downloads/Nzbget/Seven.Pounds.2008.1080p.Blu-ray.CEE.AVC.TrueHD.5.1/BDMV/STREAM'
+
 def findFiles(path,string):
     matchlist=[]
     for tuple in os.walk(path):
