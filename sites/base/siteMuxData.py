@@ -101,9 +101,11 @@ class MuxHelper():
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
                 if re.search("sdh", name, re.IGNORECASE):
-                    temp.extend(["--hearing-impaired-flag", f"0:{name}"])
+                    temp.extend(["--hearing-impaired-flag", "0:1"])
                 if re.search("commentary", name, re.IGNORECASE):
-                    temp.extend(["--commentary-flag", "0"])
+                    temp.extend(["--commentary-flag", "0:1"])
+            
+          
 
             temp.append(file)
             out.append(temp)
