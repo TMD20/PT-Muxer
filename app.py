@@ -22,6 +22,7 @@ def main():
                         choices=['size', 'order'])
     parser.add_argument('-o', '--ocr', default="disabled", choices=['enabled', 'subpref','default',"all","disabled","english"])
     parser.add_argument('-g', '--group', default="Unknown")
+    parser.add_argument('-mc', '--mkvcommand', action='store_true')
 
     args = parser.parse_args()
    

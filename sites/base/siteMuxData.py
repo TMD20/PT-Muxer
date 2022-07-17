@@ -131,15 +131,22 @@ class MuxOBj():
             choice = inputs[menu.show()]
         return os.path.join(output, fileName)
 
-    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
+    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to,commandBool):
         mkvmergeBin="/usr/bin/mkvmerge"
       
 
         if not os.path.isfile(mkvmergeBin):
                 mkvmergeBin= os.path.join(util.getRootDir(), "binaries/mkvmerge")
           
+       
         command = list(itertools.chain.from_iterable(
             [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName,"--global-tags",xml], self._out]))
+        if commandBool:
+            print(" ".join(command))
+            input("\n\nmkvmerge command has tempory files for xml and chapter files\nFiles will be autoremoved on cglose \
+            \nRun mkvmerge command before closing program\nThen enter any input: ")
+            quit()
+
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')

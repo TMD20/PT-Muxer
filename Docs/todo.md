@@ -1,10 +1,5 @@
 
 
-Critical 
-Fix Video Name Bug
-Add chapter file to JSON
-Create XML
-DN issue
 
 
 
@@ -16,15 +11,15 @@ DN issue
 
 
 
-This todo is based on the Blutopia remux
+
+
+
+This todo is partiakky based on the Blutopia remux process
 Not every thing in the list will be possible to accomplish in a automated way
 
 Change bdinfo to select for each track, then extract after
 Add Mkvmerge commands to JSON
-1. xml file
 2. Find way to filter similar tracks bluray.com/or track properties
-2. imdb and tmdb in mediainfo
-3. OCR improvements
 3. Speech reconition
 3. Add Ability To Add mkvmerge extra commands
 3. ALlow passing addition mkvmerge track arguments
@@ -33,12 +28,6 @@ Add Mkvmerge commands to JSON
 6. Documentation on Track Naming Etc
 7. Video Original Source ID, not sure how common this is
 8. Video Original Source medium
-9. Embedded forced subtitles
-   If the eac3to log mentions that the English subtitle track contains forced portions, these must be extracted with BDSup2Sub and provided as a separate track.
-   Import the subtitle into BDSup2Sub.
-   Set the Target FPS to the desired FPS to correctly align the timestamps.
-   File → Export → Export only forced → Save
-   E.g. Subtitle track 7 contains 959 normal and 170 forced captions.
 
 Not sure if this can be done via commandline
 7.DGDemux for UHD Disk Seamless Branching; how to detect 8. Makemkv for demux dolby vision disk 9. Title Forced Subtitles Forced for foreign parts 10. 3rd priority: an object-based layer (DTS:X, Atmos) is better than none. Should this be consider above a regular loseless track? 11. Support upmixes and downmixes
@@ -48,7 +37,6 @@ Not sure if this can be done via commandline
 
 12. Commentary Tracks
     Might be hard to automate
-13. Exclude non-English forced subtitles unless they are in the production's primary language.
 14. Scraping info from website; sites probably doesn't have an API
     re preparing:
     Wikipedia

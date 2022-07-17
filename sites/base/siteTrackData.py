@@ -109,8 +109,8 @@ class siteTrackData(TracksData):
 
     def _getVideoName(self, bdinfo):
         codec = re.search(".*?(?= /)", bdinfo).group(0)
-        other = re.search("/ [0-9].*", bdinfo).group(0)
-        return re.sub("  ", " ", f"{codec} / {other}")
+        other = re.search("(?<=/ )[0-9].*", bdinfo).group(0)
+        return re.sub(" +", " ", f"{codec} / {other}")
 #####################################################################################################################
   #     Track Name Helpers
   ################################################################################################################
@@ -133,9 +133,6 @@ class siteTrackData(TracksData):
 
     def _getNormalTrack(self, bdinfo):
         bdinfo = bdinfo.strip()
-        codec = re.search(".*?(?= /)", bdinfo).group(0)
-        other = re.search(".*([0-9]\.[0-9].*)", bdinfo).group(1)
-
         site_title = None
 
         # Dolby Surrond
@@ -144,5 +141,8 @@ class siteTrackData(TracksData):
             site_title = f"Dolby Surround / {match}"
         # Catch all
         else:
+            codec = re.search(".*?(?= /)", bdinfo).group(0)
+            other = re.search(".*([0-9]\.[0-9].*)", bdinfo).group(1)
             site_title = f"{codec} / {other}"
-        return re.sub(" +", " ", site_title).rstrip().lstrip()
+        site_title = re.sub("/ DN.*dB", "", site_title)
+        return re.sub(" +", " ", site_title).strip()

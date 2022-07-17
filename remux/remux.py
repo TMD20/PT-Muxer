@@ -15,7 +15,7 @@ def Remux(args):
     if len(sources) == 0:
         print("No Sources")
         quit()
-    Process(remuxConfig, muxGenerator, args.outpath, args.group)
+    Process(remuxConfig, muxGenerator, args.outpath, args.group,args.mkvcommand)
 
 
 def getRemuxConfig(inpath):
@@ -29,7 +29,7 @@ def getRemuxConfig(inpath):
     return remuxConfig
 
 
-def Process(remuxConfig, muxGenerator, outpath, group):
+def Process(remuxConfig, muxGenerator, outpath, group,commandBool):
     chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
     chapters=chaptersTemp[1]
     movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
@@ -53,7 +53,7 @@ def Process(remuxConfig, muxGenerator, outpath, group):
     muxGenerator.generateMuxData(remuxConfig)
 
     muxGenerator.createMKV(fileName, movieTitle,
-                           chapters, xml,  remuxHelper.getBdinfo(remuxConfig), remuxHelper.getEac3to(remuxConfig))
+                           chapters, xml,  remuxHelper.getBdinfo(remuxConfig), remuxHelper.getEac3to(remuxConfig), commandBool)
     os.close(chaptersTemp[0])
     os.close(xmlTemp[0])
     print(f"New File Finished at: {fileName}")
