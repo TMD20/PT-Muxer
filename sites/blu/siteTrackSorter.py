@@ -18,6 +18,7 @@ class Blu(siteSorter):
         #####
         remove = []
         while i < len(self._unSortedAudio):
+
             track = self._unSortedAudio[i]
             prevTrack = self._unSortedAudio[i-1]
             filename = os.path.basename(track["file"])

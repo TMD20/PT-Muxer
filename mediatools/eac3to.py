@@ -31,10 +31,8 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
   
 
     if not os.path.isfile(eactoBin):
-        currentdir = os.path.abspath(".")
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        eactoBin = os.path.abspath("../binaries/eac3to/eac3to.exe")
-        os.chdir(currentdir)
+        eactoBin =os.path.join(util.getRootDir(), "binaries/eac3to/eac3to.exe")
+      
 
 
     command1 = [[wineBin, eactoBin,

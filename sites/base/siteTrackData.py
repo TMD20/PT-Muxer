@@ -123,14 +123,7 @@ class siteTrackData(TracksData):
 
     def _getVideoName(self, bdinfo):
         codec = re.search(".*?(?= /)", bdinfo).group(0)
-        other = re.search("[0-9].*", bdinfo).group(0)
-
-        # kbps = re.search("[0-9]*? kbps", bdinfo)
-        # res = re.search("[0-9]*0p", bdinfo)
-        # fps = re.search("[0-9.]* fps", bdinfo)
-        # ratio = re.search("[0-9]*?:[0-9]*?(?= /)", bdinfo)
-        # bits = re.search("([0-9]|[0-9][0-9]) bits", bdinfo)
-        # hdr = re.search("HDR.*?(?= /)", bdinfo)
+        other = re.search("/ [0-9].*", bdinfo).group(0)
         return re.sub("  ", " ", f"{codec} / {other}")
 #####################################################################################################################
   #     Track Name Helpers

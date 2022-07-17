@@ -4,6 +4,7 @@ Critical
 Fix Video Name Bug
 Add chapter file to JSON
 Create XML
+DN issue
 
 
 

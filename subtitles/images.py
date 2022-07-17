@@ -2,16 +2,16 @@
 import subprocess
 import os
 
+import tools.general as util
+
 def getSubImages(supFile,dir):
     supBin = "/usr/local/bin/Suprip.exe"
     wineBin= "/usr/bin/wine"
 
     if not os.path.isfile(supBin):
-        currentdir = os.path.abspath(".")
-        os.chdir(os.path.dirname(os.path.realpath(__file__)))
-        supBin = os.path.abspath("../binaries/suprip-1.16/SupRip.exe")
-        os.chdir(currentdir)
-
+        supBin= os.path.join(
+            util.getRootDir(), "binaries/suprip-1.16/SupRip.exe")
+ 
 
     #suprip outputs to same directory sup file is in always
     movedSup=os.path.join(dir,"temp.sup")

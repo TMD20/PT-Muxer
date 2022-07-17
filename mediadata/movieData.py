@@ -1,11 +1,19 @@
 import re
+import os
+from dotenv import load_dotenv
+
 
 
 from guessit import guessit
 from imdb import Cinemagoer as imdb
 from simple_term_menu import TerminalMenu
+from tmdbv3api import TMDb, Find
 
 
+load_dotenv()
+tmdb = TMDb()
+tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
+find = Find()
 ia = imdb()
 
 def getMovieName(movie):
@@ -43,3 +51,13 @@ def getKind(movie):
     else:
         return "tv"
 
+def convertIMDBtoTMDB(id):
+    if re.search("tt",id)==None:
+        id=f"tt{id}"
+    results = find.find_by_imdb_id(id)["movie_results"]
+    if len(results)>0:
+        return results[0]["id"]
+
+
+
+  

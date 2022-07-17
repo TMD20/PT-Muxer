@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE Tags SYSTEM "matroskatags.dtd">
+<Tags>
+    <Tag>                                         <!-- TV Show Template (advanced) -->
+        <Targets>
+            <TargetTypeValue>70</TargetTypeValue> <!-- 70 is used for COLLECTION -->
+        </Targets>
+        <Simple>
+            <Name>IMDB</Name>
+            <String>tt####</String>               <!-- Replace # with IMDB id for that tv series e.g. tt0944947 -->
+        </Simple>
+        <Simple>
+            <Name>TMDB</Name>
+            <String>tv/####</String>              <!-- Replace # with TMDB id for that tv series e.g. tv/1399 -->
+        </Simple>
+        <Simple>
+            <Name>TVDB</Name>
+            <String>####</String>                 <!-- Replace # with TVDB id for that tv series e.g. 121361 -->
+        </Simple>
+    </Tag>
+    <Tag>                                         <!-- Season -->
+        <Targets>
+            <TargetTypeValue>60</TargetTypeValue> <!-- 60 is used for SEASON/SEQUEL/VOLUME -->
+        </Targets>
+        <Simple>
+            <Name>PART_NUMBER</Name>
+            <String>#</String>                    <!-- Replace # with season number e.g. 1 -->
+        </Simple>
+        <Simple>
+            <Name>TOTAL_PARTS</Name>
+            <String>#</String>                    <!-- Replace # with number of episodes in that season e.g. 10 -->
+        </Simple>
+    </Tag>
+    <Tag>                                         <!-- Episode -->
+        <Targets>
+            <TargetTypeValue>50</TargetTypeValue> <!-- 50 is used for MOVIE/EPISODE/CONCERT -->
+        </Targets>
+        <Simple>
+            <Name>PART_NUMBER</Name>
+            <String>#</String>                    <!-- Replace # with episode number of that season e.g. 4 -->
+        </Simple>
+        <Simple>
+            <Name>IMDB</Name>
+            <String>tt####</String>               <!-- Replace # with IMDB id for that episode e.g. tt1829963 -->
+        </Simple>
+    </Tag>
+</Tags>

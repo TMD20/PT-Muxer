@@ -36,11 +36,8 @@ class siteSorter():
         otherForcedSubs = []
         allforced=[]
         if not os.path.isfile(bdSubBin):
-            currentdir = os.path.abspath(".")
-            os.chdir(os.path.dirname(os.path.realpath(__file__)))
-            bdSubBin = os.path.abspath(
-                "../binaries/bdsup2sub++1.0.2_Win32.exe")
-            os.chdir(currentdir)
+            bdSubBin = os.path.join(
+                util.getRootDir(), "binaries/bdsup2sub++1.0.2_Win32.exe")
 
         # Get Forced Subtitles
         for oldTrack in self._unSortedSub:
