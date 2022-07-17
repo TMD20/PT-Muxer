@@ -123,7 +123,6 @@ class TracksData():
     def _medialang(self, currline):
         return re.search("(?:.*?: )(.*?)(?: /.*)", currline).group(1)
 
-        return tempdict
 
     def _mediacode(self, lang):
         try:

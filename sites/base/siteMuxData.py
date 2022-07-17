@@ -2,9 +2,10 @@ import itertools
 import re
 import os
 import subprocess
+
 from simple_term_menu import TerminalMenu
 from prompt_toolkit import prompt as input
-
+import tools.general as util
 class MuxHelper():
     def __init__(self):
         self._audio=[]
@@ -127,24 +128,18 @@ class MuxHelper():
             choice = inputs[menu.show()]
         return os.path.join(output, fileName)
 
-    def createMKV(self, movieTitle, chapters, fileName, remuxConfig):
+    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
         mkvmergeBin="/usr/bin/mkvmerge"
       
-      
+
         if not os.path.isfile(mkvmergeBin):
-            currentdir=os.path.abspath(".")
-            os.chdir(os.path.dirname(os.path.realpath(__file__)))
-            mkvmergeBin = os.path.abspath("../../binaries/mkvmerge")
-            os.chdir(currentdir)
-
-    
-
-                
-
-
+                mkvmergeBin= os.path.join(util.getRootDir(), "binaries/mkvmerge")
+          
         command = list(itertools.chain.from_iterable(
-            [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName], self._out]))
-  
+            [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName,"--global-tags",xml], self._out]))
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
+
+
+

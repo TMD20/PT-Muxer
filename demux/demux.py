@@ -24,10 +24,9 @@ def Demux(args):
     movie = movieData.matchMovie(sources)
     extractBdinfo(sources, demuxData)
     extractTracks(demuxData)
-    sortTracks(muxSorter, demuxData, movie, args)    
-    machineReader(muxSorter,args,movie)
+    sortTracks(muxSorter, demuxData, movie, args)
+    machineReader(muxSorter, args, movie)
 
-    
     finalizeOutput(muxSorter, demuxData, movie)
 
 
@@ -43,11 +42,11 @@ def getSources(options, inpath):
 def extractBdinfo(sources, demuxData):
 
     # Generate Bdinfo/TrackInfo for Each Source
-    
-    bdObjs=[]
-    outputs=[]
+
+    bdObjs = []
+    outputs = []
     for source in sources:
-        print("\n",source,"\n")
+        print("\n", source, "\n")
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
         os.chdir(output)
         bdObj = bdinfo.Bdinfo()
@@ -55,16 +54,15 @@ def extractBdinfo(sources, demuxData):
         bdObjs.append(bdObj)
         outputs.append(output)
         os.chdir("..")
-    
-    for i,bdObj in enumerate(bdObjs):
-        print(f"Extracting BDINFO from {sources[i]}")
-        demuxData.addTracks(bdObj.process(), bdObj.playlistNum, sources[i], outputs[i])
-    
 
+    for i, bdObj in enumerate(bdObjs):
+        print(f"Extracting BDINFO from {sources[i]}")
+        demuxData.addTracks(
+            bdObj.process(), bdObj.playlistNum, sources[i], outputs[i])
 
 
 def extractTracks(demuxData):
-    
+
     # Extract Using eac3to
     print("Running Eac3to on all sources")
     for key in demuxData.sources:
@@ -77,8 +75,6 @@ def extractTracks(demuxData):
         print(f"Extracting Files From {key}")
         eac3to.process(trackoutdict["sourceDir"], trackoutdict["outputDir"],
                        eac3to_list, trackoutdict["playlistNum"])
-   
-
 
 
 def sortTracks(muxSorter, demuxData, movie, args):
@@ -86,24 +82,23 @@ def sortTracks(muxSorter, demuxData, movie, args):
     muxSorter.tracksDataObj = demuxData
     muxSorter.sortTracks(movie["languages"],
                          args.sublang, args.audiolang, args.sortpref)
-    muxSorter.addForcedSubs(movie["languages"],args.audiolang)
+    muxSorter.addForcedSubs(movie["languages"], args.audiolang)
 
 
-def machineReader(muxSorter,args,movie):
-    #Add OCR for Subtitles
-    if args.ocr=="disabled":
+def machineReader(muxSorter, args, movie):
+    # Add OCR for Subtitles
+    if args.ocr == "disabled":
         return
-    elif args.ocr=="enabled":
+    elif args.ocr == "enabled":
         subreader.subreader(muxSorter.enabledSub)
-    elif args.ocr=="default":
+    elif args.ocr == "default":
         subreader.subreader(muxSorter.unSortedSub, movie["languages"])
-    elif args.ocr=="sublang":
-        subreader.subreader(muxSorter.unSortedSub,args.sublang)
-    elif args.ocr=="english":
+    elif args.ocr == "sublang":
+        subreader.subreader(muxSorter.unSortedSub, args.sublang)
+    elif args.ocr == "english":
         subreader.subreader(muxSorter.unSortedSub, ["English"])
     else:
         subreader.subreader(muxSorter.unSortedSub)
-    
 
 
 def finalizeOutput(muxSorter, demuxData, movie):
@@ -113,6 +108,7 @@ def finalizeOutput(muxSorter, demuxData, movie):
     outdict["Movie"] = {}
     outdict["Movie"]["year"] = movie["year"]
     outdict["Movie"]["imdb"] = movie["imdbID"]
+    outdict["Movie"]["tmdb"] = movieData.convertIMDBtoTMDB(movie["imdbID"])
     outdict["Movie"]["langs"] = movie["languages"]
 
     # Sources Section
@@ -123,6 +119,9 @@ def finalizeOutput(muxSorter, demuxData, movie):
         outdict["Sources"][key]["outputDir"] = trackObj["outputDir"]
         outdict["Sources"][key]["sourceDir"] = trackObj["sourceDir"]
         outdict["Sources"][key]["playlistNum"] = trackObj["playlistNum"]
+    # Chapters
+    outdict["ChapterData"] = demuxHelper.CreateChapterList(
+        *[demuxData.filterBySource(key)["outputDir"] for key in demuxData.sources])
 
     # Enabled Track Section
     outdict["Enabled_Tracks"] = {}
@@ -155,4 +154,4 @@ def finalizeOutput(muxSorter, demuxData, movie):
     outputPath = os.path.abspath(os.path.join(".", "output.txt"))
     print(f"Writing to {outputPath}")
     with open(outputPath, "w") as p:
-        p.write(json.dumps(outdict, indent=4))
+        p.write(json.dumps(outdict, indent=4, ensure_ascii=False))

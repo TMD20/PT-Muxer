@@ -2,13 +2,17 @@ import os
 import shutil
 import re
 import subprocess
+from telnetlib import RCTE
+import tempfile
 
 from prompt_toolkit import prompt as input
 from simple_term_menu import TerminalMenu
 from pymediainfo import MediaInfo
+from string import Template
 
 import mediatools.extract as extract
 import tools.general as util
+import time
 
 
 def getFiles(path):
@@ -148,13 +152,6 @@ def getSources(remuxConfig):
     return list
 
 
-def getChapterFile(remuxConfig):
-    keys = list(remuxConfig["Sources"].keys())
-    print("Which Source Has The proper Chapter File")
-    key = keys[TerminalMenu(keys).show()]
-    return os.path.join(remuxConfig["Sources"][key]["outputDir"], "chapters.txt")
-
-
 def getBdinfo(remuxConfig):
     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
     output = os.path.dirname(
@@ -175,3 +172,61 @@ def getEac3to(remuxConfig):
 
 def getMediaInfo(mkv):
     return MediaInfo.parse(mkv, output="", full=False)
+
+
+def CreateChapterList(*sources):
+    path=None
+    if len(sources)>1:
+        print("Which Source Has The proper Chapter File")
+        dir = sources[TerminalMenu(sources).show()]
+        path = os.path.join(dir,"chapters.txt")
+    else:
+        path = os.path.join(sources[0], "chapters.txt")
+    with open(path, "r") as p:
+        lines = p.readlines()
+        i = 0
+        output = []
+        while i < len(lines):
+            time= lines[i]
+            name = lines[i+1]
+            time = time.strip()
+            name= name.strip()
+            #Default chapter name
+            numChapter = re.search("\d+", lines[i+1]).group(0)
+            name=re.sub("NAME=",f"NAME=Chapter {numChapter}",name)
+            output.append({"time": time, "name": name})
+            i = i+2
+        return output
+
+
+def chapterListParser(chapterList):
+    tempData = tempfile.mkstemp()
+    file=tempData[1]
+    with open(file,"w") as p:
+        for dict in chapterList:
+            p.write(dict["time"])
+            p.write("\n")
+            p.write(dict["name"])
+            p.write("\n")
+    return tempData
+
+def writeXML(imdb,tmdb,kind):
+    infile=os.path.join(util.getRootDir(),f"xml/{kind}")
+    
+    tempData= tempfile.mkstemp()
+    outfile=tempData[1]
+    result=None
+    with open(infile, 'r') as f:
+        src = Template(f.read())
+        result = src.substitute({"imdb":imdb,"tmdb":tmdb})
+    with open(outfile, "w") as p:
+        p.writelines(result)
+    return tempData
+
+            
+        
+
+
+
+    
+

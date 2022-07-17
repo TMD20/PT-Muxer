@@ -18,7 +18,8 @@ def mkdirSafe(target):
             os.mkdir(ele)
     
 
-
+def getRootDir():
+    return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     
 def getShowName(path):
@@ -27,7 +28,6 @@ def getShowName(path):
     return show
 
 
-'/home/main/Downloads/Nzbget/Seven.Pounds.2008.1080p.Blu-ray.CEE.AVC.TrueHD.5.1/BDMV/STREAM'
 
 def findFiles(path,string):
     matchlist=[]
