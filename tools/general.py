@@ -21,7 +21,9 @@ def getRootDir():
 
     
 def getShowName(path):
-    show=re.sub(" +"," ",os.path.basename(re.sub("/BDMV/STREAM", "", path)))
+    show = re.sub("/BDMV/STREAM", "", path)
+    show = os.path.basename(show)
+    show=re.sub(" +"," ",show)
     show = re.sub(" ", ".", show)
     return show
 

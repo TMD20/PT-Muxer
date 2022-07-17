@@ -11,8 +11,8 @@ class Blu(MuxOBj):
     def __init__(self):
         super().__init__()
 
-    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
-        super().createMKV(fileName,movieTitle, chapters,xml,  bdinfo,eac3to)
+    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to, commandBool):
+        super().createMKV(fileName, movieTitle, chapters, xml,  bdinfo, eac3to, commandBool)
         tempdir = tempfile.TemporaryDirectory()
         mediainfoPath = os.path.join(tempdir.name,"media.txt")
         mediainfo = remuxHelper.getMediaInfo(fileName)
