@@ -143,7 +143,7 @@ class MuxOBj():
             [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName,"--global-tags",xml], self._out]))
         if commandBool:
             print(" ".join(command))
-            input("\n\nmkvmerge command has tempory files for xml and chapter files\nFiles will be autoremoved on cglose \
+            input("\n\nmkvmerge command has tempory files for xml and chapter files\nFiles will be autoremoved on close \
             \nRun mkvmerge command before closing program\nThen enter any input: ")
             quit()
 
