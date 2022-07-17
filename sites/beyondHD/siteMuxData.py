@@ -5,11 +5,10 @@ from simple_term_menu import TerminalMenu
 from prompt_toolkit import prompt as input
 
 
-import tools.muxHelpers as remuxHelper
-from sites.base.siteMuxData import MuxHelper
+from sites.base.siteMuxData import MuxOBj
 
 
-class BeyondHD(MuxHelper):
+class BeyondHD(MuxOBj):
     def __init__(self):
         super().__init__()
     #Overwrite Filename
@@ -28,7 +27,4 @@ class BeyondHD(MuxHelper):
             choice = inputs[menu.show()]
         return os.path.join(output, fileName)
     
-    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
-        super().createMKV(fileName, movieTitle, chapters, xml,  bdinfo, eac3to)
-        mediainfo = remuxHelper.getMediaInfo(fileName)
-        print(f"\n\n{mediainfo}\n\n")
+

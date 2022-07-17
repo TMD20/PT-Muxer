@@ -1,12 +1,12 @@
 import re
 import os
 
-from sites.base.siteTrackSorter import siteSorter
+from sites.base.siteTrackSorter import siteTrackSorter
 import mediatools.eac3to as eac3to
 import tools.general as util
 
 
-class Blu(siteSorter):
+class Blu(siteTrackSorter):
     def __init__(self):
         super().__init__()
 

@@ -1,4 +1,3 @@
-
 import copy
 import os
 import re
@@ -7,7 +6,7 @@ import subprocess
 import tools.general as util
 
 
-class siteSorter():
+class siteTrackSorter():
     def __init__(self):
         self._unSortedAudio = []
         self._unSortedVideo = []

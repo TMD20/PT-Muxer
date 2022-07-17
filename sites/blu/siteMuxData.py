@@ -1,13 +1,13 @@
-from sites.base.siteMuxData import MuxHelper
-import tools.muxHelpers as remuxHelper
 import os
 import subprocess
 import tempfile
+
+from sites.base.siteMuxData import MuxOBj
+import tools.muxHelpers as remuxHelper
 import tools.general as util
 
 
-
-class Blu(MuxHelper):
+class Blu(MuxOBj):
     def __init__(self):
         super().__init__()
 

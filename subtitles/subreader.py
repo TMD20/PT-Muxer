@@ -1,10 +1,9 @@
-import subtitles.images as subimages
-import subtitles.ocr as subocr
-
 import os
 import tempfile
 import re
 
+import subtitles.images as subimages
+import subtitles.ocr as subocr
 def subreader(tracks,maxLines=None,langs=None):
         maxLines=maxLines or 51
 

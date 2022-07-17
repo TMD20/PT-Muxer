@@ -10,8 +10,8 @@ from PIL import Image
 import langcodes
 
 
-NUM_THREADS = 4
 
+NUM_THREADS = 4
 ocr_queue = queue.Queue()
 
 

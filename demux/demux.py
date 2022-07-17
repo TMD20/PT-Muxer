@@ -7,7 +7,7 @@ import re
 import mediatools.bdinfo as bdinfo
 import mediatools.eac3to as eac3to
 import tools.muxHelpers as demuxHelper
-import sites.pickers.sitedataPicker as siteDataPicker
+import sites.pickers.siteDataPicker as siteDataPicker
 import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
 import subtitles.subreader as subreader

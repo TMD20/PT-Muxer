@@ -1,19 +1,14 @@
-
 import os
 import re
 
-import tools.general as util
 from mediadata.tracksData import TracksData
 import mediatools.eac3to as eac3to
-
-
 
 
 class siteTrackData(TracksData):
     def __init__(self):
         super().__init__()
 
-    
     """
     Public Functions
     """
@@ -22,7 +17,7 @@ class siteTrackData(TracksData):
     ###### This Function use the Tracksdata class to create a TracksData Object Filled with                        #
     #       Raw Tracks Data filled with Data from BDINFO Tracks                                                    #
     #       Additionally it adds Data about the trackname
-    
+
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
@@ -38,9 +33,6 @@ class siteTrackData(TracksData):
 
         return current_tracks
 
-
- 
-
     ################################################################################################################
     #   Getter Functions
     ################################################################################################################
@@ -48,7 +40,6 @@ class siteTrackData(TracksData):
     @property
     def sources(self):
         return self._sources
-
 
     """
     Private Functions
@@ -63,23 +54,20 @@ class siteTrackData(TracksData):
             type = track["type"]
             bdinfo = track["bdinfo_title"]
             compat = track.get("compat")
-            parent=track.get("parent")
+            parent = track.get("parent")
             if type == "audio":
-                track["site_title"] = self._getAudioName(bdinfo, compat,parent)
+                track["site_title"] = self._getAudioName(
+                    bdinfo, compat, parent)
             elif type == "video":
                 track["site_title"] = self._getVideoName(bdinfo)
             elif type == "subtitle":
                 track["site_title"] = self._getSubName(bdinfo)
-    
 
     def _updateTrackDictEac3to(self, tracks):
         for track in tracks:
             type = track["type"]
             line = track["site_title"] or track["bdinfo_title"]
-        
-         
-           
-            
+
             langcode = track["langcode"]
             index = track["index"]
             if type == "audio":
@@ -90,7 +78,6 @@ class siteTrackData(TracksData):
             elif type == "subtitle":
                 track["eac3to"] = eac3to.getSubFileName(
                     langcode, index)
-      
 
     def _updateTrackDictFileOutput(self, tracks, output):
         for track in tracks:
@@ -99,22 +86,21 @@ class siteTrackData(TracksData):
     def _updateTrackDictNotes(self, tracks):
         for track in tracks:
             track["notes"] = "Add Your Own if You want"
-    
-    
+
     def _updateTrackEac3toExtra(self, tracks):
         for track in tracks:
             if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", track["bdinfo_title"], re.IGNORECASE) == None and track["type"] == "audio":
                 track["eac3to_extras"] = track.get("eac3to_extras") or []
                 track["eac3to_extras"].append("-keepDialnorm")
-      
+
     #####################################################################################################################
     #       These Functions Will make a best effort to Give the Track the Proper Name.
     #       Like Sorting Functions These May have to be overwritten based on Specific Site Rules
     ################################################################################################################
 
-    def _getAudioName(self, bdinfo, compat,parent):
+    def _getAudioName(self, bdinfo, compat, parent):
         if compat:
-            return self._getCompatTrack(bdinfo,parent)
+            return self._getCompatTrack(bdinfo, parent)
         else:
             return self._getNormalTrack(bdinfo)
 
@@ -129,38 +115,34 @@ class siteTrackData(TracksData):
   #     Track Name Helpers
   ################################################################################################################
 
-    def _getCompatTrack(self, bdinfo,parent):
+    def _getCompatTrack(self, bdinfo, parent):
         bdinfo = bdinfo.rstrip().lstrip()
         bdinfo = re.sub("/ *", "/ ", bdinfo)
-        site_title=None
-        if re.search("DTS Core",bdinfo):
+        site_title = None
+        if re.search("DTS Core", bdinfo):
             return
-        elif not re.search("True",parent,re.IGNORECASE):
+        elif not re.search("True", parent, re.IGNORECASE):
             return
         elif re.search("Dolby Digital", bdinfo):
-            site_title=f"Compatibility Track / {bdinfo}"
+            site_title = f"Compatibility Track / {bdinfo}"
         elif re.search("AC3 Embedded:", bdinfo):
             match = re.search(".*?:.*?([0-9].*(bit|kbps))", bdinfo).group(1)
-            site_title=f"Compatibility Track / Dolby Digital Audio / {match}"
+            site_title = f"Compatibility Track / Dolby Digital Audio / {match}"
         site_title = re.sub("\/.*DN", "", site_title)
-        return re.sub("  .*", " ",site_title ).strip()
+        return re.sub("  .*", " ", site_title).strip()
 
     def _getNormalTrack(self, bdinfo):
         bdinfo = bdinfo.strip()
         codec = re.search(".*?(?= /)", bdinfo).group(0)
         other = re.search(".*([0-9]\.[0-9].*)", bdinfo).group(1)
 
-        site_title=None
-       
+        site_title = None
 
-        #Dolby Surrond
-        if re.search("Dolby Digital.*Dolby Surround",bdinfo,re.IGNORECASE):
-            match = re.search(".*(?=/ Dolby Surround)",bdinfo).group(0)
+        # Dolby Surrond
+        if re.search("Dolby Digital.*Dolby Surround", bdinfo, re.IGNORECASE):
+            match = re.search(".*(?=/ Dolby Surround)", bdinfo).group(0)
             site_title = f"Dolby Surround / {match}"
-        #Catch all
+        # Catch all
         else:
-             site_title = f"{codec} / {other}"
+            site_title = f"{codec} / {other}"
         return re.sub(" +", " ", site_title).rstrip().lstrip()
-
-
-  

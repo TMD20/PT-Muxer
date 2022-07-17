@@ -5,8 +5,11 @@ import subprocess
 
 from simple_term_menu import TerminalMenu
 from prompt_toolkit import prompt as input
+
 import tools.general as util
-class MuxHelper():
+import tools.muxHelpers as remuxHelper
+
+class MuxOBj():
     def __init__(self):
         self._audio=[]
         self._video=[]
@@ -140,6 +143,11 @@ class MuxHelper():
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
+        
+
+        mediainfo = remuxHelper.getMediaInfo(fileName)
+        print(f"\n\n{mediainfo}\n\n")
+        
 
 
 
