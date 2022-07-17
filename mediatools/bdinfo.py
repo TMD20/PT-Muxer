@@ -1,12 +1,10 @@
 import subprocess
 import re
-import random
 import os
-
-import langcodes
+import tempfile
 
 import tools.general as util
-import tempfile
+
 
 
 class Bdinfo():

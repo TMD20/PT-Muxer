@@ -1,9 +1,7 @@
 import re
 import os
+
 from dotenv import load_dotenv
-
-
-
 from guessit import guessit
 from imdb import Cinemagoer as imdb
 from simple_term_menu import TerminalMenu

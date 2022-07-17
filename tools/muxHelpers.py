@@ -2,18 +2,16 @@ import os
 import shutil
 import re
 import subprocess
-from telnetlib import RCTE
 import tempfile
+from string import Template
 
 from prompt_toolkit import prompt as input
 from simple_term_menu import TerminalMenu
 from pymediainfo import MediaInfo
-from string import Template
+
 
 import mediatools.extract as extract
 import tools.general as util
-import time
-
 
 def getFiles(path):
     currpath = os.getcwd()

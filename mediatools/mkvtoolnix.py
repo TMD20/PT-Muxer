@@ -1,6 +1,4 @@
-import itertools
 import re
-import subprocess
 
 from guessit import guessit
 

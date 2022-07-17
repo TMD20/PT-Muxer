@@ -2,16 +2,8 @@
 import argparse
 import os
 
-
 import demux.demux as demuxAction
 import remux.remux as remuxAction
-
-
-
-
-
-
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -25,7 +17,7 @@ def main():
 
     parser.add_argument('-sl', '--sublang', nargs='?',default=[])
     parser.add_argument('-al', '--audiolang', nargs='?',default=[])
-    parser.add_argument('-s', '--site', default="blu")
+    parser.add_argument('-s', '--site', default=None)
     parser.add_argument('-p', '--sortpref', default="size",
                         choices=['size', 'order'])
     parser.add_argument('-o', '--ocr', default="disabled", choices=['enabled', 'subpref','default',"all","disabled","english"])
