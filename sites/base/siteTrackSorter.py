@@ -3,6 +3,8 @@ import os
 import re
 import subprocess
 
+import xxhash
+
 import tools.general as util
 
 
@@ -66,6 +68,8 @@ class siteTrackSorter():
                 newTrack = copy.deepcopy(oldTrack)
                 newTrack["file"] = newFile
                 newTrack["eac3to"] = newEac3to
+                newTrack["key"] = xxhash.xxh32_hexdigest(
+                    newTrack["bdinfo_title"]+newTrack["sourceKey"] + str(newTrack["index"])+"forced")+"_"+(newTrack["langcode"] or "vid")
 
                
         

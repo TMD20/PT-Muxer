@@ -20,9 +20,15 @@ def main():
     parser.add_argument('-s', '--site', default=None)
     parser.add_argument('-p', '--sortpref', default="size",
                         choices=['size', 'order'])
-    parser.add_argument('-o', '--ocr', default="disabled", choices=['enabled', 'subpref','default',"all","disabled","english"])
+    parser.add_argument('-o', '--ocr', default="disabled", choices=['enabled', 'sublang','default',"all","disabled","english"])
+    parser.add_argument('-v', '--voicerec', default="disabled", choices=['enabled', 'audiolang','default',"all","disabled","english"])
+
     parser.add_argument('-g', '--group', default="Unknown")
     parser.add_argument('-mc', '--mkvcommand', action='store_true')
+
+    parser.add_argument(
+        '--log-level', default='INFO',
+        help='logging level')
 
     args = parser.parse_args()
    

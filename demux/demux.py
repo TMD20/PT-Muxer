@@ -2,6 +2,7 @@ import pprint
 import os
 import json
 import re
+from xml.etree.ElementTree import QName
 
 
 import mediatools.bdinfo as bdinfo
@@ -11,15 +12,17 @@ import sites.pickers.siteDataPicker as siteDataPicker
 import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
 import subtitles.subreader as subreader
+import transcription.voiceRecord as voiceRec
 
 
 def Demux(args):
-    # Create Necessary Params/Objects
     options = demuxHelper.getFiles(args.inpath)
     demuxData = siteDataPicker.pickSite(args.site)
     muxSorter = siteSortPicker.pickSite(args.site)
     sources = getSources(options, args.inpath)
+    print("Creating Demux Folder at\n")
     os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
+    print(os.path.abspath("."))
     print("Getting Basic Movie Data\n\n")
     movie = movieData.matchMovie(sources)
     extractBdinfo(sources, demuxData)
@@ -35,7 +38,6 @@ def getSources(options, inpath):
     for i in range(0, len(sources)):
         if re.search(".iso", sources[i]):
             sources[i] = demuxHelper.Extract(sources[i], inpath)
-    print("Creating Demux Folder\n")
     return sources
 
 
@@ -99,6 +101,23 @@ def machineReader(muxSorter, args, movie):
         subreader.subreader(muxSorter.unSortedSub, ["English"])
     else:
         subreader.subreader(muxSorter.unSortedSub)
+    
+   #Voice Recorder
+
+    if args.voicerec == "disabled":
+        return
+    elif args.voicerec == "enabled":
+        voiceRec.main(muxSorter.enabledAudio)
+    elif args.voicerec == "default":
+        voiceRec.main(muxSorter.unSortedAudio, movie["languages"])
+    elif args.voicerec == "audiolang":
+        voiceRec.main(muxSorter.unSortedAudio, args.audiolang)
+    elif args.voicerec == "english":
+        voiceRec.main(muxSorter.unSortedAudio, ["English"])
+    else:
+        voiceRec.main(muxSorter.unSortedAudio)
+
+
 
 
 def finalizeOutput(muxSorter, demuxData, movie):

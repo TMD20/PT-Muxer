@@ -3,6 +3,7 @@ import queue
 import itertools
 import concurrent
 import concurrent.futures
+from timeit import default_timer as timer
 
 import tesserocr
 import easyocr
@@ -16,6 +17,7 @@ ocr_queue = queue.Queue()
 
 
 def perform_ocr(img):
+
     ocr_obj = ocr_queue.get(block=True, timeout=300)
     if isinstance(ocr_obj, easyocr.easyocr.Reader):
         try:
@@ -43,8 +45,11 @@ def perform_ocr(img):
  
  
 def subocr(files,langcode):
+        start_time = timer()
         for _ in range(NUM_THREADS):
-            ocr_queue.put(getocr_obj(langcode))             
+            ocr_queue.put(getocr_obj(langcode)) 
+        if ocr_queue.queue[0]==None:
+            return ["Language Not Supported"]
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
             res=executor.map(perform_ocr, files)
             
@@ -53,10 +58,17 @@ def subocr(files,langcode):
         for r in res:
             output.append(r)
         ocr_queue.queue.clear()
+        elapsed = timer() - start_time
+        print(f"Execution Time {elapsed } seconds")
         return list(list(itertools.chain.from_iterable(output)))
 def getocr_obj(langcode):
+
     try:
         return easyocr.Reader([langcode],gpu=False)
     except:
-
+        None
+    try:
         return tesserocr.PyTessBaseAPI(path="/usr/share/tesseract-ocr/5/tessdata", lang=langcodes.Language.get(langcode).to_alpha3())
+    except:
+        None
+    return None
