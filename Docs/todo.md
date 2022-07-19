@@ -19,6 +19,7 @@ Not every thing in the list will be possible to accomplish in a automated way
 
 Change bdinfo to select for each track, then extract after
 Add Mkvmerge commands to JSON
+1. Add chinese OCR support Tradition vs Simplied 
 2. Find way to filter similar tracks bluray.com/or track properties
 3. Speech reconition
 3. Add Ability To Add mkvmerge extra commands

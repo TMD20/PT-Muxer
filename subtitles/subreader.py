@@ -8,7 +8,7 @@ def subreader(tracks,maxLines=None,langs=None):
         maxLines=maxLines or 51
 
         for track in tracks:
-            print("Attempting to OCR: ", track["file"])
+            print("\n\nAttempting to OCR: ", track["file"])
             if langs!=None and (track["lang"] not in langs):
                 continue
             with tempfile.TemporaryDirectory() as tmpdirname:
@@ -22,7 +22,6 @@ def subreader(tracks,maxLines=None,langs=None):
               
 
                 lines = subocr.subocr(files[0:maxLines], track["langcode"])
-                print(lines)
     
                 lastline = subocr.subocr([files[-1]],track["langcode"])[0]
 

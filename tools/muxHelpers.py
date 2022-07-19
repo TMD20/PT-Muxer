@@ -8,7 +8,8 @@ from string import Template
 from prompt_toolkit import prompt as input
 from simple_term_menu import TerminalMenu
 from pymediainfo import MediaInfo
-
+from imdb import Cinemagoer as imdb
+from guessit import guessit
 
 import mediatools.extract as extract
 import tools.general as util
@@ -19,6 +20,7 @@ def getFiles(path):
     list1 = util.findFolders(path, "STREAM")
     list2 = util.findFiles(path, "\.iso$")
     list1.extend(list2)
+    os.chdir(currpath)
     return list1
 
 
@@ -47,9 +49,12 @@ def addSources(paths):
 
 
 def createParentDemuxFolder(sources, outpath):
+    title = guessit(sources[0])["title"]
     if len(sources) > 0:
-        folder = f"Mux.{os.urandom(7).hex()}.{util.getShowName(list(dict.fromkeys(sources))[0])}"
+        folder = f"Mux.{os.urandom(7).hex()}.{title}"
         parentDemux = os.path.join(outpath, folder)
+        parentDemux=re.sub(" +"," ",parentDemux)
+        parentDemux=re.sub(" ",".",parentDemux)
         os.mkdir(parentDemux)
         return parentDemux
     else:
@@ -221,7 +226,6 @@ def writeXML(imdb,tmdb,kind):
         p.writelines(result)
     return tempData
 
-            
         
 
 
