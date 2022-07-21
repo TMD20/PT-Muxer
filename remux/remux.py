@@ -44,12 +44,22 @@ def Process(remuxConfig, muxGenerator, outpath, group,commandBool):
     audioCodec = mkvTool.getAudio(remuxConfig)
     audioChannel = mkvTool.getAudioChannel(remuxConfig)
     videoRes = mkvTool.getVideoResolution(remuxConfig)
-
-    xmlTemp = remuxHelper.writeXML(
-        remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], kind)
+    xmlTemp=None
+    filename=None
+    if kind=="movie":
+        xmlTemp = remuxHelper.writeXMLMovie(
+            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
+        fileName = muxGenerator.getFileName(
+            kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel, group) 
+    else:
+        season=remuxConfig["season"]
+        episode=remuxConfig["episode"]
+        xmlTemp = remuxHelper.writeXMLTV(
+            #imdb,tmdb,season,episode
+            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], season,episode)
+        fileName = muxGenerator.getFileName(
+            kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel, group,season,episode) 
     xml=xmlTemp[1]
-    fileName = muxGenerator.getFileName(
-        kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel, group)
     muxGenerator.generateMuxData(remuxConfig)
 
     muxGenerator.createMKV(fileName, movieTitle,

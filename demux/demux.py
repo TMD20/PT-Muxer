@@ -1,8 +1,6 @@
-import pprint
 import os
 import json
 import re
-from xml.etree.ElementTree import QName
 
 
 import mediatools.bdinfo as bdinfo
@@ -13,24 +11,86 @@ import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
+import tools.general as util
 
+def demux(args):
+    #Normalize
+    args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
+    args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
-def Demux(args):
+    options=["Movie","TV"]
+    if options[demuxHelper.Menu(options)]=="Movie":
+        demuxMovie(args)
+    else:
+        demuxTV(args)
+
+def demuxTV(args):
     options = demuxHelper.getFiles(args.inpath)
     demuxData = siteDataPicker.pickSite(args.site)
     muxSorter = siteSortPicker.pickSite(args.site)
+    print("Add Sources For First Episode Demux\n")
     sources = getSources(options, args.inpath)
+    print("What TV Show?")
+    movie = movieData.matchMovie(sources)
+    season=util.getIntInput("Enter Season Number")
+    print("Creating Demux Folder at\n")
+    os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
+
+   
+
+
+    i=1
+    while True:
+        os.mkdir(str(i))
+        os.chdir(str(i))
+        print(os.path.abspath("."))
+        extractBdinfo(sources, demuxData)
+        extractTracks(demuxData)
+        sortTracks(muxSorter, demuxData, movie, args)
+        machineReader(muxSorter, args, movie)
+        finalizeOutput(muxSorter, demuxData, movie,season,i)
+        os.chdir("..")
+        print("Add Another Episode\n")
+        opt=["YES","NO"]
+        if opt[demuxHelper.Menu(opt)]=="NO":
+            break
+        #prepare for next loop
+        i=i+1
+        options = demuxHelper.getFiles(args.inpath)
+        demuxData = siteDataPicker.pickSite(args.site)
+        muxSorter = siteSortPicker.pickSite(args.site)
+
+        print("Change Sources\n")
+        if demuxHelper.Menu(["YES", "NO"]) == "YES":
+            sources = getSources(options, args.inpath)
+        print("Creating Demux Folder at\n")
+
+
+
+
+
+def demuxMovie(args):
+    options = demuxHelper.getFiles(args.inpath)
+    demuxData = siteDataPicker.pickSite(args.site)
+    muxSorter = siteSortPicker.pickSite(args.site)
+    print("Add Sources For Movie Demux\n")
+    sources = getSources(options, args.inpath)
+    print("What Movie?\n\n")
+    movie = movieData.matchMovie(sources)
     print("Creating Demux Folder at\n")
     os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
     print(os.path.abspath("."))
-    print("Getting Basic Movie Data\n\n")
-    movie = movieData.matchMovie(sources)
     extractBdinfo(sources, demuxData)
     extractTracks(demuxData)
     sortTracks(muxSorter, demuxData, movie, args)
     machineReader(muxSorter, args, movie)
-
     finalizeOutput(muxSorter, demuxData, movie)
+    
+
+
+
+
+    
 
 
 def getSources(options, inpath):
@@ -48,7 +108,9 @@ def extractBdinfo(sources, demuxData):
     bdObjs = []
     outputs = []
     for source in sources:
-        print("\n", source, "\n")
+        print( f"\n{source}\n")
+        print("Pick a playlist to extract from\n")
+
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
         os.chdir(output)
         bdObj = bdinfo.Bdinfo()
@@ -83,7 +145,7 @@ def sortTracks(muxSorter, demuxData, movie, args):
     # Sort/enable Tracks Based on Site
     muxSorter.tracksDataObj = demuxData
     muxSorter.sortTracks(movie["languages"],
-                         args.sublang, args.audiolang, args.sortpref)
+                         args.audiolang, args.sublang, args.sortpref)
     muxSorter.addForcedSubs(movie["languages"], args.audiolang)
 
 
@@ -92,15 +154,17 @@ def machineReader(muxSorter, args, movie):
     if args.ocr == "disabled":
         return
     elif args.ocr == "enabled":
-        subreader.subreader(muxSorter.enabledSub)
+        subreader.subreader(muxSorter.enabledSub,keep=args.keepocr)
     elif args.ocr == "default":
-        subreader.subreader(muxSorter.unSortedSub, movie["languages"])
+        subreader.subreader(muxSorter.unSortedSub,
+                            langs=movie["languages"], keep=args.keepocr)
     elif args.ocr == "sublang":
-        subreader.subreader(muxSorter.unSortedSub, args.sublang)
+        subreader.subreader(muxSorter.unSortedSub,
+                            langs=args.sublang, keep=args.keepocr)
     elif args.ocr == "english":
-        subreader.subreader(muxSorter.unSortedSub, ["English"])
+        subreader.subreader(muxSorter.unSortedSub,langs=["English"],keep=args.keepocr)
     else:
-        subreader.subreader(muxSorter.unSortedSub)
+        subreader.subreader(muxSorter.unSortedSub, keep=args.keepocr)
     
    #Voice Recorder
 
@@ -120,15 +184,23 @@ def machineReader(muxSorter, args, movie):
 
 
 
-def finalizeOutput(muxSorter, demuxData, movie):
+def finalizeOutput(muxSorter, demuxData, movie,season=None,episode=None):
     # Export
     # Movie Info Section
+
+
     outdict = {}
     outdict["Movie"] = {}
     outdict["Movie"]["year"] = movie["year"]
     outdict["Movie"]["imdb"] = movie["imdbID"]
     outdict["Movie"]["tmdb"] = movieData.convertIMDBtoTMDB(movie["imdbID"])
     outdict["Movie"]["langs"] = movie["languages"]
+    if episode:
+        outdict["season"] = season
+        outdict["episode"] = episode
+        
+
+
 
     # Sources Section
     outdict["Sources"] = {}
@@ -170,7 +242,8 @@ def finalizeOutput(muxSorter, demuxData, movie):
         key = track["key"]
         track.pop("key")
         outdict["Tracks_Details"]["Video"][key] = track
-    outputPath = os.path.abspath(os.path.join(".", "output.txt"))
+    outputPath = os.path.abspath(os.path.join(".", "output.json"))
     print(f"Writing to {outputPath}")
+    print("If this is a TV show double check episode in json")
     with open(outputPath, "w") as p:
         p.write(json.dumps(outdict, indent=4, ensure_ascii=False))

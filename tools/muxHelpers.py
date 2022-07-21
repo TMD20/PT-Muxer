@@ -8,11 +8,12 @@ from string import Template
 from prompt_toolkit import prompt as input
 from simple_term_menu import TerminalMenu
 from pymediainfo import MediaInfo
-from imdb import Cinemagoer as imdb
 from guessit import guessit
+
 
 import mediatools.extract as extract
 import tools.general as util
+import mediadata.movieData as movieData
 
 def getFiles(path):
     currpath = os.getcwd()
@@ -33,16 +34,13 @@ def addSources(paths):
     sources = []
     user_options=["YES","NO"]
 
-    source_menu = TerminalMenu(paths)
-    user_menu=TerminalMenu(user_options)
-    
 
     addsource = "YES"
     while addsource=="YES":
-        dir = paths[source_menu.show()]
+        dir =paths[Menu(paths)]
         sources.append(dir)
         print("Add Another Source?\n")
-        addsource = user_options[user_menu.show()]
+        addsource = user_options[Menu(user_options)]
     res = []
     [res.append(x) for x in sources if x not in res]
     return res
@@ -138,16 +136,16 @@ def getOutputList(path):
         dir = tuple[0]
         files = tuple[2]
         for file in files:
-            if file == "output.txt":
+            if file == "output.json":
                 demuxList.append(os.path.join(dir, file))
     return demuxList
 
 
 def pickOutput(demuxList):
     if len(demuxList) == 0:
-        print("Deep Search of Directory Could Not Find any output.txt Files")
+        print("Deep Search of Directory Could Not Find any output.json Files")
         quit()
-    return demuxList[TerminalMenu(demuxList).show()]
+    return demuxList[Menu(demuxList)]
 
 
 def getSources(remuxConfig):
@@ -181,7 +179,7 @@ def CreateChapterList(*sources):
     path=None
     if len(sources)>1:
         print("Which Source Has The proper Chapter File")
-        dir = sources[TerminalMenu(sources).show()]
+        dir=sources[Menu(sources)]
         path = os.path.join(dir,"chapters.txt")
     else:
         path = os.path.join(sources[0], "chapters.txt")
@@ -213,8 +211,8 @@ def chapterListParser(chapterList):
             p.write("\n")
     return tempData
 
-def writeXML(imdb,tmdb,kind):
-    infile=os.path.join(util.getRootDir(),f"xml/{kind}")
+def writeXMLMovie(imdb,tmdb):
+    infile=os.path.join(util.getRootDir(),f"xml/movie")
     
     tempData= tempfile.mkstemp()
     outfile=tempData[1]
@@ -226,8 +224,26 @@ def writeXML(imdb,tmdb,kind):
         p.writelines(result)
     return tempData
 
-        
+def writeXMLTV(imdb,tmdb,season,episode):
+    infile=os.path.join(util.getRootDir(),f"xml/movie")
+    tempData= tempfile.mkstemp()
+    outfile=tempData[1]
+    result=None
 
+    imdbEP=movieData.getEpisode(movieData.getByID(imdb),season,episode)["imdbID"]
+    totalEP=movieData.getTotalEpisodes(movieData.getByID(imdb), season)
+
+
+    with open(infile, 'r') as f:
+        src = Template(f.read())
+        result = src.substitute({"imdb":imdb,"tmdb":tmdb,"imdbEP":imdbEP,"totalEP":totalEP})
+    with open(outfile, "w") as p:
+        p.writelines(result)
+    return tempData
+def Menu(items):
+    menu = TerminalMenu(items)
+    return menu.show()
+  
 
 
     

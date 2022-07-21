@@ -14,7 +14,7 @@ def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
 
     for track in tracks:
         print("\n\nAttempting to Transcription of: ", track["file"])
-        if langs!=None and (track["lang"] not in langs):
+        if langs and (track["lang"].lower() not in langs):
             continue
         langcode={
         "en":"en-us",

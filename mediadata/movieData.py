@@ -4,8 +4,9 @@ import os
 from dotenv import load_dotenv
 from guessit import guessit
 from imdb import Cinemagoer as imdb
-from simple_term_menu import TerminalMenu
 from tmdbv3api import TMDb, Find
+
+import tools.muxHelpers as remuxHelper
 
 
 load_dotenv()
@@ -32,10 +33,9 @@ def matchMovie(sources):
         result=ia.get_movie(re.sub("tt", "", id))
     else:
         titles = list(map(lambda x: x["long imdb title"], results))
-        menu = TerminalMenu(titles)
         index = None
         while index == None:
-            index = menu.show()
+            index = remuxHelper.Menu(titles)
         result= results[index]
     ia.update(result, info=['main'])
     return result
@@ -55,6 +55,20 @@ def convertIMDBtoTMDB(id):
     results = find.find_by_imdb_id(id)["movie_results"]
     if len(results)>0:
         return results[0]["id"]
+def getSeason(sources):
+    details = guessit(sources[0])
+    season = details.get("season")
+    return season
+def getTotalEpisodes(movie,season):
+    ia.update(movie, 'episodes')
+    return len(movie["episodes"][season].keys())
+
+
+def getEpisode(movie, season,episode):
+    ia.update(movie, 'episodes')
+    episode = movie["episodes"][season][episode]
+    ia.update(episode, info=['main'])
+    return episode
 
 
 

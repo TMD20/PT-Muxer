@@ -45,7 +45,7 @@ def findFolders(path, string):
     for tuple in os.walk(path):
         dir = tuple[0]
         if re.search(string, dir,re.IGNORECASE) != None:
-                matchlist.append(os.path.join(dir))
+            matchlist.append(os.path.join(dir))
     return matchlist
 
 
@@ -69,13 +69,20 @@ def removeDupesList(list):
     dupe=set()
     res=[]
     for ele in list:
-        if ele not in set:
+        if ele not in dupe:
             res.append(ele)
             dupe.add(ele)
     return res
 
-        
-        
+def getIntInput(string):
+    while True:
+        num = input(f"\n\n{string} ")
+        try:
+            int(num)
+            return num
+        except:
+            None
+    
         
         
         
