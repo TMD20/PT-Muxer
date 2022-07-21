@@ -79,15 +79,8 @@ class Bdinfo():
     '''
 
     def _getIndex(self):
-        while True:
-            playlistNum = input("\n\nEnter a playlist: ")
-            try:
-                int(playlistNum)
-                self._playlistNum = playlistNum
-                break
-            except:
-                None
-
+        self._playlistNum = util.getIntInput("Enter a playlist: ")
+       
     @util.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
         self._playlist = subprocess.run(["sudo", "bdinfo", "-l", self._mediaDir, "."],

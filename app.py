@@ -4,6 +4,7 @@ import os
 
 import demux.demux as demuxAction
 import remux.remux as remuxAction
+import tools.muxHelpers as muxHelpers
 
 def main():
     parser = argparse.ArgumentParser()
@@ -25,18 +26,22 @@ def main():
 
     parser.add_argument('-g', '--group', default="Unknown")
     parser.add_argument('-mc', '--mkvcommand', action='store_true')
+    parser.add_argument('-k', '--keepocr', action='store_true')
 
     parser.add_argument(
         '--log-level', default='INFO',
         help='logging level')
 
     args = parser.parse_args()
+
+
    
     if args.demux:
         os.chdir(args.outpath)
-        demuxAction.Demux(args)
+        demuxAction.demux(args)
+            
 
-    if args.remux:
+    elif args.remux:
         remuxAction.Remux(args)
 
    

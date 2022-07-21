@@ -3,7 +3,6 @@ import re
 import os
 import subprocess
 
-from simple_term_menu import TerminalMenu
 from prompt_toolkit import prompt as input
 
 import tools.general as util
@@ -116,19 +115,25 @@ class MuxOBj():
         self._sub=(list(itertools.chain.from_iterable(out)))
        
 
-    def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel,group):
+    def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel,group,season=None,episode=None):
         inputs = ["YES","NO"]
 
         if kind == "movie":
             fileName = f"{movieName}.{year}.{videoRes}.{mediatype}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = re.sub(" +", " ", fileName)
             fileName = re.sub(" +", ".", fileName)
+        else:
+        
+            fileName = f"{movieName}.{year}.S{season//10}{season%10}.E0{episode}.{videoRes}.{mediatype}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = re.sub(" +", " ", fileName)
+            fileName = re.sub(" +", ".", fileName)
+
         print(f"Is this FileName Correct: {fileName}\n")
-        menu = TerminalMenu(inputs)
-        choice = inputs[menu.show()]
+        choice =  inputs[remuxHelper.Menu(inputs)]
         while choice !="YES":
             fileName = input("Enter New Name: ", default=fileName)
             print("Is the File Correct Now\n")
-            choice = inputs[menu.show()]
+            choice = inputs[remuxHelper.Menu(inputs)]
         return os.path.join(output, fileName)
 
     def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to,commandBool):

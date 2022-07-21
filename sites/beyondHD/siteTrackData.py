@@ -15,16 +15,16 @@ class BeyondHD(siteTrackData):
     def _convertFlac(self, current_tracks, output):
         for i in range(len(current_tracks)):
             track = current_tracks[i]
+            if track["type"] != "audio":
+                continue
             title = track["bdinfo_title"]
             channels = re.search("\d.\d", title)
             if channels == None:
                 continue
             channels = float(channels.group(0))
-
-            trackType = track["type"]
             eac3to = track["eac3to"]
             file = track["file"]
-            if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", title, re.IGNORECASE) and trackType == "audio" \
+            if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", title, re.IGNORECASE)\
                     and channels < 3.0:
                 eac3to = re.sub("\..*", ".flac", eac3to)
                 file = os.path.join(
