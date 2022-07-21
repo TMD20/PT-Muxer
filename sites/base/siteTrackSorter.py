@@ -215,7 +215,8 @@ class siteTrackSorter():
             else:
                 mainTracks.extend(newTracks)
         # Make Main Audio Default
-        mainTracks[0]["default"] = True
+        if len(mainTracks)>0:
+            mainTracks[0]["default"] = True
         self._enabledAudio.extend(mainTracks)
 
     def _sortCompatAudio(self, audioTracks):

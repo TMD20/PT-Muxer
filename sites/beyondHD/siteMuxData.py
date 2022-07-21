@@ -1,35 +1,57 @@
 import os
 import re
 
-from prompt_toolkit import prompt as input
-
+from InquirerPy import inquirer
 
 from sites.base.siteMuxData import MuxOBj
-import tools.muxHelpers as demuxHelper
+import mediatools.mkvtoolnix as mkvTool
+import mediadata.movieData as movieData
+import tools.general as util
+
 
 
 class BeyondHD(MuxOBj):
     def __init__(self):
         super().__init__()
-    #Overwrite Filename
+    # Overwrite Filename
 
-    def getFileName(self, kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel, group,season=None, episode=None):
-        inputs = ["YES", "NO"]
+    def getFileName(self, kind, remuxConfig, movie, group):
+        hdr = mkvTool.getHDR(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoCodec = mkvTool.getVideo(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        mediaType = mkvTool.getMediaType(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoRes = mkvTool.getVideoResolution(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
+        audioCodec = mkvTool.getAudio(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        audioChannel = mkvTool.getAudioChannel(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        
+        movieName = movieData.getMovieName(movie)
+        movieYear = movieData.getMovieYear(movie)
+
+        season = remuxConfig.get("Season")
+        episode = remuxConfig.get("Episode")
+       
         if kind == "movie":
-            fileName = f"{movieName}.{year}.{mediatype}.{videoRes}.{audioCodec}.{audioChannel}.{videoCodec}.{hdr}.REMUX-{group}.mkv"
-            fileName = re.sub(" +", ".", fileName)
+            fileName = f"{movieName}.{movieYear}.{mediaType}.{videoRes}.{audioCodec}.{audioChannel}.{videoCodec}.{hdr}.REMUX-{group}.mkv"
         else:
-            fileName = f"{movieName}.{year}.S{season//10}{season&10}.E0{episode}.{videoRes}.{mediatype}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = re.sub(" +", " ", fileName)
-            fileName = re.sub(" +", ".", fileName)
-        print(f"Is this FileName Correct: {fileName}\n")
-        choice =  inputs[demuxHelper.Menu(inputs)]
+            fileName = f"{movieName}.{movieYear}.S{season//10}{season&10}.E0{episode}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
 
-        while choice !="YES":
-            fileName = input("Enter New Name: ", default=fileName)
-            print("Is the File Correct Now\n")
-            choice = inputs[demuxHelper.Menu(inputs)]
-        return os.path.join(output, fileName)
-    
+        # normalize
+        fileName = re.sub(" +", " ", fileName)
+        fileName = re.sub(" +", ".", fileName)
+        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
+        
+        inputs = ["YES", "NO"]
+        choice = util.Menu(
+            inputs, f"Is this FileName Correct: {fileName}\n")
 
+        while choice != "YES":
+            fileName = inquirer.text(
+                message="Enter New FileName: ", default=fileName).execute()
+            choice = util.Menu(inputs, "Is the File Correct Now\n")
+        return os.path.abspath(os.path.join(".", fileName))

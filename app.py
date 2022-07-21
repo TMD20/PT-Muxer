@@ -16,8 +16,8 @@ def main():
     mux.add_argument('-d', '--demux', action='store_true')
     mux.add_argument('-r', '--remux', action='store_true')
 
-    parser.add_argument('-sl', '--sublang', nargs='?',default=[])
-    parser.add_argument('-al', '--audiolang', nargs='?',default=[])
+    parser.add_argument('-sl', '--sublang', nargs='*', default=[])
+    parser.add_argument('-al', '--audiolang', nargs='*', default=[])
     parser.add_argument('-s', '--site', default=None)
     parser.add_argument('-p', '--sortpref', default="size",
                         choices=['size', 'order'])
@@ -25,7 +25,6 @@ def main():
     parser.add_argument('-v', '--voicerec', default="disabled", choices=['enabled', 'audiolang','default',"all","disabled","english"])
 
     parser.add_argument('-g', '--group', default="Unknown")
-    parser.add_argument('-mc', '--mkvcommand', action='store_true')
     parser.add_argument('-k', '--keepocr', action='store_true')
 
     parser.add_argument(

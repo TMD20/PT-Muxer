@@ -29,7 +29,9 @@ def subreader(tracks,maxLines=None,langs=None,keep=False):
 
                 lines = subocr.subocr(files[0:maxLines], track["langcode"])
     
-                lastline = subocr.subocr([files[-1]],track["langcode"])[0]
+                lastline = subocr.subocr([files[-1]],track["langcode"])
+                if len(lastline)>0:
+                    lastline=lastline[0]
 
                 lines.append(
                     f"SUBPARSER_LAST_LINE = {lastline}")
