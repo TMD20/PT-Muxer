@@ -60,7 +60,7 @@ def subocr(files,langcode):
         ocr_queue.queue.clear()
         elapsed = timer() - start_time
         print(f"Execution Time {elapsed } seconds")
-        return list(list(itertools.chain.from_iterable(output)))
+        return list(itertools.chain.from_iterable(output))
 def getocr_obj(langcode):
 
     try:

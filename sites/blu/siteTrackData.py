@@ -27,7 +27,9 @@ class Blu(siteTrackData):
                 newTrack = copy.deepcopy(track)
                 newTrack["notes"] = "Check Log to see if this Track has padding"
                 match = re.search(".*([0-9]\.[0-9].*)", title).group(1)
-                newTrack["site_title"] = f"FLAC Audio / {match}"
+                newTitle= f"FLAC Audio / {match}"
+                newTitle=re.sub(" +"," ",newTitle)
+                newTrack["site_title"] =newTitle
                 newTrack["eac3to"] = re.sub("\..*", ".flac", track["eac3to"])
                 newTrack["file"] = os.path.join(
                     output, newTrack["eac3to"].split(":")[1])

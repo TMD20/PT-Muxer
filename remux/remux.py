@@ -1,69 +1,94 @@
 import json
 import os
 
-import tools.muxHelpers as remuxHelper
+from pymediainfo import MediaInfo
+
+import remux.helper as remuxHelper
 import mediadata.movieData as movieData
-import mediatools.mkvtoolnix as mkvTool
 import sites.pickers.siteMuxPicker as muxPicker
+import tools.general as util
 
 
 def Remux(args):
-    muxGenerator = muxPicker.pickSite(args.site)
-    remuxConfig = getRemuxConfig(args.inpath)
-
-    sources = remuxHelper.getSources(remuxConfig)
-    if len(sources) == 0:
-        print("No Sources")
+    #Variables
+    remuxConfigPaths = remuxHelper.getRemuxConfigs(args.inpath)
+    movie=None
+    if not remuxConfigPaths or len(remuxConfigPaths)==0:
+        print("You Must Pick at list one Config")
         quit()
-    Process(remuxConfig, muxGenerator, args.outpath, args.group,args.mkvcommand)
+
+    fileNameList = []
+    movieTitleList=[]
+    for remuxConfigPath in remuxConfigPaths:
+        print(f"Preparing Data for {remuxConfigPath}")
+
+        remuxConfig = None
+        muxGenerator = muxPicker.pickSite(args.site)
+
+        with open(remuxConfigPath, "r") as p:
+            remuxConfig = json.loads(p.read())
+            
+        if remuxHelper.checkMissing(remuxConfig) == False:
+            continue
+        if movie==None:
+            movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
+        kind = movieData.getKind(movie)
+     
+        os.chdir(args.outpath)
+        fileName = muxGenerator.getFileName(kind, remuxConfig, movie, args.group)
+        fileNameList.append(fileName)
+        movieTitleList.append(movieData.getMovieTitle(movie))
+    for i in range(len(fileNameList)):
+        fileName=fileNameList[i]
+        movieTitle=movieTitleList[i]
+        muxGenerator = muxPicker.pickSite(args.site) 
+        ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator)
+    for ele in fileNameList:
+         print(f"New Files at {ele}\n")
+         mediainfo = MediaInfo.parse(ele, output="", full=False)
+         print(f"\n\n{mediainfo}\n\n")
+    
+    
 
 
-def getRemuxConfig(inpath):
-    remuxConfig = None
 
-    remuxConfigPath = remuxHelper.pickOutput(
-        remuxHelper.getOutputList(inpath))
-
-    with open(remuxConfigPath, "r") as p:
-        remuxConfig = json.loads(p.read())
-    return remuxConfig
-
-
-def Process(remuxConfig, muxGenerator, outpath, group,commandBool):
+def ProcessBatch(fileName,movieTitle,kind,remuxConfig,muxGenerator):
+    #Variables
     chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
-    chapters=chaptersTemp[1]
-    movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
-    movieName = movieData.getMovieName(movie)
 
-    movieYear = movieData.getMovieYear(movie)
-    movieTitle = f"{movieName} ({movieYear})"
-    kind = movieData.getKind(movie)
-    mediatype = mkvTool.getMediaType(remuxConfig)
-    hdr = mkvTool.getHDR(remuxConfig)
-    videoCodec = mkvTool.getVideo(remuxConfig)
-    audioCodec = mkvTool.getAudio(remuxConfig)
-    audioChannel = mkvTool.getAudioChannel(remuxConfig)
-    videoRes = mkvTool.getVideoResolution(remuxConfig)
-    xmlTemp=None
-    filename=None
+    xmlTemp = None
     if kind=="movie":
         xmlTemp = remuxHelper.writeXMLMovie(
             remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
-        fileName = muxGenerator.getFileName(
-            kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel, group) 
     else:
-        season=remuxConfig["season"]
-        episode=remuxConfig["episode"]
+        season=remuxConfig["Season"]
+        episode=remuxConfig["Episode"]
         xmlTemp = remuxHelper.writeXMLTV(
             #imdb,tmdb,season,episode
-            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], season,episode)
-        fileName = muxGenerator.getFileName(
-            kind, mediatype, hdr, outpath, movieName, movieYear, videoRes, videoCodec, audioCodec, audioChannel, group,season,episode) 
-    xml=xmlTemp[1]
+            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], season,episode) 
+
     muxGenerator.generateMuxData(remuxConfig)
 
     muxGenerator.createMKV(fileName, movieTitle,
-                           chapters, xml,  remuxHelper.getBdinfo(remuxConfig), remuxHelper.getEac3to(remuxConfig), commandBool)
+                           chaptersTemp[1], xmlTemp[1],  util.getBdinfo(remuxConfig), util.getEac3to(remuxConfig))
+
     os.close(chaptersTemp[0])
     os.close(xmlTemp[0])
-    print(f"New File Finished at: {fileName}")
+   
+
+    
+
+
+
+    
+
+
+
+
+   
+   
+   
+   
+   
+  
+  

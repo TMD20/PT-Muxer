@@ -2,6 +2,8 @@ import os
 import re
 import functools
 
+from InquirerPy import inquirer
+
 def mkdirSafe(target):
     if len(os.path.splitext(target)[1])>0:
         target=os.path.dirname(target)
@@ -82,13 +84,31 @@ def getIntInput(string):
             return num
         except:
             None
-    
+
+
+def Menu(items, message):
+    return inquirer.select(message=f"\n{message}\n", choices=items).execute()
         
         
-        
-        
-        
-        
+def validateFiles(fileList):
+    for file in fileList:
+        if not os.path.exists(file):
+            return file
+
+def getBdinfo(remuxConfig):
+    key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
+    output = os.path.dirname(
+        remuxConfig["Tracks_Details"]["Video"][key]["file"])
+    return findFiles(output,"bdinfo")[0]
+   
+
+
+def getEac3to(remuxConfig):
+    key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
+    output = os.path.dirname(
+        remuxConfig["Tracks_Details"]["Video"][key]["file"])
+    return findFiles(output,"eac3to")[0]
+       
         
     
 

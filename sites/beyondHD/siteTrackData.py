@@ -31,6 +31,7 @@ class BeyondHD(siteTrackData):
                     output, eac3to.split(":")[1])
                 match = re.search(".*([0-9]\.[0-9].*)", title).group(1)
                 title = f"FLAC Audio / {match}"
+                title=re.sub(" +"," ",title)
             track["site_title"] = title
             track["file"] = file
             track["eac3to"] = eac3to

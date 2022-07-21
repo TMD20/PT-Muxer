@@ -6,7 +6,7 @@ from guessit import guessit
 from imdb import Cinemagoer as imdb
 from tmdbv3api import TMDb, Find
 
-import tools.muxHelpers as remuxHelper
+import tools.general as util
 
 
 load_dotenv()
@@ -33,10 +33,11 @@ def matchMovie(sources):
         result=ia.get_movie(re.sub("tt", "", id))
     else:
         titles = list(map(lambda x: x["long imdb title"], results))
-        index = None
-        while index == None:
-            index = remuxHelper.Menu(titles)
-        result= results[index]
+        match = None
+        while match == None:
+            match= util.Menu(titles,'What Movie/TV Show')
+        result=results[titles.index(match)]
+        
     ia.update(result, info=['main'])
     return result
 
@@ -71,5 +72,9 @@ def getEpisode(movie, season,episode):
     return episode
 
 
+def getMovieTitle(movie):
+    movieName = getMovieName(movie)
+    movieYear = getMovieYear(movie)
+    return f"{movieName} ({movieYear})"
 
   

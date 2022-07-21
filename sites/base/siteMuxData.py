@@ -3,32 +3,33 @@ import re
 import os
 import subprocess
 
-from prompt_toolkit import prompt as input
+from InquirerPy import inquirer
 
 import tools.general as util
-import tools.muxHelpers as remuxHelper
+import mediatools.mkvtoolnix as mkvTool
+import mediadata.movieData as movieData
+
 
 class MuxOBj():
     def __init__(self):
-        self._audio=[]
-        self._video=[]
-        self._sub=[]
-        self._out=None
+        self._audio = []
+        self._video = []
+        self._sub = []
+        self._out = None
 
-    def generateMuxData(self,remuxConfig):
+    def generateMuxData(self, remuxConfig):
         self._addAudioTracks(remuxConfig)
         self._addVideoTracks(remuxConfig)
         self._addSubTracks(remuxConfig)
-        self._out =  list(itertools.chain.from_iterable([self._video,self._audio,self._sub]))
-
-
+        self._out = list(itertools.chain.from_iterable(
+            [self._video, self._audio, self._sub]))
 
     @property
     def out(self):
         return self._out
 
-    def _addVideoTracks(self,remuxConfig):
-        out=[]
+    def _addVideoTracks(self, remuxConfig):
+        out = []
         langcodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
         langcode = remuxConfig["Tracks_Details"]["Audio"][langcodeKey]["langcode"]
         for i in range(len(remuxConfig["Enabled_Tracks"]["Video"])):
@@ -38,24 +39,22 @@ class MuxOBj():
             name = trackjson["site_title"]
             file = trackjson["file"]
 
-
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
 
-            default=["--default-track-flag", "0:0"]
+            default = ["--default-track-flag", "0:0"]
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
             temp.extend(default)
             temp.append(file)
             out.append(temp)
-        self._video=list(itertools.chain.from_iterable(out))
+        self._video = list(itertools.chain.from_iterable(out))
 
-
-    def _addAudioTracks(self,remuxConfig):
+    def _addAudioTracks(self, remuxConfig):
         out = []
         for i in range(len(remuxConfig["Enabled_Tracks"]["Audio"])):
-            key =remuxConfig["Enabled_Tracks"]["Audio"][i]
+            key = remuxConfig["Enabled_Tracks"]["Audio"][i]
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
             langcode = trackjson["langcode"]
@@ -65,24 +64,22 @@ class MuxOBj():
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
             default = ["--default-track-flag", "0:0"]
-            if trackjson.get("default")==True:
+            if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
             temp.extend(default)
             if re.search("commentary", name, re.IGNORECASE):
                 temp.extend(["--commentary-flag", "0"])
-            
+
             temp.append(file)
             out.append(temp)
-     
-        self._audio=list(itertools.chain.from_iterable(out))
-        
 
-    def _addSubTracks(self,remuxConfig):
-        out=[]
+        self._audio = list(itertools.chain.from_iterable(out))
+
+    def _addSubTracks(self, remuxConfig):
+        out = []
         for i in range(len(remuxConfig["Enabled_Tracks"]["Sub"])):
-            key =remuxConfig["Enabled_Tracks"]["Sub"][i]
+            key = remuxConfig["Enabled_Tracks"]["Sub"][i]
             key = str(key)
-            
 
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
@@ -92,10 +89,10 @@ class MuxOBj():
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]
-            
-            if trackjson.get("default")==True:
+
+            if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
-            
+
             if trackjson.get("forced") == True:
                 forced = ["--forced-display-flag", "0:1"]
             temp.extend(default)
@@ -107,59 +104,58 @@ class MuxOBj():
                     temp.extend(["--hearing-impaired-flag", "0:1"])
                 if re.search("commentary", name, re.IGNORECASE):
                     temp.extend(["--commentary-flag", "0:1"])
-            
-          
 
             temp.append(file)
             out.append(temp)
-        self._sub=(list(itertools.chain.from_iterable(out)))
-       
+        self._sub = (list(itertools.chain.from_iterable(out)))
 
-    def getFileName(self,kind, mediatype, hdr, output, movieName, year, videoRes, videoCodec, audioCodec, audioChannel,group,season=None,episode=None):
-        inputs = ["YES","NO"]
+    def getFileName(self, kind,remuxConfig,movie,group):
+        videoCodec = mkvTool.getVideo(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        mediaType = mkvTool.getMediaType(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoRes = mkvTool.getVideoResolution(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+
+        audioCodec = mkvTool.getAudio(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        audioChannel = mkvTool.getAudioChannel(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        
+        movieName = movieData.getMovieName(movie)
+        movieYear = movieData.getMovieYear(movie)
+
+        season = remuxConfig.get("Season")
+        episode = remuxConfig.get("Episode")
 
         if kind == "movie":
-            fileName = f"{movieName}.{year}.{videoRes}.{mediatype}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = re.sub(" +", " ", fileName)
-            fileName = re.sub(" +", ".", fileName)
+            fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         else:
+            fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}.E{episode//10}{episode%10}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+        # Normalize
+        fileName = re.sub(" +", " ", fileName)
+        fileName = re.sub(" +", ".", fileName)
+        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
         
-            fileName = f"{movieName}.{year}.S{season//10}{season%10}.E0{episode}.{videoRes}.{mediatype}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = re.sub(" +", " ", fileName)
-            fileName = re.sub(" +", ".", fileName)
+        inputs = ["YES", "NO"]
+        choice = util.Menu(
+            inputs, f"Is this FileName Correct: {fileName}\n")
+        while choice != "YES":
+            fileName = inquirer.text(
+                message="Enter New FileName: ", default=fileName).execute()
+            choice = util.Menu(inputs, "Is the File Correct Now\n")
+        return os.path.abspath(os.path.join(".", fileName))
 
-        print(f"Is this FileName Correct: {fileName}\n")
-        choice =  inputs[remuxHelper.Menu(inputs)]
-        while choice !="YES":
-            fileName = input("Enter New Name: ", default=fileName)
-            print("Is the File Correct Now\n")
-            choice = inputs[remuxHelper.Menu(inputs)]
-        return os.path.join(output, fileName)
-
-    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to,commandBool):
-        mkvmergeBin="/usr/bin/mkvmerge"
-      
+    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
+        mkvmergeBin = "/usr/bin/mkvmerge"
 
         if not os.path.isfile(mkvmergeBin):
-                mkvmergeBin= os.path.join(util.getRootDir(), "binaries/mkvmerge")
-          
-       
-        command = list(itertools.chain.from_iterable(
-            [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName,"--global-tags",xml], self._out]))
-        if commandBool:
-            print(" ".join(command))
-            input("\n\nmkvmerge command has tempory files for xml and chapter files\nFiles will be autoremoved on close \
-            \nRun mkvmerge command before closing program\nThen enter any input: ")
-            quit()
+            mkvmergeBin = os.path.join(util.getRootDir(), "binaries/mkvmerge")
 
+        command = list(itertools.chain.from_iterable(
+            [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
+        commandStr = " ".join(command)
+        print(f"Running This Command\n{commandStr}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
-        
-
-        mediainfo = remuxHelper.getMediaInfo(fileName)
-        print(f"\n\n{mediainfo}\n\n")
-        
-
-
-
