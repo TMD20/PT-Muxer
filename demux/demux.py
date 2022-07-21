@@ -31,15 +31,31 @@ def demuxTV(args):
     options = demuxHelper.getBDMVs(args.inpath)
     demuxData = siteDataPicker.pickSite(args.site)
     muxSorter = siteSortPicker.pickSite(args.site)
+    choices = ["Yes", "No"]
+
     print("Add Sources For First Episode Demux\n")
     sources = getSources(options, args.inpath)
     print("What TV Show?")
     movie = movieData.matchMovie(sources)
     season = int(util.getIntInput("Enter Season Number"))
-    print("Creating Demux Folder at\n")
-    os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
-
     i = 1
+    if util.Menu(choices, "Restore Folder Old MuxFolder Data") == "Yes":
+            folders=util.findFolders(args.inpath,"mux")
+            #only get root directories
+
+            folders=list(filter(lambda x:os.path.realpath(os.path.dirname(x))==os.path.realpath(args.inpath),folders))
+            if len(folders)==0:
+                print("No Folders Found To Restore")
+                quit()
+            folder = util.Menu(folders, "Which Folder Do you want to Restore")
+            os.chdir(folder)
+            i=len(os.listdir("."))
+    else:
+        os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
+
+    print("Creating Demux Folder at\n")
+    
+
     while True:
         os.mkdir(str(i))
         os.chdir(str(i))
@@ -50,15 +66,15 @@ def demuxTV(args):
         machineReader(muxSorter, args, movie)
         finalizeOutput(muxSorter, demuxData, movie, season, i)
         os.chdir("..")
-        opt = ["YES", "NO"]
-        if util.Menu(opt, "Add Another Episode") == "NO":
+      
+        if util.Menu(choices, "Add Another Episode") == "No":
             break
         # prepare for next loop
         i = i+1
         demuxData = siteDataPicker.pickSite(args.site)
         muxSorter = siteSortPicker.pickSite(args.site)
 
-        if util.Menu(opt,"Change Sources") == "YES":
+        if util.Menu(choices, "Change Sources") == "Yes":
             sources = getSources(options, args.inpath)
         print(f"Program Ran {i} time so far\n")
         print("Creating Demux Folder at\n")

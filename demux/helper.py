@@ -1,6 +1,7 @@
 import os
 import re
 import subprocess
+import shutil
 
 from guessit import guessit
 from InquirerPy import inquirer
@@ -41,9 +42,17 @@ def createChildDemuxFolder(parentDir, show):
 
 
 def addSource(paths):
+    print(paths)
+    if len(paths)==0:
+        print("No Valid Source Directories Found")
+        quit()
     return inquirer.checkbox(message="\nSelect All the Sources You Want for this Demux\n \
     For TV Shows you can change the Source(s) Per Episode", 
     choices=paths).execute()
+
+def getStartingPoint():
+    return util.getIntInput("You should select each playlist in order\nWhat Episode is the Starting point")
+
 
 
 def CreateChapterList(*sources):
