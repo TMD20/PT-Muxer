@@ -141,22 +141,55 @@ see Filtering Tracks section
 
 ## TV Mode
 When ask "What Type of Media are you Demuxing? Select TV mode, this is used for demuxing multiple playlist 
-#### Folder Struture
 
-![image](https://user-images.githubusercontent.com/80348218/180505703-19666c95-235a-451f-a746-139f0459749c.png)
-Inside Directory 1
-![image](https://user-images.githubusercontent.com/80348218/180505738-3098aae2-98f1-4bff-b6c1-535be0995b63.png)
-Inside one of the source directories
-![image](https://user-images.githubusercontent.com/80348218/180505781-c7ebb2ae-a278-435f-a470-c5031a6593eb.png)
-output logs folder
-![image](https://user-images.githubusercontent.com/80348218/180505811-44195aaf-325a-4bfb-ba22-dd650fba60c8.png)
+## Episode Data
+* Season number is entered once at the the beginning of the program
+* Episode Number, this is assumed by the number if folders in the home directory, see... folder struture to see more details
+* imdb data: This can be entered manually or by clicking on one of the options that appear 
+* tmdb: converted via imdb number
+* tvdb: converted via imdb number
+
+## Sources
+You can utilize one or more sources per episode
+
+After a episode finishes extracting, you can utilize the same or different sources for the next episode i.e for example a Season can be split across many disk
+
+### Folder Struture
+**Home Folder**
+
+<img src=https://user-images.githubusercontent.com/80348218/180505703-19666c95-235a-451f-a746-139f0459749c.png width=500><img/>
+
+**Inside Directory 1**
+
+<img src=https://user-images.githubusercontent.com/80348218/180505738-3098aae2-98f1-4bff-b6c1-535be0995b63.png width=500><img/>
+
+**inside ahmybudda folder**
+
+<img src=https://user-images.githubusercontent.com/80348218/180505781-c7ebb2ae-a278-435f-a470-c5031a6593eb.png width=500><img/>
+
+**output_logs**
+
+<img src=https://user-images.githubusercontent.com/80348218/180505811-44195aaf-325a-4bfb-ba22-dd650fba60c8.png width=500><img/>
+
+**subImages folder**
+
+<img src=https://user-images.githubusercontent.com/80348218/180524253-4f522b0f-81cb-48e4-af8c-bf36ecb420a4.png width=500><img/>
+
+
+
+
+
+
+
+
+
  
 
 
 
 ## Remux Mode
 
-* python3 /path/to/app.py -demux sourcepath outputpath
+* python3 /path/to/app.py -demux sourcepath outputpathhttps://user-images.githubusercontent.com/80348218/180505811-44195aaf-325a-4bfb-ba22-dd650fba60c8.png
 
 ### Required
 ```
