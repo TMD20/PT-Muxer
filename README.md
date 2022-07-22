@@ -143,7 +143,7 @@ see Filtering Tracks section
 When ask "What Type of Media are you Demuxing? Select TV mode, this is used for demuxing multiple playlist 
 #### Folder Struture
 
-![image](https://user-images.githubusercontent.com/80348218/180505703-19666c95-235a-451f-a746-139f0459749c.png=*200)
+![image](https://user-images.githubusercontent.com/80348218/180505703-19666c95-235a-451f-a746-139f0459749c.png)
 Inside Directory 1
 ![image](https://user-images.githubusercontent.com/80348218/180505738-3098aae2-98f1-4bff-b6c1-535be0995b63.png)
 Inside one of the source directories
