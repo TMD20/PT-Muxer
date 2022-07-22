@@ -138,6 +138,18 @@ This will effect which Tracks are picked see Filtering Tracks section
  order you want the tracks to    appear
 see Filtering Tracks section
 ```
+
+## TV Mode
+When ask "What Type of Media are you Demuxing? Select TV mode, this is used for demuxing multiple playlist 
+#### Folder Struture
+
+![image](https://user-images.githubusercontent.com/80348218/180505703-19666c95-235a-451f-a746-139f0459749c.png=*200)
+Inside Directory 1
+![image](https://user-images.githubusercontent.com/80348218/180505738-3098aae2-98f1-4bff-b6c1-535be0995b63.png)
+Inside one of the source directories
+![image](https://user-images.githubusercontent.com/80348218/180505781-c7ebb2ae-a278-435f-a470-c5031a6593eb.png)
+output logs folder
+![image](https://user-images.githubusercontent.com/80348218/180505811-44195aaf-325a-4bfb-ba22-dd650fba60c8.png)
  
 
 
