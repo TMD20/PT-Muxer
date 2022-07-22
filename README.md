@@ -140,7 +140,10 @@ see Filtering Tracks section
 ```
 
 ## TV Mode
-When ask "What Type of Media are you Demuxing? Select TV mode, this is used for demuxing multiple playlist 
+
+Selected during demux via questionarre
+
+Specifically the  "What Type of Media are you Demuxing? Question
 
 ## Episode Data
 * Season number is entered once at the the beginning of the program
