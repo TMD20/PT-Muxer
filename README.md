@@ -67,7 +67,7 @@ Including Language
 These are extracted automatically.
 * parent: what track a embedded track was extracted from
 * child: embedded track if present
-* machine_parse: if using ocr or voice rec. The gathered values will be here
+* machine_parse: if using ocr or voice rec. The gathered values will be here. See machine_parse section for more details
 * length: will display how long, how many subs a track has
 * default: whether to set the default flag in mkv
 * forced: whether to set the forced flag. Also can be set by changing the site_title to including "forced" 
@@ -168,6 +168,29 @@ see Filtering Tracks section
 This will Effect mainly effect the final track name
 See Sites Section for more detail
 ```
+
+#Machine Parse
+
+## Subtitles
+
+Subtitles can be ocr with the --ocr command
+This will run one of two ocr. The first is better but has fewer languages. 
+The second is faster has lots of languages, but in my 
+Experience does no ocr as well.
+
+You can utilize this to identify what kind of track the sub is from for. It should work for foreign tracks as a well.
+
+To save the images retrieved for the ocr use the 
+--keepocr command 
+Every line on the sub will be saved.
+However only 50 lines are ocr to save time.
+
+## Video
+Videorec is not as good as ocr. But it can still kind of be used to ID tracks.
+Use the --videorec command to use this feature. 
+To save time it will only record about 50 lines worth of the track.
+
+
 
 
 
