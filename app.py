@@ -4,7 +4,6 @@ import os
 
 import demux.demux as demuxAction
 import remux.remux as remuxAction
-import tools.muxHelpers as muxHelpers
 
 def main():
     parser = argparse.ArgumentParser()
