@@ -113,10 +113,10 @@ Each Key has a list of Ids
 * Sub: All the subtitle Tracks to enable 
 * Audio: All the audio Tracks to enable 
 
-## Changing order of Tracks
+### Changing order of Tracks
 Just change the order of the track in the list
 
-## Disable Track
+### Disable Track
 Just remove a track from the list
 
 
