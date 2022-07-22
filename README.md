@@ -18,6 +18,30 @@ If you need help I can provide some support until I have time to refactor all th
 * Installing modules and running python3 via virtualenv
 * udevil for non-sudo ISO extractions
 
+### Installing Tesseract
+Tesseract allows for many more languages to be ocr, but it does require sudo
+and requires packages on the system
+The easiest way would just be to follow the instructions in this repo
+
+https://github.com/sirfz/tesserocr
+This will require sudo
+
+#### Disable tesseract
+* Go the project folder
+* cd ./subtitles/
+* open ocr.py 
+* ctrl f "getocr_obj" 
+* comment out
+```
+  try:
+        return tesserocr.PyTessBaseAPI(path="/usr/share/tesseract-ocr/5/tessdata", lang=langcodes.Language.get(langcode).to_alpha3())
+    except:
+        None
+    return None
+```
+now only easyocr will be used.
+
+
 # Modes: 
 
 ## Demux Mode
