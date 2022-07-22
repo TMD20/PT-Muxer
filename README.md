@@ -1,4 +1,9 @@
 # **How to Install/Get Started** 
+Note I have not had time to test this on windows.
+Wine is part of the code, but that is just to run windows software on linux. 
+
+This should run fine on windows with minor changes, but It will require some tecnical know how. 
+If you need help I can provide some support until I have time to refactor all the changes required for windows
 
 ## Required
   * python modules via requirements.txt 
@@ -33,7 +38,7 @@ JSON Example:
 # 3 Main JSON Sections
 
 
-## 2. Movie
+## 1. Movie
 Data about the movie or TV show
 For TV show or Movie use OCR/ subimages to confirm episode number
 
@@ -44,18 +49,7 @@ For TV show or Movie use OCR/ subimages to confirm episode number
 * Episode: If TV show the episode number
 *
 
-## 2. ChapterData
-
-This section has information about when the chapters
-
-* time: when the chapter occurs
-* name: What name to give the Chapter
-
-
-
-
-
-## 1. Sources
+## 2. Sources
 
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
 Each source has its own key here with some data inside of it
@@ -72,6 +66,12 @@ Each source has its own key here with some data inside of it
 * playlistNum: What Number was entered as a response to the question "What playlist" during the demux process
 
 
+## 3. ChapterData
+
+This section has information about when the chapters
+
+* time: when the chapter occurs
+* name: What name to give the Chapter
 
 
 
@@ -79,15 +79,24 @@ Each source has its own key here with some data inside of it
 
 
 
-## 2. Enabled Tracks
+## 4. Enabled Tracks
 
 Displays which Tracks will be added during the mkvmerge Process. To See more details about a track match the number to the here to the Track Details Sections.
 
-Changes that can be made with effect
-* Remove Tracks to remove them from final mkvmerge
-* Reorder Tracks to change what tracks appear, and in what order the final mkv file
+## Keys
+Each Key has a list of Ids
+* Video: All the video Tracks to enable 
+* Sub: All the subtitle Tracks to enable 
+* Audio: All the audio Tracks to enable 
 
-## 3. Track Details
+## Changing order of Tracks
+Just change the order of the track in the list
+
+## Disable Track
+Just remove a track from the list
+
+
+## 5. Track Details
 
 
 Some Details about Each Track
