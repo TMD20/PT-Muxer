@@ -19,8 +19,9 @@ def Remux(args):
 
     fileNameList = []
     movieTitleList=[]
+    util.mkdirSafe(os.path.join(args.outpath, ""))
     for remuxConfigPath in remuxConfigPaths:
-        print(f"Preparing Data for {remuxConfigPath}")
+        print(f"\nPreparing Data for {remuxConfigPath}\n")
 
         remuxConfig = None
         muxGenerator = muxPicker.pickSite(args.site)
@@ -33,20 +34,23 @@ def Remux(args):
         if movie==None:
             movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
         kind = movieData.getKind(movie)
-     
         os.chdir(args.outpath)
         fileName = muxGenerator.getFileName(kind, remuxConfig, movie, args.group)
         fileNameList.append(fileName)
         movieTitleList.append(movieData.getMovieTitle(movie))
+    print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
     for i in range(len(fileNameList)):
         fileName=fileNameList[i]
         movieTitle=movieTitleList[i]
         muxGenerator = muxPicker.pickSite(args.site) 
         ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator)
+    print("\nIf the Program made it this far all MKV(s)...\nShould be in the output directory picked \
+    \nBefore Closing We will now print off filelocations and mediainfo")
     for ele in fileNameList:
          print(f"New Files at {ele}\n")
          mediainfo = MediaInfo.parse(ele, output="", full=False)
          print(f"\n\n{mediainfo}\n\n")
+    print(f"As a Reminder the output Directory is: {args.output}" )
     
     
 

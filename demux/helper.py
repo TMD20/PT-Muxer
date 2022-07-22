@@ -9,10 +9,11 @@ from InquirerPy import inquirer
 import mediatools.extract as extract
 import tools.general as util
 
+
 def getBDMVs(path):
     currpath = os.getcwd()
     os.chdir(path)
-    list1 = util.findFolders(path, "STREAM")
+    list1 = util.findMatches(path, "STREAM")
     list2 = util.findFiles(path, "\.iso$")
     list1.extend(list2)
     os.chdir(currpath)
@@ -42,17 +43,18 @@ def createChildDemuxFolder(parentDir, show):
 
 
 def addSource(paths):
-    print(paths)
-    if len(paths)==0:
+    if len(paths) == 0:
         print("No Valid Source Directories Found")
         quit()
     return inquirer.checkbox(message="\nSelect All the Sources You Want for this Demux\n \
-    For TV Shows you can change the Source(s) Per Episode", 
-    choices=paths).execute()
+    For TV Shows you can change the Source(s) Per Episode\n\n"
+                             "Select a option with the space button\n \
+    Press Enter when Done",
+                             choices=paths).execute()
+
 
 def getStartingPoint():
     return util.getIntInput("You should select each playlist in order\nWhat Episode is the Starting point")
-
 
 
 def CreateChapterList(*sources):
@@ -77,6 +79,7 @@ def CreateChapterList(*sources):
             output.append({"time": time, "name": name})
             i = i+2
         return output
+
 
 def Extract(source, inpath):
 

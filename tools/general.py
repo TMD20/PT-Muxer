@@ -5,6 +5,7 @@ import functools
 from InquirerPy import inquirer
 
 def mkdirSafe(target):
+    print(target)
     if len(os.path.splitext(target)[1])>0:
         target=os.path.dirname(target)
     directories=[target]

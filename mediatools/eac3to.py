@@ -2,6 +2,8 @@ import os
 import re
 import itertools
 import subprocess
+from pathlib import PureWindowsPath, PurePosixPath
+
 
 import tools.general as util
 
@@ -63,8 +65,11 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
 
 
 def getwinepath(folder):
-    winePath = "/usr/bin/winepath"
-    return subprocess.run([winePath, "-w", folder], cwd="/", stdout=subprocess.PIPE).stdout.decode('utf8', 'strict').replace('\n', '')
+    return str(PureWindowsPath(PurePosixPath(folder)))
+    
+
+    
+    # return subprocess.run([winePath, "-w", folder], cwd="/", stdout=subprocess.PIPE).stdout.decode('utf8', 'strict').replace('\n', '')
 
 
 def set_eac3toPath(output,show):

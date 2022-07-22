@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from guessit import guessit
 from imdb import Cinemagoer as imdb
 from tmdbv3api import TMDb, Find
+from InquirerPy import inquirer
 
 import tools.general as util
 
@@ -28,15 +29,18 @@ def matchMovie(sources):
     title = details.get("title")
     results = ia.search_movie(title)
     if len(results) == 0:
-        print("Unable to find imdb")
-        id = input("Enter imdb: ")
+        id=inquirer.text(message="Unable to find movie\nEnter imdb id").execute()
         result=ia.get_movie(re.sub("tt", "", id))
     else:
         titles = list(map(lambda x: x["long imdb title"], results))
-        match = None
-        while match == None:
-            match= util.Menu(titles,'What Movie/TV Show')
-        result=results[titles.index(match)]
+        titles.insert(0, "None of these Titles Match")
+        match= util.Menu(titles,'What Movie/TV Show')
+        if match == "None of these Titles Match":
+            id = inquirer.text(
+                message="Unable to find movie\nEnter imdb id").execute()
+            result = ia.get_movie(re.sub("tt", "", id))
+        else:
+            result=results[titles.index(match)]
         
     ia.update(result, info=['main'])
     return result

@@ -1,6 +1,8 @@
+import sites.base.siteTrackSorter as base
 import sites.beyondHD.siteTrackSorter as beyondHD
 import sites.blu.siteTrackSorter as blu
-import sites.base.siteTrackSorter as base
+import sites.animebytes.siteTrackSorter as anime
+
 
 def pickSite(site):
     if site == None:
@@ -10,3 +12,5 @@ def pickSite(site):
     elif site.lower() == "blu":
         return blu.Blu()
     
+    elif site.lower() == "ab" or site.lower() == "animebytes":
+        return anime.AnimeBytes()
