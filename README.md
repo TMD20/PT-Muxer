@@ -42,17 +42,23 @@ Displays which Tracks will be added during the mkvmerge Process. To See more det
 
 Changes that can be made with effect
 * Remove Tracks to remove them from final mkvmerge
-* Reorder Tracks to change how they appear in mkvmerge, and in the final mkv file
+* Reorder Tracks to change what tracks appear, and in what order the final mkv file
 
 ## 3. Track Details
+
 
 Some Details about Each Track
 Including Language
 
 Changes that can be made with effect
-* Changing the language code to change the language of the track
-* Changing the title to change the title of the track
-
+### Keys
+langcode: used by mkvmerge to set track language
+site_title: used to set title for mediainfo, set to None for no title
+bdinfo_title: just the title from bdinfo
+Playlist number: the number you entered. When asked what playlist to extract.
+Index numbers: the track number. Video is usually 1. Next audio tracks, lastly subs
+eac30: just some info about the file extract by eacto
+file: location of the file on the system
 
 # Commands:
 
