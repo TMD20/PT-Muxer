@@ -67,7 +67,7 @@ Including Language
 These are extracted automatically.
 * parent: what track a embedded track was extracted from
 * child: embedded track if present
-* machine_parse: if using ocr or voice rec. The gathered values will be here. See machine_parse section for more details
+* machine_parse: if using ocr or voice rec. The gathered values will be here. See machine_parse or demux sections for more details
 * length: will display how long, how many subs a track has
 * default: whether to set the default flag in mkv
 * forced: whether to set the forced flag. Also can be set by changing the site_title to including "forced" 
