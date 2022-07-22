@@ -68,7 +68,9 @@ Machine_parse: if using ocr or voice rec. The gathered values will be here
 Length: will display how long, how many subs a track has
 default: whether to set the default flag in mkv
 forced: whether to set the forced flag. Also can be set by changing the site_title to including "forced" 
-
+sourceDir: The original location of the bdmv used to extract track
+sourceKey: the key of the source in the json that the track is tied to
+type: whether this is a audio, video, sub track
    
 
 # Commands:
