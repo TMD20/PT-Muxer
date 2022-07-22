@@ -32,12 +32,50 @@ JSON Example:
 
 # 3 Main JSON Sections
 
+
+## 2. Movie
+Data about the movie or TV show
+For TV show or Movie use OCR/ subimages to confirm episode number
+
+* imdb: ID for Movie/TV show
+* tmdb: ID for Movie/TV show
+* langs: Offical Languages for movie or TV show
+* Season: if TV show the season
+* Episode: If TV show the episode number
+*
+
+## 2. ChapterData
+
+This section has information about when the chapters
+
+* time: when the chapter occurs
+* name: What name to give the Chapter
+
+
+
+
+
 ## 1. Sources
 
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
 Each source has its own key here with some data inside of it
 
-Keys:
+### Keys
+
+#### Sections
+* Each Source has it own dictionary or section
+* The section is marked by a  source directory base path key /home/main/test would have a key of test
+  
+ ##### Inside Sections 
+* outputDir: the location of the output files for the source i.e the mux folder location
+* sourceDir: The location of where the source is found
+* playlistNum: What Number was entered as a response to the question "What playlist" during the demux process
+
+
+
+
+
+
 
 
 
@@ -234,10 +272,15 @@ Experience does no ocr as well.
 
 You can utilize this to identify what kind of track the sub is from for. It should work for foreign tracks as a well.
 
+
 To save the images retrieved for the ocr use the 
 --keepocr command 
 Every line on the sub will be saved.
 However only 50 lines are ocr to save time.
+
+This is very useful for identifing episode as sometimes the last sub image my give a good clue. 
+You can also identify dialecs if you want to specificy for the langauge. 
+i.e spanish, french etc
 
 ## Video
 Videorec is not as good as ocr. But it can still kind of be used to ID tracks.
