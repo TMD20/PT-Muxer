@@ -50,27 +50,25 @@ Changes that can be made with effect
 Some Details about Each Track
 Including Language
 
-Changes that can be made with effect
 ### Keys
-langcode: used by mkvmerge to set track language
-lang: Translation of langcode to the actual language
-site_title: used to set title for mediainfo, set to None for no title
-bdinfo_title: just the title from bdinfo
-Playlist number: the number you entered. When asked what playlist to extract.
-Index numbers: the track number. Video is usually 1. Next audio tracks, lastly subs
-eac30: just some info about the file extract by eacto
-file: location of the file on the system
-compat: Used for embedded tracks i.e dolby digital inside true hd
+* langcode: used by mkvmerge to set track language
+* lang: Translation of langcode to the actual language
+* site_title: used to set title for mediainfo, set to None for no title
+* bdinfo_title: just the title from bdinfo
+* index: the track number. Video is usually 1. Next audio tracks, lastly subs
+* eac30: just some info about the file extract by eacto
+* file: location of the file on the system
+* compat: Used for embedded tracks i.e dolby digital inside true hd
 These are extracted automatically.
-parent: what track a embedded track was extracted from
-child: embedded track if present
-Machine_parse: if using ocr or voice rec. The gathered values will be here
-Length: will display how long, how many subs a track has
-default: whether to set the default flag in mkv
-forced: whether to set the forced flag. Also can be set by changing the site_title to including "forced" 
-sourceDir: The original location of the bdmv used to extract track
-sourceKey: the key of the source in the json that the track is tied to
-type: whether this is a audio, video, sub track
+* parent: what track a embedded track was extracted from
+* child: embedded track if present
+* machine_parse: if using ocr or voice rec. The gathered values will be here
+* length: will display how long, how many subs a track has
+* default: whether to set the default flag in mkv
+* forced: whether to set the forced flag. Also can be set by changing the site_title to including "forced" 
+* sourceDir: The original location of the bdmv used to extract track
+* sourceKey: the key of the source in the json that the track is tied to
+* type: whether this is a audio, video, sub track
    
 
 # Commands:
