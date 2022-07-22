@@ -35,6 +35,11 @@ JSON Example:
 ## 1. Sources
 
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
+Each source has its own key here with some data inside of it
+
+Keys:
+
+
 
 ## 2. Enabled Tracks
 
