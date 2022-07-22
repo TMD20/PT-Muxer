@@ -176,6 +176,12 @@ After a episode finishes extracting, you can utilize the same or different sourc
 <img src=https://user-images.githubusercontent.com/80348218/180524253-4f522b0f-81cb-48e4-af8c-bf36ecb420a4.png width=500><img/>
 
 
+## Restore Data
+
+For a TV mode demux that is partially stopped you can restore the data during the run of the program
+
+Be careful as movie and TV mode folders will be selectable, and selecting a movie mode folder may lead to undesirable outcomes 
+
 
 
 
