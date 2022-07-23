@@ -7,11 +7,25 @@ If you need help I can provide some support until I have time to refactor all th
 
 ## Required
   * python modules via requirements.txt 
-  * mkvmerge
-  * eac3to
-  * wine
   * Linux
-  * mediainfo
+
+
+## Optional Binaries
+
+These binaries are included but you are free to use newer versions if desired
+
+see config.py "*LinuxPath"for filepaths. 
+
+### mkvmerge:
+
+* https://mkvtoolnix.download/downloads.html#ubuntu - Provides multiple ways to install mkvmerge: including via building yourself or package manager
+* 
+### wine
+
+* https://github.com/Kron4ek/Wine-Builds - install wine without sudo
+* https://wiki.winehq.org/Download -build wine yourself, or install using package manager
+
+
 
 ## Recommended
 
