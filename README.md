@@ -287,7 +287,6 @@ Specifically the  "What Type of Media are you Demuxing? Question
 * Episode Number, this is assumed by the number if folders in the home directory, see... folder struture to see more details
 * imdb data: This can be entered manually or by clicking on one of the options that appear 
 * tmdb: converted via imdb number
-* tvdb: converted via imdb number
 
 #### Sources
 You can utilize one or more sources per episode

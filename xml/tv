@@ -13,10 +13,6 @@
             <Name>TMDB</Name>
             <String>$tmdb</String>              <!-- Replace # with TMDB id for that tv series e.g. tv/1399 -->
         </Simple>
-        <Simple>
-            <Name>TVDB</Name>
-            <String>$tvdb</String>                 <!-- Replace # with TVDB id for that tv series e.g. 121361 -->
-        </Simple>
     </Tag>
     <Tag>                                         <!-- Season -->
         <Targets>
