@@ -1,86 +1,3 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
-
-- [**How to Install/Get Started**](#how-to-installget-started)
-  - [Required](#required)
-  - [Install](#install)
-    - [Linux:](#linux)
-    - [Windows](#windows)
-  - [Optional Binaries](#optional-binaries)
-    - [mkvmerge:](#mkvmerge)
-    - [wine](#wine)
-    - [eac3to](#eac3to)
-    - [suprip](#suprip)
-  - [bdinfo](#bdinfo)
-  - [BDSup2Sub](#bdsup2sub)
-  - [Recommended](#recommended)
-    - [Installing Tesseract](#installing-tesseract)
-      - [Disable tesseract](#disable-tesseract)
-- [Modes:](#modes)
-  - [Demux Mode](#demux-mode)
-  - [Remux Mode:](#remux-mode)
-- [JSON](#json)
-  - [Overview](#overview)
-  - [Examples](#examples)
-    - [Movie](#movie)
-    - [TV](#tv)
-  - [Sections](#sections)
-    - [1. Movie](#1-movie)
-    - [2. Sources](#2-sources)
-      - [Keys](#keys)
-      - [Source Dictionary](#source-dictionary)
-        - [Source Dictionary Key](#source-dictionary-key)
-    - [3. ChapterData](#3-chapterdata)
-    - [4. Enabled Tracks](#4-enabled-tracks)
-      - [Keys](#keys-1)
-      - [Changing order of Tracks](#changing-order-of-tracks)
-      - [Disable Track](#disable-track)
-    - [5. Track Details](#5-track-details)
-      - [Keys](#keys-2)
-- [Commands:](#commands)
-  - [Demux Mode](#demux-mode-1)
-    - [Required](#required-1)
-    - [Optional](#optional)
-    - [TV Mode](#tv-mode)
-      - [Episode Data](#episode-data)
-      - [Sources](#sources)
-      - [Folder Struture](#folder-struture)
-        - [Home Folder](#home-folder)
-        - [Inside Directory 1](#inside-directory-1)
-        - [Inside ahmybudda folder](#inside-ahmybudda-folder)
-        - [Output_logs](#output_logs)
-        - [SubImages folder](#subimages-folder)
-      - [Restore Data](#restore-data)
-    - [Movie Mode](#movie-mode)
-      - [Sources](#sources-1)
-      - [Folder Struture](#folder-struture-1)
-        - [Home Folder](#home-folder-1)
-        - [Inside ahmybudda folder](#inside-ahmybudda-folder-1)
-        - [Output_logs](#output_logs-1)
-        - [SubImages folder](#subimages-folder-1)
-  - [Remux Mode](#remux-mode)
-    - [Required](#required-2)
-    - [Optional](#optional-1)
-    - [Selecting Tracks](#selecting-tracks)
-- [Machine Parse](#machine-parse)
-  - [Subtitles](#subtitles)
-  - [Video](#video)
-- [Sites](#sites)
-  - [AnimeBytes](#animebytes)
-  - [BeyondHD](#beyondhd)
-  - [Blutopia](#blutopia)
-  - [AnimeBytes](#animebytes-1)
-- [Forced Subs](#forced-subs)
-- [Filtering Tracks](#filtering-tracks)
-  - [Video](#video-1)
-  - [Audio](#audio)
-  - [Sub](#sub)
-- [**Note**](#note)
-
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
-
-
 # **How to Install/Get Started** 
 Note I have not had time to test this on windows.
 Wine is part of the code, but that is just to run windows software on linux. 
@@ -160,7 +77,9 @@ The easiest way would just be to follow the instructions in this repo
 https://github.com/sirfz/tesserocr
 This will require sudo
 
-#### Disable tesseract
+## Optional:Disabling Tesseract (Non Sudo)
+If you can't install tesseract and still want to ocr
+
 * Go the project folder
 * cd ./subtitles/
 * open ocr.py 
