@@ -26,7 +26,7 @@ class Blu(siteTrackSorter):
             prevSource = prevTrack["sourceKey"]
             output = os.path.dirname(track["file"])
             t = None
-            # guard clases
+            # guard cases
             if track["site_title"] == None:
                 i = i+1
                 continue

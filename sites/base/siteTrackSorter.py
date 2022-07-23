@@ -268,7 +268,7 @@ class siteTrackSorter():
                     continue
                 langSet.add(track["lang"])
                 mainTracks.append(track)
-            # Sort Semi Alphabetically with English Track First
+            # Sort Alphabetically
             mainTracks = sorted(mainTracks, key=self._subAlphaOrder)
             # Add English Tracks
             newTracks = [ele for ele in subTracks if ele["lang"]

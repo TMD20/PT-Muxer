@@ -30,6 +30,7 @@ class siteTrackData(TracksData):
         self._updateTrackDictFileOutput(current_tracks, output)
         self._updateTrackDictNotes(current_tracks)
         self._updateTrackEac3toExtra(current_tracks)
+        self._convertFlac(current_tracks, output)
 
         return current_tracks
 
@@ -146,3 +147,31 @@ class siteTrackData(TracksData):
             site_title = f"{codec} / {other}"
         site_title = re.sub("/ DN.*dB", "", site_title)
         return re.sub(" +", " ", site_title).strip()
+
+    #######################################################################
+    #  This Function will convert certain lossless Tracks to flac
+    ########################################################################
+
+    def _convertFlac(self, current_tracks, output):
+        for i in range(len(current_tracks)):
+            track = current_tracks[i]
+            if track["type"] != "audio":
+                continue
+            title = track["bdinfo_title"]
+            channels = re.search("\d.\d", title)
+            if channels == None:
+                continue
+            channels = float(channels.group(0))
+            eac3to = track["eac3to"]
+            file = track["file"]
+            if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", title, re.IGNORECASE)\
+                    and channels < 3.0:
+                eac3to = re.sub("\..*", ".flac", eac3to)
+                file = os.path.join(
+                    output, eac3to.split(":")[1])
+                match = re.search(".*([0-9]\.[0-9].*)", title).group(1)
+                title = f"FLAC Audio / {match}"
+                title = re.sub(" +", " ", title)
+            track["site_title"] = title
+            track["file"] = file
+            track["eac3to"] = eac3to

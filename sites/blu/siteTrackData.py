@@ -13,9 +13,9 @@ class Blu(siteTrackData):
 
     def addTracks(self, quicksum, playlistNum, source, output):
         current_tracks = super().addTracks(quicksum, playlistNum, source, output)
-        self._checkPadding(current_tracks, playlistNum, source, output)
+        self._checkPadding(current_tracks ,output)
 
-    def _checkPadding(self, current_tracks, playlistNum, source, output):
+    def _checkPadding(self, current_tracks, output):
         start = os.getcwd()
         os.chdir(output)
         insertDict = []
