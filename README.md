@@ -63,11 +63,22 @@ see config.py "*LinuxPath"for filepaths.
 ### mkvmerge:
 
 * https://mkvtoolnix.download/downloads.html#ubuntu - Provides multiple ways to install mkvmerge: including via building yourself or package manager
-* 
 ### wine
 
 * https://github.com/Kron4ek/Wine-Builds - install wine without sudo
 * https://wiki.winehq.org/Download -build wine yourself, or install using package manager
+### eac3to
+* https://www.videohelp.com/software/eac3to - You can find updates here or use custom versions made by users
+
+### suprip
+* https://www.videohelp.com/software/SupRip - Updates are here, has not been updated in a while
+
+## bdinfo 
+* https://github.com/zoffline/BDInfoCLI-ng - Update here, has not be updated in a while
+
+## BDSup2Sub
+* https://www.videohelp.com/software/BDSup2Sub - Updates here, has not be updated in a while
+
 
 
 
