@@ -174,7 +174,7 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 
 
 ```
-  outpath
+  outputpath
  
   Where you want the mux folder to be outputed to. A Folder with the following struture will be created
   Mux.randomstring.showName
@@ -184,7 +184,7 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 ### Optional
 --site blutopia/blu/bhd/beyondhd [default=blu]
 ```
-Example: python3 /path/to/app.py -demux inpath outpath --site blu
+Example: python3 /path/to/app.py -demux sourcepath outputpath --site blu
 
 This will Effect
 * Order of Tracks
@@ -196,7 +196,7 @@ see Filtering Tracks section
 ```
  --sortpref  [default=size]
 ```
-Example: python3 /path/to/app.py -demux inpath outpath --sortpref size
+Example: python3 /path/to/app.py -demux sourcepath outputpath --sortpref size
  options: size or order
 size: sort tracks by which track is largest. Give highest priority to largest track
 order: sort tracks by which comes first, give highest priority to first tracks
@@ -204,7 +204,7 @@ order: sort tracks by which comes first, give highest priority to first tracks
 ```
  --audiolang
 ```
- Example:python3 /path/to/app.py -demux inpath outpath --audiolang english japanese
+ Example:python3 /path/to/app.py -demux sourcepath outputpath --audiolang english japanese
  
  Which Track Language(s) you want to enable for the current demux
  Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled audio   tracks list
@@ -214,7 +214,7 @@ order: sort tracks by which comes first, give highest priority to first tracks
   --sublang 
  ```
 
- Example:python3 /path/to/app.py inpath outpath -demux --sublang english japanese
+ Example:python3 /path/to/app.py sourcepath outputpath -demux --sublang english japanese
  
  Which Track Language(s) you want to enable for the current demux
  Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled sub  tracks list
@@ -224,16 +224,33 @@ order: sort tracks by which comes first, give highest priority to first tracks
 
  --ocr sublang 
 ```
-    Example: python3 /path/to/app.py -demux inpath outpath --ocr enabled
+    Example: python3 /path/to/app.py -demux sourcepath outputpath --ocr enabled
    Generates machine readable text of the sup files. 
    
-  choices: enabled, sublang,default,all,disabled,english
-  enabled: Just ocr enabled tracks i.e tracks that are within  
+  choices ->  enabled, sublang,default,all,disabled,english
+  
+  enabled: Just ocr enabled tracks i.e tracks that autoenabled during demux process. See filtering for more details
   sublangs: OCR the same languages you set for sublangs
   default: OCR using the languages from imdb
   all: OCR every single language
   english: OCR english only
 ```
+
+
+ --voicerec sublang 
+```
+    Example: python3 /path/to/app.py -demux sourcepath outputpath --voicerec enabled
+   Generates machine readable text of the sup files. 
+   
+  choices ->  enabled, audiolang,default,all,disabled,english
+  
+  enabled: Just use voicerec enabled tracks i.e tracks that autoenabled during demux process. See filtering for more details 
+  sublangs:Use voice rec on the same languages you set for audiolangs
+  default: Use voice rec on the languages from imdb
+  all: Use voice rec on every single language
+  english: voice rec english only
+```
+
 
 ### TV Mode
 
@@ -326,7 +343,7 @@ Similar to the TV mode Struture save for the numbered folders
 
 
 ```
-  outpath
+  outputpath
   
   The folder you want the final MKV to be outputted to
 ```
@@ -398,23 +415,3 @@ Coming Soon
 ## **Note**
 
 Windows Support is planned but it might take me a while, and would be done when I feel like the main program is stable
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
