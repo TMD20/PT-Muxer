@@ -447,7 +447,28 @@ To save time it will only record about 50 lines worth of the track.
 
 
 # Sites
-Coming Soon
+## AnimeBytes
+Currently the main difference is that japanese and english are default audio languages, even if imdb only list japanese as the language of the TV/Movie
+
+## BeyondHD
+This has it own script for the final filename
+
+Every lossless mono or stereo Track will be converted to FLAC
+
+## Blutopia
+This has it own script for the final filename
+
+Blutopia will check for padding using conversion to flac. If padding is found then the flac audio will be used in replacement of the original codec. This only applies to 24bit tracks
+
+Every lossless mono or stereo Track will be converted to FLAC
+
+
+Blutopia has a decent validator for checking if a remux is valid. It not 100 percent but gives a general Idea
+
+
+
+
+
 
 # Filtering Tracks
 Note Every Track is extracted these are the rules for tracks that are enabled for remuxing, automatically. You can always change these settings
