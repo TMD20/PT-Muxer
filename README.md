@@ -3,9 +3,9 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [**How to Install/Get Started**](#how-to-installget-started)
-  - [Required](#required)
-  - [Optional Binaries](#optional-binaries)
-  - [Recommended](#recommended)
+  - [Required Software](#required)
+  - [Optional Software](#optional-binaries)
+  - [Recommended Software](#recommended)
 - [**Modes:**](#modes)
   - [Demux Mode](#demux-mode)
   - [Remux Mode:](#remux-mode)
