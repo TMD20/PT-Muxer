@@ -14,7 +14,7 @@ def getBDMVs(path):
     currpath = os.getcwd()
     os.chdir(path)
     list1 = util.findMatches(path, "STREAM")
-    list2 = util.findFiles(path, "\.iso$")
+    list2 = util.findMatches(path, "*.iso$")
     list1.extend(list2)
     os.chdir(currpath)
     return sorted(list1)

@@ -41,7 +41,7 @@ def demuxTV(args):
     season = int(util.getIntInput("Enter Season Number"))
     i = 1
     if util.Menu(choices, "Restore Folder Old MuxFolder Data") == "Yes":
-        folders = util.findMatches(args.inpath, "mux")
+        folders = util.findMatches(args.inpath, "Mux*")
         # only get root directories
 
         folders = list(filter(lambda x: os.path.realpath(
