@@ -8,6 +8,7 @@ If you need help I can provide some support until I have time to refactor all th
 ## Required
   * python modules via requirements.txt 
   * Linux
+  * mono
 
 
 ## Optional Binaries
@@ -301,15 +302,6 @@ Similar to the TV mode Struture save for the numbered folders
 <img src=https://user-images.githubusercontent.com/80348218/180524253-4f522b0f-81cb-48e4-af8c-bf36ecb420a4.png width=500><img/>
 
 
-
-
-
-
-
- 
-
-
-
 ## Remux Mode
 
 * python3 /path/to/app.py -demux sourcepath outputpathhttps://user-images.githubusercontent.com/80348218/180505811-44195aaf-325a-4bfb-ba22-dd650fba60c8.png
@@ -336,6 +328,22 @@ Similar to the TV mode Struture save for the numbered folders
 This will Effect mainly effect the final track name
 See Sites Section for more detail
 ```
+
+## Selecting Tracks
+
+```
+Note the same imdbID will be used for all files during the muxing process
+Episode IDs will also be generated from this ID if needed
+
+Therefore you should only do 
+1 Movie Per run
+or 1 TV show per run.
+
+Selecting Multiple Season of a TV show is fine
+
+If you want to do a batch you'll need to write a seperate script
+```
+
 
 # Machine Parse
 
