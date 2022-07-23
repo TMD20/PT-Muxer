@@ -48,7 +48,8 @@ def addSource(paths):
         print("No Valid Source Directories Found")
         quit()
 
-    msg = """
+    msg = \
+    """
     Click on the Source(s) You Want for this Demux 
     For TV Shows you can change the Source(s) Per Episode
 

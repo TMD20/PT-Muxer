@@ -34,8 +34,11 @@ def matchMovie(sources):
     title = details.get("title")
     results = ia.search_movie(title)
     if len(results) == 0:
-        message = """Unable to find movie
-        Enter imdb id: """
+        message =\
+         """
+        Unable to find movie
+        Enter imdb id:
+        """
         id = utils.textEnter(message)
         result = ia.get_movie(re.sub("tt", "", id))
     else:
@@ -43,8 +46,10 @@ def matchMovie(sources):
         titles.insert(0, "None of these Titles Match")
         match = utils.singleSelectMenu(titles, 'What Movie/TV Show')
         if match == "None of these Titles Match":
-            message = """Unable to find movie ID
-            Enter imdb id:  
+            message = \
+            """
+            Unable to find movie ID
+            Enter imdb id
             """
             id = utils.textEnter(message)
 
