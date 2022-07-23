@@ -7,11 +7,17 @@ If you need help I can provide some support until I have time to refactor all th
 
 ## Required
   * python modules via requirements.txt 
+  * Linux
+
+## Optional Binaries
+  These binaries are included but you are free to use newer versions if desired
+   see config.py "*LinuxPath"for filepaths. 
   * mkvmerge
-  * eac3to
   * wine
   * Linux
   * mediainfo
+
+
 
 ## Recommended
 
