@@ -450,7 +450,39 @@ To save time it will only record about 50 lines worth of the track.
 Coming Soon
 
 # Filtering Tracks
-Coming Soon
+Note Every Track is extracted these are the rules for tracks that are enabled for remuxing, automatically. You can always change these settings
+## Video
+Video can be choosen by size or order using the --sortpref argument
+
+## Audio
+You can decide the general order of the languages using the --audiolang argument
+
+If --audiolang argument is not passed languages will be generally come from the imdb page. Note some sites like animebytes may have slight change to this
+
+This may change base on the site specific but some general rules are
+
+- Every English Track will be added, and will always come first if enabled via args or imdb
+- The First Audio Track That is enabled will be set to default
+- For other Languages only the first track found will be found
+- Compatiblity Tracks will come right after their parent Track
+- First Track Depends on --sortpref along with order of languages via args or imdb
+- Other Tracks are added in the order of the --audiolang argument or imdb order
+
+
+## Sub
+You can decide the general order of the languages using the --sublang argument
+
+If --sublang argument is not passed languages will be generally be in alphabetical order
+
+This may change base on the site specific but some general rules are
+
+- If you pass --sublang as a argument languages will appear in the order that you write. Meaning English may not be the first Track language
+- If --sublang argument is not passed then tracks will appear in alphabetical order, the imdb langauges have no effect
+- Every English Subtitle will be added
+- For other Languages only the first track will be added. --sortpref has no effect, this is only based on the order of the track
+- English Track Will come first
+
+
 
 
 
