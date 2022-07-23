@@ -387,12 +387,7 @@ Coming Soon
 
 ## **Note**
 
-I will be provided better details in the future on how to install and run
-basically you should make a virtual env, and install all the required modules with the requirements.txt
-
-Windows Support is planned but it might take me a while, and would be done when I feel like the main program is supported
-
-Subtitles will be forced if they have forced anywhere in the site title
+Windows Support is planned but it might take me a while, and would be done when I feel like the main program is stable
 
 
 
