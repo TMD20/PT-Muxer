@@ -55,7 +55,7 @@ def matchMovie(sources):
 
             result = ia.get_movie(re.sub("tt", "", id))
         else:
-            result = results[titles.index(match)]
+            result = results[titles.index(match)-1]
 
     ia.update(result, info=['main'])
     return result

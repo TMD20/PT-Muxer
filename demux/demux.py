@@ -119,7 +119,7 @@ def extractBdinfo(sources, demuxData):
     outputs = []
     for source in sources:
         print(f"\n{source}\n")
-        print("Loading Playlist...\n")
+        print("Loading Playlists...\n")
 
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
         os.chdir(output)
@@ -179,9 +179,7 @@ def machineReader(muxSorter, args, movie):
 
    # Voice Recorder
 
-    if args.voicerec == "disabled":
-        return
-    elif args.voicerec == "enabled":
+    if args.voicerec == "enabled":
         voiceRec.main(muxSorter.enabledAudio)
     elif args.voicerec == "default":
         voiceRec.main(muxSorter.unSortedAudio, movie["languages"])
