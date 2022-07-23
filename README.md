@@ -9,13 +9,14 @@
 - [**Modes:**](#modes)
   - [Demux Mode](#demux-mode)
   - [Remux Mode:](#remux-mode)
-- [**JSON Sections**](#3-main-json-sections)
-  - [Overview](#1-movie)
-  - [1. Movie](#1-movie)
-  - [2. Sources](#2-sources)
-  - [3. ChapterData](#3-chapterdata)
-  - [4. Enabled Tracks](#4-enabled-tracks)
-  - [5. Track Details](#5-track-details)
+- [**JSON**](#json-sections)
+  - [Overview](#overview)
+  - [Sections JSON](#3 sections)
+    - [1. Movie](#1-movie)
+    - [2. Sources](#2-sources)
+    - [3. ChapterData](#3-chapterdata)
+    - [4. Enabled Tracks](#4-enabled-tracks)
+    - [5. Track Details](#5-track-details)
 - [**Commands:**](#commands)
   - [Demux Mode](#demux-mode-1)
     - [Required Args](#required-1)
@@ -129,13 +130,14 @@ Creates a mux folder with everything generated during the programs run
 JSON Example: 
 *  https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
 
-# JSON Sections
+# JSON
 
 ## Overview
 
 The JSON is outputed when you use the --demux argument. This Provides lots of details on all the tracks and sources used during the run of the program. Some of the information is autofilled, and the user can change the values if desired. Depending on what you change the settings to that will effect the final mkv produce
 
-## 1. Movie
+## Sections
+### 1. Movie
 Data about the movie or TV show
 For TV show or Movie use OCR/ subimages to confirm episode number
 
@@ -146,24 +148,24 @@ For TV show or Movie use OCR/ subimages to confirm episode number
 * Episode: If TV show the episode number
 *
 
-## 2. Sources
+### 2. Sources
 
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
 Each source has its own key here with some data inside of it
 
-### Keys
+#### Keys
 
-#### Sections
-* Each Source has it own dictionary or section
+#### Source Dictionary
+* Each Source has it own dictionary
 * The section is marked by a  source directory base path key /home/main/test would have a key of test
   
- ##### Inside Sections 
+ ##### Source Dictionary Key
 * outputDir: the location of the output files for the source i.e the mux folder location
 * sourceDir: The location of where the source is found
 * playlistNum: What Number was entered as a response to the question "What playlist" during the demux process
 
 
-## 3. ChapterData
+### 3. ChapterData
 
 This section has information about when the chapters
 
@@ -171,31 +173,31 @@ This section has information about when the chapters
 * name: What name to give the Chapter
 
 
-## 4. Enabled Tracks
+### 4. Enabled Tracks
 
 Displays which Tracks will be added during the mkvmerge Process. To See more details about a track match the number to the here to the Track Details Sections.
 The demux Process will auto add tracks to this section
 
-### Keys
+#### Keys
 Each Key has a list of Ids
 * Video: All the video Tracks to enable 
 * Sub: All the subtitle Tracks to enable 
 * Audio: All the audio Tracks to enable 
 
-### Changing order of Tracks
+#### Changing order of Tracks
 Just change the order of the track in the list
 
-### Disable Track
+#### Disable Track
 Just remove a track from the list
 
 
-## 5. Track Details
+### 5. Track Details
 
 
 Some Details about Each Track
 Including Language
 
-### Keys
+#### Keys
 * langcode: used by mkvmerge to set track language
 * lang: Translation of langcode to the actual language
 * site_title: used to set title for mediainfo, set to None for no title
