@@ -533,40 +533,43 @@ To save time it will only record about 50 lines worth of the track.
 
 
 
-# Sites
-# General Rules
-These apply if you don't pick a site.
-A more specific site can overwrite these rules possibly
+# Tracks
+## Normal Audio Track
+- A language is enabled if added to --audiolang. If that argument is not passed then only the imdb language will be added
+- However if english is not in the imdb langauge list, it will be added as the last language. This will account for any dubs.
+- Every English Track will be added if language is enabled.
+- For Non-English Track only the first track based on --sortpref will be added to enabled audio section
+- When all the enabled tracks are gathered, and sorted. The first enabled audio track will be set to default
 
-When you don't add --audiolang preferenec the language preference will come from imdb. To account for english dubs. The English Language will always be added to the list of languages, at the end. If it doesn't appear somewhere else in the list
-## AnimeBytes
+- Every lossless mono or stereo Track will be converted to FLAC
+
+### AnimeBytes
 Currently the main difference is that japanese and english are default audio languages, even if imdb only list japanese as the language of the TV/Movie
 
-## BeyondHD
-This has it own script for the final filename
-
+### BeyondHD
 Every lossless mono or stereo Track will be converted to FLAC
 
-## Blutopia
-This has it own script for the final filename
+### Blutopia
 
 Blutopia will check for padding using conversion to flac. If padding is found then the flac audio will be used in replacement of the original codec. This only applies to 24bit tracks
 
 Every lossless mono or stereo Track will be converted to FLAC
+## Compatablitly Track
+
+- A secondary Search for compatiblity tracks will be done. If a enabled audio track has one, then that will be inserted after that track
 
 
-Blutopia has a decent validator for checking if a remux is valid. It not 100 percent but gives a general Idea
+## Subs
+- If the films primary language is not english then the first english sub will have it default flag turned on
+- Every English Subtitle will be added to enabled sub section
+- Only the first subtitle of every other langauge, based on sortpref will be added
+- Order of subtitles can either be based on --sublang argument, alternative it will be a-z with the first subtitles being the english ones.
 
-## AnimeBytes
-
-Default Language is english and japanese
-
-Every lossless track will be converted to flac
+### AnimeBytes
 
 The first and second english sub tracks will be compared. The smallest one is assumed to be forced, and this track will be set to default with the forced flag on
 
-
-# Forced Subs
+## Embedded Forced Subs
 This only applies to forced subs that need to be extracted from another track
 
 Only a max of two languages will be checked.
@@ -586,10 +589,15 @@ All the data from the old track will be copied to the forced sub data.
 
 If a forced sub is found for the first audio language, then that track will be set to forced and enabled. This Track will be added at the top of the enabled sub section in the json
 
-Other forced subs for secondary and further languages will be added at the end of the enabled sub section in the json.
+The second forced sub will be added to the end of the enabled sub list
 
 Every forced sub found will be added to the sub track details section
 
+Forced Tracks will have the default and forced flags turned on
+
+## Video Track
+Only 1 video track is ever added and the one that is picked depends on --sortpref argument
+If no argument is passed the default is to just take the largest video file from multiple sources if present.
 
 
 
@@ -629,6 +637,12 @@ This may change base on the site specific but some general rules are
 - Given the order subs will be added to the enabled sub section, based on either order that you pass or alphabetically order. 
 - Every English Subtitle will be added to the enabled sub section
 - For other Languages only the first track will be added. --sortpref has no effect, this is only based on the order of the track
+
+# Sites
+General speaking other then track sorting sites will be similar. One difference is typically in the final name of the mkv
+
+## Blutopia
+Blutopia has a decent validator for checking if a remux is valid. It not 100 percent but gives a general Idea
 
 
 
