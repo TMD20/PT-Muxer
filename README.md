@@ -474,6 +474,30 @@ Every lossless track will be converted to flac
 The first and second english sub tracks will be compared. The smallest one is assumed to be forced, and this track will be set to default with the forced flag on
 
 
+# Forced Subs
+This only applies to forced subs that need to be extracted from another track
+
+Before checking if forced subs exist. Only the audio languages enabled via imdb or --audiolang argument will be checked
+
+If english is the primary language or first language via the audio prefences only that track language will be checked for forced subs
+
+All the data from the old track will be copied to the forced sub data.
+- The title will be change
+- The Track key will be changed
+- The Track eac3to will be changed
+- The Track File will be changed
+
+
+If a forced sub is found for the first audio language, then that track will be set to forced and enabled. This Track will be added at the top of the enabled sub section in the json
+
+Other forced subs for secondary and further languages will be added at the end of the enabled sub section in the json.
+
+Every forced sub found will be added to the sub track details section
+
+
+
+
+
 
 
 # Filtering Tracks
@@ -488,12 +512,13 @@ If --audiolang argument is not passed languages will be generally come from the 
 
 This may change base on the site specific but some general rules are
 
-- Every English Track will be added, and will always come first if enabled via args or imdb
+- Every English Track will be added, and will always come first in the enabled audio section in the json. If enabled via args or imdb
+- Other Tracks will appear in the enabled audio section based on the imdb order or the --audiolang order you passed
+- For other Languages only the first track found will be added to the enabled audio section
+-  First Track Depends on --sortpref along with order of languages via args or imdb. So if set to largest. The largest audio track for every langauge will be the one that is enabled. If set to order the first track in the first source will be added
 - The First Audio Track That is enabled will be set to default
-- For other Languages only the first track found will be found
-- Compatiblity Tracks will come right after their parent Track
-- First Track Depends on --sortpref along with order of languages via args or imdb
-- Other Tracks are added in the order of the --audiolang argument or imdb order
+- For any enabled Track that also has a Compatiblity Track. The Compatiblity Track will come right after their parent Track in the enabled audio section in the json 
+
 
 
 ## Sub
@@ -503,11 +528,11 @@ If --sublang argument is not passed languages will be generally be in alphabetic
 
 This may change base on the site specific but some general rules are
 
-- If you pass --sublang as a argument languages will appear in the order that you write. Meaning English may not be the first Track language
-- If --sublang argument is not passed then tracks will appear in alphabetical order, the imdb langauges have no effect
-- Every English Subtitle will be added
+- If you pass --sublang as a argument languages will be looked at in the order that you write. Meaning English may not be the first Track language.
+- If --sublang argument is not passed then tracks will be looked at in alphabetical order, the imdb langauges have no effect. English will also be the first language in the enabled sub section.
+- Given the order subs will be added to the enabled sub section, based on either order that you pass or alphabetically order. 
+- Every English Subtitle will be added to the enabled sub section
 - For other Languages only the first track will be added. --sortpref has no effect, this is only based on the order of the track
-- English Track Will come first
 
 
 
