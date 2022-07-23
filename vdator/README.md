@@ -1,3 +1,24 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [vdator](#vdator)
+    - [Table of Contents](#table-of-contents)
+    - [Supported pastebin sites](#supported-pastebin-sites)
+    - [Setup](#setup)
+      - [Create a python3 virtual environment:](#create-a-python3-virtual-environment)
+      - [Installing dependencies](#installing-dependencies)
+      - [Updating dependencies](#updating-dependencies)
+      - [Running manually](#running-manually)
+      - [Running with systemd](#running-with-systemd)
+    - [Lint](#lint)
+    - [Using](#using)
+    - [Adding a pastebin site](#adding-a-pastebin-site)
+    - [Adding a new check](#adding-a-new-check)
+    - [API](#api)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # vdator
 > Remux validator Discord bot
 
