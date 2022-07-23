@@ -35,7 +35,7 @@
   - [Video](#video)
 - [Sites](#sites)
 - [Filtering Tracks](#filtering-tracks)
-  - [**Note**](#note)
+- [*Note](#note)
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
@@ -471,6 +471,6 @@ Coming Soon
 
 
 
-## **Note**
+# **Note**
 
 Windows Support is planned but it might take me a while, and would be done when I feel like the main program is stable
