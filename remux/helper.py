@@ -21,7 +21,9 @@ def getRemuxConfigs(path):
         print("Deep Search of Directory Could Not Find any output.json Files")
         quit()
     demuxList = sorted(demuxList)
-    message= """Select One or more Files to Remux
+    message= \
+    """
+    Select One or more Files to Remux
     
     These should be either one Movie or one Show
     Batching of Multiple shows or Movies Not supported
@@ -30,7 +32,7 @@ def getRemuxConfigs(path):
     When Done Press Enter
     """
 
-    return utils.multiSelectMenu(message=message, choices=demuxList).execute()
+    return utils.multiSelectMenu(message=message, items=demuxList)
 
 
 def chapterListParser(chapterList):

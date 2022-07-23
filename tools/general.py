@@ -33,7 +33,7 @@ def getShowName(path):
     return show
 
 
-def findMatches(path, string):
+def  findMatches(path, string):
     return glob.glob(os.path.join(path, "**", string), recursive=True)
 
 
@@ -83,8 +83,8 @@ def multiSelectMenu(items, message):
 
 def textEnter(message,default=None):
     if default!=None:
-        return inquirer.checkbox(message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
-    return inquirer.checkbox(message=textwrap.dedent(f"\n{message}\n")).execute()
+        return inquirer.text(message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
+    return inquirer.text(message=textwrap.dedent(f"\n{message}\n")).execute()
     
 
 
@@ -106,7 +106,7 @@ def getEac3to(remuxConfig):
     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
     output = os.path.dirname(
         remuxConfig["Tracks_Details"]["Video"][key]["file"])
-    return findMatches(output, "Eac3to")[0]
+    return findMatches(output, "Eac3to*")[0]
 
 
 def getwinepath(folder):
