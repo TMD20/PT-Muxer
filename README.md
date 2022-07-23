@@ -329,11 +329,13 @@ This will Effect mainly effect the final track name
 See Sites Section for more detail
 ```
 
-## Selecting Tracks
+### Selecting Tracks
 
 ```
-Note the same imdbID will be used for all files during the muxing process
-Episode IDs will also be generated from this ID if needed
+Note the same imdb id will be used for all files during the muxing process
+Episode IDs will also be generated from this ID if needed.
+
+This is put in a metadata file that is utilize to put information about the current show into the final mkv. You can see this information via medainfo. 
 
 Therefore you should only do 
 1 Movie Per run
