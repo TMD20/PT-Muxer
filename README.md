@@ -11,6 +11,31 @@ If you need help I can provide some support until I have time to refactor all th
   * Linux
   * mono
 
+## Install
+### Linux: 
+python3 -m pip install --user virtualenv
+python3 -m venv env
+source env/bin/activate
+which python -> should be the virtualenv
+pip3 install-r requirements.txt
+deactivate -> Do this after installing the requirements
+
+### Windows
+py -m pip install --user virtualenv
+py -m venv env
+.\env\Scripts\activate
+which python -> should be the virtualenv
+py -m pip install -r requirements.txt
+deactivate -> Do this after install the requirements
+
+Linux: 
+
+General Guide: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
+
+
+
+
+
 
 ## Optional Binaries
 
