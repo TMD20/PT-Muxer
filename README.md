@@ -113,11 +113,6 @@ This section has information about when the chapters
 * name: What name to give the Chapter
 
 
-
-
-
-
-
 ## 4. Enabled Tracks
 
 Displays which Tracks will be added during the mkvmerge Process. To See more details about a track match the number to the here to the Track Details Sections.
@@ -234,10 +229,11 @@ order: sort tracks by which comes first, give highest priority to first tracks
    Generates machine readable text of the sup files. 
    
   choices: enabled, sublang,default,all,disabled,english
-  Enabled: Just ocr enabled tracks i.e tracks that are within 
-
- 
-
+  enabled: Just ocr enabled tracks i.e tracks that are within  
+  sublangs: OCR the same languages you set for sublangs
+  default: OCR using the languages from imdb
+  all: OCR every single language
+  english: OCR english only
 ```
 
 ### TV Mode
@@ -319,7 +315,7 @@ Similar to the TV mode Struture save for the numbered folders
 
 ## Remux Mode
 
-* python3 /path/to/app.py -demux sourcepath outputpathhttps://user-images.githubusercontent.com/80348218/180505811-44195aaf-325a-4bfb-ba22-dd650fba60c8.png
+* python3 /path/to/app.py -demux sourcepath output [optional args]
 
 ### Required
 ```
