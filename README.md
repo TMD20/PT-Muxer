@@ -8,32 +8,22 @@ If you need help I can provide some support until I have time to refactor all th
 ## Required
   * python modules via requirements.txt 
   * Linux
-​
-12
-## Optional Binaries
-13
-  These binaries are included but you are free to use newer versions if desired
-14
-   see config.py "*LinuxPath"for filepaths. 
-15
-   
-16
-## mkvmerge:
-17
-* https://mkvtoolnix.download/downloads.html#ubuntu - Provides multiple ways to install mkvmerge: including via building yourself or package manager
-18
-### wine
-19
-* https://github.com/Kron4ek/Wine-Builds - install wine without sudo
-20
-* https://wiki.winehq.org/Download -build wine yourself, or install using package manager
-21
-### mediainfo
-22
-* https://mediaarea.net/en/MediaInfo/Download/Source - build mediainfo yourself
-23
-* https://mediaarea.net/en/MediaInfo/Download -Provides multiple ways to install mediainfo: including via building yourself,package manager,appimage
 
+
+## Optional Binaries
+
+These binaries are included but you are free to use newer versions if desired
+
+see config.py "*LinuxPath"for filepaths. 
+
+### mkvmerge:
+
+* https://mkvtoolnix.download/downloads.html#ubuntu - Provides multiple ways to install mkvmerge: including via building yourself or package manager
+* 
+### wine
+
+* https://github.com/Kron4ek/Wine-Builds - install wine without sudo
+* https://wiki.winehq.org/Download -build wine yourself, or install using package manager
 
 
 
