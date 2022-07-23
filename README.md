@@ -530,10 +530,7 @@ Use the --videorec command to use this feature.
 To save time it will only record about 50 lines worth of the track.
 
 
-
-
-
-# Tracks
+# Enabled Tracks Sorting/Filtering
 ## Normal Audio Track
 - A language is enabled if added to --audiolang. If that argument is not passed then only the imdb language will be added
 - However if english is not in the imdb langauge list, it will be added as the last language. This will account for any dubs.
@@ -600,52 +597,11 @@ Only 1 video track is ever added and the one that is picked depends on --sortpre
 If no argument is passed the default is to just take the largest video file from multiple sources if present.
 
 
-
-
-
-
-# Filtering Tracks
-Note Every Track is extracted these are the rules for tracks that are enabled for remuxing, automatically. You can always change these settings
-## Video
-Video can be choosen by size or order using the --sortpref argument
-
-## Audio
-You can decide the general order of the languages using the --audiolang argument
-
-If --audiolang argument is not passed languages will be generally come from the imdb page. Note some sites like animebytes may have slight change to this
-
-This may change base on the site specific but some general rules are
-
-- Every English Track will be added to the enabled track section
-- For other Languages only the first track found will be added to the enabled audio section
-- Tracks will appear in the enabled audio section based on the imdb order or the --audiolang order you passed
--  First Track Depends on --sortpref along with order of languages via args or imdb. So if set to largest. The largest audio track for every langauge will be the one that is enabled. If set to order the first track in the first source will be added
-- The First Audio Track That is enabled will be set to default
-- For any enabled Track that also has a Compatiblity Track. The Compatiblity Track will come right after their parent Track in the enabled audio section in the json 
-
-
-
-## Sub
-You can decide the general order of the languages using the --sublang argument
-
-If --sublang argument is not passed languages will be generally be in alphabetical order
-
-This may change base on the site specific but some general rules are
-
-- If you pass --sublang as a argument languages will be looked at in the order that you write. Meaning English may not be the first Track language.
-- If --sublang argument is not passed then tracks will be looked at in alphabetical order, the imdb langauges have no effect. English will also be the first language in the enabled sub section.
-- Given the order subs will be added to the enabled sub section, based on either order that you pass or alphabetically order. 
-- Every English Subtitle will be added to the enabled sub section
-- For other Languages only the first track will be added. --sortpref has no effect, this is only based on the order of the track
-
-# Sites
+# Sites 
 General speaking other then track sorting sites will be similar. One difference is typically in the final name of the mkv
 
 ## Blutopia
 Blutopia has a decent validator for checking if a remux is valid. It not 100 percent but gives a general Idea
-
-
-
 
 
 # **Note**
