@@ -38,12 +38,13 @@ class siteTrackSorter():
             wineBin = config.wineProjectPath
 
         audioLangs = self._getAudioPrefs(movieLang, audioPref)
-        if audioLangs[0] == "english":
-            audioLangs = ["english"]
-        # In cause We need More then one Forced Sub
-        otherForcedSubs = []
-        allforced = []
+        if audioLangs[0].lower() != "english":
+            audioLangs = [audioLangs[0],"english"]
+        else:
+            audioLangs=audioLangs[0]
 
+        primary=[]
+        all=[]
         # Get Forced Subtitles
         for oldTrack in self._unSortedSub:
             if oldTrack["lang"].lower() not in audioLangs:
@@ -73,28 +74,24 @@ class siteTrackSorter():
                 newTrack["file"] = newFile
                 newTrack["eac3to"] = newEac3to
                 newTrack["key"] = xxhash.xxh32_hexdigest(
-                    newTrack["bdinfo_title"]+newTrack["sourceKey"] + str(newTrack["index"])+"forced")+"_"+(newTrack["langcode"] or "vid")
+                    newTrack["bdinfo_title"]+newTrack["sourceKey"] + str(newTrack["index"])+"forced")+"_"+"forced"+"_"(newTrack["langcode"] or "vid")
 
                 # Force Track For Primary Langauge Comes First
                 if oldTrack["lang"].lower() == audioLangs[0]:
-                    newList = [newTrack]
                     newTrack["default"] = True
                     newTrack["forced"] = True
-                    newList.extend(self._enabledSub)
-                    self._enabledSub = newList
-                    allforced.append(newTrack)
+                    primary.append(newTrack)
+                    all.append(newTrack)
 
-                # We need to Sort by language later
+                # Just add to the end of the list
                 else:
                     newTrack["default"] = True
                     newTrack["forced"] = True
-                    otherForcedSubs.append(newTrack)
-                    allforced.append(newTrack)
-
-        sorted(otherForcedSubs,
-               key=lambda x: audioLangs.index(newTrack["lang"].lower()))
-        self._enabledSub.extend(otherForcedSubs)
-        self._unSortedSub.extend(allforced)
+                    self.enabledSub.append(newTrack)
+                    all.append(newTrack)
+        primary.extend(self.enabledSub)
+        self.enabledSub=primary
+        self.unSortedSub.append(all)
 
     """
     Setters/Getters
@@ -319,5 +316,7 @@ class siteTrackSorter():
 
     def _getAudioPrefs(self, movieLang, audioPrefs):
         if len(audioPrefs) == 0:
+            if "English" not in movieLang:
+                movieLang.append("English")
             return list(map(lambda x: x.lower(), movieLang))
         return utils.removeDupesList(audioPrefs)
