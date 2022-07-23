@@ -222,7 +222,7 @@ order: sort tracks by which comes first, give highest priority to first tracks
  This will overwrite any site configuraton in terms of sub prefernece 
 ```
 
- --ocr sublang 
+ --ocr 
 ```
     Example: python3 /path/to/app.py -demux sourcepath outputpath --ocr enabled
    Generates machine readable text of the sup files. 
@@ -237,10 +237,10 @@ order: sort tracks by which comes first, give highest priority to first tracks
 ```
 
 
- --voicerec sublang 
+ --voicerec 
 ```
     Example: python3 /path/to/app.py -demux sourcepath outputpath --voicerec enabled
-   Generates machine readable text of the sup files. 
+   Generates machine readable text of the audio files. 
    
   choices ->  enabled, audiolang,default,all,disabled,english
   
@@ -249,6 +249,14 @@ order: sort tracks by which comes first, give highest priority to first tracks
   default: Use voice rec on the languages from imdb
   all: Use voice rec on every single language
   english: voice rec english only
+```
+
+
+ --keepocr
+```
+    Example: python3 /path/to/app.py -demux sourcepath outputpath --ocr enabled --keepocr
+    During ocr images are saved to a temporory drive, this option moves the files to a permanant location in the output Mux folder.
+
 ```
 
 
@@ -348,13 +356,21 @@ Similar to the TV mode Struture save for the numbered folders
   The folder you want the final MKV to be outputted to
 ```
 ### Optional
-
-```
 --site blutopia/blu/bhd/beyondhd [default=blu]
+```
+Example:python3 /path/to/app.py --remux --site blutopia
 
 This will Effect mainly effect the final track name
 See Sites Section for more detail
 ```
+
+--group [default=Unknown]
+```
+Example:python3 /path/to/app.py --remux --group superduperremuxing
+
+This will change the group tag of the final MKV
+```
+
 
 ### Selecting Tracks
 
