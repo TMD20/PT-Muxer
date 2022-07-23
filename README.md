@@ -465,7 +465,13 @@ Every lossless mono or stereo Track will be converted to FLAC
 
 Blutopia has a decent validator for checking if a remux is valid. It not 100 percent but gives a general Idea
 
+## AnimeBytes
 
+Default Language is english and japanese
+
+Every lossless track will be converted to flac
+
+The first and second english sub tracks will be compared. The smallest one is assumed to be forced, and this track will be set to default with the forced flag on
 
 
 
