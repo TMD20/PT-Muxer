@@ -182,9 +182,9 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 
 
 ### Optional
-
-```
 --site blutopia/blu/bhd/beyondhd [default=blu]
+```
+Example: python3 /path/to/app.py -demux inpath outpath --site blu
 
 This will Effect
 * Order of Tracks
@@ -194,30 +194,27 @@ This will Effect
 For More Details on Different Sites and their effects on The final Output Please Read the Site Section
 see Filtering Tracks section
 ```
-
-```
  --sortpref  [default=size]
+```
+Example: python3 /path/to/app.py -demux inpath outpath --sortpref size
  options: size or order
 size: sort tracks by which track is largest. Give highest priority to largest track
 order: sort tracks by which comes first, give highest priority to first tracks
 
 ```
-
-
+ --audiolang
 ```
- --pref audiolang
- Example: --pref audiolang english japanese
+ Example:python3 /path/to/app.py -demux inpath outpath --audiolang english japanese
  
  Which Track Language(s) you want to enable for the current demux
  Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled audio   tracks list
  
  This will overwrite any site configuraton in terms of audio prefernece 
 ```
- 
+  --sublang 
  ```
- --pref sublang 
- 
- Example: --pref sublang english japanese
+
+ Example:python3 /path/to/app.py inpath outpath -demux --sublang english japanese
  
  Which Track Language(s) you want to enable for the current demux
  Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled sub  tracks list
@@ -226,6 +223,8 @@ order: sort tracks by which comes first, give highest priority to first tracks
 ```
 
  --ocr sublang 
+```
+    Example: python3 /path/to/app.py -demux inpath outpath --ocr enabled
    Generates machine readable text of the sup files. 
    
   choices: enabled, sublang,default,all,disabled,english
