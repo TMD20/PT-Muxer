@@ -534,6 +534,11 @@ To save time it will only record about 50 lines worth of the track.
 
 
 # Sites
+# General Rules
+These apply if you don't pick a site.
+A more specific site can overwrite these rules possibly
+
+When you don't add --audiolang preferenec the language preference will come from imdb. To account for english dubs. The English Language will always be added to the list of languages, at the end. If it doesn't appear somewhere else in the list
 ## AnimeBytes
 Currently the main difference is that japanese and english are default audio languages, even if imdb only list japanese as the language of the TV/Movie
 
@@ -599,9 +604,9 @@ If --audiolang argument is not passed languages will be generally come from the 
 
 This may change base on the site specific but some general rules are
 
-- Every English Track will be added, and will always come first in the enabled audio section in the json. If enabled via args or imdb
-- Other Tracks will appear in the enabled audio section based on the imdb order or the --audiolang order you passed
+- Every English Track will be added to the enabled track section
 - For other Languages only the first track found will be added to the enabled audio section
+- Tracks will appear in the enabled audio section based on the imdb order or the --audiolang order you passed
 -  First Track Depends on --sortpref along with order of languages via args or imdb. So if set to largest. The largest audio track for every langauge will be the one that is enabled. If set to order the first track in the first source will be added
 - The First Audio Track That is enabled will be set to default
 - For any enabled Track that also has a Compatiblity Track. The Compatiblity Track will come right after their parent Track in the enabled audio section in the json 
