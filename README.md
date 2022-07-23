@@ -92,6 +92,17 @@ JSON Example:
 
 The JSON is outputed when you use the --demux argument. This Provides lots of details on all the tracks and sources used during the run of the program. Some of the information is autofilled, and the user can change the values if desired. Depending on what you change the settings to that will effect the final mkv produce
 
+
+## Examples
+
+### Movie
+https://0.xwem.com/?b3791a91929e6b38#He4TbTYS4a4yVAik6fkBtNfNviXb1NBC2BC86Bd7EwFi
+
+
+### TV
+https://0.xwem.com/?be82537624a327c6#8aW8WEmFUYbxxjR4Pknf7s52GqpzAe6xcyMPdsw3LaTv
+
+
 ## Sections
 ### 1. Movie
 Data about the movie or TV show
