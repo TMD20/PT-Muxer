@@ -121,6 +121,7 @@ This section has information about when the chapters
 ## 4. Enabled Tracks
 
 Displays which Tracks will be added during the mkvmerge Process. To See more details about a track match the number to the here to the Track Details Sections.
+The demux Process will auto add tracks to this section
 
 ### Keys
 Each Key has a list of Ids
@@ -181,7 +182,7 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
   outpath
  
   Where you want the mux folder to be outputed to. A Folder with the following struture will be created
-  mux.randomstring.basenamefirstfolder
+  Mux.randomstring.showName
 ```
 
 
@@ -196,33 +197,47 @@ This will Effect
 * Which Tracks are Included by default
 * ETC
 For More Details on Different Sites and their effects on The final Output Please Read the Site Section
-Track Order and Tracks Picked can be overwritten see Filtering Tracks section
+see Filtering Tracks section
 ```
 
 ```
- --pref size/order [default=size]
+ --sortpref  [default=size]
+ options: size or order
+size: sort tracks by which track is largest. Give highest priority to largest track
+order: sort tracks by which comes first, give highest priority to first tracks
+
+```
+
+
+```
+ --pref audiolang
+ Example: --pref audiolang english japanese
  
-Whether tracks should be sorted by size or Large
-This will effect which Tracks are picked see Filtering Tracks section
-```
-
-
-```
- --pref audiolang 
+ Which Track Language(s) you want to enable for the current demux
+ Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled audio   tracks list
  
- Which Track Language you want to enable for the current demux
- This will overwrite any site configuraton. You can call this argument multiple times, note the order of the calls 
- is the order you want the tracks toappear
- see Filtering Tracks section
+ This will overwrite any site configuraton in terms of audio prefernece 
 ```
  
  ```
  --pref sublang 
  
- Which Track Language you want to enable for the current demux
- This will overwrite any site configuraton. You can call this argument multiple times, note the order of the calls is the 
- order you want the tracks to    appear
-see Filtering Tracks section
+ Example: --pref sublang english japanese
+ 
+ Which Track Language(s) you want to enable for the current demux
+ Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled sub  tracks list
+ 
+ This will overwrite any site configuraton in terms of sub prefernece 
+```
+
+ --ocr sublang 
+   Generates machine readable text of the sup files. 
+   
+  choices: enabled, sublang,default,all,disabled,english
+  Enabled: Just ocr enabled tracks i.e tracks that are within 
+
+ 
+
 ```
 
 ### TV Mode
