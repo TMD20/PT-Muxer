@@ -4,13 +4,13 @@ import re
 import xxhash
 import langcodes
 
-import tools.general as util
+import tools.general as utils
 
 
 class TracksData():
     def __init__(self):
         self._rawMediaTracksData = {}
-        self._sources=[]
+        self._sources = []
 
     """
     Public Functions
@@ -25,31 +25,26 @@ class TracksData():
         tracks = []
         for index, currline in enumerate(trackStrs):
             index = index+2
-            self._appendTrack(currline, index, tracks,source)
+            self._appendTrack(currline, index, tracks, source)
         for track in tracks:
             track["sourceDir"] = source
-            track["sourceKey"] = util.getShowName(source)
+            track["sourceKey"] = utils.getShowName(source)
         self._expandRawTracksData(tracks, playlistNum, source, output)
         self.addSource(source)
-    
-  
-   
-    
+
     def addSource(self, source):
-        self._sources.append(util.getShowName(source))
+        self._sources.append(utils.getShowName(source))
 
     ################################################################################################################
     #   Getter Functions
     ################################################################################################################
 
-    
-    
     @property
     def rawMediaTracksData(self):
         return self._rawMediaTracksData
 
     def filterBySource(self, source):
-        return self._rawMediaTracksData.get(util.getShowName(source))
+        return self._rawMediaTracksData.get(utils.getShowName(source))
 
     """
    Private
@@ -113,7 +108,7 @@ class TracksData():
         tempdict["default"] = False
         tempdict["forced"] = False
         tempdict["machine_parse"] = []
-        tempdict["length"]=None
+        tempdict["length"] = None
         return tempdict
 
         ################################################################################################################
@@ -122,7 +117,6 @@ class TracksData():
 
     def _medialang(self, currline):
         return re.search("(?:.*?: )(.*?)(?: /.*)", currline).group(1)
-
 
     def _mediacode(self, lang):
         try:
@@ -134,7 +128,7 @@ class TracksData():
         ###### Adds Track to List                                                                                     #
         ################################################################################################################
 
-    def _appendTrack(self, currline, index, tracks,source):
+    def _appendTrack(self, currline, index, tracks, source):
         tempdict = None
         tempdict2 = None
         match = re.search("([a-z|A-Z]*?):", currline, re.IGNORECASE).group(1)
@@ -145,33 +139,34 @@ class TracksData():
             tempdict2 = self._audioCompatParser(currline)
         elif match == "Subtitle":
             tempdict = self._subParser(currline)
-        #Try to Get Unique Key Values
+        # Try to Get Unique Key Values
         tempdict["key"] = xxhash.xxh32_hexdigest(
-            tempdict["bdinfo_title"]+util.getShowName(source)+str(index))+"_"+(tempdict
-            ["langcode"] or "vid")
+            tempdict["bdinfo_title"]+utils.getShowName(source)+str(index))+"_"+(tempdict
+                                                                                ["langcode"] or "vid")
         tempdict["index"] = index
-        tempdict["parent"]=None
-        tempdict["child"]=None
+        tempdict["parent"] = None
+        tempdict["child"] = None
         tracks.append(tempdict)
         if tempdict2 != None:
-            key  = xxhash.xxh32_hexdigest(
-                tempdict2["bdinfo_title"]+util.getShowName(source) + str(index))+"_"+(tempdict2["langcode"] or "vid")
+            key = xxhash.xxh32_hexdigest(
+                tempdict2["bdinfo_title"]+utils.getShowName(source) + str(index))+"_"+(tempdict2["langcode"] or "vid")
             tempdict2["key"] = key
             tempdict2["index"] = index
-            tempdict2["child"] =None
-            tempdict2["parent"]=tempdict["bdinfo_title"]
-            tempdict["child"] =tempdict2["bdinfo_title"]
-            tempdict["parent"]=None
+            tempdict2["child"] = None
+            tempdict2["parent"] = tempdict["bdinfo_title"]
+            tempdict["child"] = tempdict2["bdinfo_title"]
+            tempdict["parent"] = None
             tracks.append(tempdict2)
 
-    #Primary Key are Basename Source
+    # Primary Key are Basename Source
     # Tracks are Objects
     # Output is a a string
     def _expandRawTracksData(self, tracks, playlistNum, source, output):
-        self._rawMediaTracksData[util.getShowName(source)] = {}
-        self._rawMediaTracksData[util.getShowName(source)]["tracks"] = tracks
-        self._rawMediaTracksData[util.getShowName(source)]["outputDir"] = output
-        self._rawMediaTracksData[util.getShowName(
+        self._rawMediaTracksData[utils.getShowName(source)] = {}
+        self._rawMediaTracksData[utils.getShowName(source)]["tracks"] = tracks
+        self._rawMediaTracksData[utils.getShowName(
+            source)]["outputDir"] = output
+        self._rawMediaTracksData[utils.getShowName(
             source)]["sourceDir"] = source
-        self._rawMediaTracksData[util.getShowName(
+        self._rawMediaTracksData[utils.getShowName(
             source)]["playlistNum"] = playlistNum

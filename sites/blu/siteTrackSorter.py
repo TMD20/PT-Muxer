@@ -3,7 +3,7 @@ import os
 
 from sites.base.siteTrackSorter import siteTrackSorter
 import mediatools.eac3to as eac3to
-import tools.general as util
+import tools.general as utils
 
 
 class Blu(siteTrackSorter):
@@ -37,9 +37,8 @@ class Blu(siteTrackSorter):
                 i = i+1
                 continue
 
-            with open(eac3to.set_eac3toPath(output, util.getShowName(track["sourceDir"])), "r") as p:
+            with open(eac3to.set_eac3toPath(output, utils.getShowName(track["sourceDir"])), "r") as p:
                 t = p.read()
-           
 
             prevSource = prevTrack["sourceKey"]
             print(f"Creating file \"{filename}\".*Decoding FLAC", "\n\n")

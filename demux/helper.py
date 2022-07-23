@@ -7,14 +7,15 @@ from guessit import guessit
 from InquirerPy import inquirer
 
 import mediatools.extract as extract
-import tools.general as util
+import tools.general as utils
+import config
 
 
 def getBDMVs(path):
     currpath = os.getcwd()
     os.chdir(path)
-    list1 = util.findMatches(path, "STREAM")
-    list2 = util.findMatches(path, "*.iso$")
+    list1 = utils.findMatches(path, "STREAM")
+    list2 = utils.findMatches(path, "*.iso$")
     list1.extend(list2)
     os.chdir(currpath)
     return sorted(list1)
@@ -23,7 +24,7 @@ def getBDMVs(path):
 def createParentDemuxFolder(sources, outpath):
     title = guessit(sources[0])["title"]
     if len(sources) > 0:
-        folder = f"Mux.{os.urandom(7).hex()}.{title}"
+        folder = f"{config.demuxPrefix}.{os.urandom(7).hex()}.{title}"
         parentDemux = os.path.join(outpath, folder)
         parentDemux = re.sub(" +", " ", parentDemux)
         parentDemux = re.sub(" ", ".", parentDemux)
@@ -35,7 +36,7 @@ def createParentDemuxFolder(sources, outpath):
 
 def createChildDemuxFolder(parentDir, show):
     os.chdir(parentDir)
-    show = util.getShowName(show)
+    show = utils.getShowName(show)
 
     show = re.sub(" ", ".", show)
     os.mkdir(show)
@@ -46,21 +47,26 @@ def addSource(paths):
     if len(paths) == 0:
         print("No Valid Source Directories Found")
         quit()
-    return inquirer.checkbox(message="\nSelect All the Sources You Want for this Demux\n \
-    For TV Shows you can change the Source(s) Per Episode\n\n"
-                             "Select a option with the space button\n \
-    Press Enter when Done",
-                             choices=paths).execute()
+
+    msg = """
+    Click on the Source(s) You Want for this Demux 
+    For TV Shows you can change the Source(s) Per Episode
+
+    Press Space to add/remove selection
+    Press Enter when Done
+    """
+    return utils.multiSelectMenu(paths, msg)
 
 
 def getStartingPoint():
-    return util.getIntInput("You should select each playlist in order\nWhat Episode is the Starting point")
+    return utils.getIntInput("You should select each playlist in order\nWhat Episode is the Starting point")
 
 
 def CreateChapterList(*sources):
     path = None
     if len(sources) > 1:
-        dir = util.Menu(sources, "Which Source Has The proper Chapter File")
+        dir = utils.singleSelectMenu(
+            sources, "Which Source Has The proper Chapter File")
         path = os.path.join(dir, "chapters.txt")
     else:
         path = os.path.join(sources[0], "chapters.txt")
@@ -100,7 +106,7 @@ def Extract(source, inpath):
         try:
             print("\nTrying Mounting ISO\nThen Extracting")
             mountpoint = f"/media/{os.getlogin()}/custom"
-            util.mkdirSafe(f"/media/{os.getlogin()}")
+            utils.mkdirSafe(f"/media/{os.getlogin()}")
             if os.path.exists(mountpoint):
                 subprocess.run(
                     ["udevil", "umount", mountpoint], subprocess.PIPE)
