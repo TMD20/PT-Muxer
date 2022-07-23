@@ -9,7 +9,8 @@
 - [**Modes:**](#modes)
   - [Demux Mode](#demux-mode)
   - [Remux Mode:](#remux-mode)
-- [**3 Main JSON Sections**](#3-main-json-sections)
+- [**JSON Sections**](#3-main-json-sections)
+  - [Overview](#1-movie)
   - [1. Movie](#1-movie)
   - [2. Sources](#2-sources)
   - [3. ChapterData](#3-chapterdata)
@@ -128,8 +129,11 @@ Creates a mux folder with everything generated during the programs run
 JSON Example: 
 *  https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
 
-# 3 Main JSON Sections
+# JSON Sections
 
+## Overview
+
+The JSON is outputed when you use the --demux argument. This Provides lots of details on all the tracks and sources used during the run of the program. Some of the information is autofilled, and the user can change the values if desired. Depending on what you change the settings to that will effect the final mkv produce
 
 ## 1. Movie
 Data about the movie or TV show
