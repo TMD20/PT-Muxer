@@ -5,9 +5,10 @@ import subprocess
 
 from InquirerPy import inquirer
 
-import tools.general as util
+import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import mediadata.movieData as movieData
+import config
 
 
 class MuxOBj():
@@ -109,7 +110,7 @@ class MuxOBj():
             out.append(temp)
         self._sub = (list(itertools.chain.from_iterable(out)))
 
-    def getFileName(self, kind,remuxConfig,movie,group):
+    def getFileName(self, kind, remuxConfig, movie, group):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -121,7 +122,7 @@ class MuxOBj():
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        
+
         movieName = movieData.getMovieName(movie)
         movieYear = movieData.getMovieYear(movie)
 
@@ -136,21 +137,21 @@ class MuxOBj():
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" +", ".", fileName)
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
-        
+
         inputs = ["YES", "NO"]
-        choice = util.Menu(
+        choice = utils.singleSelectMenu(
             inputs, f"Is this FileName Correct: {fileName}\n")
         while choice != "YES":
-            fileName = inquirer.text(
-                message="Enter New FileName: ", default=fileName).execute()
-            choice = util.Menu(inputs, "Is the File Correct Now\n")
+            message = "Enter New FileName: "
+            utils.textEnter(message, fileName)
+            choice = utils.singleSelectMenu(
+                inputs, "Is the File Correct Now\n")
         return os.path.abspath(os.path.join(".", fileName))
 
     def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
-        mkvmergeBin = "/usr/bin/mkvmerge"
-
+        mkvmergeBin = config.mkvmergeLinuxPath
         if not os.path.isfile(mkvmergeBin):
-            mkvmergeBin = os.path.join(util.getRootDir(), "binaries/mkvmerge")
+            mkvmergeBin = config.mkvMergeProjectPath
 
         command = list(itertools.chain.from_iterable(
             [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))

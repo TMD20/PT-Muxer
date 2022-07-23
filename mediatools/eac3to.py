@@ -2,22 +2,18 @@ import os
 import re
 import itertools
 import subprocess
-from pathlib import PureWindowsPath, PurePosixPath
+
+import config
+import tools.general as utils
 
 
-import tools.general as util
+def process(source, output, outputs_list, playlistNum):
+    start = os.getcwd()
+    show = utils.getShowName(source)
+    eac3toPath = set_eac3toPath(output, show)
 
+    utils.mkdirSafe(eac3toPath)
 
-
-def process(source, output,outputs_list, playlistNum):
-    start=os.getcwd()
-    show = util.getShowName(source)
-    eac3toPath = set_eac3toPath(output,show)
-    
-    util.mkdirSafe(eac3toPath)
-   
-
-    
     os.chdir(output)
     extract_files(source, playlistNum, outputs_list, eac3toPath)
     cleanFiles(outputs_list)
@@ -26,22 +22,20 @@ def process(source, output,outputs_list, playlistNum):
 
 def extract_files(source, playlistNum, outputs_list, eac3toPath):
     success = False
-    eactoBin = "/usr/local/bin/eac3to/eac3to.exe"
-    wineBin= "/usr/bin/wine"
-  
-
+    eactoBin = config.eac3toLinuxPath
     if not os.path.isfile(eactoBin):
-        eactoBin =os.path.join(util.getRootDir(), "binaries/eac3to/eac3to.exe")
-      
+        eactoBin = config.eac3toProjectPath
 
+    wineBin = config.wineLinuxPath
+    if not os.path.isfile(wineBin):
+        wineBin = config.wineProjectPath
 
     command1 = [[wineBin, eactoBin,
-                getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", f"-log={eac3toPath}"]]
-    
+                utils.getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", f"-log={eac3toPath}"]]
+
     command2 = [[wineBin, eactoBin,
-                getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]
-  
-  
+                utils.getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]
+
     with subprocess.Popen(list(itertools.chain.from_iterable(
             command1)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
         for line in p.stdout:
@@ -50,7 +44,6 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
             print(line, end='')
         success = True
         p.wait()
-    
 
     if success == False:
         print("Trying with --demux arg")
@@ -61,24 +54,15 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
             for line in p.stdout:
                 print(line, end='')
             p.wait()
-           
 
 
-def getwinepath(folder):
-    return str(PureWindowsPath(PurePosixPath(folder)))
-    
-
-    
-    # return subprocess.run([winePath, "-w", folder], cwd="/", stdout=subprocess.PIPE).stdout.decode('utf8', 'strict').replace('\n', '')
-
-
-def set_eac3toPath(output,show):
+def set_eac3toPath(output, show):
     return os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
 
 
 def cleanFiles(outputs_list):
     valid_list = [item.split(":")[1]
-                  for item in outputs_list if len(item.split(":"))>1]
+                  for item in outputs_list if len(item.split(":")) > 1]
     for file in os.listdir("."):
         if os.path.isfile(file) and file not in valid_list and file != "chapters.txt":
             os.remove(file)
@@ -96,27 +80,27 @@ def getVideoFileName(line, index):
 
 
 def getAudioFileName(line, langcode, index):
-    ##Lossless audio
-    if re.search("flac", line,re.IGNORECASE) != None:
+    # Lossless audio
+    if re.search("flac", line, re.IGNORECASE) != None:
         codec = "flac"
 
-    elif re.search("lpcm",line,re.IGNORECASE)!=None:
-        codec="pcm"
-    elif re.search("Master Audio", line,re.IGNORECASE) != None:
+    elif re.search("lpcm", line, re.IGNORECASE) != None:
+        codec = "pcm"
+    elif re.search("Master Audio", line, re.IGNORECASE) != None:
         codec = "dtsma"
-    
-    elif re.search("TrueHD", line,re.IGNORECASE) != None:
+
+    elif re.search("TrueHD", line, re.IGNORECASE) != None:
         codec = "thd"
-    
-    elif re.search("Dolby Digital", line,re.IGNORECASE) != None:
+
+    elif re.search("Dolby Digital", line, re.IGNORECASE) != None:
         codec = "ac3"
-    elif re.search("AC3 Embedded", line,re.IGNORECASE) != None:
+    elif re.search("AC3 Embedded", line, re.IGNORECASE) != None:
         codec = "ac3"
 
     elif re.search("DTS Audio", line, re.IGNORECASE) != None:
         codec = "dts"
     elif re.search("dts", line, re.IGNORECASE) != None:
-        codec="dts"
+        codec = "dts"
 
     return f"{index}:00{index}-{langcode}.{codec}"
 
@@ -124,4 +108,3 @@ def getAudioFileName(line, langcode, index):
 def getSubFileName(langcode, index):
     # remove special characters
     return f"{index}:00{index}-{langcode}.sup"
-

@@ -10,8 +10,9 @@ import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
-import tools.general as util
+import tools.general as utils
 import demux.helper as demuxHelper
+import config
 
 
 def demux(args):
@@ -21,7 +22,7 @@ def demux(args):
     args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
     options = ["Movie", "TV"]
-    if util.Menu(options, "What Type of Media are you Demuxing?") == "Movie":
+    if utils.singleSelectMenu(options, "What Type of Media are you Demuxing?") == "Movie":
         demuxMovie(args)
     else:
         demuxTV(args)
@@ -33,15 +34,14 @@ def demuxTV(args):
     muxSorter = siteSortPicker.pickSite(args.site)
     choices = ["Yes", "No"]
 
-    print("Add Sources For First Episode Demux\n")
     sources = getSources(options, args.inpath)
 
     print("What TV Show?")
     movie = movieData.matchMovie(sources)
-    season = int(util.getIntInput("Enter Season Number"))
+    season = int(utils.getIntInput("Enter Season Number"))
     i = 1
-    if util.Menu(choices, "Restore Folder Old MuxFolder Data") == "Yes":
-        folders = util.findMatches(args.inpath, "Mux*")
+    if utils.singleSelectMenu(choices, "Restore Folder Old MuxFolder Data") == "Yes":
+        folders = utils.findMatches(args.inpath, f"{config.demuxPrefix}*")
         # only get root directories
 
         folders = list(filter(lambda x: os.path.realpath(
@@ -49,7 +49,8 @@ def demuxTV(args):
         if len(folders) == 0:
             print("No Folders Found To Restore")
             quit()
-        folder = util.Menu(folders, "Which Folder Do you want to Restore")
+        folder = utils.singleSelectMenu(
+            folders, "Which Folder Do you want to Restore")
         os.chdir(folder)
         i = len(os.listdir("."))
     else:
@@ -68,14 +69,14 @@ def demuxTV(args):
         finalizeOutput(muxSorter, demuxData, movie, season, i)
         os.chdir("..")
 
-        if util.Menu(choices, "Add Another Episode") == "No":
+        if utils.singleSelectMenu(choices, "Add Another Episode") == "No":
             break
         # prepare for next loop
         i = i+1
         demuxData = siteDataPicker.pickSite(args.site)
         muxSorter = siteSortPicker.pickSite(args.site)
 
-        if util.Menu(choices, "Change Sources") == "Yes":
+        if utils.singleSelectMenu(choices, "Change Sources") == "Yes":
             sources = getSources(options, args.inpath)
         print(f"Program Ran {i-1} time so far\n")
         print("Creating Demux Folder at\n")
@@ -101,6 +102,9 @@ def demuxMovie(args):
 
 def getSources(options, inpath):
     sources = demuxHelper.addSource(options)
+    if sources == None or len(sources) == 0:
+        print("No sources Selected")
+        quit()
     for i in range(0, len(sources)):
         if re.search(".iso", sources[i]):
             sources[i] = demuxHelper.Extract(sources[i], inpath)
@@ -115,7 +119,7 @@ def extractBdinfo(sources, demuxData):
     outputs = []
     for source in sources:
         print(f"\n{source}\n")
-        print("Pick a playlist to extract from\n")
+        print("Loading Playlist...\n")
 
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
         os.chdir(output)
@@ -125,10 +129,10 @@ def extractBdinfo(sources, demuxData):
         outputs.append(output)
         os.chdir("..")
 
-    for i, bdObj in enumerate(bdObjs):
-        print(f"Extracting BDINFO from {sources[i]}")
+    for j, bdObj in enumerate(bdObjs):
+        print(f"Extracting BDINFO from {sources[j]}")
         demuxData.addTracks(
-            bdObj.process(), bdObj.playlistNum, sources[i], outputs[i])
+            bdObj.process(), bdObj.playlistNum, sources[j], outputs[j])
 
 
 def extractTracks(demuxData):

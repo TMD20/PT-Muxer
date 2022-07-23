@@ -3,8 +3,8 @@ import re
 import os
 import tempfile
 
-import tools.general as util
-
+import tools.general as utils
+import config
 
 
 class Bdinfo():
@@ -19,17 +19,16 @@ class Bdinfo():
     '''
 
     def setup(self, parent, subfolder):
-        show = util.getShowName(subfolder)
+        show = utils.getShowName(subfolder)
         self.setBdinfoPath(parent, show)
         self.set_mediaDir(subfolder)
         self._generate_playlists()
         self._playListSelect()
-    
+
     def process(self):
         bdinfo = self._bdinfo()
         self._writeBdinfo(bdinfo)
         return self.parse_bdinfo(bdinfo)
-      
 
     def parse_bdinfo(self, data):
         lines = data.splitlines()
@@ -79,31 +78,47 @@ class Bdinfo():
     '''
 
     def _getIndex(self):
-        self._playlistNum = util.getIntInput("Enter a playlist: ")
-       
-    @util.requiredClassAttribute("_mediaDir")
+        self._playlistNum = utils.getIntInput("Enter playlist number: ")
+
+    @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
-        self._playlist = subprocess.run(["sudo", "bdinfo", "-l", self._mediaDir, "."],
+
+        bdinfoBin = config.bdinfoLinuxPath
+        if not os.path.isfile(bdinfoBin):
+            bdinfoBin = config.bdinfoProjectPath
+
+        wineBin = config.wineLinuxPath
+        if not os.path.isfile(wineBin):
+            wineBin = config.wineProjectPath
+
+        self._playlist = subprocess.run([wineBin, bdinfoBin, "-l", self._mediaDir, "."],
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
 
     def _playListSelect(self):
         print(self._playlist)
         self._getIndex()
-   
-   
+
     def _bdinfo(self):
+        bdinfoBin = config.bdinfoLinuxPath
+        if not os.path.isfile(bdinfoBin):
+            bdinfoBin = config.bdinfoProjectPath
+
+        wineBin = config.wineLinuxPath
+        if not os.path.isfile(wineBin):
+            wineBin = config.wineProjectPath
+
         selection = self._playlist.splitlines()[2+int(self._playlistNum)]
         match = re.search("[0-9]+.MPLS", selection)
         if match != None:
             selection = selection[match.start():match.end()]
             temp = tempfile.TemporaryDirectory()
             t = subprocess.run(
-                ["sudo", "bdinfo", "-m", selection, self._mediaDir, temp.name])
+                [wineBin, bdinfoBin, "-m", selection, self._mediaDir, temp.name])
             file = open(os.path.join(temp.name, os.listdir(temp.name)[0]), "r")
             return file.read()
 
     def _writeBdinfo(self, data):
-        util.mkdirSafe(os.path.dirname(self._bdinfoPath))
+        utils.mkdirSafe(os.path.dirname(self._bdinfoPath))
 
         file = open(self._bdinfoPath, "w")
         file.write(data)

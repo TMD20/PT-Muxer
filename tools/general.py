@@ -2,6 +2,8 @@ import os
 import re
 import functools
 import glob
+from pathlib import PureWindowsPath, PurePosixPath
+import textwrap
 
 from InquirerPy import inquirer
 
@@ -12,7 +14,7 @@ def mkdirSafe(target):
     directories = [target]
 
     while target != "/":
-        tarYYYget = os.path.dirname(target)
+        target = os.path.dirname(target)
         directories.append(target)
     directories.reverse()
     for ele in directories:
@@ -20,8 +22,7 @@ def mkdirSafe(target):
             os.mkdir(ele)
 
 
-def getRootDir():
-    return os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
 
 
 def getShowName(path):
@@ -71,8 +72,21 @@ def getIntInput(string):
             None
 
 
-def Menu(items, message):
-    return inquirer.select(message=f"\n{message}\n", choices=items).execute()
+def singleSelectMenu(items, message):
+    return inquirer.select(message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+
+
+
+def multiSelectMenu(items, message):
+    return inquirer.checkbox(message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+
+
+def textEnter(message,default=None):
+    if default!=None:
+        return inquirer.checkbox(message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
+    return inquirer.checkbox(message=textwrap.dedent(f"\n{message}\n")).execute()
+    
+
 
 
 def validateFiles(fileList):
@@ -93,3 +107,7 @@ def getEac3to(remuxConfig):
     output = os.path.dirname(
         remuxConfig["Tracks_Details"]["Video"][key]["file"])
     return findMatches(output, "Eac3to")[0]
+
+
+def getwinepath(folder):
+    return str(PureWindowsPath(PurePosixPath(folder)))
