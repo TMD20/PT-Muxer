@@ -1,3 +1,46 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [**How to Install/Get Started**](#how-to-installget-started)
+  - [Required](#required)
+  - [Optional Binaries](#optional-binaries)
+  - [Recommended](#recommended)
+- [**Modes:**](#modes)
+  - [Demux Mode](#demux-mode)
+  - [Remux Mode:](#remux-mode)
+- [**3 Main JSON Sections**](#3-main-json-sections)
+  - [1. Movie](#1-movie)
+  - [2. Sources](#2-sources)
+  - [3. ChapterData](#3-chapterdata)
+  - [4. Enabled Tracks](#4-enabled-tracks)
+  - [5. Track Details](#5-track-details)
+- [**Commands:**](#commands)
+  - [Demux Mode](#demux-mode-1)
+    - [Required](#required-1)
+    - [Optional](#optional)
+    - [TV Mode](#tv-mode)
+      - [Episode Data](#episode-data)
+      - [Sources](#sources)
+      - [Folder Struture](#folder-struture)
+      - [Restore Data](#restore-data)
+    - [Movie Mode](#movie-mode)
+      - [Sources](#sources-1)
+      - [Folder Struture](#folder-struture-1)
+  - [Remux Mode](#remux-mode)
+    - [Required](#required-2)
+    - [Optional](#optional-1)
+- [**Machine Parse**](#machine-parse)
+  - [Subtitles](#subtitles)
+  - [Video](#video)
+- [Sites](#sites)
+- [Filtering Tracks](#filtering-tracks)
+  - [**Note**](#note)
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+
+
+
 # **How to Install/Get Started** 
 Note I have not had time to test this on windows.
 Wine is part of the code, but that is just to run windows software on linux. 
