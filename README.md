@@ -569,7 +569,11 @@ The first and second english sub tracks will be compared. The smallest one is as
 # Forced Subs
 This only applies to forced subs that need to be extracted from another track
 
-Before checking if forced subs exist. Only the audio languages enabled via imdb or --audiolang argument will be checked
+Only a max of two languages will be checked.
+If the first language passed via --audiolang or in the imdb is english then only english subtitles will be checked. 
+
+If any other language is the first language, then that language and english will be check. 
+Anyother language whether passed through imdb or --audiolang will be ignored
 
 If english is the primary language or first language via the audio prefences only that track language will be checked for forced subs
 
