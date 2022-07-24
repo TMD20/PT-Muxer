@@ -168,10 +168,7 @@ Creates a mux folder with everything generated during the programs run
 
 ## Remux Mode: 
 
-* Reads JSON file runs mkvmerge based on data extracted from file, and the site the remux is intented for
-
-JSON Example: 
-*  https://0.xwem.com/?aba290d66884edb3#Aah9T8RyTPR9aeASUMCjqtQ1SequUajHhNUvECxP51Jk
+* Reads JSON file. Uses the data to create a remix based on data extracted from file. User can change the title of the final mkv by passing the --site argument.
 
 # JSON
 
@@ -249,7 +246,11 @@ Just remove a track from the list
 
 
 Some Details about Each Track
-Including Language
+Including Language. 
+
+Each track has a hashed key. The hash is made using the source information and track title, and just in case the track index. It should be unique to each track and will stay the same 
+
+If you use the same source again. Inside each track key you'll see some more data, that I will explain below.
 
 #### Keys
 * langcode: used by mkvmerge to set track language
@@ -533,7 +534,7 @@ To save time it will only record about 50 lines worth of the track.
 # Enabled Tracks Sorting/Filtering
 ## Normal Audio Track
 Here I will explain how tracks are added to th enabled audio tracks section in the Final JSON
-- A track is added of the language is enabled with --audiolang. If that argument is not passed then only the tracks that match imdb languages will be added.
+- A track is added if the language is enabled with --audiolang. If that argument is not passed then only the tracks that match imdb languages will be added.
 With this a exception is also made for English track. This will be in the order in IMDb. Or if not presented, be the last language to be checked.
 - Every English Track will be added if that language is enabled. They will be added partly based on sortpref.
 - For Non-English Track only the first track based on --sortpref will be added to enabled audio section
