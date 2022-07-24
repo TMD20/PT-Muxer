@@ -532,11 +532,12 @@ To save time it will only record about 50 lines worth of the track.
 
 # Enabled Tracks Sorting/Filtering
 ## Normal Audio Track
-- A language is enabled if added to --audiolang. If that argument is not passed then only the imdb language will be added
-- However if english is not in the imdb langauge list, it will be added as the last language. This will account for any dubs.
-- Every English Track will be added if language is enabled.
+Here I will explain how tracks are added to th enabled audio tracks section in the Final JSON
+- A track is added of the language is enabled with --audiolang. If that argument is not passed then only the tracks that match imdb languages will be added.
+With this a exception is also made for English track. This will be in the order in IMDb. Or if not presented, be the last language to be checked.
+- Every English Track will be added if that language is enabled. They will be added partly based on sortpref.
 - For Non-English Track only the first track based on --sortpref will be added to enabled audio section
-- When all the enabled tracks are gathered, and sorted. The first enabled audio track will be set to default
+- When all the enabled tracks are gathered, and sorted. The first enabled audio track will be set to default. 
 
 - Every lossless mono or stereo Track will be converted to FLAC
 
@@ -553,18 +554,24 @@ Blutopia will check for padding using conversion to flac. If padding is found th
 Every lossless mono or stereo Track will be converted to FLAC
 ## Compatablitly Track
 
-- A secondary Search for compatiblity tracks will be done. If a enabled audio track has one, then that will be inserted after that track
+- A secondary Search for compatiblity audio tracks will be done. If a enabled audio track has one, then that will be inserted after that track.
+This only applies to true HD tracks currently 
+.
 
 
 ## Subs
-- If the films primary language is not english then the first english sub will have it default flag turned on
-- Every English Subtitle will be added to enabled sub section
+Here I will explain how subs are added to the enabled sub section in the final JSON
+- Within a language subs are given priority based on the order of the sub in provided sources.
+- Every English Subtitle will be added to enabled sub section. If the language is enabled.
 - Only the first subtitle of every other langauge, based on sortpref will be added
-- Order of subtitles can either be based on --sublang argument, alternative it will be a-z with the first subtitles being the english ones.
+- If the films primary language is not english then the first english sub will have it default flag turned on
+
+- Order of subtitles can either be based on --sublang argument
+ alternative it will be a-z with the first subtitles being the english ones.
 
 ### AnimeBytes
-
-The first and second english sub tracks will be compared. The smallest one is assumed to be forced, and this track will be set to default with the forced flag on
+If no embedded force English track is found, a secondary search for forced track is will be done.
+The first and second english sub tracks will be compared. The smallest one is assumed to be forced, and this track will be set to default with the forced flag on.
 
 ## Embedded Forced Subs
 This only applies to forced subs that need to be extracted from another track
@@ -573,28 +580,27 @@ Only a max of two languages will be checked.
 If the first language passed via --audiolang or in the imdb is english then only english subtitles will be checked. 
 
 If any other language is the first language, then that language and english will be check. 
-Anyother language whether passed through imdb or --audiolang will be ignored
+Anyother language whether passed through imdb or --audiolang will be ignored.
 
-If english is the primary language or first language via the audio prefences only that track language will be checked for forced subs
+The goal is to have force subs for any non English primary language, along with English.
+
 
 All the data from the old track will be copied to the forced sub data.
 - The title will be change
 - The Track key will be changed
 - The Track eac3to will be changed
 - The Track File will be changed
-
-
-If a forced sub is found for the first audio language, then that track will be set to forced and enabled. This Track will be added at the top of the enabled sub section in the json
-
-The second forced sub will be added to the end of the enabled sub list
-
-Every forced sub found will be added to the sub track details section
-
-Forced Tracks will have the default and forced flags turned on
+- default flag turned on
+- forced flag turned on 
+If a forced track is found for the first audio, it is added as the first enabled audio tracks
+if a forced track is found for the second language, then it is added to the end of the enabled sub list.
 
 ## Video Track
 Only 1 video track is ever added and the one that is picked depends on --sortpref argument
 If no argument is passed the default is to just take the largest video file from multiple sources if present.
+
+This probably isn't the right tool if you want to do some complex hybrid remux.
+So only 1 video source should be applied
 
 
 # Sites 
