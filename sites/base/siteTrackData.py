@@ -130,7 +130,8 @@ class siteTrackData(TracksData):
             match = re.search(".*?:.*?([0-9].*(bit|kbps))", bdinfo).group(1)
             site_title = f"Compatibility Track / Dolby Digital Audio / {match}"
         site_title = re.sub("\/.*DN", "", site_title)
-        return re.sub("  .*", " ", site_title).strip()
+
+        return re.sub(" +", " ", site_title).strip()
 
     def _getNormalTrack(self, bdinfo):
         bdinfo = bdinfo.strip()
@@ -172,6 +173,7 @@ class siteTrackData(TracksData):
                 match = re.search(".*([0-9]\.[0-9].*)", title).group(1)
                 title = f"FLAC Audio / {match}"
                 title = re.sub(" +", " ", title)
-            track["site_title"] = title
-            track["file"] = file
-            track["eac3to"] = eac3to
+                track["site_title"] = title
+                track["file"] = file
+                track["eac3to"] = eac3to
+

@@ -7,12 +7,32 @@ import remux.helper as remuxHelper
 import mediadata.movieData as movieData
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
+import config
 
 
 def Remux(args):
     # Variables
-    remuxConfigPaths = remuxHelper.getRemuxConfigs(args.inpath)
+    options = ["Movie", "TV"]
+    remuxConfigPaths=[]
     movie = None
+
+    if utils.singleSelectMenu(options, "What Type of Media do you want to Remux?") == "Movie":
+        folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
+        remuxConfigPaths.append(os.path.join(utils.singleSelectMenu(folders, "Pick a folder to demux"),"output.json"))
+        
+    else:
+        folders = utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
+        folder = utils.singleSelectMenu(folders, "Pick a folder to demux")
+        remuxConfigPaths.extend(
+            list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
+    #double check to make sure every path is current
+    remuxConfigPaths = list(filter(lambda x:os.path.isfile(x),remuxConfigPaths))
+  
+
+
+
+
+  
     if not remuxConfigPaths or len(remuxConfigPaths) == 0:
         print("You Must Pick at list one Config")
         quit()

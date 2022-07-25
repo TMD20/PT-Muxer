@@ -38,21 +38,22 @@ def demuxTV(args):
 
     print("What TV Show?")
     movie = movieData.matchMovie(sources)
-    season = int(utils.getIntInput("Enter Season Number"))
+    season = int(utils.getIntInput("Enter Season Number: "))
     i = 1
     if utils.singleSelectMenu(choices, "Restore Folder Old MuxFolder Data") == "Yes":
-        folders = utils.findMatches(args.inpath, f"{config.demuxPrefix}*")
-        # only get root directories
-
-        folders = list(filter(lambda x: os.path.realpath(
-            os.path.dirname(x)) == os.path.realpath(args.inpath), folders))
+        print("Searching for Prior TV Mode Folders")
+        folders=utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
         if len(folders) == 0:
-            print("No Folders Found To Restore")
-            quit()
-        folder = utils.singleSelectMenu(
-            folders, "Which Folder Do you want to Restore")
-        os.chdir(folder)
-        i = len(os.listdir("."))
+            print("No TV Mode Folders Found To Restore")
+            print("Creating a new Mux Folder")
+            os.chdir(demuxHelper.createParentDemuxFolder(
+                sources, args.outpath))
+        else:
+            folder = utils.singleSelectMenu(
+                folders, "Which Folder Do you want to Restore")
+        
+            os.chdir(folder)
+            i = len(os.listdir("."))+1
     else:
         os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
 
@@ -62,6 +63,8 @@ def demuxTV(args):
         os.mkdir(str(i))
         os.chdir(str(i))
         print(os.path.abspath("."))
+        print(f"This is run number {i}\n")
+
         extractBdinfo(sources, demuxData)
         extractTracks(demuxData)
         sortTracks(muxSorter, demuxData, movie, args)
@@ -78,7 +81,6 @@ def demuxTV(args):
 
         if utils.singleSelectMenu(choices, "Change Sources") == "Yes":
             sources = getSources(options, args.inpath)
-        print(f"Program Ran {i-1} time so far\n")
         print("Creating Demux Folder at\n")
 
 
