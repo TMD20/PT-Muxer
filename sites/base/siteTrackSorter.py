@@ -87,11 +87,11 @@ class siteTrackSorter():
                 else:
                     newTrack["default"] = True
                     newTrack["forced"] = True
-                    self.enabledSub.append(newTrack)
+                    self._enabledSub.append(newTrack)
                     all.append(newTrack)
-        primary.extend(self.enabledSub)
-        self.enabledSub=primary
-        self.unSortedSub.append(all)
+        primary.extend(self._enabledSub)
+        self._enabledSub=primary
+        self._unSortedSub.extend(all)
 
     """
     Setters/Getters
@@ -234,9 +234,8 @@ class siteTrackSorter():
                     break
 
     def _sortSub(self, subTracks, subPrefs, audioLang):
-        # User Passed language prefs
+        # tempdict for tracks to add
         mainTracks = []
-        # Get the Primary Audio Lang
         if subPrefs:
             for lang in subPrefs:
                 newTracks = [ele for ele in subTracks if ele["lang"].lower()

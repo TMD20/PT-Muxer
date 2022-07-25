@@ -11,12 +11,9 @@ import config
 
 def getRemuxConfigs(path):
     demuxList = []
-    for tuple in os.walk(path):
-        dir = tuple[0]
-        files = tuple[2]
-        for file in files:
-            if file == "output.json":
-                demuxList.append(os.path.join(dir, file))
+    folders=utils.findMatches(path,"Mux.*")
+
+
     if len(demuxList) == 0:
         print("Deep Search of Directory Could Not Find any output.json Files")
         quit()

@@ -1,66 +1,72 @@
-<!-- START doctoc generated TOC please keep comment here to allow auto update -->
-<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+<!-* START doctoc generated TOC please keep comment here to allow auto update -->
+<!-* DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [**How to Install/Get Started**](#how-to-installget-started)
-  - [Install](#install)
-    - [Linux:](#linux)
-    - [Windows](#windows)
-  - [Optional Binaries](#optional-binaries)
-    - [mkvmerge:](#mkvmerge)
-    - [wine](#wine)
-    - [eac3to](#eac3to)
-    - [suprip](#suprip)
-  - [bdinfo](#bdinfo)
-  - [BDSup2Sub](#bdsup2sub)
-  - [Recommended](#recommended)
-    - [udevil](#udevil)
-    - [Installing Tesseract](#installing-tesseract)
-- [Modes:](#modes)
-  - [Demux Mode](#demux-mode)
-  - [Remux Mode:](#remux-mode)
-- [JSON](#json)
-  - [Overview](#overview)
-  - [Examples](#examples)
-    - [Movie](#movie)
-    - [TV](#tv)
-  - [Sections](#sections)
-    - [1. Movie](#1-movie)
-    - [2. Sources](#2-sources)
-    - [3. ChapterData](#3-chapterdata)
-    - [4. Enabled Tracks](#4-enabled-tracks)
-    - [5. Track Details](#5-track-details)
-- [Commands:](#commands)
-  - [Demux Mode](#demux-mode-1)
-    - [Required](#required-1)
-    - [Optional](#optional)
-    - [TV Mode](#tv-mode)
-      - [Restore Data](#restore-data)
-    - [Movie Mode](#movie-mode)
-  - [Remux Mode](#remux-mode)
-    - [Required](#required-2)
-    - [Optional](#optional-1)
-    - [Selecting Tracks](#selecting-tracks)
-- [Machine Parse](#machine-parse)
-  - [Subtitles](#subtitles)
-  - [Video](#video)
-  - [Optional:Disabling Tesseract (Non Sudo)](#optionaldisabling-tesseract-non-sudo)
-- [Enabled Tracks Sorting/Filtering](#enabled-tracks-sortingfiltering)
-  - [Normal Audio Track](#normal-audio-track)
-  - [Compatablitly Track](#compatablitly-track)
-  - [Subs](#subs)
-  - [Embedded Forced Subs](#embedded-forced-subs)
-  - [Video Track](#video-track)
-- [Sites](#sites)
-  - [Blutopia](#blutopia-1)
-- [**Note**](#note)
+* [**How to Install/Get Started**](#how-to-installget-started)
+  * [Install](#install)
+    * [Linux:](#linux)
+    * [Windows](#windows)
+  * [General virtualenv Guide](#general-virtualenv-guide)
+  * [Optional Upgrades](#optional-upgrades)
+    * [mkvmerge:](#mkvmerge)
+    * [wine](#wine)
+    * [eac3to](#eac3to)
+    * [suprip](#suprip)
+    * [bdinfo](#bdinfo)
+    * [BDSup2Sub](#bdsup2sub)
+  * [Recommended Software](#recommended-software)
+    * [Udevil](#udevil)
+    * [Installing Tesseract](#installing-tesseract)
+* [Modes:](#modes)
+  * [Demux Mode](#demux-mode)
+  * [Remux Mode](#remux-mode)
+* [JSON](#json)
+  * [Overview](#overview)
+  * [Examples](#examples)
+    * [Movie](#movie)
+    * [TV](#tv)
+  * [Sections](#sections)
+    * [1. Movie](#1-movie)
+    * [2. Sources](#2-sources)
+    * [3. ChapterData](#3-chapterdata)
+    * [4. Enabled Tracks](#4-enabled-tracks)
+    * [5. Track Details](#5-track-details)
+* [Commands:](#commands)
+  * [Demux Mode](#demux-mode-1)
+    * [Required](#required-2)
+    * [Optional](#optional)
+    * [TV Mode](#tv-mode)
+      * [Data](#data)
+      * [Sources](#sources)
+      * [Folder Struture](#folder-struture)
+      * [Restore Data](#restore-data)
+    * [Movie Mode](#movie-mode)
+      * [Sources](#sources-1)
+      * [Folder Struture](#folder-struture-1)
+  * [Remux Mode](#remux-mode-1)
+    * [Required](#required-3)
+    * [Optional](#optional-1)
+    * [Movie Mode](#movie-mode-1)
+    * [TV Mode](#tv-mode-1)
+* [Machine Parse](#machine-parse)
+  * [Subtitles](#subtitles)
+  * [Video](#video)
+  * [Optional:Disabling Tesseract for Non Sudo OCR](#optionaldisabling-tesseract-for-non-sudo-ocr)
+* [Enabled Tracks Sorting/Filtering](#enabled-tracks-sortingfiltering)
+  * [Normal Audio Track](#normal-audio-track)
+  * [Compatablitly Track](#compatablitly-track)
+  * [Subs](#subs)
+  * [Embedded Forced Subs](#embedded-forced-subs)
+  * [Video Track](#video-track)
+* [Sites](#sites)
+  * [Blutopia](#blutopia-1)
 
-<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+<!-* END doctoc generated TOC please keep comment here to allow auto update -->
 
 # **How to Install/Get Started** 
 Instructions are provided for Linux and Windows
 
-However windows is not fully supported at the moment. 
+Note:Windows is not fully supported at the moment
 Modification to the code are required to get it to work on that platform
 
 ## Install
@@ -91,65 +97,73 @@ deactivate -> Do this after install the requirements
 General Guide: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
 
 
+## Optional Upgrades
 
-## Optional Binaries
-
-These binaries are included but you are free to use newer versions if desired
+These binaries are included but you are free to use newer versions/your own if desired
 
 see config.py "*LinuxPath"for filepaths. 
 
 ### mkvmerge:
 
-* https://mkvtoolnix.download/downloads.html#ubuntu - Provides multiple ways to install mkvmerge: including via building yourself or package manager
+* https://mkvtoolnix.download/downloads.html#ubuntu * Provides multiple ways to install mkvmerge: including via building yourself or package manager
 ### wine
 
-* https://github.com/Kron4ek/Wine-Builds - install wine without sudo
+* https://github.com/Kron4ek/Wine-Builds * install wine without sudo
 * https://wiki.winehq.org/Download -build wine yourself, or install using package manager
 ### eac3to
-* https://www.videohelp.com/software/eac3to - You can find updates here or use custom versions made by users
+* https://www.videohelp.com/software/eac3to -You can find updates here
 
 ### suprip
-* https://www.videohelp.com/software/SupRip - Updates are here, has not been updated in a while
+* https://www.videohelp.com/software/SupRip * Updates are here, has not been updated in a while
 
-## bdinfo 
-* https://github.com/zoffline/BDInfoCLI-ng - Update here, has not be updated in a while
+### bdinfo 
+* https://github.com/zoffline/BDInfoCLI-ng * Update here, has not be updated in a while
 
-## BDSup2Sub
-* https://www.videohelp.com/software/BDSup2Sub - Updates here, has not be updated in a while
-
-
+### BDSup2Sub
+* https://www.videohelp.com/software/BDSup2Sub * Updates here, has not be updated in a while
 
 
-## Recommended
+
+
+## Recommended Software
 
 ### Udevil
 Typically mounting provides the best results when trying to extract an ISO. However it usually requires sudo access. udevil will allow files to be "mounted" without the need for sudo access
-https://github.com/IgnorantGuru/spacefm/wiki/Distros - it mixed in with spacefm, make sure to only get udevil
+https://github.com/IgnorantGuru/spacefm/wiki/Distros * it mixed in with spacefm, make sure to only get udevil
 
 ### Installing Tesseract
 Tesseract allows for many more languages to be ocr, but it does require sudo
 and requires packages on the system
 The easiest way would just be to follow the instructions in this repo
 
-https://github.com/sirfz/tesserocr
-This will require sudo
+https://github.com/sirfz/tesserocr * requires sudo to install
 
 # Modes: 
 
 ## Demux Mode
+This mode allows the user to pick multiple BDMV/ISO(with udevil).
+For Each source it will do the following
+* Extract every track for that source
+* Search and extract any embedded forced subs for main, and secondary movie language
+* Search and extract compatibility tracks 
+* Generate and save the bdinfo log
+* Save eac3to log
 
-Creates a mux folder with everything generated during the programs run
-* Including all tracks from all sources, Extracted via eac3to
-* BDINFO File for all Sources
-* Eac3to Log for all Sources
-* General Output.txt JSON file with Configurable Options
+When all sources are extrated data is then save to file called output.json. The user can then update the json before running remux mode
+## Remux Mode
 
-## Remux Mode: 
+This mode creates a mkv file via mkvmerge by utilizing the tracks extracted in demux mode.
+It then reads the JSON file to figure out
+* What Tracks to pass to mkvmerge
+* Flags to add to those tracks
+* What language to set tracks to
+* The title that the tracks should have, if at all
+* Reads JSON file. Uses the data to create a remix based on data extracted from file.
 
-* Reads JSON file. Uses the data to create a remix based on data extracted from file. User can change the title of the final mkv by passing the --site argument.
+The final .mkv filename is determined by the status of the --site argument
+
 
 # JSON
-
 ## Overview
 
 The JSON is outputed when you use the --demux argument. This Provides lots of details on all the tracks and sources used during the run of the program. Some of the information is autofilled, and the user can change the values if desired. Depending on what you change the settings to that will effect the final mkv produce
@@ -170,17 +184,22 @@ https://0.xwem.com/?be82537624a327c6#8aW8WEmFUYbxxjR4Pknf7s52GqpzAe6xcyMPdsw3LaT
 Data about the movie or TV show
 For TV show or Movie use OCR/ subimages to confirm episode number
 
+Changing any of these settings, other than langs will have an effect on --remux mode
+langs data is present only for convience
+
 * imdb: ID for Movie/TV show
 * tmdb: ID for Movie/TV show
 * langs: Offical Languages for movie or TV show
 * Season: if TV show the season
 * Episode: If TV show the episode number
-*
+
 
 ### 2. Sources
 
 Just Basic Data data about the sources the user has utilize during the demuxing process. Most Likely shouldn’t be change
 Each source has its own key here with some data inside of it
+
+Changing values could cause --remux mode to crash if they don't match
 
 #### Keys
 
@@ -197,6 +216,7 @@ Each source has its own key here with some data inside of it
 ### 3. ChapterData
 
 This section has information about when the chapters
+Changing Value here will effect the chapters in the final mkv in --remux mode
 
 * time: when the chapter occurs
 * name: What name to give the Chapter
@@ -223,33 +243,32 @@ Just remove a track from the list
 ### 5. Track Details
 
 
-Some Details about Each Track
-Including Language. 
+This section holds some Details about Each Track
 
-Each track has a hashed key. The hash is made using the source information and track title, and just in case the track index. It should be unique to each track and will stay the same 
+Track has a hashed key. The hash is made using the source information and track title, and just in case the track index. It should be unique to each track and will stay the same 
 
-If you use the same source again. Inside each track key you'll see some more data, that I will explain below.
+Changing some values will have "no effect" as the final mkv produced in --remux mode will stay the same reguardless of what you set that key to. These values are marked below
 
+Other values will effect the final mkv, and those are marked as well.
 #### Keys
-* langcode: used by mkvmerge to set track language
-* lang: Translation of langcode to the actual language
-* site_title: used to set title for mediainfo, set to None for no title
-* bdinfo_title: just the title from bdinfo
-* index: the track number. Video is usually 1. Next audio tracks, lastly subs
-* eac30: just some info about the file extract by eacto
-* file: location of the file on the system
+* langcode: used by mkvmerge to set track language. This is used to set the track language in --remux mode
+* lang: Translation of langcode to the actual language. This is for convience, and has no effect on --remux mode
+* site_title: used to set title for mediainfo, set to None for no title. This will effect --remux mode
+* bdinfo_title: just the title from bdinfo, changing this value has no effect
+* index: the track number. Video is usually 1. Next audio tracks, lastly subs. Changing this value has no effect
+* eac30: just some info about the file extract by eacto. Changing this value has no effect
+* file: location of the file on the system. Should only be changed if you move the output.json to a neww folder
 * compat: Used for embedded tracks i.e dolby digital inside true hd
-These are extracted automatically.
-* parent: what track a embedded track was extracted from
-* child: embedded track if present
+These are extracted automatically. Changing this value has no effect
+* parent: what track a embedded track was extracted from. changing this value has no effect
+* child: embedded track if present. changing this value has no effect
 * machine_parse: if using ocr or voice rec. The gathered values will be here. See machine_parse or demux sections for more details
-* length: will display how long, how many subs a track has
-* default: whether to set the default flag in mkv
+* length: will display how long, how many subs a track has. Changing this value has no effect
+* default: whether to set the default flag in mkv.
 * forced: whether to set the forced flag. Also can be set by changing the site_title to including "forced" 
-* sourceDir: The original location of the bdmv used to extract track
-* sourceKey: the key of the source in the json that the track is tied to
-* type: whether this is a audio, video, sub track
-   
+* sourceDir: The original location of the bdmv used to extract track, This should not be changed as it is used during the --remux process
+* sourceKey: the key of the source in the json that the track is tied to, This should not be changed as it is used during the --remux process
+* type: whether this is a audio, video, sub track. This value should not be changed as it is used during the --remux process
 
 # Commands:
 
@@ -262,7 +281,7 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
  sourcepath 
  
  where you keep all your bdmv and or iso files.
- You can pick multiple sources if you desire, just make sure they are all for the same movie
+ You can pick multiple sources if you desire, just make sure they are all for the same movie/TV Episode
 ```
 
 
@@ -279,13 +298,13 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 ```
 Example: python3 /path/to/app.py -demux sourcepath outputpath --site blu
 
-This will Effect
+This argument makes small changes in potentially any area of the demux process. The goal is to better account for differences in site rules when it comes to demuxes.
+Some differences could be
 * Order of Tracks
 * Track Names
-* Which Tracks are Included by default
-* ETC
+* Which Tracks or langauges are Included by default
 For More Details on Different Sites and their effects on The final Output Please Read the Site Section
-see Filtering Tracks section
+see  Enabled Tracks Sorting/Filtering and sites sections
 ```
  --sortpref  [default=size]
 ```
@@ -299,26 +318,26 @@ order: sort tracks by which comes first, give highest priority to first tracks
 ```
  Example:python3 /path/to/app.py -demux sourcepath outputpath --audiolang english japanese
  
- Which Track Language(s) you want to enable for the current demux
- Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled audio   tracks list
- 
- This will overwrite any site configuraton in terms of audio prefernece 
-```
+ Which Track Language(s) you want to enable for the current demux.
+ This only affects what tracks will be added in the enabled audio tracks section, when creating the JSON file. Every track is extracted 
+ regardless of this setting
+ ```
   --sublang 
  ```
 
  Example:python3 /path/to/app.py sourcepath outputpath -demux --sublang english japanese
- 
- Which Track Language(s) you want to enable for the current demux
- Note all tracks are extracted and saved. This will remove non-matching tracks from the enabled sub  tracks list
- 
- This will overwrite any site configuraton in terms of sub prefernece 
+
+ Which Track Language(s) you want to enable for the current demux.
+ This only affects what tracks will be added in the enabled sub tracks section, when creating the JSON file. Every track is extracted 
+ regardless of this setting
 ```
 
  --ocr 
 ```
     Example: python3 /path/to/app.py -demux sourcepath outputpath --ocr enabled
+
    Generates machine readable text of the sup files. 
+   Not all tracks have to be ocr, which ones depend on the argument you pass to this command
    
   choices ->  enabled, sublang,default,all,disabled,english
   
@@ -333,7 +352,8 @@ order: sort tracks by which comes first, give highest priority to first tracks
  --voicerec 
 ```
     Example: python3 /path/to/app.py -demux sourcepath outputpath --voicerec enabled
-   Generates machine readable text of the audio files. 
+
+   Generates machine readable text of the audio files. Not all tracks have to be transcribe, which ones depend on the argument you pass to the command. 
    
   choices ->  enabled, audiolang,default,all,disabled,english
   
@@ -348,18 +368,24 @@ order: sort tracks by which comes first, give highest priority to first tracks
  --keepocr
 ```
     Example: python3 /path/to/app.py -demux sourcepath outputpath --ocr enabled --keepocr
-    During ocr images are saved to a temporory drive, this option moves the files to a permanant location in the output Mux folder.
+
+    During ocr images are saved to a temporory drive, this option moves the files to a permanant location in the output Mux folder. You need to have pass the --ocr command for this to have any affect. 
 
 ```
 
 
 ### TV Mode
 
-Selected during demux via questionarre
+TV mode can be select when using --demux argument.
+During Demux mode you will be asked  "What Type of Media are you Demuxing? 
+Select TV
 
-Specifically the  "What Type of Media are you Demuxing? Question
+This mode will allow the program execute once and then run multiple times using the same imdb and season information for each run. However the episode number will increment each time you go through a run.
 
-#### Episode Data
+Note: I would recommend using the arguments --keepocr --ocr enabled at minimum. 
+This will make identifiy episodes much easier. As sometimes the order will be random, ocr can help with identify tracks. Along with length data
+
+#### Data
 * Season number is entered once at the the beginning of the program
 * Episode Number, this is assumed by the number if folders in the home directory, see... folder struture to see more details
 * imdb data: This can be entered manually or by clicking on one of the options that appear 
@@ -394,23 +420,29 @@ After a episode finishes extracting, you can utilize the same or different sourc
 
 #### Restore Data
 
-For a TV mode demux that is partially stopped you can restore the data during the run of the program
+For a TV mode demux that is partially stopped you can restore the data during the run of the program.
+It will not consider Movie Mode Folders to be valid. 
 
-Be careful as movie and TV mode folders will be selectable, and selecting a movie mode folder may lead to undesirable outcomes 
+If no valid folders are found, the program will create a new one.
 
 
 ### Movie Mode
 
-Selected during demux via questionarre
+Movie mode can be select when using --demux argument.
+During Demux mode you will be asked  "What Type of Media are you Demuxing? 
+Select Movie
 
-Specifically the  "What Type of Media are you Demuxing? Question
+This Mode only runs once
 
+Note: I would recommend using the arguments --keepocr --ocr enabled at minimum. 
+This will make identifiy tracks much easier. OCR should do a decent job of helping, but if it fails to give the data required. Then having images from the subtitles can help a lot
 #### Sources
-You can utilize one or more sources for a movie
+You can utilize one or more sources for a movie.
 
 
 #### Folder Struture
-Similar to the TV mode Struture save for the numbered folders
+Similar to the TV mode Struture
+However the numbered subfolders are not present
 
 ##### Home Folder
 
@@ -432,6 +464,8 @@ Similar to the TV mode Struture save for the numbered folders
 ## Remux Mode
 
 * python3 /path/to/app.py -demux sourcepath output [optional args]
+
+
 
 ### Required
 ```
@@ -463,25 +497,26 @@ Example:python3 /path/to/app.py --remux --group superduperremuxing
 This will change the group tag of the final MKV
 ```
 
+### Movie Mode
 
-### Selecting Tracks
+Movie mode can be select when using --remux argument.
+During remux mode you will be asked  "What Type of Media are you remuxing? 
+Select Movie
 
-```
-Note the same imdb id will be used for all files during the muxing process
-Episode IDs will also be generated from this ID if needed.
-
-This is put in a metadata file that is utilize to put information about the current show into the final mkv. You can see this information via medainfo. 
-
-Therefore you should only do 
-1 Movie Per run
-or 1 TV show per run.
-
-Selecting Multiple Season of a TV show is fine
-
-If you want to do a batch you'll need to write a seperate script
-```
+This mode will find all valid Mux folders, and allow you to select one for muxing
 
 
+
+### TV Mode
+
+TV mode can be select when using --remux argument.
+During remux mode you will be asked  "What Type of Media are you remuxing? 
+Select TV
+
+This mode will find all valid Mux folders, and allow you to select one for muxing.
+Unlike Movie mode, TV mode will mux multiple outputs all into the output directory.
+
+Episode Number, and the title for each file depend on your JSON settings
 # Machine Parse
 
 ## Subtitles
@@ -508,7 +543,7 @@ Videorec is not as good as ocr. But it can still kind of be used to ID tracks.
 Use the --videorec command to use this feature. 
 To save time it will only record about 50 lines worth of the track.
 
-## Optional:Disabling Tesseract for Non Sudo ocr
+## Optional:Disabling Tesseract for Non Sudo OCR
 If you can't install tesseract and still want to ocr
 
 * Go the project folder
@@ -528,84 +563,118 @@ now only easyocr will be used.
 
 # Enabled Tracks Sorting/Filtering
 ## Normal Audio Track
-Here I will explain how tracks are added to th enabled audio tracks section in the Final JSON
-- A track is added if the language is enabled with --audiolang. If that argument is not passed then only the tracks that match imdb languages will be added.
-With this a exception is also made for English track. This will be in the order in IMDb. Or if not presented, be the last language to be checked.
-- Every English Track will be added if that language is enabled. They will be added partly based on sortpref.
-- For Non-English Track only the first track based on --sortpref will be added to enabled audio section
-- When all the enabled tracks are gathered, and sorted. The first enabled audio track will be set to default. 
+Here I will explain how audio tracks are added to th enabled audio tracks section in the Final JSON
 
-- Every lossless mono or stereo Track will be converted to FLAC
+### The first thing you must know is that tracks are enabled based on either
+* The --audiolang argument
+* If that is not passed then the lang of the movie, this is retrive through imdb data
+* If english is not part of the imdb data, then it will be appended as the last language
+* To completetly disable english, you will need to pass --audiolang argument
+
+### Priority of Tracks
+* Tracks are either given priority by size(default) or by order in the sources
+* to change sorting/priority you can use --sortpref argument during demux
+
+### How many Tracks for each language are added?
+* Currently only the first track for each language will be added. This is the track with the highest priority.
+* An exception is made for english Tracks, every english track is added. They are however, added in order of priority
+
+### In What order are valid Tracks added?
+* They are added in the order produced by imdb if --audiolang argument is not passed
+* Alternatively they are added in the order provided by --audiolang argument
+### Special cases
+* Every lossless mono or sterio track is converted into FLAC
+
 
 ### AnimeBytes
 Currently the main difference is that japanese and english are default audio languages, even if imdb only list japanese as the language of the TV/Movie
+
+This is to ensure the production of Dual Audio 
 
 ### BeyondHD
 Every lossless mono or stereo Track will be converted to FLAC
 
 ### Blutopia
 
-Blutopia will check for padding using conversion to flac. If padding is found then the flac audio will be used in replacement of the original codec. This only applies to 24bit tracks
+Blutopia will check for padding using conversion to FLAC. If padding is found then the FLAC audio will be used in replacement of the original codec. This only applies to 24bit tracks
 
 Every lossless mono or stereo Track will be converted to FLAC
 ## Compatablitly Track
+This will extracted embedded Tracks from TrueHD tracks
+### What Tracks are Checked
+* audio tracks that were added to the enabled audio list, and that are TrueHD Tracks
 
-- A secondary Search for compatiblity audio tracks will be done. If a enabled audio track has one, then that will be inserted after that track.
-This only applies to true HD tracks currently 
-.
+###  Insertion Order
+* The new Track is inserted right after the track it was extracted from
 
 
 ## Subs
 Here I will explain how subs are added to the enabled sub section in the final JSON
-- Within a language subs are given priority based on the order of the sub in provided sources.
-- Every English Subtitle will be added to enabled sub section. If the language is enabled.
-- Only the first subtitle of every other langauge, based on sortpref will be added
-- If the films primary language is not english then the first english sub will have it default flag turned on
+### The first thing you must know is that tracks are enabled based on either
+* The --sublang argument
+* If that argument is not passed then every language will be added
+### Priority of Tracks
+* Tracks are either given priority based on the order of the Subtitle in sources
 
-- Order of subtitles can either be based on --sublang argument
- alternative it will be a-z with the first subtitles being the english ones.
+### How many Tracks for each language are added?
+* Currently only the first track for each language will be added. This is the track with the highest priority.
+* An exception is made for english Tracks, every english track is added. They are however, added in order of priority
+
+### In What order are Valid Tracks added?
+* The order provided by the --sublang argument
+* If that argument is not passed english, all other languages sorted a-z
+
+### Foriegn Films
+* If the first audio Track is not english, i.e the movie is foriegn
+* Then the first english subtitle will be set as default
 
 ### AnimeBytes
 If no embedded force English track is found, a secondary search for forced track is will be done.
+
 The first and second english sub tracks will be compared. The smallest one is assumed to be forced, and this track will be set to default with the forced flag on.
 
 ## Embedded Forced Subs
 This only applies to forced subs that need to be extracted from another track
 
-Only a max of two languages will be checked.
-If the first language passed via --audiolang or in the imdb is english then only english subtitles will be checked. 
 
-If any other language is the first language, then that language and english will be check. 
-Anyother language whether passed through imdb or --audiolang will be ignored.
+### What languages are check
+* Only a max of two languages will be checked.
+* If the first language passed via --audiolang or in the imdb is english then only english subtitles will be checked. 
+* If the first language is not english via --audiolangs or imdb, then that language will be checked  along with english
+* All other languages will be ignored
 
-The goal is to have force subs for any non English primary language, along with English.
-
+### If a forced Track is found embedded
 
 All the data from the old track will be copied to the forced sub data.
-- The title will be change
-- The Track key will be changed
-- The Track eac3to will be changed
-- The Track File will be changed
-- default flag turned on
-- forced flag turned on 
-If a forced track is found for the first audio, it is added as the first enabled audio tracks
-if a forced track is found for the second language, then it is added to the end of the enabled sub list.
+* The title will be change
+* The Track key will be changed
+* The Track eac3to will be changed
+* The Track File will be changed
+* default flag turned on
+* forced flag turned on 
+
+
+If a forced track is found for the first language, 
+* it is added as the first enabled audio tracks
+
+if a forced track is found for the second language
+* it is added to the end of the enabled sub list.
 
 ## Video Track
-Only 1 video track is ever added and the one that is picked depends on --sortpref argument
-If no argument is passed the default is to just take the largest video file from multiple sources if present.
 
-This probably isn't the right tool if you want to do some complex hybrid remux.
-So only 1 video source should be applied
+### What Track is added
+* Only 1 video track is ever added and the one that is picked depends on --sortpref argument
+* Either the largest or first video track will be added, default is adding the largest video file
 
 
 # Sites 
 General speaking other then track sorting sites will be similar. One difference is typically in the final name of the mkv
 
 ## Blutopia
-Blutopia has a decent validator for checking if a remux is valid. It not 100 percent but gives a general Idea
+During remux if you set the site to --blutopia, that will have an effect on the final file name.
+It will also provide use of their validator, which provides details on if your remux will be approved.
+
+It not 100 percent, but it provides a general idea.
 
 
-# **Note**
 
-Windows Support is planned but it might take me a while, and would be done when I feel like the main program is stable
