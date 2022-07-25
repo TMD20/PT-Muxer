@@ -8,12 +8,13 @@ class AnimeBytes(siteTrackSorter):
     def __init__(self):
         super().__init__()
 
+    #Set English Track as forced if no embedded english Track is foudn
     def _sortSub(self, subTracks, subPrefs, audioLang):
         super()._sortSub(subTracks, subPrefs, audioLang)
-        # remove any forced/default tracks
+        # Check if a force english track has been found
         for track in self.enabledSub:
-            track["default"] = False
-            track["forced"] = False
+            if track["force"]==True and track["lang"].lower()=="english":
+                return
         for key in list(self._tracksDataObj.rawMediaTracksData.keys()):
             keyTracks = list(
                 filter(lambda x: x["sourceKey"] == key, self.unSortedSub))
