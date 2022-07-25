@@ -163,9 +163,8 @@ def sortTracks(muxSorter, demuxData, movie, args):
 
 def machineReader(muxSorter, args, movie):
     # Add OCR for Subtitles
-    if args.ocr == "disabled":
-        return
-    elif args.ocr == "enabled":
+
+    if args.ocr == "enabled":
         subreader.subreader(muxSorter.enabledSub, keep=args.keepocr)
     elif args.ocr == "default":
         subreader.subreader(muxSorter.unSortedSub,
@@ -176,8 +175,10 @@ def machineReader(muxSorter, args, movie):
     elif args.ocr == "english":
         subreader.subreader(muxSorter.unSortedSub, langs=[
                             "English"], keep=args.keepocr)
-    else:
-        subreader.subreader(muxSorter.unSortedSub, keep=args.keepocr)
+    elif args.ocr == "all":
+        subreader.subreader(muxSorter.unSortedSub, keep=args.keepocr)                        
+    elif args.keepocr:
+        subreader.imagesOnly(muxSorter.enabledSub)
 
    # Voice Recorder
 
@@ -189,7 +190,7 @@ def machineReader(muxSorter, args, movie):
         voiceRec.main(muxSorter.unSortedAudio, args.audiolang)
     elif args.voicerec == "english":
         voiceRec.main(muxSorter.unSortedAudio, ["English"])
-    else:
+    elif args.voicerec=="all":
         voiceRec.main(muxSorter.unSortedAudio)
 
 

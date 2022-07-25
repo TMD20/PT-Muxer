@@ -12,6 +12,7 @@ def mkdirSafe(target):
     if len(os.path.splitext(target)[1]) > 0:
         target = os.path.dirname(target)
     directories = [target]
+    
 
     while target != "/":
         target = os.path.dirname(target)

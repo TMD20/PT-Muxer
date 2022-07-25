@@ -5,6 +5,7 @@ import shutil
 
 import subtitles.images as subimages
 import subtitles.ocr as subocr
+import tools.general as utils
 
 
 def subreader(tracks, maxLines=None, langs=None, keep=False):
@@ -46,3 +47,16 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
                 os.mkdir(newDir)
                 for file in os.listdir(tmpdirname):
                     shutil.move(os.path.join(tmpdirname, file), newDir)
+def imagesOnly(tracks):
+    for track in tracks:
+        file = track["eac3to"].split(":")[1]
+        newDir = os.path.join(os.path.abspath(f"./subImages"),f"{file}/")
+        utils.mkdirSafe(newDir)
+        
+        subimages.getSubImages(track["file"], newDir)
+        files = os.listdir(newDir)
+        # if for some reason no images created
+        if len(files) == 0:
+            print("Could Not Generate Images for OCR")
+            continue
+       

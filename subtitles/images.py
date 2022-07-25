@@ -1,20 +1,21 @@
 import subprocess
 import os
+import shutil
 
-import tools.general as utils
 import config
 
 
 def getSubImages(supFile, dir):
-    supBin = "/usr/local/bin/Suprip.exe"
-    wineBin = "/usr/bin/wine"
+    supBin = config.supripLinuxPath
+    wineBin = config.wineLinuxPath
 
     if not os.path.isfile(supBin):
-        supBin = os.path.join(
-            config.root_dir, "binaries/suprip-1.16/SupRip.exe")
+        supBin = config.supripProjectPath
+    if not os.path.isfile(wineBin):
+        wineBin = config.wineProjectPath
 
     # suprip outputs to same directory sup file is in always
     movedSup = os.path.join(dir, "temp.sup")
-    os.popen(f"cp {supFile} {movedSup}")
+    shutil.copy2(supFile,movedSup)
     subprocess.run([wineBin, supBin, movedSup, "1"])
     os.remove(movedSup)
