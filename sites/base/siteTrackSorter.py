@@ -31,7 +31,7 @@ class siteTrackSorter():
     def addForcedSubs(self, movieLang, audioPref):
         bdSubBin = config.bdSupLinuxPath
         if not os.path.isfile(bdSubBin):
-            bdSupBin = config.bdSupProjectPath
+            bdSubBin = config.bdSupProjectPath
 
         wineBin = config.wineLinuxPath
         if not os.path.isfile(wineBin):

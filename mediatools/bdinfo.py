@@ -107,6 +107,7 @@ class Bdinfo():
         if not os.path.isfile(wineBin):
             wineBin = config.wineProjectPath
 
+
         selection = self._playlist.splitlines()[2+int(self._playlistNum)]
         match = re.search("[0-9]+.MPLS", selection)
         if match != None:
