@@ -3,7 +3,6 @@
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
 - [**How to Install/Get Started**](#how-to-installget-started)
-  - [Required](#required)
   - [Install](#install)
     - [Linux:](#linux)
     - [Windows](#windows)
@@ -15,8 +14,8 @@
   - [bdinfo](#bdinfo)
   - [BDSup2Sub](#bdsup2sub)
   - [Recommended](#recommended)
+    - [udevil](#udevil)
     - [Installing Tesseract](#installing-tesseract)
-  - [Optional:Disabling Tesseract (Non Sudo)](#optionaldisabling-tesseract-non-sudo)
 - [Modes:](#modes)
   - [Demux Mode](#demux-mode)
   - [Remux Mode:](#remux-mode)
@@ -45,6 +44,7 @@
 - [Machine Parse](#machine-parse)
   - [Subtitles](#subtitles)
   - [Video](#video)
+  - [Optional:Disabling Tesseract for Non Sudo ocr](#optionaldisabling-tesseract-non-sudo)
 - [Sites](#sites)
   - [AnimeBytes](#animebytes)
   - [BeyondHD](#beyondhd)
@@ -60,19 +60,17 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # **How to Install/Get Started** 
-Note I have not had time to test this on windows.
-Wine is part of the code, but that is just to run windows software on linux. 
+Instructions are provided for Linux and Windows
 
-This should run fine on windows with minor changes, but It will require some tecnical know how. 
-If you need help I can provide some support until I have time to refactor all the changes required for windows
-
-## Required
-  * python modules via requirements.txt 
-  * Linux
-  * mono
+However windows is not fully supported at the moment. 
+Modification to the code are required to get it to work on that platform
 
 ## Install
 ### Linux: 
+#### Required
+  * python
+  * mono
+
 python3 -m pip install --user virtualenv
 python3 -m venv env
 source env/bin/activate
@@ -81,6 +79,8 @@ pip3 install-r requirements.txt
 deactivate -> Do this after installing the requirements
 
 ### Windows
+#### Required
+  * python
 py -m pip install --user virtualenv
 py -m venv env
 .\env\Scripts\activate
@@ -88,12 +88,9 @@ which python -> should be the virtualenv
 py -m pip install -r requirements.txt
 deactivate -> Do this after install the requirements
 
-Linux: 
+## General virtualenv Guide
 
 General Guide: https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/
-
-
-
 
 
 
@@ -127,8 +124,9 @@ see config.py "*LinuxPath"for filepaths.
 
 ## Recommended
 
-* Installing modules and running python3 via virtualenv
-* udevil for non-sudo ISO extractions
+### Udevil
+Typically mounting provides the best results when trying to extract an ISO. However it usually requires sudo access. udevil will allow files to be "mounted" without the need for sudo access
+https://github.com/IgnorantGuru/spacefm/wiki/Distros - it mixed in with spacefm, make sure to only get udevil
 
 ### Installing Tesseract
 Tesseract allows for many more languages to be ocr, but it does require sudo
@@ -137,24 +135,6 @@ The easiest way would just be to follow the instructions in this repo
 
 https://github.com/sirfz/tesserocr
 This will require sudo
-
-## Optional:Disabling Tesseract (Non Sudo)
-If you can't install tesseract and still want to ocr
-
-* Go the project folder
-* cd ./subtitles/
-* open ocr.py 
-* ctrl f "getocr_obj" 
-* comment out
-```
-  try:
-        return tesserocr.PyTessBaseAPI(path="/usr/share/tesseract-ocr/5/tessdata", lang=langcodes.Language.get(langcode).to_alpha3())
-    except:
-        None
-    return None
-```
-now only easyocr will be used.
-
 
 # Modes: 
 
@@ -529,6 +509,23 @@ i.e spanish, french etc
 Videorec is not as good as ocr. But it can still kind of be used to ID tracks.
 Use the --videorec command to use this feature. 
 To save time it will only record about 50 lines worth of the track.
+
+## Optional:Disabling Tesseract for Non Sudo ocr
+If you can't install tesseract and still want to ocr
+
+* Go the project folder
+* cd ./subtitles/
+* open ocr.py 
+* ctrl f "getocr_obj" 
+* comment out
+```
+  try:
+        return tesserocr.PyTessBaseAPI(path="/usr/share/tesseract-ocr/5/tessdata", lang=langcodes.Language.get(langcode).to_alpha3())
+    except:
+        None
+    return None
+```
+now only easyocr will be used.
 
 
 # Enabled Tracks Sorting/Filtering
