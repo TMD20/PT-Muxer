@@ -64,28 +64,24 @@ def removeDupesList(list):
 
 
 def getIntInput(string):
-    while True:
-        num = input(f"\n\n{string} ")
-        try:
-            int(num)
-            return num
-        except:
-            None
+    return inquirer.number(
+        message=string,
+    ).execute()
 
 
 def singleSelectMenu(items, message):
-    return inquirer.select(message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    return inquirer.select(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
 
 def multiSelectMenu(items, message):
-    return inquirer.checkbox(message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    return inquirer.checkbox(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
 def textEnter(message,default=None):
     if default!=None:
-        return inquirer.text(message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
-    return inquirer.text(message=textwrap.dedent(f"\n{message}\n")).execute()
+        return inquirer.text(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
+    return inquirer.text(mandatory=True,message=textwrap.dedent(f"\n{message}\n")).execute()
     
 
 

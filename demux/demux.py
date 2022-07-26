@@ -34,7 +34,7 @@ def demuxTV(args):
     muxSorter = siteSortPicker.pickSite(args.site)
     choices = ["Yes", "No"]
 
-    sources = getSources(options, args.inpath)
+    sources = getSources(options, args.inpath,args.sortpref)
 
     print("What TV Show?")
     movie = movieData.matchMovie(sources)
@@ -80,7 +80,7 @@ def demuxTV(args):
         muxSorter = siteSortPicker.pickSite(args.site)
 
         if utils.singleSelectMenu(choices, "Change Sources") == "Yes":
-            sources = getSources(options, args.inpath)
+            sources = getSources(options, args.inpath,args.sortpref)
         print("Creating Demux Folder at\n")
 
 
@@ -89,7 +89,7 @@ def demuxMovie(args):
     demuxData = siteDataPicker.pickSite(args.site)
     muxSorter = siteSortPicker.pickSite(args.site)
     print("Add Sources For Movie Demux\n")
-    sources = getSources(options, args.inpath)
+    sources = getSources(options, args.inpath, args.sortpref)
     print("What Movie?\n\n")
     movie = movieData.matchMovie(sources)
     print("Creating Demux Folder at\n")
@@ -102,8 +102,8 @@ def demuxMovie(args):
     finalizeOutput(muxSorter, demuxData, movie)
 
 
-def getSources(options, inpath):
-    sources = demuxHelper.addSource(options)
+def getSources(options, inpath,sortpref):
+    sources = demuxHelper.addSource(options,sortpref)
     if sources == None or len(sources) == 0:
         print("No sources Selected")
         quit()

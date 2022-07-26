@@ -43,20 +43,49 @@ def createChildDemuxFolder(parentDir, show):
     return os.path.join(parentDir, show)
 
 
-def addSource(paths):
+def addSource(paths,sortpref):
     if len(paths) == 0:
         print("No Valid Source Directories Found")
         quit()
+    if sortpref=="size":
+        msg = \
+        """
+        Click on the Source(s) You Want for this Demux 
+        For TV Shows you can change the Source(s) Per Episode
 
-    msg = \
-    """
-    Click on the Source(s) You Want for this Demux 
-    For TV Shows you can change the Source(s) Per Episode
+        Press Space to add/remove selection
+        Press Enter when Done
+        """
+        return utils.multiSelectMenu(paths, msg)
+    else:
+        msg = \
+        """
+        Since you selected --sortpref order 
+        You will be prompted multiple times to make a selection
+        Pay attention to the order of the list printed out, as this will effect enabled tracks
 
-    Press Space to add/remove selection
-    Press Enter when Done
-    """
-    return utils.multiSelectMenu(paths, msg)
+        Click on the Source You Want for this Demux
+        For TV Shows you can change the Source(s) Per Episode
+
+        When Finish Click 'I'm Done Selecting Sources'
+        """
+        list=["I'm done selecting sources","I want to reset my list"]
+        list.extend(paths)
+        selection=[]
+        while True:
+            print(f"Your list thus far\n\n")
+            print("\n".join(selection))
+            curr_select = utils.singleSelectMenu(list, msg)
+            selection.append(curr_select)
+            if curr_select == "I want to reset my list":
+                selection=[]
+            if curr_select=="I'm done selecting sources":
+                break
+        selection=list(filter(lambda x:x!="done" and x!=None))
+        selection=utils.removeDupesList(selection)
+        return selection
+            
+
 
 
 def getStartingPoint():
