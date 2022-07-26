@@ -14,10 +14,9 @@ def Remux(args):
     # Variables
     options = ["Movie", "TV"]
     remuxConfigPaths=[]
+    remuxConfigs=[]
     movie = None
 
-    everything=[]
-    
 
     if utils.singleSelectMenu(options, "What Type of Media do you want to Remux?") == "Movie":
         folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
@@ -30,6 +29,7 @@ def Remux(args):
             list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
     #double check to make sure every path is current
     remuxConfigPaths = list(filter(lambda x:os.path.isfile(x),remuxConfigPaths))
+
   
 
 
@@ -51,9 +51,10 @@ def Remux(args):
 
         with open(remuxConfigPath, "r") as p:
             remuxConfig = json.loads(p.read())
-
+    
         if remuxHelper.checkMissing(remuxConfig) == False:
             continue
+        remuxConfigs.append(remuxConfig)
         if movie == None:
             movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
         kind = movieData.getKind(movie)
@@ -67,6 +68,8 @@ def Remux(args):
         fileName = fileNameList[i]
         movieTitle = movieTitleList[i]
         muxGenerator = muxPicker.pickSite(args.site)
+        remuxConfig = remuxConfigsg[i]
+        print(remuxConfig)
         ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator)
     message = """If the Program made it this far all MKV(s)...
     Should be in the output directory picked \
