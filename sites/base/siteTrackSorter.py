@@ -161,6 +161,8 @@ class siteTrackSorter():
         # sanitize prefs
         audioLang = self._getAudioPrefs(movieLangs, audioPrefs)
         subPrefs = utils.removeDupesList(subPrefs)
+        #set default track
+
 
         self._sortAudio(audioTracks, audioLang, sortPref)
         self._sortCompatAudio(audioTracks)
@@ -194,10 +196,14 @@ class siteTrackSorter():
 
     def _sortAudio(self, audioTracks, audioLang, sortPref):
         mainTracks = []
+
         for lang in audioLang:
             # Get All Tracks That Match This Language
             newTracks = [ele for ele in audioTracks if ele["lang"].lower()
                          == lang and ele["compat"] == False]
+            #set original language flag
+            if lang==audioLang[0]:
+                for track in newTracks: track["original"]=True
             if len(newTracks) == 0:
                 continue
             if sortPref == "size":
@@ -309,7 +315,7 @@ class siteTrackSorter():
         return track["lang"]
 
 ##################################################################################
-# User Preference Helpers
+# Additional helper functions
 #
 ##################################################################################
 
@@ -319,3 +325,4 @@ class siteTrackSorter():
                 movieLang.append("English")
             return list(map(lambda x: x.lower(), movieLang))
         return utils.removeDupesList(audioPrefs)
+

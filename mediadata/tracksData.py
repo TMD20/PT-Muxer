@@ -70,6 +70,10 @@ class TracksData():
             re.search("(?:.*?/ )(?:(.*?) \(.*)?(.*)?", currline).groups())))[0]
         tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
         tempdict["type"] = "audio"
+        tempdict["auditorydesc"] = False
+        tempdict["original"]=False
+        tempdict["commentary"]=False
+   
         return tempdict
 
     def _audioCompatParser(self, currline):
@@ -87,6 +91,9 @@ class TracksData():
         tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
         tempdict["type"] = "audio"
         tempdict["compat"] = True
+        tempdict["auditorydesc"] = False
+        tempdict["original"]=False
+        tempdict["commentary"] = False
         return tempdict
 
     def _subParser(self, currline):
@@ -96,6 +103,9 @@ class TracksData():
         langcode = self._mediacode(lang)
         tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
         tempdict["type"] = "subtitle"
+        tempdict["sdh"]=False
+        tempdict["textdesc"] = False
+        tempdict["commentary"]=False     
         return tempdict
 
     # Standard Track Data Helper
