@@ -68,8 +68,7 @@ def Remux(args):
         fileName = fileNameList[i]
         movieTitle = movieTitleList[i]
         muxGenerator = muxPicker.pickSite(args.site)
-        remuxConfig = remuxConfigsg[i]
-        print(remuxConfig)
+        remuxConfig = remuxConfigs[i]
         ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator)
     message = """If the Program made it this far all MKV(s)...
     Should be in the output directory picked \

@@ -58,12 +58,12 @@ def demuxTV(args):
         os.chdir(demuxHelper.createParentDemuxFolder(sources, args.outpath))
 
     print("Creating Demux Folder at\n")
-
+    print(f"This is run number {i}\n")
     while True:
         os.mkdir(str(i))
         os.chdir(str(i))
         print(os.path.abspath("."))
-        print(f"This is run number {i}\n")
+       
 
         extractBdinfo(sources, demuxData)
         extractTracks(demuxData)
@@ -78,9 +78,9 @@ def demuxTV(args):
         i = i+1
         demuxData = siteDataPicker.pickSite(args.site)
         muxSorter = siteSortPicker.pickSite(args.site)
-
         if utils.singleSelectMenu(choices, "Change Sources") == "Yes":
             sources = getSources(options, args.inpath,args.sortpref)
+        print(f"This is run number {i}\n")
         print("Creating Demux Folder at\n")
 
 
@@ -114,15 +114,12 @@ def getSources(options, inpath,sortpref):
 
 
 def extractBdinfo(sources, demuxData):
-
     # Generate Bdinfo/TrackInfo for Each Source
-
     bdObjs = []
     outputs = []
     for source in sources:
         print(f"\n{source}\n")
         print("Loading Playlists...\n")
-
         output = demuxHelper.createChildDemuxFolder(os.getcwd(), source)
         os.chdir(output)
         bdObj = bdinfo.Bdinfo()

@@ -71,7 +71,7 @@ def writeXMLTV(imdb, tmdb, season, episode):
     with open(infile, 'r') as f:
         src = Template(f.read())
         result = src.substitute(
-            {"imdb": imdb, "tmdb": tmdb, "imdbEP": imdbEP, "totalEP": totalEP})
+            {"imdb": imdb, "tmdb": tmdb, "imdbEP": imdbEP, "totalEP": totalEP,"season":season,"episode":episode})
     with open(outfile, "w") as p:
         p.writelines(result)
     return tempData

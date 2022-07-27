@@ -62,18 +62,29 @@ class MuxOBj():
             name = trackjson["site_title"]
             file = trackjson["file"]
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
-            if name:
-                temp.extend(["--track-name", f"0:{name}"])
+
+         # additional flags
             default = ["--default-track-flag", "0:0"]
+            forced = ["--forced-display-flag", "0:0"]
+            auditorydesc = ["--visual-impaired-flag", "0:0"]
+            commentary = ["--commentary-flag", "0:0"]
+            # reset flag values as needed
+            
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
+            if trackjson.get("forced") == True:
+                forced = ["--forced-display-flag", "0:1"]
+            if trackjson.get("commentary") == True \
+                    or re.search("commentary", name or "", re.IGNORECASE):
+                commentary = ["--commentary-flag", "0:1"]
+            if trackjson.get("auditorydesc") == True:
+                auditorydesc = ["--visual-impaired-flag", "0:1"]
             temp.extend(default)
-            if re.search("commentary", name, re.IGNORECASE):
-                temp.extend(["--commentary-flag", "0"])
-
+            temp.extend(forced)
+            temp.extend(auditorydesc)
+            temp.extend(commentary)
             temp.append(file)
             out.append(temp)
-
         self._audio = list(itertools.chain.from_iterable(out))
 
     def _addSubTracks(self, remuxConfig):
@@ -82,30 +93,37 @@ class MuxOBj():
             key = remuxConfig["Enabled_Tracks"]["Sub"][i]
             key = str(key)
 
+            # get base data
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
             file = trackjson["file"]
             name = trackjson.get("site_title")
-
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            # additional flags
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]
-
+            sdh = ["--hearing-impaired-flag", "0:0"]
+            commentary = ["--commentary-flag", "0:0"]
+            textdesc = ["--text-descriptions-flag", "0:0"]
+            # flags values if needed
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
-
             if trackjson.get("forced") == True:
                 forced = ["--forced-display-flag", "0:1"]
+            if trackjson.get("commentary") == True \
+                    or re.search("commentary", name or "", re.IGNORECASE):
+                commentary = ["--commentary-flag", "0:1"]
+            if trackjson.get("sdh") == True \
+            or re.search("sdh", name or "", re.IGNORECASE):
+                sdh = ["--hearing-impaired-flag", "0:1"]
+            if trackjson.get("textdesc") == True \
+                    or re.search("sdh", name or "", re.IGNORECASE):
+                textdesc = ["--text-descriptions-flag", "0:1"]
             temp.extend(default)
             temp.extend(forced)
-
-            if name:
-                temp.extend(["--track-name", f"0:{name}"])
-                if re.search("sdh", name, re.IGNORECASE):
-                    temp.extend(["--hearing-impaired-flag", "0:1"])
-                if re.search("commentary", name, re.IGNORECASE):
-                    temp.extend(["--commentary-flag", "0:1"])
-
+            temp.extend(sdh)
+            temp.extend(commentary)
+            temp.extend(textdesc)
             temp.append(file)
             out.append(temp)
         self._sub = (list(itertools.chain.from_iterable(out)))
