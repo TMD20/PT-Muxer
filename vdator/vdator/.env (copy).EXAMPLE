@@ -1,0 +1,48 @@
+# channels to listen in and add reactions
+REVIEW_CHANNELS=upload-review, remux
+
+# channels to send full summary to if from review channel
+REVIEW_REPLY_CHANNELS=remux-bot
+
+# channels to listen in and post full summaries
+BOT_CHANNELS=remux-bot
+
+# trainee channels
+TRAINEE_CHANNELS=upload-review
+
+# internal channels
+INTERNAL_CHANNELS=remux
+
+# release group
+RELEASE_GROUP=TMS
+# in-game, Now Playing...
+IN_GAME=Remux n00b
+
+# stop parsing after encountering this line
+IGNORE_AFTER_LINE=%%%
+
+# method to check for line to ignore after
+# 'equals' or 'contains'
+IGNORE_AFTER_LINE_METHOD=contains
+
+# ignore input until blank line if current line starts with one of these
+#IGNORE_UNTIL_BLANK_LINE_PREFIXES=
+
+# DVD check mode
+# 'mediainfo' to use mediainfo fields
+# 'nobdinfo' to assume DVD if no bdinfo given
+DVD_CHECK_MODE=nobdinfo
+
+DISCORD_BOT_SECRET=
+DISCORD_MSG_CHAR_LIMIT=2000
+
+TMDB_API_KEY=f400773075f3800bb1c601f7f81f4b5e
+HUNSPELL_LANG=/usr/share/hunspell/en_US.dic, /usr/share/hunspell/en_US.aff
+MISSPELLED_IGNORE_LIST=upmix
+
+MKVTOOLNIX_NEWS=https://mkvtoolnix.download/doc/NEWS.md
+
+FILENAME_CUTS=Directors.Cut, Extended.Cut, Final.Cut, Theatrical, Uncut, Unrated
+
+# how many years off the movie year can be. (default: 1)
+#MOVIE_YEAR_OFFSET=1

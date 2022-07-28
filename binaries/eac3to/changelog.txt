@@ -1,0 +1,1163 @@
+v3.34
+* fixed: "min/maxPlayListRuntime" worked for listing, but not processing
+
+v3.33
+* fixed a couple of HEVC bitstream bugs
+* added new parameter "-minPlayListRuntime=0:15:00"
+* added new parameter "-maxPlayListRuntime=4:00:00"
+* added support for ".264" and ".265" file extensions
+
+v3.32
+* added support for UHD Blu-Ray playlists and clip infos
+* added support for h265/HEVC bitstream parsing
+* added support for m2ts h265/HEVC splitting
+* added support for MKV h265/HEVC splitting
+* added support for h265/HEVC framerate modifications
+* added detection for Dolby Vision Enhancement Layer
+
+v3.31
+* libDcaDec: updated to latest build
+* libDcaDec: decoding only aborts on critical issues now
+* libDcaDec: now reports warnings if something isn't 100% perfect
+* libDcaDec: proper handling of clipped files (2nd pass etc)
+* libDcaDec: proper handling of tracks that switch bitdepth 16 <-> 24
+* fixed: TrueHD decoding -> AC3 encoding didn't work properly
+
+v3.30
+* libDcaDec is now default for all DTS tracks except XSA / low bitrate
+* fixed: #310: Use ffmpeg like external encoder
+* fixed: #312: Convert to wav with a big negative delay works incorrectly
+* fixed: #314: 'edit' option adds one frame less than expected
+* fixed: #345: Fails to decode Atmos track with no embedded AC3 track
+
+v3.29
+* added libDcaDec decoder for DTS decoding, new default for 7.x tracks
+* fixed: #086: left/right eye information was inverted in some 3D Blu-Rays
+* fixed: #263: decoding TrueHD Atmos with active dialnorm information failed
+* fixed: #264: using "-float32 -normalize" didn't work in all cases
+
+v3.28
+* fixed: #001: different number of frames for left and right eye
+* fixed: #061: valid silence edit was sometimes rejected
+* fixed: #067: error messages were not available to GUIs
+* fixed: #086: left/right eye information was inverted in some 3D Blu-Rays
+* fixed: #131: TrueHD Atmos streams could not be demuxed or decoded
+* fixed: #243: ArcSoft DTS decoder crash made eac3to crash, too
+* downStereo: added 0.7071 factor for surround/back channels (ITU-R BS.775-3)
+* downStereo/Dpl: using 0.5 instead of 0.7071 factor for LFE (ITU-R BS.775-3)
+
+v3.27
+* fixed: raw processing cut away 16 samples sometimes
+
+v3.26
+* fixed: downmixing of less than 6 channels to stereo failed
+* patched libav AC3 decoder to properly decode high frequencies
+* added support for floating point volume changes (e.g. -0.5db)
+* dialnorm is no longer removed from DTS-HD tracks (didn't work, anyway)
+
+v3.25
+* fixed: option "-down6" didn't handle 6.1 tracks properly
+* fixed: option "-down6" for 7.1 content lowered side channels in volume
+* fixed: 6.1 DTS/E-AC3 libav decoding resulted in incorrect 70f channel mask
+* fixed: a couple of funny AC3 channel configs resulted in swapped channels
+* fixed: option "-check" failed for SRT subtitles
+* fixed: MKV tracks without language information didn't default to "English"
+* fixed: 16bit MLP decoding didn't work at all
+* fixed: DTS 2.1 decoding had empty sub channel when using ArcSoft decoder
+* fixed: muxing h264 video streams without VUI eventually crashed
+* fixed: SMPTE 302M 20bit PCM tracks didn't extract properly
+* improved AC3 seamless branching handling by detection of identical frames
+* improved DTS seamless branching handling by detection of identical frames
+* updated to latest ffmpeg/libav revision
+* added support for libav DTS 6.1 and 7.1 decoding (only in core, no DTS-HD)
+* added support for encoding all AC3 channel configurations
+* added support for demuxing Blu-Ray primary E-AC3 tracks (AC3 core)
+* libav is now the default decoder for AC3 and E-AC3
+* option "-down2" is now deprecated, but still supported
+* option "-downDpl" mixes down to Dolby Pro Logic II
+* option "-downStereo" mixes down to standard stereo
+* added support for mixing any channel configuration to stereo/DPL
+* DPL downmixing doesn't lower volume, anymore (except when clipping occurs)
+* editing audio tracks by adding silence is now less restrictive
+* trying to mux right eye stream to MKV errors out now, instead of crashing
+* doing "eac3to 1) movie.mkv" for 3D BDs now properly skips right eye stream
+* FLAC encoding is now done with optimized block sizes for "LossyWAV" files
+* encoder bitdepth for lossy DTS tracks is no longer displayed
+* option "-test" no longer checks mkvtoolnix
+
+v3.24
+* fixed: m2ts framerate detection for h264 tracks was half of what it should be
+
+v3.23
+* fixed: handling of MKV files with header compression didn't work
+* fixed: track listing of some Blu-Rays failed silently
+* added support for decoding mono tracks with ArcSoft DTS decoder
+* added reading support for DTS tracks with additional DTS-HD header
+* improved m2ts framerate detection
+* video bitdepth is displayed now, if different than 8 bits
+* chroma format is displayed now, if different than 4:2:0
+
+v3.22
+* fixed: reducing bitdepth from >16bit to 16bit resulted in static (v3.21)
+* updated to latest ffmpeg/libav version
+* libav MP1/MP2/MP3 decoders now decode to floating point
+* libav E-AC3 decoder now supports spectral extension
+
+v3.21
+* fixed: big w64/rf64 files sometimes had incorrect header information
+* fixed: HD DVD chapter times were wrong by 3.6 seconds per hour
+* fixed: 6.1 DTS decoding with ArcSoft resulted in wrong channel order
+* fixed: 6.1 TrueHD decoding with libav resulted in wrong channel order
+* fixed: reducing bitdepth of clipped audio produced too much bitdepth
+* when clipping is automatically fixed, the applied dB gain is logged
+* when normalizing an audio track, the applied dB gain is logged
+
+v3.20
+* fixed 3D demuxing (argh)
+
+v3.19
+* added support for 3D Blu-Rays (playlists, detection & demuxing)
+
+v3.18
+* TrueHD dialnorm removal now uses "-31db" instead of "-0db"
+* TrueHD frames with -0db dialnorm are now automatically patched to -31db
+* added MKV demuxing support for TrueHD tracks
+* added MKV demuxing support for Blu-Ray PGS subtitle tracks
+* added MKV demuxing support for (MS ACM) extensible WAV tracks
+
+v3.17
+* updated libFLAC to version 1.2.1
+* added a flush after every log line to help GUIs
+* "eac3to some.mpls" now also works if the stream files aren't there, anymore
+* fixed: number of subtitles was not appended to demuxed subtitles' file name
+* fixed: dialnorm removal (for Nero decoder) failed with some 2.0 TrueHD files
+
+v3.16
+* added undocumented "-no2ndpass" switch to turn off 2nd pass processing
+* fixed: two pass processing sometimes produced superfluous sup files
+* fixed: MPG/EVO/VOB audio tracks with "PES extension 2" were not detected
+* fixed: very small W64/RF64 files were not detected correctly
+* fixed: when processing was aborted, log file was sometimes not created
+* fixed: sometimes specifying a title number addressed the wrong HD DVD title
+
+v3.15
+* "24.975" is now interpreted as "25.000/1.001"
+* Blu-Ray "sup" are demuxed with DTS set to 0 again, proper fix will come later
+* fixed: error code not set for "source file format could not be detected"
+* fixed: audio resampling from/to 24.975 didn't work properly
+* fixed: WAV files beginning with lots of zeroes were sometimes not accepted
+
+v3.14
+* WAV reading was broken for all but very small files (introduced in v3.13)
+
+v3.13
+* fields and frames are counted and displayed separately now
+* added DIRAC bitstream parser
+* added support for "-24.975" and "-changeto24.975"
+* Blu-Ray subtitle demuxing: PTS value is now written to both PTS + DTS
+* joining MKV files is now declined with a proper error message
+* last chapter is now removed, if it's less than 10 seconds from end of movie
+* fixed: "-normalize" didn't work with stdout, anymore
+* fixed: audio delay was incorrect when 1st m2ts part contained no audio data
+* fixed: very small WAV files were not detected correctly
+* fixed: "eac3to source.eac3 dest.dts -core" crashed
+
+v3.12
+* fixed: track languages for HD DVD discs were not shown
+* fixed: MLP channel order was wrong for some specific channel configurations
+* fixed: "DirectShow reported 255 channels" happened sometimes
+
+v3.11
+* fixed: MKV subtitle track language wasn't shown
+
+v3.10
+* Blu-Ray title listing now includes chapter information
+* fixed: v3.09 didn't show track languages for Blu-Rays
+
+v3.09
+* added support for MKV "SRT/UTF8", "SRT/ASCII", "ASS" and "SSA" subtitles
+* increased some internal buffers to avoid AC3 overflow in the "thd ac3 joiner"
+* fixed: frame counting didn't work for MKV video tracks
+* fixed: video track FPS change was sometimes declined
+* fixed: video tracks with "strange" FPS were sometimes handled incorrectly
+* fixed: clipping removal 2nd pass was executed even for "stdout"
+* fixed: "eac3to -test" displayed an outdated Nero download link
+* fixed: specifying a specific playlist still used default playlist's chapters
+
+v3.08
+* fixed: reading physical disc speed was abysmal (introduced in v3.07)
+* fixed: read error from physical drive resulted in crash
+
+v3.07
+* added support for MKV video tracks without sequence headers in bitstream
+* added support for old style MKV AAC tracks
+* added support for various MKV "A_MS/ACM" audio formats
+* added support for various MKV "V_MS/VFW/FOURCC" video formats
+* added warning for tracks where bitstream parsing failed
+* demuxing a video track now also complains about video gaps/overlaps
+* the "-check" option now also complains about video gaps/overlaps
+* optimized memory allocation
+* fixed: adding subtitle caption count to filenames sometimes didn't work
+* fixed: subtitle caption counts in log sometimes had wrong track numbers
+* fixed: all non-supported MKV tracks shared the same description
+* fixed: incorrect framerate mismatch complaint was shown for pulldown sources
+* fixed: FLAC tracks in MKV files don't slow down detection, anymore
+* fixed: source file detection read 300MB from every source file
+
+v3.06
+* added MKV reading/parsing support
+* added demux support for MKV (E-)AC3, DTS(-HD), AAC, MPx, FLAC and WAV tracks
+* added demux support for MKV "modern style" MPEG2, VC-1 and h264/AVC tracks
+* reading from (HD) DVD and Blu-Ray drives uses different reading APIs now
+* empty tracks in TS/m2ts container are not listed, anymore
+* for 24.000 fps video tracks a little warning is displayed now
+* when demuxing subtitle files, the number of captions is added to the filename
+* timestamp derived FPS is used for gap checking instead of video bitstream FPS
+* fixed: 44.1khz AC3 encoding was still broken
+* fixed: zero byte stripping pass was done for true 24bit TrueHD tracks
+* fixed: downconverting WAV files with 0x3f channel mask didn't work
+* fixed: log output "remaining delay [...]" was sometimes wrong for AC3 tracks
+* fixed: silent frame creation was tried for E-AC3 although it can't work
+
+v3.05
+* warning is shown if h264 video bitstream contains "full range" flag
+* h264 video bitstream "full range" flag is automatically removed
+* you can disable removal of the "full range" flag by doing "-keepFullRange"
+* added reader for external DVD, HD DVD and Blu-Ray SUP files
+* external SUP files can be delayed now
+* number of HD DVD and DVD subtitles in SUP track is counted and displayed
+* number of forced and non-forced Blu-Ray subtitles in SUP track is displayed
+* "-check" option now also works for demuxed audio, video and subtitle tracks
+* when reading from physical disc drive, 2KB (instead of 1MB) blocks are read
+* improved automatic skipping over damaged first 5MB of TS/m2ts files
+* fixed: resampling and Surcode encoding didn't work in one step
+* fixed: TRP detection crashed
+* fixed: track listing sometimes contained tracks without description
+* fixed: h264 with missing framerate in 1st sequence header made eac3to crash
+* fixed: some AC3WAV files were not detected correctly
+* fixed: video frame count was not displayed when 2nd pass was executed
+
+v3.04
+* video track framerates are now shown with up to 3 decimals, if necessary
+* m2ts/TS framerate is determined by interpreting video track timestamps
+* m2ts/TS framerate is displayed in the format description (if available)
+* warning is shown if container timestamps don't match video framerate
+* warning is shown if video bitstream has a non-standard framerate
+* video without framerate information: container framerate is used
+* video without framerate information: framerate can be set (e.g. "-23.976")
+* video without framerate information: new framerate is written to bitstream
+* remaining non-fixed audio delay is now shown in log
+* command prompt colors are restored after eac3to has run through
+* fixed: 2-pass processing for stripping zero bytes sometimes crashed
+* fixed: CA (Conditional Access) tracks were shown as "Unknown audio track"
+
+v3.03
+* fixed: MPEG2 1088 to 1080 cropping was still incomplete
+
+v3.02
+* fixed: VC-1 stream handling was broken
+* fixed: destination file extension "*.lpcm" didn't work with 2pass processing
+* fixed: MPEG2 1088 to 1080 cropping was incomplete
+* fixed: no log was being created when "temp file could not be interpreted"
+
+v3.01
+* fixed: m2ts LCPM demuxing didn't work with v3.00
+* fixed: TrueHD -> TrueHD+AC3 conversion didn't work with v3.00
+
+v3.00
+* broken AC3, DTS, AAC and MPx streams are now automatically repaired
+* errors in TS/m2ts files are now reported (with runtime) and ignored
+* damaged first max 5MB and max 5% of a TS/m2ts file are automatically skipped
+* video/audio tracks which can't be parsed, are now demuxed in raw form
+* added support for "line 21" closed captions in ATSC/NTSC broadcasts and DVDs
+* added reading of movie / network name from "line 21" XDS information
+* for gaps, edits & repairs > 1000ms eac3to now inserts silence by default
+* for gaps, edits & repairs < 1000ms eac3to now loops audio by default
+* option "-silence" forces eac3to to insert silence instead of looping audio
+* option "-loop" forces eac3to to loop audio instead of inserting silence
+* newly encoded AC3 frame is now used for "silence" instead of file's 1st frame
+* increased reading block size (might improve reading performance)
+* optimized TS/m2ts demuxing performance
+* optimized MPEG2, VC-1 and h264 parsing performance
+* command line output is colored now (e.g. errors drawn in red)
+* MPEG2 1920x1088 bitstream is now automatically patched/cropped to 1920x1080
+* log file now contains "<WARNING>" and "<ERROR>" indicators
+* workaround for movie playlists which want the same m2ts file played twice
+* added version check for eac3to (doh!)
+* when a read error occurs, reading is tried again up to 3 times
+* (E-)AC3 frames with -0db dialnorm are now automatically patched to -31db
+* updated to newer libAften build -> fixes 44.1khz encoding
+* fixed: sometimes "The last DTS frame is incomplete" was a false alarm
+* fixed: mkvtoolnix version check didn't work, anymore
+* fixed: errors were meant to be output to stderr, but they weren't
+* fixed: automatic gap/overlap fixing with AAC targets aborted processing
+* fixed: positive edit began a bit too early
+* fixed: two ID3 tags after each other made eac3to fail detecting the format
+* fixed: some VOB files were not detected properly
+
+v2.87
+* fixed: negative edit was done too late (introduced in v2.86)
+
+v2.86
+* fixed: "1:some.ac3" instead of "1: some.ac3" failed for 2 digit track numbers
+* fixed: "eac3to source movie.mkv" demuxed video instead of muxing to MKV
+* negative edit now begins at the specified runtime instead of ending there
+
+v2.85
+* using "eac3to source video.h264" doesn't demux audio/subtitle tracks, anymore
+* using "eac3to source movie.*" demuxes video, audio and subtitle tracks
+* using "eac3to source 1: video.* 2: audio.*" demuxes the specified tracks
+* AC3 and E-AC3 dialnorm removal now uses "-31db" instead of "-0db"
+* workaround for DTS files where last byte is missing in each audio frame
+* fixed: v2.84 sometimes crashed when parsing HD DVD XML files
+* fixed: v2.84 sometimes chose incorrect XML file
+* fixed: v2.84 sometimes chose wrong m2ts playlist file
+* fixed: some actions were eventually applied twice when "-2pass" was used
+* fixed: AAC encoding quality "quality=0.0x" was passed to Nero as "0.x"
+
+v2.84
+* fixed: 2nd pass gap removal was tried (and failed) for TrueHD+AC3 targets
+* fixed: processing aborted when trying to fix gaps in PCM destination files
+* fixed: more than one RAW/PCM overlaps resulted in lost sync (since v2.81)
+* fixed: demuxing TrueHD+AC3 stream by title number didn't renew the AC3 part
+* new option for removing or looping audio data, e.g. "-edit=0:20:47,-100ms"
+* title sorting criteria changed: resolution is more important than runtime
+* new option "-lowPriority" sets eac3to to background/idle priority
+* libav warnings are now assigned to the affected audio track
+* fixed: "lossless check failed" false alarms for seamless branching movies
+* fixed: spike removal filter was not active for the very last overlap/gap
+* improved muxing h264 streams which begin with double sequence headers
+* source files are now opened with "share read + write access"
+* destination files are now opened with "share read access"
+
+v2.83
+* fixed: gap/overlap correction didn't work for FLAC and WAV files
+* fixed: when clipping was detected, 2nd pass was not always executed correctly
+
+v2.82
+* fixed: sometimes eac3to stalled before processing (introduced in v2.81)
+
+v2.81
+* audio gap/overlap fixing is now automatically done in a 2nd pass
+* option "-normalize" maximizes the volume of the audio data, needs 2 passes
+* audio clipping is detected and automatically removed in a 2nd pass
+* "-2pass" activates 2 pass mode (can speedup seamless branching processing)
+* superfluous zero bytes are now automatically removed in 2nd pass
+* "-phaseShift" shifts surround channel phase by 90° for DPL II downmixing
+* spike removal post processing filter now always produces 16bit samples
+* empty channels are now reported by the bitdepth analyzer as "no audio data"
+* option "-shutdown" shuts the PC down automatically after processing is done
+* the HD DVD XPL with the longest title is now loaded instead of VPLST000.XPL
+* eac3to can now open selected XPL files (e.g. "eac3to ADV_OBJ\VPLS002.XPL")
+* eac3to can now open selected mpls files (e.g. "eac3to PLAYLIST\00002.mpls")
+* fixed: TrueHD streams starting with a non-major header failed to decode
+* fixed: WAV files created by eac3to with empty channels had incorrect header
+* fixed: RAW/PCM gap/overlap remover sometimes didn't work correctly
+
+v2.80
+* fixed: FLAC files with missing runtime information were not accepted
+* gone back to old VOB/EVO auto delay calculation method, more reliable for me
+* improved TS broadcast audio delay detection
+* added support for constant bitrate AAC encoding
+* added support for AAC encoding 0.00 and 1.00 quality
+
+v2.79
+* improved m2ts file joining overlap detection (mainly for interlaced video)
+* vob/evo audio delay detection now uses "vobu start presentation time"
+* program streams which are neither VOB nor EVO are now reported as "MPG"
+* resampling is now automatically activated for AC3/DTS encoding, if necessary
+* "Mersenne Twister" random number generator is used for dithering now
+* zero padded DTS tracks are now displayed as such
+* fixed: 32bit PCM conversion to floating point was broken
+* fixed: with some (rare) movies first subtitle began after 50 minutes runtime
+* only plugins with the extension *.dll are loaded now
+
+v2.78
+* fixed: h264 interlaced muxing to MKV could result in too long runtime
+* fixed: transcoding DTS-HD/E-AC3 core sometimes failed to work correctly
+* improved TS/m2ts audio delay detection
+* added filter to remove spikes when fixing gaps/overlaps in RAW/PCM audio
+* each eac3to instance has its own log file now
+* playlist output now also works with "-log" option
+* default bitrate for mono & stereo AC3 encodes lowered to 448kbps
+* default bitrate for mono & stereo DTS encodes lowered to 768kbps
+* it should be possible to handle TsSplitter splitted TS files via "+" now
+
+v2.77
+* pcm/raw audio delay is now applied before resampling and fps change
+* parsing of command line with multiple sources files sometimes failed
+
+v2.76
+* "-slowdown" now works to convert 24.000 movies to 23.976
+* "-speedup" now works to convert 24.000 movies to 25.000
+* option "-xx.xxx" (e.g. "-24.000") sets the FPS of the source track
+* option "-changeToXx.xxx" (e.g. "-changeTo23.976") changes video/audio FPS
+* modified FPS information is written to video bitstream (VC-1, MPEG2, h264)
+* demuxing with FPS change option now activates audio track transcoding
+* SSRC resampling parameters modified slightly to reduce steepness and ringing
+* fixed incorrect h264 movie slowdown gap/overlap complaints
+* fixed DTS-HD High Resolution bitrate calculation
+* dithering is now done differently per channel
+
+v2.75
+* added (E-)AC3 5.1 "EX" detection
+* added (E-)AC3 2.0 "Surround" detection
+* added (E-)AC3 2.0 "Headphone" detection
+* NeroAacEnc is now fed with up to 32bit float (if available)
+* resampling option "-quality=low|high|ultra" not supported, anymore
+* new option "-fast" switches SSRC resampler to fast, but low quality mode
+* new option "-r8brain" forces use of r8brain resampler instead of SSRC
+* added support for AES3 PCM streams in TS container
+* started working on encoder plugin interface
+
+v2.74
+* "-demux" failed to work for DTS-HD and "TrueHD/AC3" tracks in v2.73
+* fixed: DTS-HD tracks could make processing abort at the very end of the movie
+
+v2.73
+* changed TS demuxing logic to make the broken (!) new SkyHD broadcasts work
+* DTS core and "TrueHD/AC3" AC3 parameters are displayed separately now
+* when using "-core" option, eac3to now bases its decisions on core parameters
+* added WAV/W64/RF64 read/write support for 32bit PCM and 32/64 bit float
+* option "-full" allows WAV/W64/RF64 output to be native (default <= 24bit PCM)
+* Surcode DTS encoding is now done with up to 32bit float (if available)
+* Aften AC3 encoding is now done with up to 64bit float (if available)
+
+v2.72
+* fixed: per channel bitdepth analyzation didn't work correctly
+
+v2.71
+* fixed: v2.70 detected Blu-Rays as "TS" without chapters and track languages
+* fixed: TrueHD downmixing to 2.0 didn't work
+
+v2.70
+* added floating point support to the complete audio processing chain
+* added gain functionality, e.g. "-3db" or "+1db"
+* bitdepth analyzation is now done separately for each channel
+* fixed: when decoding lossy audio with libav, peaks were clipped incorrectly
+* fixed: libav MP1/2/3 decoder output was cut down to 24bit
+* fixed: with some EVO sources the AC3 track was not listed
+* fixed: if no key frame was found, h264 track in m2(ts) was not listed
+* fixed: video/audio data before first PAT/PMT was discarded
+* Blu-Ray chapters now don't contain link points, anymore, unless necessary
+* added 10db boost to LFE channel, when "-down2" and "-mixlfe" are used
+* ArcSoft output can now be overwritten to "-2", "-6", "-7" or "-8" channels
+
+v2.69
+* added high precision SSRC resampler
+* resampling "-quality" now allows "low", "high" (SSRC) or "ultra" (r8brain)
+* resampling quality now defaults to "high" (SSRC)
+* bitdepth is now analyzed separately for original vs. processed data
+* fixed: downmixing 16 bit DTS tracks to 5.1 or 2.0 didn't work
+* fixed: Sonic Decoder was incorrectly assumed to decode XXCh DTS files to 6.1
+* for movies the Haali Muxer can't handle "-seekToIFrames" is suggested now
+
+v2.68
+* fixed crash when transcoding Blu-Ray/HD DVD track to FLAC
+
+v2.67
+* information about HDCD and real bitdepth is now stored into FLAC metadata
+* information about real bitdepth is now read from FLAC metadata
+* PTS break: PTS is increased by 1 frame (fixes some false overlap warnings)
+* fixed: video gap log text was sometimes not correct (runtime information)
+* added undocumented switch "-neroaacenc="c:\whatever\neroaacenc.exe""
+* error log messages are now output to stderr instead of stdout
+* improved "which mkvtoolnix is currently installed?" check
+* fixed: mkvtoolnix version check "Oct" date was not interpreted correctly
+
+v2.66
+* changed eac3to to allow AAC encoding with 7.1 channels (for new Nero encoder)
+* fixed AGM creation for files bigger than 4GB
+* added support for Nero's new AAC Encoder download URL
+* lowered volume of error/success sounds
+* when there are 2 similar playlists the one with less chapters is ignored now
+
+v2.65
+* automatic channel remapping for 6.1 tracks with wrong channel mask
+* automatic channel remapping for ArcSoft DTS decoder 6.1 tracks
+* fixed: TrueHD -> Surcode encoding didn't work, anymore
+* fixed: MPEG2 + h264 video gap/overlap removal didn't work properly
+
+v2.64
+* added channel mask reading support to Blu-Ray PCM track parser
+* added channel mask reading support to TrueHD parser
+* added channel mask reading & writing support to FLAC decoder / encoder
+* changed 5.x channel mask from $03x to $60x
+* changed 6.x channel mask from $13x to $70x
+* mono wavs output now creates correct names for some channel masks
+* when transcoding 6.1 sources to PCM, 7 channel doubling is activated now
+* fixed: DTS channelmask detection was incorrect for very strange configs
+* fixed: sometimes the h264 video stream of a Blu-Ray m2ts was not detected
+
+v2.63
+* fixed: incorrect detection of 6.0 DTS tracks as 5.0
+* fixed: incorrect libav DTS channel remapping for 6.x or 7.x tracks
+* fixed: incorrect ArcSoft DTS channel remapping for "6.0" and "2/2.1" tracks
+* fixed: v2.61+62 incorrectly decoded 16bit TrueHD tracks to 24bit FLAC/WAV/RAW
+* fixed: some DTSWAV files made HDCD decoder crash
+* fixed: DTSWAV and AC3WAV samplerate and bitdepth were reported incorrectly
+* improved DirectShow channel configuration reporting
+* undocumented option -progressnumbers now outputs "analyze:" and "process:"
+
+v2.62
+* fixed: downmixing 16 bit 7.1 DTS tracks to 5.1 stopped working in v2.61
+
+v2.61
+* option "-no7doubling" is not supported anymore
+* option "-double7" added which upconverts 6.1 to 7.1
+* added read/write support for Sony wave64 (*.w64) format
+* added read/write support for RF64 wave64 (*.rf64) format
+* added write support for AGM format
+* true bitdepth (e.g. 18 bits) is written to extensible wav header now
+* when reading 16/24 (true/storage) WAV files, zero bytes are stripped now
+* added HDCD detection for WAV and FLAC files
+* added HDCD detection for PCM tracks in VOB/EVO/m2ts containers
+* added HDCD decoder written by Christopher Key
+* added new option "-decodeHdcd" to decode HDCD information
+* HDCD track -> lossy format: HDCD decoding is automatically activated
+* when DTS-MA and TrueHD tracks are decoded, a check for HDCD is done
+* fixed some incorrect DTS channel masks
+* added automatic libav DTS channel remapping
+* added automatic ArcSoft DTS channel remapping
+* added channel map manipulation to make funny DTS tracks decode with Sonic
+* added channel map manipulation to make funny DTS tracks decode with ArcSoft
+* added channel volume modification to undo ArcSoft mono surround splitting
+* for TrueHD+AC3 creation AC3 delay and gap correction are disabled now
+* fixed: DTSWAV and DTSAC3 readers reported too long runtime
+* fixed: sometimes processing aborted with a "bitdepth reducer" complaint
+
+v2.60
+* fixed: in v2.59 "-analyzeBitdepth" stopped working for Blu-Ray TrueHD tracks
+
+v2.59
+* extension ".thd+ac3" is supported now to define destination format
+* TrueHD tracks without AC3 core can be converted to TrueHD/AC3 now
+* demuxing a single-part Blu-Ray title keeps the original "TrueHD/AC3" data
+* demuxing a multi-part Blu-Ray title automatically redoes the AC3 substream
+* added workaround for Blu-Ray playlists with multiple last "invalid" parts
+* fixed: "-check" didn't work for LPCM tracks
+
+v2.58
+* h264 parser rewritten: framerate, pulldown etc is detected reliably now
+* h264 pulldown is automatically removed from progressive movie sources now
+* h264 pulldown removal can be disabled by using "-keepPulldown"
+* h264 muxing now fully supports streams with mixed 23.976 and 29.970 content
+* h264 1920x1088 bitstream is now automatically patched/cropped to 1920x1080
+* h264 filler data is now already removed during demuxing
+* h264 sources with funny framerates (e.g. Luxe.tv HD) are patched to 25fps now
+* mixed video/movie h264 streams are now always muxed with 29.970 timestamps
+* speedup/slowdown now changes framerate information in the h264 bitstream
+* options "-24p", "-60i" and "-30p" are no longer supported
+* fixed Blu-Ray seamless branching subtitle remuxing
+* added workaround for Blu-Ray playlists with a last small "invalid" m2ts part
+* bitdepth analyzation is now done for decoded FLAC, WAV, PCM, DTS MA, too
+* bitrate is now also reported for FLAC, WAV and PCM tracks
+* when encoding AC3, DTS or AAC, the encoding bitrate is reported
+* fixed: v2.57 incorrectly decoded 16bit TrueHD tracks to 24bit FLAC/WAV/RAW
+* (M2)TS discontinuities before the first unit start are ignored now
+* new option "-progressnumbers" replaces progress bar with percentage numbers
+
+v2.57
+* added automated support for Nero AAC command line encoder
+* added "quality=0.xx" (0.00 - 0.99) parameter to control AAC encoder quality
+* added Nero AAC encoder check to the "-test" list
+* "-test" checks whether a new Haali Matroska Muxer version is available
+* "-test" checks whether a new MkvToolnix release build is available
+* "-test" checks whether a new MkvToolnix beta build is available
+* "-test" checks whether a new Nero AAC encoder version is available
+* added TRP container support (TS files without PMT/PAT)
+* parameter "-extensible" is no longer supported (it's default now)
+* new parameter "-simple" can be used to disable the "-extensible" wav header
+* decoded TrueHD tracks: bitdepth is now automatically analyzed in more detail
+* option "-analyzeBitdepth" manually activates extended bitdepth analyzation
+* DVB subtitle tracks are listed now - can't be demuxed, though
+* option "-check" doesn't fail on DTS Express tracks, anymore
+
+v2.56
+* fixed: processing aborted when a VC-1 sequence end code was found
+
+v2.55
+* AAC bitstream parser added
+* AAC auto detection added
+* AAC bitstream delay added
+* AAC bitstream gap/overlap correction added
+* AAC decoding (Nero & Sonic) added
+* old MP2 parser now "officially" and properly supports MP1, MP2 and MP3
+* MP3 decoding (libav & Nero) added
+* added support for MPEG Audio version 2 and version 2.5
+* added (limited) support for ID3, APE and LYRICS tags in MP3 and AAC tracks
+* improved VOB/EVO audio delay detection algorithm
+* detection and automatic skipping of invalid vob units
+* options "-60i" and "-24p" are no longer supported for MPEG2 video
+* improved detection of MPEG2 framerate / pulldown state / mode
+* improved MPEG2 muxing warnings
+* several bugs in MPEG2 video muxing fixed
+* fixed interlaced VC-1 muxing with user data (Nine Inch Nails)
+
+v2.54
+* VC-1 pulldown removal rewritten (comparable to vc1conv 0.4, but faster)
+* VC-1 pulldown removal is activated by default
+* VC-1 pulldown removal can be manually deactivated by "-keepPulldown" option
+* VC-1 pulldown removal is also available and activated when muxing to MKV now
+* fixed Blu-Ray subtitle demuxing for seamless branching movies
+* better task separation when doing multiple operations with an audio track
+
+v2.53
+* Blu-Ray PGS subtitle demuxing support added
+* added support for EVO/VOB subtitles which begin very late in the file
+* MPEG2 video muxing doesn't rely on GOP headers, anymore
+* all (M2)TS discontinuities are now reported with exact file position
+* fixed: reading language information from TS files didn't work correctly
+
+v2.52
+* fixed muxing of MPEG2 broadcasts where "temporal_reference" overruns
+* MPEG2 bitstream headers are now updated correctly when speedup is performed
+* MPEG2 bitstream headers are now updated correctly when slowdown is performed
+* MPEG2 bitstream headers are now updated correctly when pulldown is removed
+* pulldown removal is now automatically disabled for MPEG2 broadcasts
+* AC3WAV (SPDIF formatted) support added
+
+v2.51
+* DTS Express bitstream parser added
+* DTS Express auto detection added
+* DTS Express bitstream delay added
+* DTS Express bitstream gap/overlap correction added
+* DTS Express decoding (Nero & ArcSoft) added
+* fixed: 6.1 -> 7.1 channel doubling resulted in wrong channel order
+* added (undocum.) option "-no7doubling" to disable 6.1 -> 7.1 channel doubling
+* DTS tracks with funny speaker settings are displayed as "7.1 (strange setup)"
+* warning is displayed when decoding "7.1 (strange setup)" tracks with ArcSoft
+
+v2.50
+* ArcSoft DTS Decoder DLL is now directly accessed instead of using DirectShow
+
+v2.49
+* DTS parser sets correct channel mask now
+* DTS-HD parser now properly detects format, channels and samplerate
+* added support for ArcSoft DTS(-HD) Decoder
+* added several tweaks to make ArcSoft Decoder behave correctly
+* added ArcSoft test to the "-test" processing
+* made ArcSoft Decoder default for DTS and DTS-HD decoding
+
+v2.48
+* 96kHz LPCM tracks in (M2)TS and EVO/VOB containers didn't work correctly
+* "Applying (E-)AC3 delay" now only shows if the bitstream is actually modified
+* fixed crash in MP2 reader when checking some PCM tracks
+* added support for MLP formats 13 - 16
+* improved/corrected MLP channel descriptions
+* MLP parser sets correct channel mask
+* added proper channel remaps for libav MLP decoding of "funny" channel formats
+* added proper channel remaps for Nero MLP decoding of "funny" channel formats
+* added proper channel remaps for Nero AC3 decoding of "funny" channel formats
+* when doubling 7th channel the channel mask is set correctly now
+* channel mask is corrected if a decoder doesn't output all channels
+* channel mask is corrected if channel downmixing is performed
+
+v2.47
+* improved detection of AC3/DTS tracks in TS/M2TS container
+* added support for Blu-Ray style LPCM tracks in TS container
+* fixed 44.1kHz AC3 tracks
+* fixed crazy audio delay values when no video track was detected
+* sometimes video/audio tracks were not properly detected in (M2)TS container
+* MPEG2 demuxing/remuxing incorrectly output the first sequence headers twice
+* sequence end codes are removed when demuxing video now, too
+* MPEG2 pulldown removal is automatically activated only for EVO HD sources now
+* MPEG2 pulldown removal can be manually activated by using "-stripPulldown"
+* MPEG2 pulldown removal can be disabled by using "-keepPulldown"
+
+v2.46
+* MPEG2 muxing now fully supports streams with mixed 23.976 and 29.970 content
+* mixed video/movie MPEG2 streams are now always muxed with 29.970 timestamps
+* if a movie MPEG2 stream goes video, processing is automatically restarted
+* MPEG2 pulldown is now automatically removed whenever an MPEG2 stream is read
+* new option "-keepPulldown" can be used to disable MPEG2 pulldown removal
+* corrected default WAV channel masks for 4.0, 6.1 and 7.1
+* added proper channel remaps for libav AC3 decoding of "funny" channel formats
+* added general channel mask support
+* WAV parser reads channel mask from extensible header
+* (E-)AC3 parser sets correct channel mask
+
+v2.45
+* Blu-Ray angles are now reported as separate titles
+* duplicate playlists are not listed in the "folder view", anymore
+* reduced TrueHD and RAW/PCM gap/overlap threshold to 7ms
+* reduced (E-)AC3 gap/overlap threshold to 60% of the runtime of one audio frame
+* reduced MP2 gap/overlap threshold to 60% of the runtime of one MP2 frame
+* reduced DTS threshold to 60% of the runtime of one DTS frame, but at least 7ms
+* fixed: Blu-Ray chapter export sometimes wrote incorrect "00:00:00.000" items
+* improved handling of MPEG2 streams (changes from interlaced to progressive)
+* video information now shows "with pulldown flags", if applicable
+* removed "-ignoreDiscon" from help; hint is shown when a discontinuity occurs
+* added "-ignoreEncrypt" option; hint is shown when a source is encrypted
+* new option "-extensible" creates WAV files with a slightly different header
+* fixed some smaller bugs
+
+v2.44
+* libav is now automatically used when Nero/Sonic decoders are not working
+* gap/overlap correction of RAW/PCM tracks sometimes aborted
+* rerunning de/remuxing to correct gaps/overlaps ignored RAW/PCM tracks
+* "lossless check failed" messages are surpressed on join points now
+
+v2.43
+* added automatic Blu-Ray playlist parsing
+* added support for multi part (e.g. seamless branching) Blu-Ray titles
+* audio gap/overlap detection rewrite completed
+* added audio gap/overlap correction functionality
+* added Blu-Ray chapter support
+* log lines are now prefixed with a track identifier
+* RAW/PCM delay is used instead of bitstream delay, if possible
+* fixed: video framecount was missing
+
+v2.42
+* added support for 16bit DTSWAV files
+* fixed: Blu-Ray TrueHD support was broken
+
+v2.41
+* added full MP2 (MPEG2 audio) support including decoding + bitstream delay
+* added TS/M2TS runtime detection
+* improved VOB/EVO runtime detection
+* added TrueHD gap/overlap detection
+* audio gap/overlap detection logic rewritten (not complete yet)
+* fixed: log file option didn't work correctly
+* fixed: some DTS tracks in PAL TS broadcasts weren't detected correctly
+* fixed: some E-AC3 tracks in PAL TS broadcasts weren't detected correctly
+
+v2.40
+* video framecount is now also shown for TS/M2TS demuxing/remuxing
+* "-check" option added to check container for corruption
+* TS/M2TS: discontinuity check sometimes fired false alarms
+* HD DVD subtitle language/description was not always correct
+* title listing is only shown if there are at least 2 titles
+* if there is only one title, the title is automatically selected
+* TS/M2TS audio delay detection was broken
+* improved audio delay detection for broadcasts and badly mastered discs
+* TS/M2TS video demuxing could eventually add some invalid data
+* new option "log=c:\whatever\log.txt" specifies the log file path/name
+
+v2.39
+* simple audio transcoding was broken
+
+v2.38
+* fixed file path handling bug
+
+v2.37
+* added HD DVD chapter support
+* added HD DVD subtitle demuxing support
+* added pre-freeze detection for Haali Matroska Muxer bug
+* invalid characters are removed from file names now
+* log file is copied to destination path (of first destination file)
+
+v2.36
+* TS/M2TS: discontinuity is only checked for tracks which are de- or remuxed
+* TS/M2TS: "-demux" creates both a "thd" and an "ac3" file for "thd/ac3" tracks
+* TS/M2TS: "eac3to source.m2ts movie.mkv" transcodes "thd/ac3" tracks to FLAC
+* M2TS: track language is displayed (if the file "xxxxx.clpi" is available)
+* TS: track language is displayed (if the source file contains this info)
+* video gaps/overlaps in the last 5 seconds of the movie are ignored now
+
+v2.35
+* fixed broken EVO support
+
+v2.34
+* TS/M2TS: fixed PAT/PMT reading bug
+* TS/M2TS: new "-ignoreDiscon" option makes eac3to ignore discontinuity errors
+
+v2.33
+* added full TS and M2TS support (file joining not supported yet, though)
+* further improved "-demux" file names
+* help text and HD DVD track listing is now also written to the log
+
+v2.32
+* added automatic "VPLST000.XPL" and "HVA00001.VTI" parsing
+* "eac3to" or "eac3to ." inside of a HD DVD folder lists all title sets
+* "eac3to someHdDvdMovieFolder" lists all title sets
+* "eac3to someHdDvdMovieFolder whatever.mkv" converts the longest title set
+* "eac3to someHdDvdMovieFolder x) whatever.mkv" converts the selected title set
+* EVO report now contains the EVO display name (if "VPLST000.XPL" is available)
+* added language to EVO audio track listing (if "VPLST000.XPL" is available)
+* added EVO audio track display names (if "VPLST000.XPL" is available)
+* sequence end codes are stripped from VC-1, MPEG2 and h264/AVC
+* put "-stripPulldown" option back in on request
+* option "-demux" now writes to "current directory" instead of source directory
+* option "-demux" now creates files with meaningful names
+* doing "eac3to src.evo dst.mkv" now creates audio files with meaningful names
+* doing "eac3to src.evo dst.mkv" writes the audio files to same path as the MKV
+* after successful (erroneous) processing "success.wav" (error.wav) is played
+
+v2.31
+* DTSWAV input support added
+* fixed bitstream delaying of 96khz DTS tracks
+* improved DTS runtime calculation
+* fixed DTS audio gap/overlap correction for strange DTS formats
+* fixed E-AC3 audio gap/overlap correction for strange bitrates
+* fixed incorrect MKV "default duration" when using "-24p" or "-30p"
+* fixed incorrect MKV "default duration" when using "-slowdown" or "-speedup"
+* improved support for "open bitrate" DTS files
+* slightly improved automatic (E-)AC3 delaying exactness
+
+v2.30
+* fixed wrong MPEG2 framerate (bug introduced in v2.29)
+
+v2.29
+* added automatic audio gap/overlap correction for (E-)AC3, DTS(-HD) and LPCM
+* options "-slowdown" and "-speedup" can now also be used for video muxing
+* added support for muxing of EVO's secondary video track to MKV
+* added "-24p", "-30p" and "-60i" options to overwrite detected h264 framerate
+* fixed some MPEG2 muxing problems
+* temporarily disabled "-stripPulldown" because vc1conv 0.3 is better
+
+v2.28
+* new "-seekToIFrames" switch makes Basic Instinct (h264) muxing work
+
+v2.27
+* fixed h264/AVC muxing crash with some movies (due to too high RAM usage)
+* fixed missing frames at the end of the movie when doing h264/AVC muxing
+* fixed non-working "eac3to -test"
+
+v2.26
+* Haali Splitter replaced with internal splitter for EVO h264/AVC tracks
+* external raw h264/AVC tracks can now be muxed directly to Matroska
+* timestamps for h264/AVC MKV videos don't need to be rewritten, anymore
+* gaps/overlaps in h264/AVC track of EVO files are detected now
+* h264 aspect ratio is detected and written into MKV now
+* Haali Media Splitter is not being used at all, anymore
+* mkvtoolnix is not being used at all, anymore
+* added detection for MPEG2 interlaced -> progressive mode change
+* workaround for eacGui bug
+
+v2.25
+* fixed MPEG2 muxing for interlaced content
+
+v2.24
+* Haali Splitter replaced with internal splitter for EVO MPEG2 tracks
+* external raw MPEG2 tracks can now be muxed directly to Matroska
+* timestamps for MPEG2 MKV videos don't need to be rewritten, anymore
+* gaps/overlaps in MPEG2 track of EVO files are detected now
+* VC-1 and MPEG2 aspect ratios are detected and written into MKV now
+* fixed bug with "-down2" option
+
+v2.23
+* fixed bug which made some DTS tracks appear dirty although they weren't
+* fixed extremely big gap detection with Fantastic Four 2
+* fixed non cleaned up gaps file bug
+
+v2.22
+* gap/overlap logic changed completely (optional two pass muxing now)
+* "-ignoreGaps" parameter is gone
+
+v2.21
+* latest libav MLP/TrueHD decoder fixes "lossless check failed" bug
+* latest libav MLP/TrueHD decoder supports & decodes 7.1 TrueHD tracks
+* Matroska muxing speed dramatically improved
+* eac3to now detects and handles E-AC3 7.1 tracks correctly
+* option "-core" extracts 5.1 core from E-AC3 7.1 tracks
+* added support for small DTS files (< 300kb)
+
+v2.20
+* changed VC-1 muxing method to fix problems with several movies, e.g.
+  - Unforgiven
+  - Phantom of the Opera
+  - Million Dollar Baby
+  - Fantastic Four 2
+* fps value is now also added to MKV header when muxing raw VC-1 stream
+* added new "-skip" option to skip corruption in the beginning of an EVO file
+* added extra handling which fixes some EVO authoring bugs
+
+v2.19
+* fixed h264 bitstream parsing of framerate information format
+* fixed (again) muxing of some rare VC-1 titles like e.g. POTO USA
+
+v2.18
+* fixed bug which stopped eac3to v2.15-17 from working on some PCs
+* fixed h264 bitstream parsing bug (Sum of all Fears)
+* fps value is added to MKV header now
+* relaxed VC-1 gap detection once more
+* TrueHD decoding to stdout fixed (always output as 24 bit now)
+
+v2.17
+* fixed VC-1 pulldown removal
+* VC-1 pulldown removal must now be activated by the new option "-stripPulldown"
+* improved VC-1 gap/overlap detection
+* new option "-ignoreGaps" disables VC-1 gap/overlap detection
+* libav E-AC3 decoder background decoding removed again
+
+v2.16
+* fixed "eac3to -test" crash
+* fixed "eac3to some.ddp some.wav" crash
+* made video gap/overlap detection a little more relaxed
+* WAV header is initialized to 4GB instead of 0GB (for stdout)
+* fixed incorrect "primary/secondary" text
+
+v2.15
+* Haali Splitter replaced with internal splitter for EVO VC-1 tracks
+* external raw VC-1 tracks can now be muxed directly to Matroska
+* timestamps for VC-1 MKV videos don't need to be rewritten, anymore
+* some problematic VC-1 movies should mux fine to MKV now (e.g. POTO USA)
+* gaps/overlaps in VC-1 track of EVO files are detected and displayed now
+* pulldown can be removed from external raw VC-1 tracks now
+* pulldown is automatically removed when demuxing EVO VC-1 tracks now
+* updated to the latest revision of the libav E-AC3 decoder
+* some minor changes and bugfixes
+
+v2.14
+* libav TrueHD decoder "end of stream" bug should be fixed now
+* fixed libav DTS decoder - subwoofer channels is properly decoded now, too
+* patched libav DTS decoder to output full 24 bit
+* updated to the latest revision of the libav E-AC3 decoder
+* when decoding E-AC3 with Nero, libav decoding is also executed at the same time
+
+v2.13
+* added option to downmix multi channel audio to stereo
+* added support for VC-1 custom aspect ratios
+* added stdout output support
+
+v2.12
+(thanks to Ron/drmpeg for all his help)
+* video resolution, framerate and mode (progressive/interlaced) are displayed
+* rewriting timestamps should now always write the correct framerate
+* after a full EVO/VOB processing the number of video frames is shown
+* EVO 16 bit and 24 bit LPCM demuxing supported now (need samples for 20 bit)
+* (E-)AC3 bitstream can be delayed now (similar to delaycut)
+* DTS bitstream can be delayed now (similar to delaycut)
+* DTS-HD High-Res and Master Audio bitstream can be delayed now
+* when demuxing bitstream audio tracks from EVO delay is automatically applied
+* some little bugs fixed
+
+v2.11
+* libav E-AC3 decoding is without DRC now
+* libav AC3 decoding added (without DRC)
+* libav E-AC3 and AC3 decoding hacked to return full 24 bit
+* fixed: delay was not applied for lossless audio tracks
+* fixed crash when parsing PCM files without doing any conversion
+* TrueHD dialnorm was displayed incorrectly
+* changed 23.976 to 24/1.001
+* fixed some more minor bugs
+
+v2.10
+* fixed crash which occurred when doing "EVO/VOB -> Surcode DTS encoding"
+* "eac3to source.evo movie.mkv" syntax replaces "-auto" option
+* "eac3to 1.evo+2.evo movie.evo" syntax supported now for simple EVO/VOB joining
+
+v2.09
+* EVO demuxing added with proper delays for all audio tracks
+* EVO file joining/rebuilding added
+* automated EVO video remuxing (Matroska) added
+* automated rewriting of Matroska timestamps to 24p via mkvtoolnix added
+* multiple operations on the source file can now be run at the same time
+* switch "-test" tests all external DirectShow filters and tools
+* latest ffmpeg/libav TrueHD and E-AC3 decoder patches included
+* latest libAften build included
+* libav TrueHD decoder is now the default decoder for TrueHD/MLP
+* support for libav DTS decoding added
+* fixed a whole lot of bugs (and might have added a few new ones)
+
+v2.08
+* fixed: bitdepth reducer sometimes crashed when being fed a PCM file
+* fixed: FLAC encoder sometimes crashed when delay was applied
+* fixed: some TrueHD files were dithered/processed by Nero when they shouldn't
+* fixed: Surcode 1.0.29 encoding automation
+* fixed: source file was deleted when source and dest file names were identical
+* eac3to output is now always written to "log.txt"
+* when a crash occurs, "log.txt" is added to the bug report
+* improved help text + hints slightly
+* undocumented switch "-check16bit" added
+* undocumented switch "-mono" added
+
+v2.07
+* fixed libAV MLP decoding support
+* added automatic MLP ID20 channel remapping
+* Surcode 1.0.29 (or newer) home directory detection added
+
+v2.06
+* doing FLAC -> FLAC now copies metadata from source to destination file
+* MLP files are correctly decoded now (by both Nero and libav/ffmpeg)
+* runtime for padded DTS files is shown correctly now
+
+v2.05
+* added support for libav/ffmpeg decoding of TrueHD/MLP and E-AC3
+* added "-libav" switch to force libav decoding
+
+v2.04
+* don't need dtsac3source.ax, anymore
+* don't need Nero Splitter, anymore
+* don't need Sonic HD Demuxer, anymore
+* replaced hacked DirectShow feeding with a cleaner approach
+* added support for DTS-HD Master Audio 7.1 tracks (only 5.1 decoding)
+* little performance boost for PAL speedup/down on DualCore CPUs
+* fixed some bugs
+
+v2.03
+* new "-debug" switch added
+
+v2.02
+* fixed: automatic registering of the dtsac3source filter crashed
+
+v2.01
+* fixed: AC3 encoding sometimes crashed when being fed 24 bit audio data
+* fixed: AC3 encoded files were invalid when being fed 24 bit audio data
+* eac3toGUI didn't work with eac3to v2.0
+* "eac3to source.ac3 dest.ac3 -slowdown" didn't do anything useful
+* when a crash occurs, the bug report is automatically copied to clipboard now
+* some minor cosmetic improvements
+
+v2.00
+totally new features
+* AC3 decoding support (Nero's decoder without DRC/dialnorm)
+* resampling to 44.1/48/96 kHz (by using "r8brain")
+* apply/reverse PAL speedup (by using "r8brain")
+* "eac3to sourceFile" will print out source file details
+strongly enhanced features
+* dramatically improved performance (no intermediate files, anymore!)
+* proper 6.1/7.1 downmixing to 5.1 instead of just dropping the back surround channels
+* RAW/PCM file detection now auto detects channels, bitdepth and endian
+* WAV is now fully supported as source file format
+* destination file extension "PCM" creates Blu-Ray style LPCM tracks
+* bitdepth can be reduced to anything between 14 bits and 23 bits
+DTS related improvements/changes
+* DTS-96/24 support added
+* "open bitrate" support added
+* strange channel configuration support added
+* removal of zero padding from DTS files added
+* eac3to can fix broken DTS-ES files (they decode to 5.1 instead of 6.1 without the fix)
+* dialog normalization can be removed without removing the additional DTS-HD data now
+* core extraction must be specifically asked for now (see "-core" switch)
+AC3 related improvements
+* did I mention that eac3to can decode AC3 now?
+* strange channel configuration support added
+TrueHD related improvements
+* delay problem (hopefully) solved
+* fixed: sometimes some audio data in the middle of a track was lost
+* TrueHD/AC3 interweaved file can be stripped to TrueHD only now
+various minor improvements/changes
+* progress bar added
+* eac3to detects file format independently of file extension
+* multiple input files can be treated as one big file
+* "sox" is not needed, anymore
+* "dump" filter not needed, anymore
+* "aften.exe" replaced by "libAften.dll"
+* "flac.exe" replaced by "libFlac.dll"
+* DTS/DD+/AC3 source filter ships with eac3to now
+* 8bit support added
+* crash analyzer and bug reporting added
+
+v1.23
+* bugfix: sometimes TrueHD decoding resulted in incorrect sampling rate
+
+v1.22
+* 6.1 -> 7.1 channel doubling was sometimes incorrectly skipped
+* OS speaker settings now don't have to be 7.1, anymore
+* added detection of 5.1 output when 6.1 was expected
+* DTS and DTS-ES files are now forcefully patched to 24 bit by eac3to (workaround for Sonic decoder)
+* Sonic Audio Decoder is now always used by default for DTS decoding
+
+v1.21
+* bugfix: 2 channel DTS files were not accepted
+* added: DTS-ES 6.1 support
+* added: DTS-HD High Resolution Matrix 5.1 support
+* added: DTS-HD Master Audio 6.1 support
+
+v1.20
+* bugfix: some Blu-Ray TrueHD tracks were not accepted
+* change: eac3to output text slightly improved
+
+v1.19
+* bugfix: still some TrueHD files were not accepted ("The source file format is unknown")
+* added: FLAC supported as source/input file format now
+* added: full delay functionality
+
+v1.18
+* bugfix: some TrueHD files were not accepted ("The source file format is unknown")
+* change: EVO files are not accepted as source files, anymore
+* added: detection and repacking of 16 bit TrueHD tracks
+* added: proper detection of "DTS-HD Master Audio" and "DTS-HD High Resolution" tracks
+* added: runtime information for "DTS-HD High Resolution" tracks
+* bugfix: bitrate information for "DTS-HD High Resolution" tracks
+* added: decoding of "DTS-HD Master Audio" tracks (Sonic)
+* added: decoding of "DTS-HD High Resolution" tracks (Sonic)
+* added: decoding of conventional DTS tracks (Sonic/Nero)
+
+v1.17
+* TrueHD dialog normalization removal added
+
+v1.16
+* added decoding support for Blu-Ray TrueHD files
+
+v1.15
+* bugfixes
+
+v1.14
+* DTS dialog normalization can be removed now
+* DTS core can be extracted from DTS-HD track now
+
+v1.13
+* "eac3to src.ac3 dst.ac3" removes dialog normalization from AC3 files
+* "eac3to src.eac3 dst.eac3" removes dialog normalization from E-AC3 files
+* "eac3to src.thd dst.ac3" extracts the AC3 frames from a Blu-Ray TrueHD track and removes dialog normalization
+
+v1.12
+* tools "flac.exe", "aften.exe" and "sox.exe" are now distributed in the eac3to zip
+* correct channel mapping for 7.1 LPCM tracks is default now
+* new option "-down6" allows downconverting of 7.1 tracks to 5.1
+* modded "flac.exe" ships with eac3to now, which has no problems with 2GB file output, anymore
+
+v1.11
+* bugfix: (L)PCM -> DTS encoding automation failed when source and destination folders differed
+* added: new "-allowDnr" switch allows Nero's audio decoder to apply DNR
+* added: new "-keepDialnorm" switch disables removal of E-AC3 dialnorm information
+
+v1.10
+* E-AC3 dialog normalization detection and removal
+* DRC turned off for Nero E-AC3 decoder
+* Surcode automation improved
+* Nero is now the default E-AC3 and TrueHD decoder
+* the flag "/nero" is no more
+* there is a flag "/sonic" now to force the use of the Sonic filters
+
+v1.09
+* multi channel mono wav output added
+* automated SurCode DTS encoding added
+* 24bit PCM handling works now (was buggy before)
+* "-blu-ray" option removed
+* with PCM input files "bigendian" is default now
+* with 5.1 PCM input blu-ray style channel remapping is default now
+* switches "-16" and "-24" are valid for both TrueHD and PCM input now
+* eac3to now creates the WAV files on its own instead of using sox
+* target extension ".wavs" results in one mono wav for each channel being created
+* SurCode DVD DTS encoding automation added
+* new options "-768" and "-1536" for DTS encoding
+* TrueHD output is not downconverted to 16bit by default, anymore
+* new option "-down16" downconverts the raw data from 24 -> 16 bit (not limited to TrueHD input)
+
+v1.08
+* added PCM input support
+* automatic detection of PCM bitdepth added (16bit or 24bit)
+* "-blu-ray" switch remaps PCM channels correctly
+
+v1.07
+* added "-8" switch for 8 channel support
+
+v1.06
+* mono E-AC3 support added
+
+v1.05
+* support for 5.1 TrueHD audio tracks added
+
+v1.04
+* E-AC3 files bigger than 4GB are supported now
+
+v1.03
+* AC3 files bigger than 2GB are supported now
+
+v1.02
+* FLAC encoding works now without any input/output size limits
+
+v1.01
+* support for FLAC encoding added
+* bitrate can be specified via command line parameter
+* ffdshow removed from the filter chain
+* "ddp" and "ec3" file extensions are accepted now, too
+* fix: "dd+" file extension didn't work correctly.
+
+v1.00
+* initial release
+* can convert a 2.0 or 5.1 channel E-AC3 file to AC3.
