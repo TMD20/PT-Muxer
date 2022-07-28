@@ -624,7 +624,7 @@ Here I will explain how subs are added to the enabled sub section in the final J
 
 ### In What order are Valid Tracks added?
 * The order provided by the --sublang argument
-* If that argument is not passed English, all other languages sorted a-z
+* If that argument is not passed. First is all the  English subtitles,  then all other languages sorted a-z
 
 ### Foreign Films
 * If the first audio Track is not English, i.e the movie is foreign
