@@ -1,0 +1,60 @@
+{
+    "codecs": {
+        "video": {
+            "h264/AVC": ".h264",
+            "h264/MVC": ".mvc",
+            "h265/HEVC": ".h265",
+            "MPEG1": ".m1v",
+            "MPEG2": ".m2v",
+            "VC-1": ".vc1"
+        },
+        "video_3d": {
+            "h264/MVC": ".mvc"
+        },
+        "audio": {
+            "AC3": ".ac3",
+            "AC3 EX": ".ac3",
+            "AC3 Surround": ".ac3",
+            "DTS Hi-Res": ".dtshr",
+            "DTS Master Audio": ".dtsma",
+            "DTS": ".dts",
+            "E-AC3": "eac3",
+            "FLAC Audio": ".flac",
+            "RAW/PCM": ".pcm",
+            "TrueHD/AC3": ".thd",
+            "TrueHD/AC3 (Atmos)": ".thd"
+        },
+        "subtitles": {
+            "Subtitle (PGS)": ".sup",
+            "Subtitle (DVD)": ".sup"
+        },
+        "chapters": {
+            "Chapters": ".txt"
+        }
+    },
+    "track_titles": {
+        "video": {
+            "MPEG-1 Video": "MPEG-1",
+            "MPEG-2 Video": "MPEG-2",
+            "MPEG-4 AVC Video": "AVC",
+            "MPEG-H HEVC Video": "HEVC",
+            "VC-1 Video": "VC-1"
+        },
+        "audio": {
+            "DTS Audio": "DTS",
+            "DTS-HD High-Res Audio": "DTS-HD.HR",
+            "DTS-HD Master Audio": "DTS-HD.MA",
+            "DTS:X Master Audio": "DTS-X",
+            "Dolby Digital Audio": "DD",
+            "Dolby Digital EX Audio": "DD-EX",
+            "Dolby TrueHD Audio": "TrueHD",
+            "Dolby TrueHD/Atmos Audio": "TrueHD.Atmos",
+            "FLAC Audio": "FLAC"
+        }
+    },
+    "scan_types": {
+        "interlaced" : "i",
+        "mbaff" : "i",
+        "progressive" : "p"
+    }
+}

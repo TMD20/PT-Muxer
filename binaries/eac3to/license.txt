@@ -1,0 +1,88 @@
+SOFTWARE LICENSE AGREEMENT
+--------------------------
+You should carefully read the following terms and conditions before using this
+software. Unless you have a different license agreement signed by Systemsoftware
+Mathias Rauen, your use of this software indicates your acceptance of this
+license agreement and warranty.
+-------------------------------
+
+
+USAGE DESCRIPTION
+-----------------
+The software "eac3to" may be freely used as an end user application by both
+non-commercial and commercial end users, without buying a license, without even
+notifying the author about the use.
+-----------------------------------
+
+
+DISTRIBUTION
+------------
+The software "eac3to" may be distributed freely, provided that the "eac3to"
+software package is left in its original state with no files deleted or
+modified.
+---------
+
+
+3RD PARTY SOFTWARE RESTRICTIONS
+-------------------------------
+The software "eac3to" may not be used (called, automated) by any 3rd party
+software without the written consent of the "eac3to" author. However, the
+"eac3to" author hereby grants the right to use (call, automate) "eac3to" by
+such 3rd party software which is released as freeware and which is not
+available in any commercial form.
+---------------------------------
+
+
+USAGE OF LGPL SOFTWARE
+----------------------
+The software "eac3to" makes use of and ships with the following LGPL software:
+- ffmpeg/libav
+- libAften
+- libFlac
+- r8brain
+Please refer to the "legal stuff" subfolder of the "eac3to" package for further
+details.
+--------
+
+
+DISCLAIMER
+----------
+The author's products and the accompanying files and documentation are
+distributed / sold "as is" and without warranties as to performance or
+merchantability or any other warranties whether expressed or implied. The
+licensee assumes the entire risk as to the use of the author's products. In no
+event will the author be liable for additional direct or indirect damages
+including any lost profits, lost savings, or other incidental or consequential
+damages arising from any defects, or the use or inability to use this product,
+even if the author has been advised of the possibility of such damages.
+-----------------------------------------------------------------------
+
+
+TITLE
+-----
+Title, ownership rights, and intellectual property rights in and to the software
+shall remain in the author. The software is protected by the copyright laws of
+Germany and international copyright treaties.
+---------------------------------------------
+
+
+CONTENT
+-------
+Title, ownership rights, and intellectual property rights in and to the content
+accessed through the software is the property of the applicable content owner
+and may be protected by applicable copyright or other law. This license gives
+you no rights to such content.
+------------------------------
+
+
+TERMINATION
+-----------
+This agreement shall automatically terminate upon failure by you to comply with
+its terms, in which case you shall immediately discontinue the use of the
+software and shall within ten (10) days destroy all copies of the software.
+You may also terminate this agreement at any time by destroying the software
+and all copies thereof.
+-----------------------
+
+
+Copyright (C) 2007 - 2010 Mathias Rauen, www.madshi.net, All Rights Reserved
