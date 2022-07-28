@@ -247,24 +247,38 @@ The track has a hashed key. The hash is made using the source information and tr
 Changing some values will have "no effect" on the final mkv produced in --remux mode.
 
 #### Keys
-* langcode: used by mkvmerge to set track language. This is used to set the track language in --remux mode
-* lang: Translation of langcode to the actual language. This is for convenience, and has no effect on --remux mode
-* site_title: used to set title for mediainfo, set to None for no title. This will affect --remux mode
-* bdinfo_title: just the title from bdinfo, changing this value has no effect
-* index: the track number. Video is usually 1. Next audio tracks, lastly subs. Changing this value has no effect
-* eac30: just some info about the file extract by eac3to. Changing this value has no effect
-* file: location of the file on the system. Should only be changed if you move the output.json to a new folder
-* compat: Used for embedded tracks i.e dolby digital inside true hd
+* langcode: [string:2 char] used by mkvmerge to set track language. This is used to set the track language in --remux mode
+* lang:  [string] Translation of langcode to the actual language. This is for convenience, and has no effect on --remux mode
+* site_title: [string] used to set title for mediainfo, set to None for no title. This will affect --remux mode
+* bdinfo_title: [string] just the title from bdinfo, changing this value has no effect
+* index: [number] the track number. Video is usually 1. Next audio tracks, lastly subs. Changing this value has no effect
+* eac30: [special syntax string] u just some info about the file extract by eac3to. Changing this value has no effect
+* file: [filepath] location of the file on the system. Should only be changed if you move the output.json to a new folder
+* compat: [bool] u Used for embedded tracks i.e dolby digital inside true hd
 These are extracted automatically. Changing this value has no effect
-* parent: what track an embedded track was extracted from. changing this value has no effect
-* child: embedded track if present. changing this value has no effect
-* machine_parse: if using ocr or voice rec. The gathered values will be here. See machine_parse or demux sections for more details
-* length: will display how long, and how many subs a track has. Changing this value has no effect
-* default: whether to set the default flag in mkv.
-* forced: whether to set the forced flag. Also can be set by changing the site_title to include "forced" 
-* sourceDir: The original location of the bdmv used to extract track, This should not be changed as it is used during the --remux process
-* sourceKey: the key of the source in the JSON that the track is tied to, This should not be changed as it is used during the --remux process
-* type: whether this is an audio, video, sub-track. This value should not be changed as it is used during the --remux process
+* parent: [string] what track an embedded track was extracted from. changing this value has no effect
+* child: [string] embedded track if present. changing this value has no effect
+* machine_parse: [list] if using ocr or voice rec. The gathered values will be here. See machine_parse or demux sections for more details
+* length: [number] will display how long, and how many subs a track has. Changing this value has no effect
+* default: [bool] whether to set the default flag in mkv.
+* forced: [bool] whether to set the forced flag. Also can be set by changing the site_title to include "forced" 
+* sourceDir: [filepath] The original location of the bdmv used to extract track, This should not be changed as it is used during the --remux process
+* sourceKey: [string] the key of the source in the JSON that the track is tied to, This should not be changed as it is used during the --remux process
+* type: [string] whether this is an audio, video, sub-track. This value should not be changed as it is used during the --remux process
+*  commentary: [bool]  Sets the Commentary flag to yes. Should be used for all audio and subtitle tracks that are commentary
+*  
+
+
+##### Audio Keys
+These keys apply to audio tracks only, and are used to set flags in the final mkv, via mkvmerge.
+Turning these on is mostly optional, but can increase the quality of your remux. Some sights like blutopia require them
+* auditorydesc:[bool]  Turn on for tracks that include auditory descriptions, sets the Visual impaired flag
+* original:[bool]  Turn on for tracks in the movies original language,set the Original language flag
+##### Sub Keys
+These keys apply to sub tracks only, and are used to set flags in the final mkv, via mkvmerge.
+Turning these on is mostly optional, but can increase the quality of your remux. Some sights like blutopia require them
+* sdh:[bool]  Turns on the Hearing impaired flag
+* textdesc: [bool] For subtitle tracks with text-based descriptions for the visually impaired that can be read via a screen reader
 
 # Commands:
 
