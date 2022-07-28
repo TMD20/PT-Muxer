@@ -74,23 +74,25 @@ Modifications to the code are required to get it to work on that platform
 #### Required
   * python
   * mono
-
-python3 -m pip install --user virtualenv
-python3 -m venv env
-source env/bin/activate
-which python -> should be the virtualenv
-pip3 install-r requirements.txt
-deactivate -> Do this after installing the requirements
+#### Install
+* python3 -m pip install --user virtualenv
+* python3 -m venv env
+* source env/bin/activate
+* which python -> should be the virtualenv
+* pip3 install-r requirements.txt
+* deactivate -> Do this after installing the requirements
 
 ### Windows
+Note: Windows is not yet ready. However, I think the programs maybe 95 percent of the way ready for windows. You could possible make the modifications needed. Alternatively wait until I am able to do it myself
 #### Required
   * python
-py -m pip install --user virtualenv
-py -m venv env
-.\env\Scripts\activate
-which python -> should be the virtualenv
-py -m pip install -r requirements.txt
-deactivate -> Do this after installing the requirements
+#### Install
+* py -m pip install --user virtualenv
+* py -m venv env
+* .\env\Scripts\activate
+* which python -> should be the virtualenv
+* py -m pip install -r requirements.txt
+* deactivate -> Do this after installing the requirements
 
 ## General virtualenv Guide
 
