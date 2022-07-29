@@ -44,7 +44,7 @@ def getAudioChannel(enabledTracks, trackDetails):
 def getVideoResolution(enabledTracks,trackDetails):
     key = str(enabledTracks[0])
     trackinfo = trackDetails[key]["bdinfo_title"]
-    return re.search("[0-9]{3,4}p", trackinfo).group(0)
+    return re.search("[0-9]{3,4}[p|i]", trackinfo).group(0)
 
 
 def getMediaType(enabledTracks, trackDetails):

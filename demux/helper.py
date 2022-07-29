@@ -100,6 +100,8 @@ def CreateChapterList(*sources):
         path = os.path.join(dir, "chapters.txt")
     else:
         path = os.path.join(sources[0], "chapters.txt")
+    if not os.path.exists(path):
+        return None
     with open(path, "r") as p:
         lines = p.readlines()
         i = 0

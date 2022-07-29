@@ -21,7 +21,7 @@ class TracksData():
     #It also adds data about the source of the information, and where to output it                                 #
     ################################################################################################################
 
-    def updateRawTracksDict(self, trackStrs, playlistNum, source, output):
+    def updateRawTracksDict(self, trackStrs, playlistNum, playlistFile, source, output):
         tracks = []
         for index, currline in enumerate(trackStrs):
             index = index+2
@@ -29,7 +29,8 @@ class TracksData():
         for track in tracks:
             track["sourceDir"] = source
             track["sourceKey"] = utils.getShowName(source)
-        self._expandRawTracksData(tracks, playlistNum, source, output)
+        self._expandRawTracksData(
+            tracks, playlistNum, playlistFile, source, output)
         self.addSource(source)
 
     def addSource(self, source):
@@ -71,9 +72,9 @@ class TracksData():
         tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
         tempdict["type"] = "audio"
         tempdict["auditorydesc"] = False
-        tempdict["original"]=False
-        tempdict["commentary"]=False
-   
+        tempdict["original"] = False
+        tempdict["commentary"] = False
+
         return tempdict
 
     def _audioCompatParser(self, currline):
@@ -92,7 +93,7 @@ class TracksData():
         tempdict["type"] = "audio"
         tempdict["compat"] = True
         tempdict["auditorydesc"] = False
-        tempdict["original"]=False
+        tempdict["original"] = False
         tempdict["commentary"] = False
         return tempdict
 
@@ -103,9 +104,9 @@ class TracksData():
         langcode = self._mediacode(lang)
         tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
         tempdict["type"] = "subtitle"
-        tempdict["sdh"]=False
+        tempdict["sdh"] = False
         tempdict["textdesc"] = False
-        tempdict["commentary"]=False     
+        tempdict["commentary"] = False
         return tempdict
 
     # Standard Track Data Helper
@@ -171,7 +172,7 @@ class TracksData():
     # Primary Key are Basename Source
     # Tracks are Objects
     # Output is a a string
-    def _expandRawTracksData(self, tracks, playlistNum, source, output):
+    def _expandRawTracksData(self, tracks, playlistNum, playlistFile, source, output):
         self._rawMediaTracksData[utils.getShowName(source)] = {}
         self._rawMediaTracksData[utils.getShowName(source)]["tracks"] = tracks
         self._rawMediaTracksData[utils.getShowName(
@@ -180,3 +181,5 @@ class TracksData():
             source)]["sourceDir"] = source
         self._rawMediaTracksData[utils.getShowName(
             source)]["playlistNum"] = playlistNum
+        self._rawMediaTracksData[utils.getShowName(
+            source)]["playlistFile"] = playlistFile

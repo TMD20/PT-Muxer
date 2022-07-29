@@ -34,7 +34,7 @@ def demuxTV(args):
     muxSorter = siteSortPicker.pickSite(args.site)
     choices = ["Yes", "No"]
 
-    sources = getSources(options, args.inpath,args.sortpref)
+    sources = getSources(options, args.inpath, args.sortpref)
 
     print("What TV Show?")
     movie = movieData.matchMovie(sources)
@@ -42,7 +42,7 @@ def demuxTV(args):
     i = 1
     if utils.singleSelectMenu(choices, "Restore Folder Old MuxFolder Data") == "Yes":
         print("Searching for Prior TV Mode Folders")
-        folders=utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
+        folders = utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
         if len(folders) == 0:
             print("No TV Mode Folders Found To Restore")
             print("Creating a new Mux Folder")
@@ -51,7 +51,7 @@ def demuxTV(args):
         else:
             folder = utils.singleSelectMenu(
                 folders, "Which Folder Do you want to Restore")
-        
+
             os.chdir(folder)
             i = len(os.listdir("."))+1
     else:
@@ -63,7 +63,6 @@ def demuxTV(args):
         os.mkdir(str(i))
         os.chdir(str(i))
         print(os.path.abspath("."))
-       
 
         extractBdinfo(sources, demuxData)
         extractTracks(demuxData)
@@ -79,7 +78,7 @@ def demuxTV(args):
         demuxData = siteDataPicker.pickSite(args.site)
         muxSorter = siteSortPicker.pickSite(args.site)
         if utils.singleSelectMenu(choices, "Change Sources") == "Yes":
-            sources = getSources(options, args.inpath,args.sortpref)
+            sources = getSources(options, args.inpath, args.sortpref)
         print(f"This is run number {i}\n")
         print("Creating Demux Folder at\n")
 
@@ -102,8 +101,8 @@ def demuxMovie(args):
     finalizeOutput(muxSorter, demuxData, movie)
 
 
-def getSources(options, inpath,sortpref):
-    sources = demuxHelper.addSource(options,sortpref)
+def getSources(options, inpath, sortpref):
+    sources = demuxHelper.addSource(options, sortpref)
     if sources == None or len(sources) == 0:
         print("No sources Selected")
         quit()
@@ -131,7 +130,7 @@ def extractBdinfo(sources, demuxData):
     for j, bdObj in enumerate(bdObjs):
         print(f"Extracting BDINFO from {sources[j]}")
         demuxData.addTracks(
-            bdObj.process(), bdObj.playlistNum, sources[j], outputs[j])
+            bdObj.process(), bdObj.playlistNum, bdObj.playlistFile, sources[j], outputs[j])
 
 
 def extractTracks(demuxData):
@@ -142,12 +141,16 @@ def extractTracks(demuxData):
         trackoutdict = demuxData.filterBySource(key)
         eac3to_list = []
         for track in trackoutdict["tracks"]:
-            eac3to_list.append(track["eac3to"])
+            eac3to_list.append((track["index"],track["eac3to"].split(":")[1]))
             if track.get("eac3to_extras"):
                 eac3to_list.extend(track["eac3to_extras"])
         print(f"Extracting Files From {key}")
-        eac3to.process(trackoutdict["sourceDir"], trackoutdict["outputDir"],
-                       eac3to_list, trackoutdict["playlistNum"])
+        # get playlist location
+        playlistLocation=os.path.join(os.path.dirname(
+            trackoutdict["sourceDir"]), "PLAYLIST",trackoutdict["playlistFile"])
+
+        eac3to.process(trackoutdict["sourceDir"],trackoutdict["outputDir"],
+                       eac3to_list, playlistLocation)
 
 
 def sortTracks(muxSorter, demuxData, movie, args):
@@ -173,7 +176,7 @@ def machineReader(muxSorter, args, movie):
         subreader.subreader(muxSorter.unSortedSub, langs=[
                             "English"], keep=args.keepocr)
     elif args.ocr == "all":
-        subreader.subreader(muxSorter.unSortedSub, keep=args.keepocr)                        
+        subreader.subreader(muxSorter.unSortedSub, keep=args.keepocr)
     elif args.keepocr:
         subreader.imagesOnly(muxSorter.enabledSub)
 
@@ -187,7 +190,7 @@ def machineReader(muxSorter, args, movie):
         voiceRec.main(muxSorter.unSortedAudio, args.audiolang)
     elif args.voicerec == "english":
         voiceRec.main(muxSorter.unSortedAudio, ["English"])
-    elif args.voicerec=="all":
+    elif args.voicerec == "all":
         voiceRec.main(muxSorter.unSortedAudio)
 
 
