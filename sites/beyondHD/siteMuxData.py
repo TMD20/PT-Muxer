@@ -38,7 +38,7 @@ class BeyondHD(MuxOBj):
         if kind == "movie":
             fileName = f"{movieName}.{movieYear}.{mediaType}.{videoRes}.{audioCodec}.{audioChannel}.{videoCodec}.{hdr}.REMUX-{group}.mkv"
         else:
-            fileName = f"{movieName}.{movieYear}.S{season//10}{season&10}.E0{episode}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = f"{movieName}.{movieYear}.S{season//10}{season&10}E0{episode}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
 
         # normalize
         fileName = re.sub(" +", " ", fileName)

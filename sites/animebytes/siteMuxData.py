@@ -40,7 +40,7 @@ class AnimeBytes(MuxOBj):
                 movieData.getByID(movie["imdbID"]), season)
             episodeData = movieData.getEpisodeData(episodes, episode)
             episodeTitle=episodeData["title"]
-            fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}.E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         # Normalize FileName
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
