@@ -69,6 +69,7 @@ def set_eac3toPath(output, show):
 
 def cleanFiles(outputs_list):
     outputs_list = [f"{ele[1]}"for ele in outputs_list]
+    outputs_list.append("chapters.txt")
     for file in os.listdir("."):
         if os.path.isfile(file) and file not in outputs_list:
             os.remove(file)

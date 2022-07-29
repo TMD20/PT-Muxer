@@ -83,17 +83,32 @@ def getSeason(sources):
     return season
 
 
-def getTotalEpisodes(movie, season):
+def getTotalEpisodes(episodes):
+    return len(episodes.keys())
+
+
+# def getEpisodes(movie, season, episode):
+#     ia.update(movie, 'episodes')
+#     episode = movie["episodes"][season][episode]
+#     ia.update(episode, info=['main'])
+#     return episode
+
+def getEpisodes(movie, season):
     ia.update(movie, 'episodes')
-    return len(movie["episodes"][season].keys())
+    return movie["episodes"][season]
+
+def getEpisodeData(episodes,num):
+     episode=episodes[num]
+     ia.update(episode, info=['main'])
+     return episode
+   
 
 
-def getEpisode(movie, season, episode):
+def getEpisodeTitle(movie, season, episode):
     ia.update(movie, 'episodes')
     episode = movie["episodes"][season][episode]
     ia.update(episode, info=['main'])
     return episode
-
 
 def getMovieTitle(movie):
     movieName = getMovieName(movie)
