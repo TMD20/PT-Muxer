@@ -42,7 +42,8 @@ class BeyondHD(MuxOBj):
 
         # normalize
         fileName = re.sub(" +", " ", fileName)
-        fileName = re.sub(" +", ".", fileName)
+        fileName = re.sub(" ", ".", fileName)
+        fileName = re.sub("\.+", ".", fileName)
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
 
         inputs = ["YES", "NO"]

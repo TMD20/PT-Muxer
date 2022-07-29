@@ -12,13 +12,11 @@ import config
 
 def Remux(args):
     # Variables
-    options = ["Movie", "TV"]
     remuxConfigPaths=[]
     remuxConfigs=[]
     movie = None
 
-
-    if utils.singleSelectMenu(options, "What Type of Media do you want to Remux?") == "Movie":
+    if utils.singleSelectMenu(["Movie", "TV"], "What Type of Media do you want to Remux?") == "Movie":
         folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
         remuxConfigPaths.append(os.path.join(utils.singleSelectMenu(folders, "Pick a folder to demux"),"output.json"))
         

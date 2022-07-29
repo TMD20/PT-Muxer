@@ -65,6 +65,7 @@ def removeDupesList(list):
 
 def getIntInput(string):
     return inquirer.number(
+        min_allowed=1,
         message=string,
     ).execute()
 

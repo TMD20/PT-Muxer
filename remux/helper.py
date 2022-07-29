@@ -67,9 +67,14 @@ def writeXMLTV(imdb, tmdb, season, episode):
     outfile = tempData[1]
     result = None
 
-    imdbEP = movieData.getEpisode(
-        movieData.getByID(imdb), season, episode)["imdbID"]
-    totalEP = movieData.getTotalEpisodes(movieData.getByID(imdb), season)
+    episodes = movieData.getEpisodes(
+        movieData.getByID(imdb), season)
+    episodeData = movieData.getEpisodeData(episodes,episode)
+    
+    imdbEP = episodeData["imdbID"]
+    
+    
+    totalEP = movieData.getTotalEpisodes(episodes)
 
     with open(infile, 'r') as f:
         src = Template(f.read())
