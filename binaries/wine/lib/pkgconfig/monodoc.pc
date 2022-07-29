@@ -1,0 +1,9 @@
+prefix=/usr/local/bin/mine/remux/binaries/wine
+exec_prefix=${prefix}
+libdir=/usr/local/bin/mine/remux/binaries/wine/lib
+sourcesdir=${libdir}/monodoc/sources
+
+Name: Monodoc
+Description: Monodoc - Mono Documentation Tools
+Version: 6.12.0.182
+Libs: /r:${prefix}/lib/mono/monodoc/monodoc.dll 

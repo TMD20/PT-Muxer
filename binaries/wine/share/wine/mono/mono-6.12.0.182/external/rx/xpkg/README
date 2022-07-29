@@ -1,0 +1,12 @@
+You need to prepare signing key file (sln) to sign those assemblies. Xamarin packages should be signed with its own key.
+
+To build *signed* assemblies, you need to run:
+
+	make KEYFILE_SNK=/path/to/yourkey.snk SIGN_ASSEMBLY=true SIGN_ASSEMBLY_SPEC=SIGNED
+
+Xamarin will publish "signed" version of those assemblies on the component
+store, so that Starter users can make use of Rx assemblies.
+
+If you don't need any signing, simply build Rx_Xamarin/android/Rx_Xamarin_android.sln.
+
+

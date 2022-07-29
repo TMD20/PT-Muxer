@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Interactive", "android\ix\System.Interactive\android_System.Interactive.csproj", "{5F7F40B6-19D3-48C7-8E15-AE1F976F60E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Interactive.Async", "android\ix\System.Interactive.Async\android_System.Interactive.Async.csproj", "{065F2411-7610-4AD6-9513-A1EFFCE576C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Interactive.Providers", "android\ix\System.Interactive.Providers\android_System.Interactive.Providers.csproj", "{C4037060-1692-4423-B29E-76F3A74A72A5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{065F2411-7610-4AD6-9513-A1EFFCE576C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{065F2411-7610-4AD6-9513-A1EFFCE576C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{065F2411-7610-4AD6-9513-A1EFFCE576C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{065F2411-7610-4AD6-9513-A1EFFCE576C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F7F40B6-19D3-48C7-8E15-AE1F976F60E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F7F40B6-19D3-48C7-8E15-AE1F976F60E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F7F40B6-19D3-48C7-8E15-AE1F976F60E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F7F40B6-19D3-48C7-8E15-AE1F976F60E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4037060-1692-4423-B29E-76F3A74A72A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4037060-1692-4423-B29E-76F3A74A72A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4037060-1692-4423-B29E-76F3A74A72A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4037060-1692-4423-B29E-76F3A74A72A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = android\ix\System.Interactive\android_System.Interactive.csproj
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,31 @@
+commit 391fcf5868dac9aa28992cd62fae9cb104364835
+Author: Cody Russell <cody@jhu.edu>
+Date:   Sat Jan 14 14:49:14 2017 -0600
+
+    Recompute viewport allocation when updating overlay scrollbars
+    
+    https://bugzilla.xamarin.com/show_bug.cgi?id=51375
+    https://bugzilla.xamarin.com/show_bug.cgi?id=51382
+
+diff --git a/gtk/gtkscrolledwindow.c b/gtk/gtkscrolledwindow.c
+index 3999d7d..0a2cb67 100644
+--- a/gtk/gtkscrolledwindow.c
++++ b/gtk/gtkscrolledwindow.c
+@@ -270,6 +270,8 @@ static void      gtk_scrolled_window_get_scroll_areas  (GtkScrolledWindow *scrol
+                                                         GdkRectangle      *hslider_rect);
+ static void  gtk_scrolled_window_update_scrollbars (GtkScrolledWindow *scrolled_window);
+ 
++static void  gtk_scrolled_window_compute_viewport_allocation (GtkScrolledWindow *scrolled_window);
++
+ static void gtk_scrolled_window_overlay_scrollbars_changed (GtkSettings *settings,
+                                                             GParamSpec  *arg,
+                                                             gpointer     user_data);
+@@ -1391,6 +1393,8 @@ gtk_scrolled_window_update_scrollbars (GtkScrolledWindow *scrolled_window)
+   if (!priv->overlay_scrollbars || !gtk_widget_get_realized (widget))
+     return;
+ 
++  gtk_scrolled_window_compute_viewport_allocation (scrolled_window);
++
+   window = gtk_widget_get_window (gtk_widget_get_toplevel (widget));
+   window_height = gdk_window_get_height (window);
+ 

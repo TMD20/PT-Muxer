@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <ProjectGuid>{B0FFC4A8-BAC3-4A7F-8FD5-5B680209371C}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Release|AnyCPU'" />
+  <ItemGroup>
+    <Compile Include="AppxUriValue.cs" />
+    <Compile Include="IdnCheckHostNameTest.cs" />
+    <Compile Include="IdnDnsSafeHostTest.cs" />
+    <Compile Include="IdnHostNameValidationTest.cs" />
+    <Compile Include="IriEncodingDecodingTests.cs" />
+    <Compile Include="IriRelativeFileResolutionTest.cs" />
+    <Compile Include="IriTest.cs" />
+    <Compile Include="UriBuilderParameterTest.cs" />
+    <Compile Include="UriBuilderRefreshTest.cs" />
+    <Compile Include="UriBuilderTests.cs" />
+    <Compile Include="UriEscapingTest.cs" />
+    <Compile Include="UriGetComponentsTest.cs" />
+    <Compile Include="UriIpHostTest.cs" />
+    <Compile Include="UriIsWellFormedUriStringTest.cs" />
+    <Compile Include="UriMailToTest.cs" />
+    <Compile Include="UriParameterValidationTest.cs" />
+    <Compile Include="UriParserTest.cs" />
+    <Compile Include="UriRelativeResolutionTest.cs" />
+    <Compile Include="UriTests.cs" />
+    <Compile Include="WebSocketsUriParserTest.cs" />
+    <!-- Test common -->
+    <Compile Include="$(CommonTestPath)\System\ThreadCultureChange.cs">
+      <Link>Common\System\ThreadCultureChange.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

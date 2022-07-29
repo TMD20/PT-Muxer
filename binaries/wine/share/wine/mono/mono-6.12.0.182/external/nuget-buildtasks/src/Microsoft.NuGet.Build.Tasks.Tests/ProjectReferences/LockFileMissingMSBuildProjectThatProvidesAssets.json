@@ -1,0 +1,40 @@
+﻿{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.5.2": {
+      "XProjClassLib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.2",
+        "compile": {
+          "net452/XProjClassLib.dll": { }
+        },
+        "runtime": {
+          "net452/XProjClassLib.dll": { }
+        }
+      }
+    },
+    ".NETFramework,Version=v4.5.2/win": {
+      "XProjClassLib/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.2",
+        "compile": {
+          "net452/XProjClassLib.dll": { }
+        },
+        "runtime": {
+          "net452/XProjClassLib.dll": { }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "XProjClassLib/1.0.0": {
+      "type": "project",
+      "path": "../XProjClassLib/project.json",
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [ ],
+    ".NETFramework,Version=v4.5.2": [ ]
+  }
+}

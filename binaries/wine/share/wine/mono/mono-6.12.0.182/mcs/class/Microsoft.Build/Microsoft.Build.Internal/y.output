@@ -1,0 +1,1191 @@
+   0  $accept : ExpressionList $end
+
+   1  ExpressionList :
+   2                 | ExpressionList Expression
+
+   3  Expression : LogicalExpression
+
+   4  LogicalExpression : ComparisonExpression
+   5                    | LogicalExpression AND LogicalExpression
+   6                    | LogicalExpression OR LogicalExpression
+
+   7  ComparisonExpression : UnaryExpression
+   8                       | UnaryExpression EQ UnaryExpression
+   9                       | UnaryExpression NE UnaryExpression
+  10                       | UnaryExpression GT UnaryExpression
+  11                       | UnaryExpression GE UnaryExpression
+  12                       | UnaryExpression LT UnaryExpression
+  13                       | UnaryExpression LE UnaryExpression
+
+  14  UnaryExpression : PrimaryExpression
+  15                  | NOT UnaryExpression
+
+  16  PrimaryExpression : BooleanLiteral
+  17                    | StringLiteral
+  18                    | UnaryExpression
+  19                    | PropertyAccessExpression
+  20                    | ItemAccessExpression
+  21                    | MetadataAccessExpression
+  22                    | RawStringLiteralOrFunction
+  23                    | ParenthesizedExpression
+
+  24  BooleanLiteral : TRUE_LITERAL
+  25                 | FALSE_LITERAL
+
+  26  PropertyAccessExpression : PROP_OPEN PropertyAccess PAREN_CLOSE
+
+  27  PropertyAccess : NAME
+  28                 | Expression DOT NAME
+  29                 | BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME
+  30                 | BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE
+
+  31  QualifiedNameExpression : QualifiedName
+
+  32  QualifiedName : NAME
+  33                | QualifiedName DOT NAME
+
+  34  ItemAccessExpression : ITEM_OPEN ItemApplication PAREN_CLOSE
+
+  35  ItemApplication : NAME
+  36                  | NAME ARROW ExpressionList
+
+  37  MetadataAccessExpression : METADATA_OPEN MetadataAccess PAREN_CLOSE
+
+  38  MetadataAccess : NAME
+  39                 | NAME DOT NAME
+
+  40  StringLiteral : STRING_LITERAL
+
+  41  RawStringLiteralOrFunction : NAME
+  42                             | NAME PAREN_OPEN PAREN_CLOSE
+  43                             | NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE
+
+  44  FunctionCallArguments :
+  45                        | Expression
+  46                        | FunctionCallArguments COMMA Expression
+
+  47  ParenthesizedExpression : PAREN_OPEN Expression PAREN_CLOSE
+
+state 0
+	$accept : . ExpressionList $end  (0)
+	ExpressionList : .  (1)
+
+	.  reduce 1
+
+	ExpressionList  goto 1
+
+
+state 1
+	$accept : ExpressionList . $end  (0)
+	ExpressionList : ExpressionList . Expression  (2)
+
+	$end  accept
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	Expression  goto 11
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 2
+	BooleanLiteral : TRUE_LITERAL .  (24)
+
+	.  reduce 24
+
+
+state 3
+	BooleanLiteral : FALSE_LITERAL .  (25)
+
+	.  reduce 25
+
+
+state 4
+	StringLiteral : STRING_LITERAL .  (40)
+
+	.  reduce 40
+
+
+state 5
+	UnaryExpression : NOT . UnaryExpression  (15)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 23
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 6
+	PropertyAccessExpression : PROP_OPEN . PropertyAccess PAREN_CLOSE  (26)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	BRACE_OPEN  shift 24
+	NAME  shift 25
+	.  error
+
+	Expression  goto 26
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+	PropertyAccess  goto 27
+
+
+state 7
+	ItemAccessExpression : ITEM_OPEN . ItemApplication PAREN_CLOSE  (34)
+
+	NAME  shift 28
+	.  error
+
+	ItemApplication  goto 29
+
+
+state 8
+	MetadataAccessExpression : METADATA_OPEN . MetadataAccess PAREN_CLOSE  (37)
+
+	NAME  shift 30
+	.  error
+
+	MetadataAccess  goto 31
+
+
+state 9
+	ParenthesizedExpression : PAREN_OPEN . Expression PAREN_CLOSE  (47)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	Expression  goto 32
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+10: shift/reduce conflict (shift 33, reduce 41) on PAREN_OPEN
+state 10
+	RawStringLiteralOrFunction : NAME .  (41)
+	RawStringLiteralOrFunction : NAME . PAREN_OPEN PAREN_CLOSE  (42)
+	RawStringLiteralOrFunction : NAME . PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (43)
+
+	PAREN_OPEN  shift 33
+	$end  reduce 41
+	TRUE_LITERAL  reduce 41
+	FALSE_LITERAL  reduce 41
+	STRING_LITERAL  reduce 41
+	EQ  reduce 41
+	NE  reduce 41
+	GT  reduce 41
+	GE  reduce 41
+	LT  reduce 41
+	LE  reduce 41
+	AND  reduce 41
+	OR  reduce 41
+	NOT  reduce 41
+	DOT  reduce 41
+	COMMA  reduce 41
+	PROP_OPEN  reduce 41
+	ITEM_OPEN  reduce 41
+	METADATA_OPEN  reduce 41
+	PAREN_CLOSE  reduce 41
+	NAME  reduce 41
+
+
+state 11
+	ExpressionList : ExpressionList Expression .  (2)
+
+	.  reduce 2
+
+
+state 12
+	Expression : LogicalExpression .  (3)
+	LogicalExpression : LogicalExpression . AND LogicalExpression  (5)
+	LogicalExpression : LogicalExpression . OR LogicalExpression  (6)
+
+	AND  shift 34
+	OR  shift 35
+	$end  reduce 3
+	TRUE_LITERAL  reduce 3
+	FALSE_LITERAL  reduce 3
+	STRING_LITERAL  reduce 3
+	NOT  reduce 3
+	DOT  reduce 3
+	COMMA  reduce 3
+	PROP_OPEN  reduce 3
+	ITEM_OPEN  reduce 3
+	METADATA_OPEN  reduce 3
+	PAREN_OPEN  reduce 3
+	PAREN_CLOSE  reduce 3
+	NAME  reduce 3
+
+
+state 13
+	LogicalExpression : ComparisonExpression .  (4)
+
+	.  reduce 4
+
+
+14: reduce/reduce conflict (reduce 7, reduce 18) on $end
+14: reduce/reduce conflict (reduce 7, reduce 18) on TRUE_LITERAL
+14: reduce/reduce conflict (reduce 7, reduce 18) on FALSE_LITERAL
+14: reduce/reduce conflict (reduce 7, reduce 18) on STRING_LITERAL
+14: shift/reduce conflict (shift 36, reduce 18) on EQ
+14: shift/reduce conflict (shift 37, reduce 18) on NE
+14: shift/reduce conflict (shift 38, reduce 18) on GT
+14: shift/reduce conflict (shift 39, reduce 18) on GE
+14: shift/reduce conflict (shift 40, reduce 18) on LT
+14: shift/reduce conflict (shift 41, reduce 18) on LE
+14: reduce/reduce conflict (reduce 7, reduce 18) on AND
+14: reduce/reduce conflict (reduce 7, reduce 18) on OR
+14: reduce/reduce conflict (reduce 7, reduce 18) on NOT
+14: reduce/reduce conflict (reduce 7, reduce 18) on DOT
+14: reduce/reduce conflict (reduce 7, reduce 18) on COMMA
+14: reduce/reduce conflict (reduce 7, reduce 18) on PROP_OPEN
+14: reduce/reduce conflict (reduce 7, reduce 18) on ITEM_OPEN
+14: reduce/reduce conflict (reduce 7, reduce 18) on METADATA_OPEN
+14: reduce/reduce conflict (reduce 7, reduce 18) on PAREN_OPEN
+14: reduce/reduce conflict (reduce 7, reduce 18) on PAREN_CLOSE
+14: reduce/reduce conflict (reduce 7, reduce 18) on NAME
+state 14
+	ComparisonExpression : UnaryExpression .  (7)
+	ComparisonExpression : UnaryExpression . EQ UnaryExpression  (8)
+	ComparisonExpression : UnaryExpression . NE UnaryExpression  (9)
+	ComparisonExpression : UnaryExpression . GT UnaryExpression  (10)
+	ComparisonExpression : UnaryExpression . GE UnaryExpression  (11)
+	ComparisonExpression : UnaryExpression . LT UnaryExpression  (12)
+	ComparisonExpression : UnaryExpression . LE UnaryExpression  (13)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	EQ  shift 36
+	NE  shift 37
+	GT  shift 38
+	GE  shift 39
+	LT  shift 40
+	LE  shift 41
+	$end  reduce 7
+	TRUE_LITERAL  reduce 7
+	FALSE_LITERAL  reduce 7
+	STRING_LITERAL  reduce 7
+	AND  reduce 7
+	OR  reduce 7
+	NOT  reduce 7
+	DOT  reduce 7
+	COMMA  reduce 7
+	PROP_OPEN  reduce 7
+	ITEM_OPEN  reduce 7
+	METADATA_OPEN  reduce 7
+	PAREN_OPEN  reduce 7
+	PAREN_CLOSE  reduce 7
+	NAME  reduce 7
+
+
+state 15
+	UnaryExpression : PrimaryExpression .  (14)
+
+	.  reduce 14
+
+
+state 16
+	PrimaryExpression : BooleanLiteral .  (16)
+
+	.  reduce 16
+
+
+state 17
+	PrimaryExpression : StringLiteral .  (17)
+
+	.  reduce 17
+
+
+state 18
+	PrimaryExpression : PropertyAccessExpression .  (19)
+
+	.  reduce 19
+
+
+state 19
+	PrimaryExpression : ItemAccessExpression .  (20)
+
+	.  reduce 20
+
+
+state 20
+	PrimaryExpression : MetadataAccessExpression .  (21)
+
+	.  reduce 21
+
+
+state 21
+	PrimaryExpression : RawStringLiteralOrFunction .  (22)
+
+	.  reduce 22
+
+
+state 22
+	PrimaryExpression : ParenthesizedExpression .  (23)
+
+	.  reduce 23
+
+
+23: reduce/reduce conflict (reduce 15, reduce 18) on $end
+23: reduce/reduce conflict (reduce 15, reduce 18) on TRUE_LITERAL
+23: reduce/reduce conflict (reduce 15, reduce 18) on FALSE_LITERAL
+23: reduce/reduce conflict (reduce 15, reduce 18) on STRING_LITERAL
+23: reduce/reduce conflict (reduce 15, reduce 18) on EQ
+23: reduce/reduce conflict (reduce 15, reduce 18) on NE
+23: reduce/reduce conflict (reduce 15, reduce 18) on GT
+23: reduce/reduce conflict (reduce 15, reduce 18) on GE
+23: reduce/reduce conflict (reduce 15, reduce 18) on LT
+23: reduce/reduce conflict (reduce 15, reduce 18) on LE
+23: reduce/reduce conflict (reduce 15, reduce 18) on AND
+23: reduce/reduce conflict (reduce 15, reduce 18) on OR
+23: reduce/reduce conflict (reduce 15, reduce 18) on NOT
+23: reduce/reduce conflict (reduce 15, reduce 18) on DOT
+23: reduce/reduce conflict (reduce 15, reduce 18) on COMMA
+23: reduce/reduce conflict (reduce 15, reduce 18) on PROP_OPEN
+23: reduce/reduce conflict (reduce 15, reduce 18) on ITEM_OPEN
+23: reduce/reduce conflict (reduce 15, reduce 18) on METADATA_OPEN
+23: reduce/reduce conflict (reduce 15, reduce 18) on PAREN_OPEN
+23: reduce/reduce conflict (reduce 15, reduce 18) on PAREN_CLOSE
+23: reduce/reduce conflict (reduce 15, reduce 18) on NAME
+state 23
+	UnaryExpression : NOT UnaryExpression .  (15)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 15
+
+
+state 24
+	PropertyAccess : BRACE_OPEN . QualifiedNameExpression BRACE_CLOSE COLON2 NAME  (29)
+	PropertyAccess : BRACE_OPEN . QualifiedNameExpression BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (30)
+
+	NAME  shift 42
+	.  error
+
+	QualifiedNameExpression  goto 43
+	QualifiedName  goto 44
+
+
+state 25
+	PropertyAccess : NAME .  (27)
+	RawStringLiteralOrFunction : NAME .  (41)
+	RawStringLiteralOrFunction : NAME . PAREN_OPEN PAREN_CLOSE  (42)
+	RawStringLiteralOrFunction : NAME . PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (43)
+
+	PAREN_OPEN  shift 33
+	EQ  reduce 41
+	NE  reduce 41
+	GT  reduce 41
+	GE  reduce 41
+	LT  reduce 41
+	LE  reduce 41
+	AND  reduce 41
+	OR  reduce 41
+	DOT  reduce 41
+	PAREN_CLOSE  reduce 27
+
+
+state 26
+	PropertyAccess : Expression . DOT NAME  (28)
+
+	DOT  shift 45
+	.  error
+
+
+state 27
+	PropertyAccessExpression : PROP_OPEN PropertyAccess . PAREN_CLOSE  (26)
+
+	PAREN_CLOSE  shift 46
+	.  error
+
+
+state 28
+	ItemApplication : NAME .  (35)
+	ItemApplication : NAME . ARROW ExpressionList  (36)
+
+	ARROW  shift 47
+	PAREN_CLOSE  reduce 35
+
+
+state 29
+	ItemAccessExpression : ITEM_OPEN ItemApplication . PAREN_CLOSE  (34)
+
+	PAREN_CLOSE  shift 48
+	.  error
+
+
+state 30
+	MetadataAccess : NAME .  (38)
+	MetadataAccess : NAME . DOT NAME  (39)
+
+	DOT  shift 49
+	PAREN_CLOSE  reduce 38
+
+
+state 31
+	MetadataAccessExpression : METADATA_OPEN MetadataAccess . PAREN_CLOSE  (37)
+
+	PAREN_CLOSE  shift 50
+	.  error
+
+
+state 32
+	ParenthesizedExpression : PAREN_OPEN Expression . PAREN_CLOSE  (47)
+
+	PAREN_CLOSE  shift 51
+	.  error
+
+
+33: shift/reduce conflict (shift 52, reduce 44) on PAREN_CLOSE
+state 33
+	RawStringLiteralOrFunction : NAME PAREN_OPEN . PAREN_CLOSE  (42)
+	RawStringLiteralOrFunction : NAME PAREN_OPEN . FunctionCallArguments PAREN_CLOSE  (43)
+	FunctionCallArguments : .  (44)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	PAREN_CLOSE  shift 52
+	NAME  shift 10
+	COMMA  reduce 44
+
+	Expression  goto 53
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+	FunctionCallArguments  goto 54
+
+
+state 34
+	LogicalExpression : LogicalExpression AND . LogicalExpression  (5)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	LogicalExpression  goto 55
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 35
+	LogicalExpression : LogicalExpression OR . LogicalExpression  (6)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	LogicalExpression  goto 56
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 36
+	ComparisonExpression : UnaryExpression EQ . UnaryExpression  (8)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 57
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 37
+	ComparisonExpression : UnaryExpression NE . UnaryExpression  (9)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 58
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 38
+	ComparisonExpression : UnaryExpression GT . UnaryExpression  (10)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 59
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 39
+	ComparisonExpression : UnaryExpression GE . UnaryExpression  (11)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 60
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 40
+	ComparisonExpression : UnaryExpression LT . UnaryExpression  (12)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 61
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 41
+	ComparisonExpression : UnaryExpression LE . UnaryExpression  (13)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	UnaryExpression  goto 62
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 42
+	QualifiedName : NAME .  (32)
+
+	.  reduce 32
+
+
+state 43
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression . BRACE_CLOSE COLON2 NAME  (29)
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression . BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (30)
+
+	BRACE_CLOSE  shift 63
+	.  error
+
+
+state 44
+	QualifiedNameExpression : QualifiedName .  (31)
+	QualifiedName : QualifiedName . DOT NAME  (33)
+
+	DOT  shift 64
+	BRACE_CLOSE  reduce 31
+
+
+state 45
+	PropertyAccess : Expression DOT . NAME  (28)
+
+	NAME  shift 65
+	.  error
+
+
+state 46
+	PropertyAccessExpression : PROP_OPEN PropertyAccess PAREN_CLOSE .  (26)
+
+	.  reduce 26
+
+
+state 47
+	ItemApplication : NAME ARROW . ExpressionList  (36)
+	ExpressionList : .  (1)
+
+	.  reduce 1
+
+	ExpressionList  goto 66
+
+
+state 48
+	ItemAccessExpression : ITEM_OPEN ItemApplication PAREN_CLOSE .  (34)
+
+	.  reduce 34
+
+
+state 49
+	MetadataAccess : NAME DOT . NAME  (39)
+
+	NAME  shift 67
+	.  error
+
+
+state 50
+	MetadataAccessExpression : METADATA_OPEN MetadataAccess PAREN_CLOSE .  (37)
+
+	.  reduce 37
+
+
+state 51
+	ParenthesizedExpression : PAREN_OPEN Expression PAREN_CLOSE .  (47)
+
+	.  reduce 47
+
+
+state 52
+	RawStringLiteralOrFunction : NAME PAREN_OPEN PAREN_CLOSE .  (42)
+
+	.  reduce 42
+
+
+state 53
+	FunctionCallArguments : Expression .  (45)
+
+	.  reduce 45
+
+
+state 54
+	RawStringLiteralOrFunction : NAME PAREN_OPEN FunctionCallArguments . PAREN_CLOSE  (43)
+	FunctionCallArguments : FunctionCallArguments . COMMA Expression  (46)
+
+	COMMA  shift 68
+	PAREN_CLOSE  shift 69
+	.  error
+
+
+55: shift/reduce conflict (shift 34, reduce 5) on AND
+55: shift/reduce conflict (shift 35, reduce 5) on OR
+state 55
+	LogicalExpression : LogicalExpression . AND LogicalExpression  (5)
+	LogicalExpression : LogicalExpression AND LogicalExpression .  (5)
+	LogicalExpression : LogicalExpression . OR LogicalExpression  (6)
+
+	AND  shift 34
+	OR  shift 35
+	$end  reduce 5
+	TRUE_LITERAL  reduce 5
+	FALSE_LITERAL  reduce 5
+	STRING_LITERAL  reduce 5
+	NOT  reduce 5
+	DOT  reduce 5
+	COMMA  reduce 5
+	PROP_OPEN  reduce 5
+	ITEM_OPEN  reduce 5
+	METADATA_OPEN  reduce 5
+	PAREN_OPEN  reduce 5
+	PAREN_CLOSE  reduce 5
+	NAME  reduce 5
+
+
+56: shift/reduce conflict (shift 34, reduce 6) on AND
+56: shift/reduce conflict (shift 35, reduce 6) on OR
+state 56
+	LogicalExpression : LogicalExpression . AND LogicalExpression  (5)
+	LogicalExpression : LogicalExpression . OR LogicalExpression  (6)
+	LogicalExpression : LogicalExpression OR LogicalExpression .  (6)
+
+	AND  shift 34
+	OR  shift 35
+	$end  reduce 6
+	TRUE_LITERAL  reduce 6
+	FALSE_LITERAL  reduce 6
+	STRING_LITERAL  reduce 6
+	NOT  reduce 6
+	DOT  reduce 6
+	COMMA  reduce 6
+	PROP_OPEN  reduce 6
+	ITEM_OPEN  reduce 6
+	METADATA_OPEN  reduce 6
+	PAREN_OPEN  reduce 6
+	PAREN_CLOSE  reduce 6
+	NAME  reduce 6
+
+
+57: reduce/reduce conflict (reduce 8, reduce 18) on $end
+57: reduce/reduce conflict (reduce 8, reduce 18) on TRUE_LITERAL
+57: reduce/reduce conflict (reduce 8, reduce 18) on FALSE_LITERAL
+57: reduce/reduce conflict (reduce 8, reduce 18) on STRING_LITERAL
+57: reduce/reduce conflict (reduce 8, reduce 18) on AND
+57: reduce/reduce conflict (reduce 8, reduce 18) on OR
+57: reduce/reduce conflict (reduce 8, reduce 18) on NOT
+57: reduce/reduce conflict (reduce 8, reduce 18) on DOT
+57: reduce/reduce conflict (reduce 8, reduce 18) on COMMA
+57: reduce/reduce conflict (reduce 8, reduce 18) on PROP_OPEN
+57: reduce/reduce conflict (reduce 8, reduce 18) on ITEM_OPEN
+57: reduce/reduce conflict (reduce 8, reduce 18) on METADATA_OPEN
+57: reduce/reduce conflict (reduce 8, reduce 18) on PAREN_OPEN
+57: reduce/reduce conflict (reduce 8, reduce 18) on PAREN_CLOSE
+57: reduce/reduce conflict (reduce 8, reduce 18) on NAME
+state 57
+	ComparisonExpression : UnaryExpression EQ UnaryExpression .  (8)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 8
+
+
+58: reduce/reduce conflict (reduce 9, reduce 18) on $end
+58: reduce/reduce conflict (reduce 9, reduce 18) on TRUE_LITERAL
+58: reduce/reduce conflict (reduce 9, reduce 18) on FALSE_LITERAL
+58: reduce/reduce conflict (reduce 9, reduce 18) on STRING_LITERAL
+58: reduce/reduce conflict (reduce 9, reduce 18) on AND
+58: reduce/reduce conflict (reduce 9, reduce 18) on OR
+58: reduce/reduce conflict (reduce 9, reduce 18) on NOT
+58: reduce/reduce conflict (reduce 9, reduce 18) on DOT
+58: reduce/reduce conflict (reduce 9, reduce 18) on COMMA
+58: reduce/reduce conflict (reduce 9, reduce 18) on PROP_OPEN
+58: reduce/reduce conflict (reduce 9, reduce 18) on ITEM_OPEN
+58: reduce/reduce conflict (reduce 9, reduce 18) on METADATA_OPEN
+58: reduce/reduce conflict (reduce 9, reduce 18) on PAREN_OPEN
+58: reduce/reduce conflict (reduce 9, reduce 18) on PAREN_CLOSE
+58: reduce/reduce conflict (reduce 9, reduce 18) on NAME
+state 58
+	ComparisonExpression : UnaryExpression NE UnaryExpression .  (9)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 9
+
+
+59: reduce/reduce conflict (reduce 10, reduce 18) on $end
+59: reduce/reduce conflict (reduce 10, reduce 18) on TRUE_LITERAL
+59: reduce/reduce conflict (reduce 10, reduce 18) on FALSE_LITERAL
+59: reduce/reduce conflict (reduce 10, reduce 18) on STRING_LITERAL
+59: reduce/reduce conflict (reduce 10, reduce 18) on AND
+59: reduce/reduce conflict (reduce 10, reduce 18) on OR
+59: reduce/reduce conflict (reduce 10, reduce 18) on NOT
+59: reduce/reduce conflict (reduce 10, reduce 18) on DOT
+59: reduce/reduce conflict (reduce 10, reduce 18) on COMMA
+59: reduce/reduce conflict (reduce 10, reduce 18) on PROP_OPEN
+59: reduce/reduce conflict (reduce 10, reduce 18) on ITEM_OPEN
+59: reduce/reduce conflict (reduce 10, reduce 18) on METADATA_OPEN
+59: reduce/reduce conflict (reduce 10, reduce 18) on PAREN_OPEN
+59: reduce/reduce conflict (reduce 10, reduce 18) on PAREN_CLOSE
+59: reduce/reduce conflict (reduce 10, reduce 18) on NAME
+state 59
+	ComparisonExpression : UnaryExpression GT UnaryExpression .  (10)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 10
+
+
+60: reduce/reduce conflict (reduce 11, reduce 18) on $end
+60: reduce/reduce conflict (reduce 11, reduce 18) on TRUE_LITERAL
+60: reduce/reduce conflict (reduce 11, reduce 18) on FALSE_LITERAL
+60: reduce/reduce conflict (reduce 11, reduce 18) on STRING_LITERAL
+60: reduce/reduce conflict (reduce 11, reduce 18) on AND
+60: reduce/reduce conflict (reduce 11, reduce 18) on OR
+60: reduce/reduce conflict (reduce 11, reduce 18) on NOT
+60: reduce/reduce conflict (reduce 11, reduce 18) on DOT
+60: reduce/reduce conflict (reduce 11, reduce 18) on COMMA
+60: reduce/reduce conflict (reduce 11, reduce 18) on PROP_OPEN
+60: reduce/reduce conflict (reduce 11, reduce 18) on ITEM_OPEN
+60: reduce/reduce conflict (reduce 11, reduce 18) on METADATA_OPEN
+60: reduce/reduce conflict (reduce 11, reduce 18) on PAREN_OPEN
+60: reduce/reduce conflict (reduce 11, reduce 18) on PAREN_CLOSE
+60: reduce/reduce conflict (reduce 11, reduce 18) on NAME
+state 60
+	ComparisonExpression : UnaryExpression GE UnaryExpression .  (11)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 11
+
+
+61: reduce/reduce conflict (reduce 12, reduce 18) on $end
+61: reduce/reduce conflict (reduce 12, reduce 18) on TRUE_LITERAL
+61: reduce/reduce conflict (reduce 12, reduce 18) on FALSE_LITERAL
+61: reduce/reduce conflict (reduce 12, reduce 18) on STRING_LITERAL
+61: reduce/reduce conflict (reduce 12, reduce 18) on AND
+61: reduce/reduce conflict (reduce 12, reduce 18) on OR
+61: reduce/reduce conflict (reduce 12, reduce 18) on NOT
+61: reduce/reduce conflict (reduce 12, reduce 18) on DOT
+61: reduce/reduce conflict (reduce 12, reduce 18) on COMMA
+61: reduce/reduce conflict (reduce 12, reduce 18) on PROP_OPEN
+61: reduce/reduce conflict (reduce 12, reduce 18) on ITEM_OPEN
+61: reduce/reduce conflict (reduce 12, reduce 18) on METADATA_OPEN
+61: reduce/reduce conflict (reduce 12, reduce 18) on PAREN_OPEN
+61: reduce/reduce conflict (reduce 12, reduce 18) on PAREN_CLOSE
+61: reduce/reduce conflict (reduce 12, reduce 18) on NAME
+state 61
+	ComparisonExpression : UnaryExpression LT UnaryExpression .  (12)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 12
+
+
+62: reduce/reduce conflict (reduce 13, reduce 18) on $end
+62: reduce/reduce conflict (reduce 13, reduce 18) on TRUE_LITERAL
+62: reduce/reduce conflict (reduce 13, reduce 18) on FALSE_LITERAL
+62: reduce/reduce conflict (reduce 13, reduce 18) on STRING_LITERAL
+62: reduce/reduce conflict (reduce 13, reduce 18) on AND
+62: reduce/reduce conflict (reduce 13, reduce 18) on OR
+62: reduce/reduce conflict (reduce 13, reduce 18) on NOT
+62: reduce/reduce conflict (reduce 13, reduce 18) on DOT
+62: reduce/reduce conflict (reduce 13, reduce 18) on COMMA
+62: reduce/reduce conflict (reduce 13, reduce 18) on PROP_OPEN
+62: reduce/reduce conflict (reduce 13, reduce 18) on ITEM_OPEN
+62: reduce/reduce conflict (reduce 13, reduce 18) on METADATA_OPEN
+62: reduce/reduce conflict (reduce 13, reduce 18) on PAREN_OPEN
+62: reduce/reduce conflict (reduce 13, reduce 18) on PAREN_CLOSE
+62: reduce/reduce conflict (reduce 13, reduce 18) on NAME
+state 62
+	ComparisonExpression : UnaryExpression LE UnaryExpression .  (13)
+	PrimaryExpression : UnaryExpression .  (18)
+
+	.  reduce 13
+
+
+state 63
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE . COLON2 NAME  (29)
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE . COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (30)
+
+	COLON2  shift 70
+	.  error
+
+
+state 64
+	QualifiedName : QualifiedName DOT . NAME  (33)
+
+	NAME  shift 71
+	.  error
+
+
+state 65
+	PropertyAccess : Expression DOT NAME .  (28)
+
+	.  reduce 28
+
+
+state 66
+	ExpressionList : ExpressionList . Expression  (2)
+	ItemApplication : NAME ARROW ExpressionList .  (36)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	PAREN_CLOSE  reduce 36
+
+	Expression  goto 11
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 67
+	MetadataAccess : NAME DOT NAME .  (39)
+
+	.  reduce 39
+
+
+state 68
+	FunctionCallArguments : FunctionCallArguments COMMA . Expression  (46)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	.  error
+
+	Expression  goto 72
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+
+
+state 69
+	RawStringLiteralOrFunction : NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE .  (43)
+
+	.  reduce 43
+
+
+state 70
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 . NAME  (29)
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 . NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (30)
+
+	NAME  shift 73
+	.  error
+
+
+state 71
+	QualifiedName : QualifiedName DOT NAME .  (33)
+
+	.  reduce 33
+
+
+state 72
+	FunctionCallArguments : FunctionCallArguments COMMA Expression .  (46)
+
+	.  reduce 46
+
+
+state 73
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME .  (29)
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME . PAREN_OPEN FunctionCallArguments PAREN_CLOSE  (30)
+
+	PAREN_OPEN  shift 74
+	PAREN_CLOSE  reduce 29
+
+
+state 74
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME PAREN_OPEN . FunctionCallArguments PAREN_CLOSE  (30)
+	FunctionCallArguments : .  (44)
+
+	TRUE_LITERAL  shift 2
+	FALSE_LITERAL  shift 3
+	STRING_LITERAL  shift 4
+	NOT  shift 5
+	PROP_OPEN  shift 6
+	ITEM_OPEN  shift 7
+	METADATA_OPEN  shift 8
+	PAREN_OPEN  shift 9
+	NAME  shift 10
+	COMMA  reduce 44
+	PAREN_CLOSE  reduce 44
+
+	Expression  goto 53
+	LogicalExpression  goto 12
+	ComparisonExpression  goto 13
+	UnaryExpression  goto 14
+	PrimaryExpression  goto 15
+	BooleanLiteral  goto 16
+	StringLiteral  goto 17
+	PropertyAccessExpression  goto 18
+	ItemAccessExpression  goto 19
+	MetadataAccessExpression  goto 20
+	RawStringLiteralOrFunction  goto 21
+	ParenthesizedExpression  goto 22
+	FunctionCallArguments  goto 75
+
+
+state 75
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments . PAREN_CLOSE  (30)
+	FunctionCallArguments : FunctionCallArguments . COMMA Expression  (46)
+
+	COMMA  shift 68
+	PAREN_CLOSE  shift 76
+	.  error
+
+
+state 76
+	PropertyAccess : BRACE_OPEN QualifiedNameExpression BRACE_CLOSE COLON2 NAME PAREN_OPEN FunctionCallArguments PAREN_CLOSE .  (30)
+
+	.  reduce 30
+
+
+Rules never reduced:
+	PrimaryExpression : UnaryExpression  (18)
+
+
+State 10 contains 1 shift/reduce conflict.
+State 14 contains 6 shift/reduce conflicts, 15 reduce/reduce conflicts.
+State 23 contains 21 reduce/reduce conflicts.
+State 33 contains 1 shift/reduce conflict.
+State 55 contains 2 shift/reduce conflicts.
+State 56 contains 2 shift/reduce conflicts.
+State 57 contains 15 reduce/reduce conflicts.
+State 58 contains 15 reduce/reduce conflicts.
+State 59 contains 15 reduce/reduce conflicts.
+State 60 contains 15 reduce/reduce conflicts.
+State 61 contains 15 reduce/reduce conflicts.
+State 62 contains 15 reduce/reduce conflicts.
+
+
+27 terminals, 20 nonterminals
+48 grammar rules, 77 states

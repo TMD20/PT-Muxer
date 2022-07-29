@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="BuildAndTest" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+
+  <PropertyGroup>
+    <PackageReportDir Condition="'$(PackageReportDir)' == ''">$(BinDir)pkg/reports/</PackageReportDir>
+    <BuildAllPackages>false</BuildAllPackages>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(BuildAllPackages)' == 'true'">
+    <Project Include="$(MSBuildThisFileDirectory)..\pkg\*\*.builds" Condition="'$(SkipManagedPackageBuild)' != 'true'">
+      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+    </Project>
+    <Project Include="*\pkg\**\*.pkgproj" Condition="'$(SkipManagedPackageBuild)' != 'true' AND '$(BuildAllConfigurations)' == 'true'">
+      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+    </Project>
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(BuildAllPackages)' == 'false' AND '$(SkipManagedPackageBuild)' != 'true'" >
+    <Project Include="$(MSBuildThisFileDirectory)..\pkg\Microsoft.Private.PackageBaseline\Microsoft.Private.PackageBaseline.builds">
+      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+    </Project>
+    <Project Include="$(MSBuildThisFileDirectory)..\pkg\Microsoft.Private.CoreFx.NETCoreApp\Microsoft.Private.CoreFx.NETCoreApp.builds">
+      <AdditionalProperties>$(AdditionalProperties)</AdditionalProperties>
+    </Project>
+    <!-- add specific builds / pkgproj's here to include in servicing builds -->
+    <!--
+      In general we are servicing 2.x library packages from release/2.1 branch so only add library packages
+      to this build if they contain unique 2.2 features. If they are added here you need to ensure their
+      versions are bumped higher then what has shipped in release/2.1.
+    -->
+  </ItemGroup>
+
+  <!-- Need the PackageIndexFile file property from baseline.props -->
+  <Import Project="../pkg/baseline/baseline.props" />
+
+  <UsingTask TaskName="UpdatePackageIndex" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll"/>
+
+  <!--
+    Updates the package index to mark all packages we are building that can go stable as stable.
+    this will allow for a kicked off build to control package stability at queue time. This does edit
+    the package index in-place but that shouldn't cause any problems for official builds are the only
+    ones that might do this. After we ship a stable set of packages this target should be ran and the
+    changes to the package index should be commited to the repo.
+  -->
+  <Target Name="UpdatePackageIndexWithStableVersions"
+          BeforeTargets="BuildAllProjects"
+          Condition="'$(IncludePreReleaseLabelInPackageVersion)' != 'true'">
+    <ItemGroup>
+      <!--
+      The private packages don't get stabilized so they don't need to be included
+      in the set of packages that we are gathering stable versions from.
+      -->
+      <PkgProjects Include="$(MSBuildThisFileDirectory)..\pkg\*\*.pkgproj" Exclude="$(MSBuildThisFileDirectory)..\pkg\*Private*\*.pkgproj" />
+      <PkgProjects Include="*\pkg\**\*.pkgproj" />
+    </ItemGroup>
+
+    <MSBuild Targets="GetPackageIdentityIfStable"
+             BuildInParallel="$(BuildInParallel)"
+             Projects="@(PkgProjects)"
+             RemoveProperties="Configuration">
+      <Output TaskParameter="TargetOutputs"
+              ItemName="_StablePackages" />
+    </MSBuild>
+
+    <Message Text="Marking package '%(_StablePackages.Identity)' stable with version '%(_StablePackages.Version)'" />
+
+    <UpdatePackageIndex
+      PackageIndexFile="$(PackageIndexFile)"
+      StablePackages="@(_StablePackages)" />
+
+  </Target>
+
+  <UsingTask TaskName="GenerateNetStandardSupportTable" AssemblyFile="$(PackagingTaskDir)Microsoft.DotNet.Build.Tasks.Packaging.dll" />
+  <Target Name="GenerateNETStandardDocs">
+    <Error Condition="'$(WcfPackageReportDir)' == ''"
+           Text="WcfPackageReportDir must be specified to point to the package report directory of the WCF repo.  EG: /p:WcfPackageReportDir=c:\src\wcf\bin\pkg\reports\" />
+    <ItemGroup>
+      <Reports Include="$(PackageReportDir)*.json" />
+      <Reports Include="$(WcfPackageReportDir)*.json" />
+    </ItemGroup>
+
+    <GenerateNetStandardSupportTable Reports="@(Reports)" DocFilePath="$(ProjectDir)Documentation\architecture\net-platform-standard.md" InsertIntoFile="True" />
+  </Target>
+
+  <!-- Importing versioning.targets adds the hooks so that a traversal build will generate the "SyncInfoFile" (version.txt) which we package. -->
+  <Import Project="$(ToolsDir)versioning.targets" Condition="Exists('$(ToolsDir)versioning.targets')" />
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.traversal.targets))\dir.traversal.targets" />
+</Project>

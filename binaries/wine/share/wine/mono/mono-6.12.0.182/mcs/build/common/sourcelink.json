@@ -1,0 +1,8 @@
+{
+    "documents": {
+        "/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/corefx/*": "https://raw.githubusercontent.com/mono/corefx/0ba93904abbbd17e16b2c6970a9fdfdce987eb9c/*",
+        "/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/corert/*": "https://raw.githubusercontent.com/mono/corert/0ba93904abbbd17e16b2c6970a9fdfdce987eb9c/*",
+        "/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/cecil/*": "https://raw.githubusercontent.com/mono/cecil/0ba93904abbbd17e16b2c6970a9fdfdce987eb9c/*",
+        "/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/*": "https://raw.githubusercontent.com/mono/mono/0ba93904abbbd17e16b2c6970a9fdfdce987eb9c/*"
+    }
+}

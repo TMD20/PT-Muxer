@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <AssemblyName>System.Reactive.Interfaces</AssemblyName>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+
+
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\AssemblyFileVersionAttribute.cs">
+      <Link>AssemblyFileVersionAttribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\DateTimeOffset.cs">
+      <Link>DateTimeOffset.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\IObservable.cs">
+      <Link>IObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\IObserver.cs">
+      <Link>IObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\NamespaceDocs.cs">
+      <Link>NamespaceDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Concurrency\ISchedulerPeriodic.cs">
+      <Link>Reactive\Concurrency\ISchedulerPeriodic.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Concurrency\IStopwatchProvider.cs">
+      <Link>Reactive\Concurrency\IStopwatchProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Concurrency\IScheduledItem.cs">
+      <Link>Reactive\Concurrency\IScheduledItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Concurrency\IScheduler.cs">
+      <Link>Reactive\Concurrency\IScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Concurrency\ISchedulerLongRunning.cs">
+      <Link>Reactive\Concurrency\ISchedulerLongRunning.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Concurrency\IStopwatch.cs">
+      <Link>Reactive\Concurrency\IStopwatch.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Disposables\ICancelable.cs">
+      <Link>Reactive\Disposables\ICancelable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\IEventPattern.cs">
+      <Link>Reactive\IEventPattern.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\IEventPatternSource.cs">
+      <Link>Reactive\IEventPatternSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\IEventSource.cs">
+      <Link>Reactive\IEventSource.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\IObserver.Result.cs">
+      <Link>Reactive\IObserver.Result.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Linq\IGroupedObservable.cs">
+      <Link>Reactive\Linq\IGroupedObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Linq\IQbservable.cs">
+      <Link>Reactive\Linq\IQbservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Linq\IQbservableProvider.cs">
+      <Link>Reactive\Linq\IQbservableProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Subjects\IConnectableObservable.cs">
+      <Link>Reactive\Subjects\IConnectableObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Subjects\ISubject.cs">
+      <Link>Reactive\Subjects\ISubject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Interfaces\Reactive\Subjects\ISubject.Multi.cs">
+      <Link>Reactive\Subjects\ISubject.Multi.cs</Link>
+    </Compile>
+
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+</Project>

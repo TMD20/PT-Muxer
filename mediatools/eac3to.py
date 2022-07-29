@@ -7,7 +7,7 @@ import config
 import tools.general as utils
 
 
-def process(source, output, outputs_list, playlistNum):
+def process(source, output, outputs_list,playlistLocation):
     start = os.getcwd()
     show = utils.getShowName(source)
     eac3toPath = set_eac3toPath(output, show)
@@ -15,12 +15,11 @@ def process(source, output, outputs_list, playlistNum):
     utils.mkdirSafe(eac3toPath)
 
     os.chdir(output)
-    extract_files(source, playlistNum, outputs_list, eac3toPath)
+    extract_files( playlistLocation,outputs_list, eac3toPath)
     cleanFiles(outputs_list)
     os.chdir(start)
 
-
-def extract_files(source, playlistNum, outputs_list, eac3toPath):
+def extract_files(playlistLocation, outputs_list, eac3toPath):
     success = False
     eactoBin = config.eac3toLinuxPath
     if not os.path.isfile(eactoBin):
@@ -30,41 +29,47 @@ def extract_files(source, playlistNum, outputs_list, eac3toPath):
     if not os.path.isfile(wineBin):
         wineBin = config.wineProjectPath
 
-    command1 = [[wineBin, eactoBin,
-                utils.getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", f"-log={eac3toPath}"]]
+    #get list of files
+    eac3toWChapters = ["1:chapters.txt"]
+    eac3toWChapters.extend([f"{ele[0]}:{ele[1]}"for ele in outputs_list])
+    eac3toWoChapters = [f"{ele[0]-1}:{ele[1]}"for ele in outputs_list]
 
-    command2 = [[wineBin, eactoBin,
-                utils.getwinepath(source), f"{playlistNum})", "1:chapters.txt"], outputs_list, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]
+    
+    command1 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)],  eac3toWChapters,[
+        "-progressnumbers", f"-log={eac3toPath}"]]
+    
+    command2 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)], eac3toWoChapters,[
+        "-progressnumbers", f"-log={eac3toPath}"]]
 
-    with subprocess.Popen(list(itertools.chain.from_iterable(
-            command1)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
-        for line in p.stdout:
-            print(line, end='')
-        for line in p.stderr:
-            print(line, end='')
-        success = True
-        p.wait()
+    command3 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)],  eac3toWChapters , [
+        "-progressnumbers", "-demux", f"-log={eac3toPath}"]]
 
-    if success == False:
-        print("Trying with --demux arg")
+    command4 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation), ], eac3toWoChapters, [
+        "-progressnumbers", "-demux", f"-log={eac3toPath}"]]
+    commandslist=[command1,command2,command3,command4]
+    status=1
+    for command in commandslist:
         with subprocess.Popen(list(itertools.chain.from_iterable(
-                command2)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
-            for line in p.stderr:
-                print(line, end='')
+                command)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
+            for line in p.stderr:
+                print(line, end='')
             p.wait()
+            status=p.returncode
+            if status==0:
+                break
 
+   
 
 def set_eac3toPath(output, show):
     return os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
 
 
 def cleanFiles(outputs_list):
-    valid_list = [item.split(":")[1]
-                  for item in outputs_list if len(item.split(":")) > 1]
+    outputs_list = [f"{ele[1]}"for ele in outputs_list]
     for file in os.listdir("."):
-        if os.path.isfile(file) and file not in valid_list and file != "chapters.txt":
+        if os.path.isfile(file) and file not in outputs_list:
             os.remove(file)
 
 

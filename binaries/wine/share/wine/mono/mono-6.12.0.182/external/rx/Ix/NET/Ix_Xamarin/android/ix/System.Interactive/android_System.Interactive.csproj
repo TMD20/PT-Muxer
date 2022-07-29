@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5F7F40B6-19D3-48C7-8E15-AE1F976F60E1}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <AssemblyName>System.Interactive</AssemblyName>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+
+
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\System.Interactive\IAwaitable.cs">
+      <Link>IAwaitable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Imperative.cs">
+      <Link>EnumerableEx.Imperative.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Multiple.cs">
+      <Link>EnumerableEx.Multiple.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Single.cs">
+      <Link>EnumerableEx.Single.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Exceptions.cs">
+      <Link>EnumerableEx.Exceptions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Creation.cs">
+      <Link>EnumerableEx.Creation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Buffering.cs">
+      <Link>EnumerableEx.Buffering.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\EnumerableEx.Aggregates.cs">
+      <Link>EnumerableEx.Aggregates.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\IYielder.cs">
+      <Link>IYielder.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Interactive\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+</Project>

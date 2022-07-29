@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <ProjectGuid>{B6C09633-D161-499A-8FE1-46B2D53A16E7}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Release|AnyCPU'" />
+  <ItemGroup>
+    <Compile Include="XunitAssemblyAttributes.cs" />
+    <Compile Include="UnwrapTests.cs" />
+    <Compile Include="AggregateExceptionTests.cs" />
+    <Compile Include="OperationCanceledExceptionTests.cs" />
+    <Compile Include="CancellationTokenTests.cs" />
+    <Compile Include="MethodCoverage.cs" />
+    <Compile Include="CESchedulerPairTests.cs" />
+    <!-- Task -->
+    <Compile Include="Task\ExecutionContextFlowTest.cs" />
+    <Compile Include="Task\RunContinuationsAsynchronouslyTests.cs" />
+    <Compile Include="Task\TPLTestException.cs" />
+    <Compile Include="Task\TaskRunSyncTests.cs" />
+    <Compile Include="Task\TaskStatusTest.cs" />
+    <Compile Include="Task\TaskPropertiesTests.cs" />
+    <Compile Include="Task\TaskCreateTest.cs" />
+    <Compile Include="Task\TaskWaitAllAnyTest.cs" />
+    <Compile Include="Task\TaskContinueWithTests.cs" />
+    <Compile Include="Task\TaskContinueWithAllAnyTests.cs" />
+    <Compile Include="Task\TaskContinueWith_ContFuncAndActionWithArgsTests.cs" />
+    <Compile Include="Task\TaskContinueWith_ContFuncAndActionTests.cs" />
+    <Compile Include="Task\TaskContinueWhenAnyTests.cs" />
+    <Compile Include="Task\TaskContinueWhenAllTests.cs" />
+    <Compile Include="Task\TaskFromAsyncWork.cs" />
+    <Compile Include="Task\TaskFromAsyncTest.cs" />
+    <Compile Include="Task\TaskFromAsyncTest2.cs" />
+    <Compile Include="Task\TaskCancelWaitTests.cs" />
+    <Compile Include="Task\TaskCancelWaitTest.cs" />
+    <Compile Include="Task\TaskRtTests.cs" />
+    <Compile Include="Task\TaskRtTests_Core.cs" />
+    <Compile Include="Task\TaskAPMTest.cs" />
+    <!-- TaskFactory -->
+    <Compile Include="TaskFactory\TaskFactory_FromAsyncTests.cs" />
+    <Compile Include="TaskFactory\TaskFactoryTests.cs" />
+    <!-- TaskScheduler -->
+    <Compile Include="TaskScheduler\TaskSchedulerTests.cs" />
+    <!-- System.Runtime.CompilerServices -->
+    <Compile Include="System.Runtime.CompilerServices\TaskAwaiterTests.cs" />
+    <Compile Include="System.Runtime.CompilerServices\YieldAwaitableTests.cs" />
+    <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilderTests.cs" />
+    <Compile Include="$(CommonTestPath)\System\Threading\ThreadPoolHelpers.cs">
+      <Link>CommonTest\System\Threading\ThreadPoolHelpers.cs</Link>
+    </Compile>
+    <Compile Include="Task\TaskDisposeTests.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetGroup)' == 'netcoreapp'">
+    <Compile Include="CancellationTokenTests.netcoreapp.cs" />
+    <Compile Include="Task\TaskCanceledExceptionTests.netcoreapp.cs" />
+    <Compile Include="Task\TaskStatusTest.netcoreapp.cs" />
+    <Compile Include="System.Runtime.CompilerServices\AsyncTaskMethodBuilderTests.netcoreapp.cs" />
+    <Compile Include="System.Runtime.CompilerServices\ConfiguredAsyncDisposable.netcoreapp.cs" />
+    <Compile Include="System.Runtime.CompilerServices\ConfiguredCancelableAsyncEnumerableTests.netcoreapp.cs" />
+    <Compile Include="$(CommonTestPath)\System\Diagnostics\Tracing\TestEventListener.cs">
+      <Link>Common\System\Diagnostics\Tracing\TestEventListener.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="$(CommonTestPath)\System\Diagnostics\RemoteExecutorConsoleApp\RemoteExecutorConsoleApp.csproj">
+      <Project>{69e46a6f-9966-45a5-8945-2559fe337827}</Project>
+      <Name>RemoteExecutorConsoleApp</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

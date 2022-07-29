@@ -1,0 +1,3 @@
+./../../class/lib/net_4_x-linux/System.Reactive.Observable.Aliases.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Observable.Aliases/Observable.Aliases.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Observable.Aliases.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Observable.Aliases/Qbservable.Aliases.Generated.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Observable.Aliases.dll: Assembly/AssemblyInfo.cs

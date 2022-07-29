@@ -1,0 +1,13 @@
+./../../class/lib/net_4_x-linux/Mono.Http.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http.Configuration/AcceptEncodingConfig.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http.Configuration/AcceptEncodingSectionHandler.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http.Modules/AcceptEncodingModule.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http.Modules/AuthenticationModule.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http.Modules/BasicAuthenticationModule.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http.Modules/DigestAuthenticationModule.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http/GZipWebRequest.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http/GZipWebRequestCreator.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http/GZipWebResponse.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http/GZipWriteFilter.cs
+./../../class/lib/net_4_x-linux/Mono.Http.dll: Mono.Http/NtlmClient.cs

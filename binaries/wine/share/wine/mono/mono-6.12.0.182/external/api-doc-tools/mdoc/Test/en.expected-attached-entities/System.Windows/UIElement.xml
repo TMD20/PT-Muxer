@@ -1,0 +1,42 @@
+<Type Name="UIElement" FullName="System.Windows.UIElement">
+  <TypeSignature Language="C#" Value="public class UIElement : System.Windows.DependencyObject" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UIElement extends System.Windows.DependencyObject" />
+  <TypeSignature Language="DocId" Value="T:System.Windows.UIElement" />
+  <TypeSignature Language="VB.NET" Value="Public Class UIElement&#xA;Inherits DependencyObject" />
+  <TypeSignature Language="F#" Value="type UIElement = class&#xA;    inherit DependencyObject" />
+  <TypeSignature Language="JavaScript" Value="function UIElement()" Usage="var uIElement = new UIElement();" />
+  <TypeSignature Language="C++ CLI" Value="public ref class UIElement : System::Windows::DependencyObject" />
+  <AssemblyInfo>
+    <AssemblyName>AttachedEventsAndProperties</AssemblyName>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Windows.DependencyObject</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public UIElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberSignature Language="DocId" Value="M:System.Windows.UIElement.#ctor" />
+      <MemberSignature Language="VB.NET" Value="Public Sub New ()" />
+      <MemberSignature Language="JavaScript" Value="function UIElement()" Usage="var uIElement = new UIElement();" />
+      <MemberSignature Language="C++ CLI" Value="public:&#xA; UIElement();" />
+      <MemberSignature Language="C++ CX" Value="public:&#xA; UIElement();" />
+      <MemberSignature Language="C++ WINRT" Value=" UIElement();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

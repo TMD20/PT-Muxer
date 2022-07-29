@@ -1,0 +1,10 @@
+../../../build/common/Consts.cs
+../Assembly/AssemblyInfo.cs
+ByteEncoding.cs
+ByteSafeEncoding.cs
+DefaultEncoder.cs
+Handlers.cs
+Manager.cs
+MonoEncoding.cs
+MonoSafeEncoding.cs
+Strings.cs

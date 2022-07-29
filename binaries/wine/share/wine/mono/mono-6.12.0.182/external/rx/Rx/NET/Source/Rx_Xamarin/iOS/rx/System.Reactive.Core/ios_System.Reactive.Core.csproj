@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A67F34B5-75C1-4319-A93E-93DF87E728A4}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>System.Reactive.Core</AssemblyName>
+    <ProductSignAssembly>true</ProductSignAssembly>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;NO_REFLECTION_EMIT;NO_EXPRESSIONS;HAS_AWAIT;NUNIT;$(SignAssemblySpec)</DefineConstants>
+    <additionalargs>-delaySign</additionalargs>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;NO_REFLECTION_EMIT;NO_EXPRESSIONS;HAS_AWAIT;NUNIT;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!--
+    <TargetFrameworkIdentifier>iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v2.0.5</TargetFrameworkVersion>
+    -->
+    <!-- NoStdLib>true</NoStdLib -->
+    <BuildPlatform>MOBILE</BuildPlatform>
+    <BuildFlavor>MONOTOUCH</BuildFlavor>
+  </PropertyGroup>
+  <Import Project="..\..\..\Common.targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="MonoTouch.NUnitLite" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\System.Reactive.Interfaces\ios_System.Reactive.Interfaces.csproj">
+      <Project>{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}</Project>
+      <Name>ios_System.Reactive.Interfaces</Name>
+    </ProjectReference>
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+    <Compile Include="..\..\..\..\System.Reactive.Core\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\InternalsVisibleTo.cs">
+      <Link>InternalsVisibleTo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\NamespaceDocs.cs">
+      <Link>NamespaceDocs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Observable.Extensions.cs">
+      <Link>Observable.Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Observer.Extensions.cs">
+      <Link>Observer.Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\AnonymousObservable.cs">
+      <Link>Reactive\AnonymousObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\AnonymousObserver.cs">
+      <Link>Reactive\AnonymousObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\AnonymousSafeObserver.cs">
+      <Link>Reactive\AnonymousSafeObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\AsyncLock.cs">
+      <Link>Reactive\Concurrency\AsyncLock.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\CatchScheduler.cs">
+      <Link>Reactive\Concurrency\CatchScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\ConcurrencyAbstractionLayer.cs">
+      <Link>Reactive\Concurrency\ConcurrencyAbstractionLayer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\ConcurrencyAbstractionLayer.Default.cs">
+      <Link>Reactive\Concurrency\ConcurrencyAbstractionLayer.Default.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.Wrappers.cs">
+      <Link>Reactive\Concurrency\Scheduler.Wrappers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\DisableOptimizationsScheduler.cs">
+      <Link>Reactive\Concurrency\DisableOptimizationsScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.Services.Emulation.cs">
+      <Link>Reactive\Concurrency\Scheduler.Services.Emulation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\LocalScheduler.TimerQueue.cs">
+      <Link>Reactive\Concurrency\LocalScheduler.TimerQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.Services.cs">
+      <Link>Reactive\Concurrency\Scheduler.Services.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\CurrentThreadScheduler.cs">
+      <Link>Reactive\Concurrency\CurrentThreadScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\ImmediateScheduler.cs">
+      <Link>Reactive\Concurrency\ImmediateScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\LocalScheduler.cs">
+      <Link>Reactive\Concurrency\LocalScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\ScheduledItem.cs">
+      <Link>Reactive\Concurrency\ScheduledItem.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.Async.cs">
+      <Link>Reactive\Concurrency\Scheduler.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.cs">
+      <Link>Reactive\Concurrency\Scheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.Recursive.cs">
+      <Link>Reactive\Concurrency\Scheduler.Recursive.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Scheduler.Simple.cs">
+      <Link>Reactive\Concurrency\Scheduler.Simple.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\SchedulerDefaults.cs">
+      <Link>Reactive\Concurrency\SchedulerDefaults.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\SchedulerOperation.cs">
+      <Link>Reactive\Concurrency\SchedulerOperation.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\SchedulerQueue.cs">
+      <Link>Reactive\Concurrency\SchedulerQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\SchedulerWrapper.cs">
+      <Link>Reactive\Concurrency\SchedulerWrapper.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Stopwatch.Default.cs">
+      <Link>Reactive\Concurrency\Stopwatch.Default.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Synchronization.cs">
+      <Link>Reactive\Concurrency\Synchronization.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Synchronization.ObserveOn.cs">
+      <Link>Reactive\Concurrency\Synchronization.ObserveOn.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\Synchronization.Synchronize.cs">
+      <Link>Reactive\Concurrency\Synchronization.Synchronize.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\SynchronizationContextScheduler.cs">
+      <Link>Reactive\Concurrency\SynchronizationContextScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Concurrency\DefaultScheduler.cs">
+      <Link>Reactive\Concurrency\DefaultScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\AsyncLockObserver.cs">
+      <Link>Reactive\Internal\AsyncLockObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\CheckedObserver.cs">
+      <Link>Reactive\Internal\CheckedObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\ConcurrentDictionary.cs">
+      <Link>Reactive\Internal\ConcurrentDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\ConcurrentQueue.cs">
+      <Link>Reactive\Internal\ConcurrentQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Constants.cs">
+      <Link>Reactive\Internal\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\AnonymousDisposable.cs">
+      <Link>Reactive\Disposables\AnonymousDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\BooleanDisposable.cs">
+      <Link>Reactive\Disposables\BooleanDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\CancellationDisposable.cs">
+      <Link>Reactive\Disposables\CancellationDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\CompositeDisposable.cs">
+      <Link>Reactive\Disposables\CompositeDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\ContextDisposable.cs">
+      <Link>Reactive\Disposables\ContextDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\DefaultDisposable.cs">
+      <Link>Reactive\Disposables\DefaultDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\Disposable.cs">
+      <Link>Reactive\Disposables\Disposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\MultipleAssignmentDisposable.cs">
+      <Link>Reactive\Disposables\MultipleAssignmentDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\RefCountDisposable.cs">
+      <Link>Reactive\Disposables\RefCountDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\ScheduledDisposable.cs">
+      <Link>Reactive\Disposables\ScheduledDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\SerialDisposable.cs">
+      <Link>Reactive\Disposables\SerialDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Disposables\SingleAssignmentDisposable.cs">
+      <Link>Reactive\Disposables\SingleAssignmentDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\AutoDetachObserver.cs">
+      <Link>Reactive\Internal\AutoDetachObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\ExceptionServices.Default.cs">
+      <Link>Reactive\Internal\ExceptionServices.Default.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\ExceptionServices.cs">
+      <Link>Reactive\Internal\ExceptionServices.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\HostLifecycleService.cs">
+      <Link>Reactive\Internal\HostLifecycleService.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\ImmutableList.cs">
+      <Link>Reactive\Internal\ImmutableList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Lazy.cs">
+      <Link>Reactive\Internal\Lazy.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Observers.cs">
+      <Link>Reactive\Internal\Observers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\PlatformEnlightenmentProvider.cs">
+      <Link>Reactive\Internal\PlatformEnlightenmentProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\PriorityQueue.cs">
+      <Link>Reactive\Internal\PriorityQueue.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Producer.cs">
+      <Link>Reactive\Internal\Producer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\SafeObserver.cs">
+      <Link>Reactive\Internal\SafeObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\ScheduledObserver.cs">
+      <Link>Reactive\Internal\ScheduledObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Semaphore.Silverlight.cs">
+      <Link>Reactive\Internal\Semaphore.Silverlight.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Semaphore.Xna.cs">
+      <Link>Reactive\Internal\Semaphore.Xna.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Sink.cs">
+      <Link>Reactive\Internal\Sink.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\Stubs.cs">
+      <Link>Reactive\Internal\Stubs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\SynchronizationContextExtensions.cs">
+      <Link>Reactive\Internal\SynchronizationContextExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\SynchronizedObserver.cs">
+      <Link>Reactive\Internal\SynchronizedObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\SystemClock.cs">
+      <Link>Reactive\Internal\SystemClock.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Internal\SystemClock.Default.cs">
+      <Link>Reactive\Internal\SystemClock.Default.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Notification.cs">
+      <Link>Reactive\Notification.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\ObservableBase.cs">
+      <Link>Reactive\ObservableBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\ObserverBase.cs">
+      <Link>Reactive\ObserverBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Reactive\Unit.cs">
+      <Link>Reactive\Unit.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Core\Strings_Core.Generated.cs">
+      <Link>Strings_Core.Generated.cs</Link>
+    </Compile>
+    <EmbeddedResource Include="..\..\..\..\System.Reactive.Core\Strings_Core.resx">
+      <Link>Strings_Core.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

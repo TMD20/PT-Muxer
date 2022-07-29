@@ -1,0 +1,26 @@
+From cb62d4a99f228f51ee420f289f741dbb4ecea57b Mon Sep 17 00:00:00 2001
+From: Vsevolod Kukol <sevoku@microsoft.com>
+Date: Mon, 18 Mar 2019 16:15:54 +0100
+Subject: [PATCH] Skip hidden subviews when searching for a child event target
+
+---
+ gdk/quartz/gdkevents-quartz.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/gdk/quartz/gdkevents-quartz.c b/gdk/quartz/gdkevents-quartz.c
+index b5016e1de9..8101e366c8 100644
+--- a/gdk/quartz/gdkevents-quartz.c
++++ b/gdk/quartz/gdkevents-quartz.c
+@@ -724,7 +724,8 @@ find_nsview_at_pos (GdkWindowImplQuartz *impl, gint x, gint y)
+       if (sv == impl->layer_view)
+         continue;
+ 
+-      if (r.origin.x <= x && r.origin.x + r.size.width >= x &&
++      if (![sv isHidden] &&
++          r.origin.x <= x && r.origin.x + r.size.width >= x &&
+           r.origin.y <= y && r.origin.y + r.size.height >= y)
+         {
+           NSView* child = find_nsview_at_pos (impl, x - r.origin.x, y - r.origin.y);
+-- 
+2.17.1 (Apple Git-112)
+

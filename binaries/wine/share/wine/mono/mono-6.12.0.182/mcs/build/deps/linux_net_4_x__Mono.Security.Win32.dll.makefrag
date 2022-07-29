@@ -1,0 +1,14 @@
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: ../../build/common/Locale.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/CapiContext.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/CapiHash.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/CapiRandomNumberGenerator.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/CryptoAPI.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/MD2.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/MD2CryptoServiceProvider.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/MD4.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/MD4CryptoServiceProvider.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/MD5CryptoServiceProvider.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/RNGCryptoServiceProvider.cs
+./../../class/lib/net_4_x-linux/Mono.Security.Win32.dll: Mono.Security.Cryptography/SHA1CryptoServiceProvider.cs

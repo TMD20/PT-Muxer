@@ -1,0 +1,8 @@
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: ../../build/common/Locale.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: ../../build/common/MonoTODOAttribute.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: System.Runtime.Serialization.Formatters.Soap/SoapFormatter.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: System.Runtime.Serialization.Formatters.Soap/SoapReader.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: System.Runtime.Serialization.Formatters.Soap/SoapTypeMapper.cs
+./../../class/lib/net_4_x-linux/System.Runtime.Serialization.Formatters.Soap.dll: System.Runtime.Serialization.Formatters.Soap/SoapWriter.cs

@@ -1,0 +1,2 @@
+./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.dll ./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.part1.dll ./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.part2.dll ./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.part3.dll: Test/ConnLifetime.cs
+./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.dll ./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.part1.dll ./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.part2.dll ./../../class/lib/net_4_x/tests/net_4_x_Mono.Data.Tds_test.part3.dll: Test/bug-4786.cs

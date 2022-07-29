@@ -26,6 +26,7 @@ def main():
 
 
     parser.add_argument('-g', '--group', default="Unknown")
+    parser.add_argument('-kd', '--kind',choices=["movie","tv"])
 
     parser.add_argument(
         '--log-level', default='INFO',

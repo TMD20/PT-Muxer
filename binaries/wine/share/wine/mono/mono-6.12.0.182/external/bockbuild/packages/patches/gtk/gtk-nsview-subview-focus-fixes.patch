@@ -1,0 +1,93 @@
+diff --git a/gtk/gtknsview.c b/gtk/gtknsview.c
+index a4b4dd4dbe..5b9961eb14 100644
+--- a/gtk/gtknsview.c
++++ b/gtk/gtknsview.c
+@@ -49,6 +49,7 @@ enum
+ struct _GtkNSViewPrivate
+ {
+   NSView *view;
++  NSResponder *responder;
+   guint   map_timeout;
+   gboolean enable_swizzle;
+ };
+@@ -442,15 +443,29 @@ gtk_ns_view_replace_draw_insertion_point (void)
+     }
+ }
+ 
++gboolean
++does_accept_first_responder_recursively (NSView *view)
++{
++  if ([view acceptsFirstResponder]) {
++    return TRUE;
++  }
++
++  for (NSView *subview in [view subviews]) {
++    return does_accept_first_responder_recursively (subview);
++  }
++
++  return FALSE;
++}
++
+ static void
+ gtk_ns_view_constructed (GObject *object)
+ {
+   GtkNSView *ns_view = GTK_NS_VIEW (object);
++  gboolean can_focus = does_accept_first_responder_recursively (ns_view->priv->view);
+ 
+   G_OBJECT_CLASS (gtk_ns_view_parent_class)->constructed (object);
+ 
+-  gtk_widget_set_can_focus (GTK_WIDGET (ns_view),
+-                            [ns_view->priv->view acceptsFirstResponder]);
++  gtk_widget_set_can_focus (GTK_WIDGET (ns_view), can_focus);
+ 
+ #if DEBUG_FOCUS
+   g_printerr ("%s can focus: %d\n",
+@@ -549,10 +564,12 @@ gtk_ns_view_notify (GObject    *object,
+                   gtk_widget_has_focus (GTK_WIDGET (object)));
+ #endif
+ 
+-      if (gtk_widget_has_focus (GTK_WIDGET (object)))
+-        [ns_window makeFirstResponder:ns_view->priv->view];
+-      else if ([ns_window firstResponder] == ns_view->priv->view || (GTK_IS_WINDOW (toplevel) && !gtk_window_is_active (GTK_WINDOW (toplevel))))
++      if (gtk_widget_has_focus (GTK_WIDGET (object))) {
++        [ns_window makeFirstResponder:(ns_view->priv->responder ? ns_view->priv->responder : ns_view->priv->view)];
++        // ns_view->priv->responder = NULL;
++      } else if ([ns_window firstResponder] == ns_view->priv->view || (GTK_IS_WINDOW (toplevel) && !gtk_window_is_active (GTK_WINDOW (toplevel)))) {
+         [ns_window makeFirstResponder:nil];
++      }
+     }
+ }
+ 
+@@ -712,7 +729,7 @@ gtk_ns_view_grab_focus (GtkWidget *widget)
+   GTK_WIDGET_CLASS (gtk_ns_view_parent_class)->grab_focus (widget);
+ 
+   ns_window = [ns_view->priv->view window];
+-  [ns_window makeFirstResponder:ns_view->priv->view];
++  [ns_window makeFirstResponder:(ns_view->priv->responder != NULL ? ns_view->priv->responder : ns_view->priv->view)];
+ }
+ 
+ static gboolean
+@@ -818,15 +835,20 @@ gtk_ns_view_native_child_event (GdkWindow *window,
+ 
+               if (hit &&
+                   (hit == view ||
+-                   [hit ancestorSharedWithView: view] == view) &&
+-                  ([hit acceptsFirstResponder] ||
+-                   [view acceptsFirstResponder]))
++                   [hit ancestorSharedWithView: view] == view))
+                 {
++                  NSResponder *responder = (NSResponder *)hit;
++                  while (responder) {
++                    if ([responder acceptsFirstResponder])
++                      break;
++                    responder = [responder nextResponder];
++                  }
+ #if DEBUG_FOCUS
+                   g_printerr ("grabbing focus on %s\n",
+                               class_getName ([ns_view->priv->view class]));
+ #endif
+ 
++                  ns_view->priv->responder = responder;
+                   gtk_widget_grab_focus (GTK_WIDGET (ns_view));
+                 }
+             }

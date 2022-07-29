@@ -1,0 +1,5 @@
+../test-helpers/TestResourceHelper.cs
+Test/System.Data/DataRowComparerTest.cs
+Test/System.Data/DataRowExtensionsTest.cs
+Test/System.Data/DataTableExtensionsTest.cs
+Test/System.Data/EnumerableRowCollectionTest.cs

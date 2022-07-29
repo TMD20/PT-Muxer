@@ -1,0 +1,7 @@
+run:
+
+	ln -s path/to/mono/mcs mcs
+	ln -s path/to/mono/external external
+	./build-package.sh
+
+

@@ -1,0 +1,284 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>mono-api-counters.html</title>
+    <style type="text/css">
+    .mapi-docs {
+	line-height: 1.5;
+	padding-left: 2em;
+	padding-right: 2em;
+    }
+    .mapi-docs p {
+	max-width: 60em;
+    }
+    .mapi-docs .mapi-body {
+	max-width: 60em;
+    }
+    .mapi-docs code {
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.5em;
+    }
+    .mapi-description code {
+        font-family: "Consolas", "Courier", monospace;
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.2em;
+    }
+
+    .mapi-header {
+        padding: 0 0 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code {
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code:first-line {
+        line-height: 0px;
+    }
+
+    .mapi-codeblock {
+        display: block;
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+        background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-entry code {
+        border: none;
+        background-color: transparent;
+    }
+    
+    .mapi-parameters {
+        border-collapse: collapse;
+        border-spacing: 0;
+        empty-cells: hide;
+        border: 0;
+        margin: 5px 0 26px;	    
+    }
+
+    .mapi-parameters td {
+        border: 1px solid rgba(214,214,214,1);
+	  border-left-style: none;
+	padding: 5px 25px 5px 10px;
+    }
+
+    .mapi-parameters tr>td:last-child  {
+        border-right: 0;
+    }
+	
+    .mapi-parameters td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+    .mapi-parameters tr:last-child>td {
+        border-bottom: 0;
+    }
+
+    .mapi-parameters tr:first-child>td {
+        border-top: 0;
+    }
+
+    .mapi-parameters tr td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+   .mapi {
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;
+    } 
+
+    .mapi-description {
+        background: rgba(249,249,249,1);
+        border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;	 
+    }
+
+     .mapi-entry {
+         background: transparent;
+     }
+
+     .mapi-docs {
+     }
+	
+     .mapi-prototype {
+         border-left: 5px solid rgba(205,233,244,1);
+         padding: .5em;
+         margin-top: 5pt;
+         margin-bottom: 5pt;
+         font-family: "Consolas", "Courier", monospace;
+         display: block;
+         overflow: auto;
+         background-color: #f9f9f9;
+    } 
+
+    .mapi-declaration {
+	margin-top: 21px;
+    }
+
+    .mapi-section {
+        font-size: smaller;
+	font-weight: bold;
+	margin-top: 21px;
+	line-height: 1.5;
+    }
+	
+    .mapi-strike {
+        text-decoration: line-through;
+    }
+
+    .mapi-deprecated {
+        color: red;
+    }
+
+    .mapi-ptr-container {
+        background: white;
+	border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-bottom: 13px;
+        position: relative;
+        width: 100%;
+    }
+
+    .mapi-ptr {
+        background: rgba(249,249,249,1);
+	border-left: 1px solid rgba(233,233,233,1);
+	border-top: 1px solid rgba(233,233,233,1);
+        height: 12px;
+        left: 37px;
+        top: -7px;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        width: 12px;
+    }
+
+    .mapi-height-container {
+        left: -25px;
+        padding: 0 25px;
+        position: relative;
+        width: 100%;
+    }
+	
+</style>
+</head>
+<body>
+<div class="mapi-docs">
+<h2>Counters</h2>
+	
+	<p />Counters is a Mono API for flexible statistics collection
+	and is used to track different events inside the JIT.
+
+        <p />You would typically register an address with the
+        <tt>mono_counters_register</tt> routine and increment the
+        counters from your application as you go.   At the end of the
+        program you would call mono_counters_dump which will display
+        all the registered counters.
+
+	<p />If you need more complicated counter computation, a
+        function can be provided instead of an address.  In that case
+        the <tt>MONO_COUNTER_CALLBACK</tt> flag must be ored in the
+        type request. 
+
+	<p />The types that can be rendered are:
+		
+<pre>
+       MONO_COUNTER_INT
+       MONO_COUNTER_UINT
+       MONO_COUNTER_WORD
+       MONO_COUNTER_LONG
+       MONO_COUNTER_ULONG
+       MONO_COUNTER_DOUBLE
+       MONO_COUNTER_STRING
+</pre>
+	
+	<p />To organize the output, you register also a section where
+	the counter will be displayed, or one of the following values
+	when you register your counter:
+
+<pre>
+
+       MONO_COUNTER_JIT
+       MONO_COUNTER_GC
+       MONO_COUNTER_METADATA
+       MONO_COUNTER_GENERICS
+       MONO_COUNTER_SECURITY
+</pre>
+	
+<a name="api:mono_counters_dump"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_counters_dump</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_counters_dump (int section_mask, FILE *outfile)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>section_mask</i></td><td> The sections to dump counters for</td></tr><tr><td><i>outfile</i></td><td> a FILE to dump the results to; <code>NULL</code> will default to g_print</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Displays the counts of all the enabled counters registered. 
+ To filter by variance, you can OR one or more variance with the specific section you want.
+ Use <code>MONO_COUNTER_SECTION_MASK</code> to dump all categories of a specific variance.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_counters_enable"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_counters_enable</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_counters_enable (int section_mask)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>sectionmask</i></td><td> a mask listing the sections that will be displayed</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ This is used to track which counters will be displayed.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->

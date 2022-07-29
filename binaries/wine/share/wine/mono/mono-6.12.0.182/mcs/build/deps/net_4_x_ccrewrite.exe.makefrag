@@ -1,0 +1,3 @@
+./../../class/lib/net_4_x-linux/ccrewrite.exe: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/ccrewrite.exe: ../../class/Mono.Options/Mono.Options/Options.cs
+./../../class/lib/net_4_x-linux/ccrewrite.exe: Program.cs

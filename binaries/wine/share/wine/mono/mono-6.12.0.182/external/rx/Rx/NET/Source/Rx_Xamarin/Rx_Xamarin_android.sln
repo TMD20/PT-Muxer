@@ -1,0 +1,125 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "android", "android", "{5844829C-C52D-461C-B547-3A0832221259}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "rx", "rx", "{9AF9A490-2CD2-47CE-9E01-F3A799524F58}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.Interfaces", "android\rx\System.Reactive.Interfaces\android_System.Reactive.Interfaces.csproj", "{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.Core", "android\rx\System.Reactive.Core\android_System.Reactive.Core.csproj", "{FEF62C23-10CD-4DEF-A5AE-54A8B309E970}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.Linq", "android\rx\System.Reactive.Linq\android_System.Reactive.Linq.csproj", "{EC704077-EA31-4852-AD24-6732244174C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.PlatformServices", "android\rx\System.Reactive.PlatformServices\android_System.Reactive.PlatformServices.csproj", "{D263C126-9D3C-4299-A0C1-F25C703D07C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.Experimental", "android\rx\System.Reactive.Experimental\android_System.Reactive.Experimental.csproj", "{00DC3654-E373-4E3F-80FE-109F795ADF1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.Debugger", "android\rx\System.Reactive.Debugger\android_System.Reactive.Debugger.csproj", "{9360E845-D79D-4288-9100-63A80FAD2BF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_System.Reactive.Providers", "android\rx\System.Reactive.Providers\android_System.Reactive.Providers.csproj", "{E662282B-4341-4F86-AAAA-A942335B47FB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BC795ED9-C969-496A-8433-C47BA91CA87C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_Mono.Reactive.Testing", "android\rx\Mono.Reactive.Testing\android_Mono.Reactive.Testing.csproj", "{CB2AB716-BFCB-43BC-A03B-A3BDA427746C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "android_Tests.System.Reactive", "android\rx\Tests.System.Reactive\android_Tests.System.Reactive.csproj", "{73C5260F-8972-4E7C-822B-1A3A0358FA0B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReactiveTestApplication", "android\ReactiveTestApplication\ReactiveTestApplication.csproj", "{307C128B-762F-478D-AF70-485A1792DA9A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{C23266F1-B70D-414C-88CD-F5BD27F6ACE3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{00DC3654-E373-4E3F-80FE-109F795ADF1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{00DC3654-E373-4E3F-80FE-109F795ADF1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{00DC3654-E373-4E3F-80FE-109F795ADF1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{00DC3654-E373-4E3F-80FE-109F795ADF1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{307C128B-762F-478D-AF70-485A1792DA9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{307C128B-762F-478D-AF70-485A1792DA9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{307C128B-762F-478D-AF70-485A1792DA9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{307C128B-762F-478D-AF70-485A1792DA9A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73C5260F-8972-4E7C-822B-1A3A0358FA0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73C5260F-8972-4E7C-822B-1A3A0358FA0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73C5260F-8972-4E7C-822B-1A3A0358FA0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73C5260F-8972-4E7C-822B-1A3A0358FA0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9360E845-D79D-4288-9100-63A80FAD2BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9360E845-D79D-4288-9100-63A80FAD2BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9360E845-D79D-4288-9100-63A80FAD2BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9360E845-D79D-4288-9100-63A80FAD2BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CB2AB716-BFCB-43BC-A03B-A3BDA427746C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CB2AB716-BFCB-43BC-A03B-A3BDA427746C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CB2AB716-BFCB-43BC-A03B-A3BDA427746C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CB2AB716-BFCB-43BC-A03B-A3BDA427746C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D263C126-9D3C-4299-A0C1-F25C703D07C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D263C126-9D3C-4299-A0C1-F25C703D07C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D263C126-9D3C-4299-A0C1-F25C703D07C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D263C126-9D3C-4299-A0C1-F25C703D07C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E662282B-4341-4F86-AAAA-A942335B47FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E662282B-4341-4F86-AAAA-A942335B47FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E662282B-4341-4F86-AAAA-A942335B47FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E662282B-4341-4F86-AAAA-A942335B47FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC704077-EA31-4852-AD24-6732244174C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC704077-EA31-4852-AD24-6732244174C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC704077-EA31-4852-AD24-6732244174C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC704077-EA31-4852-AD24-6732244174C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEF62C23-10CD-4DEF-A5AE-54A8B309E970}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEF62C23-10CD-4DEF-A5AE-54A8B309E970}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEF62C23-10CD-4DEF-A5AE-54A8B309E970}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEF62C23-10CD-4DEF-A5AE-54A8B309E970}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A977063-0796-4CD4-84B8-AEDB2D648B26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A977063-0796-4CD4-84B8-AEDB2D648B26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A977063-0796-4CD4-84B8-AEDB2D648B26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A977063-0796-4CD4-84B8-AEDB2D648B26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{24F995BD-7075-489C-B7A5-7FDE08C304B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{24F995BD-7075-489C-B7A5-7FDE08C304B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{24F995BD-7075-489C-B7A5-7FDE08C304B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{24F995BD-7075-489C-B7A5-7FDE08C304B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79A43CEB-1A18-49EA-AAC4-B72B9C90BF5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79A43CEB-1A18-49EA-AAC4-B72B9C90BF5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79A43CEB-1A18-49EA-AAC4-B72B9C90BF5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79A43CEB-1A18-49EA-AAC4-B72B9C90BF5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{92857C8E-0E83-4D02-A831-8AF3FED43336}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{92857C8E-0E83-4D02-A831-8AF3FED43336}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{92857C8E-0E83-4D02-A831-8AF3FED43336}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{92857C8E-0E83-4D02-A831-8AF3FED43336}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A67F34B5-75C1-4319-A93E-93DF87E728A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A67F34B5-75C1-4319-A93E-93DF87E728A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A67F34B5-75C1-4319-A93E-93DF87E728A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A67F34B5-75C1-4319-A93E-93DF87E728A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B41CB61A-DCA0-4539-8F99-7B3499E18E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B41CB61A-DCA0-4539-8F99-7B3499E18E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B41CB61A-DCA0-4539-8F99-7B3499E18E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B41CB61A-DCA0-4539-8F99-7B3499E18E6D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9AF9A490-2CD2-47CE-9E01-F3A799524F58} = {5844829C-C52D-461C-B547-3A0832221259}
+		{BC795ED9-C969-496A-8433-C47BA91CA87C} = {5844829C-C52D-461C-B547-3A0832221259}
+		{C23266F1-B70D-414C-88CD-F5BD27F6ACE3} = {5844829C-C52D-461C-B547-3A0832221259}
+		{4FA878DC-6E88-43C4-B37B-8C1151CEC56F} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{FEF62C23-10CD-4DEF-A5AE-54A8B309E970} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{EC704077-EA31-4852-AD24-6732244174C0} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{D263C126-9D3C-4299-A0C1-F25C703D07C9} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{00DC3654-E373-4E3F-80FE-109F795ADF1F} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{9360E845-D79D-4288-9100-63A80FAD2BF0} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{E662282B-4341-4F86-AAAA-A942335B47FB} = {9AF9A490-2CD2-47CE-9E01-F3A799524F58}
+		{CB2AB716-BFCB-43BC-A03B-A3BDA427746C} = {BC795ED9-C969-496A-8433-C47BA91CA87C}
+		{73C5260F-8972-4E7C-822B-1A3A0358FA0B} = {BC795ED9-C969-496A-8433-C47BA91CA87C}
+		{307C128B-762F-478D-AF70-485A1792DA9A} = {BC795ED9-C969-496A-8433-C47BA91CA87C}
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = android\ReactiveTestApplication\ReactiveTestApplication.csproj
+	EndGlobalSection
+EndGlobal

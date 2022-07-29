@@ -1,0 +1,10 @@
+../test-helpers/TestResourceHelper.cs
+Test/Bug27864.cs
+Test/SqliteCommandUnitTests.cs
+Test/SqliteConnectionTest.cs
+Test/SqliteDataAdapterUnitTests.cs
+Test/SqliteDataReaderTest.cs
+Test/SqliteExceptionUnitTests.cs
+Test/SqliteFunctionTests.cs
+Test/SqliteParameterUnitTests.cs
+Test/SqliteTests.cs

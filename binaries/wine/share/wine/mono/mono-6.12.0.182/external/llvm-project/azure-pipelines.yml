@@ -1,0 +1,180 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - release/6.x
+    - release/9.x
+
+pr:
+  branches:
+    include:
+    - release/6.x
+    - release/9.x
+
+variables:
+- template: eng/common-variables.yml
+
+stages:
+- stage: build
+  displayName: Build
+  jobs:
+  - template: /eng/common/templates/jobs/jobs.yml
+    parameters:
+      enablePublishBuildArtifacts: true
+      enablePublishBuildAssets: true
+      enablePublishUsingPipelines: true
+      variables:
+        - _BuildConfig: Release
+      jobs:
+
+      ############ LINUX BUILD ############
+      - job: Build_Linux
+        displayName: Linux
+        timeoutInMinutes: 120
+        strategy:
+          matrix:
+            x64:
+              poolname: Hosted Ubuntu 1604
+              assetManifestOS: linux
+              assetManifestPlatform: x64
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:centos-7-bfcd90a-20200121150017
+              rootfs: 
+              archflag: --arch x64
+            arm64:
+              poolname: Hosted Ubuntu 1604
+              assetManifestOS: linux
+              assetManifestPlatform: arm64
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-cross-arm64-cfdd435-20200121150126
+              rootfs: /crossrootfs/arm64
+              archflag: --arch arm64
+            arm:
+              poolname: Hosted Ubuntu 1604
+              assetManifestOS: linux
+              assetManifestPlatform: arm
+              imagename: mcr.microsoft.com/dotnet-buildtools/prereqs:ubuntu-16.04-cross-09ec757-20200320131433
+              rootfs: /crossrootfs/arm
+              archflag: --arch arm
+        pool:
+          name: $(poolname)
+        container:
+          image: $(imagename)
+        steps:
+        - bash: |
+            set -ex
+            git clean -ffdx
+            git reset --hard HEAD
+          displayName: 'Clean up working directory'
+
+        - bash: |
+            ./build.sh --ci --restore --build --pack $(archflag) --configuration $(_BuildConfig) $(_InternalBuildArgs)
+          displayName: 'Build and package'
+          env:
+            ROOTFS_DIR: $(rootfs)
+
+        - bash: |
+            ./eng/common/build.sh --ci --restore --publish --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) --projects $(Build.SourcesDirectory)/llvm.proj
+          displayName: Publish packages
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+
+      ############ MACOS BUILD ############
+      - job: Build_macOS
+        displayName: macOS
+        timeoutInMinutes: 120
+        strategy:
+          matrix:
+            x64:
+              poolname: Hosted macOS
+              assetManifestOS: osx
+              assetManifestPlatform: x64
+        pool:
+          name: $(poolname)
+        steps:
+        - bash: |
+            set -ex
+            git clean -ffdx
+            git reset --hard HEAD
+          displayName: 'Clean up working directory'
+
+        - bash: |
+            brew install autoconf automake libtool
+          displayName: 'Prepare macOS dependencies'
+
+        - bash: |
+            ./build.sh --ci --restore --build --pack --configuration $(_BuildConfig) $(_InternalBuildArgs)
+          displayName: 'Build and package'
+
+        - bash: 
+            ./eng/common/build.sh --ci --restore --publish --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) --projects $(Build.SourcesDirectory)/llvm.proj
+          displayName: Publish packages
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+
+      ############ MXE BUILD ############
+      - job: Build_mxe
+        displayName: mxe
+        timeoutInMinutes: 120
+        strategy:
+          matrix:
+            x64:
+              poolname: Hosted macOS
+              assetManifestOS: osx
+              assetManifestPlatform: x64
+        pool:
+          name: $(poolname)
+        steps:
+        - bash: |
+            set -exv
+            git clean -ffdx
+            git reset --hard HEAD
+          displayName: 'Clean up working directory'
+
+        - bash: |
+            brew install autoconf automake libtool
+            brew tap xamarin/xamarin-android-windeps
+            brew install mingw-w64 xamarin/xamarin-android-windeps/mingw-zlib
+          displayName: 'Prepare macOS dependencies'
+
+        - bash: |
+            MXE_PREFIX=`brew --prefix`
+            sed -e "s,@MXE_PATH@,$MXE_PREFIX," < mxe-Win64.cmake.in > llvm/cmake/modules/mxe-Win64.cmake
+            ./build.sh --ci --restore --build --pack --arch x64-mxe /p:MXE_PREFIX=$MXE_PREFIX -v:normal --configuration $(_BuildConfig) $(_InternalBuildArgs)
+          displayName: 'Build and package'
+
+        - bash:
+            #./eng/common/build.sh --ci --restore --publish --configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) --projects $(Build.SourcesDirectory)/llvm.proj
+          displayName: Publish packages
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+
+      ############ WINDOWS BUILD ############
+      - job: Build_Windows
+        displayName: Windows
+        timeoutInMinutes: 120
+        strategy:
+          matrix:
+            x64:
+              poolname: Hosted VS2017
+              assetManifestOS: win
+              assetManifestPlatform: x64
+        pool:
+          name: $(poolname)
+        steps:
+        - bash: |
+            set -ex
+            git clean -ffdx
+            git reset --hard HEAD
+          displayName: 'Clean up working directory'
+
+        - powershell: eng\build.ps1 -ci -restore -build -pack -configuration $(_BuildConfig) $(_InternalBuildArgs)
+          displayName: 'Build and package'
+
+        - powershell: eng\common\build.ps1 -ci -restore -publish -configuration $(_BuildConfig) $(_InternalBuildArgs) /p:AssetManifestOS=$(assetManifestOS) /p:PlatformName=$(assetManifestPlatform) -projects $(Build.SourcesDirectory)\llvm.proj
+          displayName: Publish packages
+          condition: and(succeeded(), ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest'))
+
+############ POST BUILD ARCADE LOGIC ############
+- ${{ if and(ne(variables['System.TeamProject'], 'public'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+  - template: /eng/common/templates/post-build/post-build.yml
+    parameters:
+      enableSourceLinkValidation: false
+      enableSigningValidation: false
+      enableSymbolValidation: false
+      enableNugetValidation: true

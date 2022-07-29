@@ -1,0 +1,6 @@
+./../../class/lib/build-linux/System.IO.Compression.FileSystem.dll: ../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
+./../../class/lib/build-linux/System.IO.Compression.FileSystem.dll: ../../../external/corefx/src/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.cs
+./../../class/lib/build-linux/System.IO.Compression.FileSystem.dll: ../../../external/corefx/src/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFileExtensions.cs
+./../../class/lib/build-linux/System.IO.Compression.FileSystem.dll: ../../build/common/Consts.cs
+./../../class/lib/build-linux/System.IO.Compression.FileSystem.dll: AssemblyInfo.cs
+./../../class/lib/build-linux/System.IO.Compression.FileSystem.dll: corefx/SR.cs

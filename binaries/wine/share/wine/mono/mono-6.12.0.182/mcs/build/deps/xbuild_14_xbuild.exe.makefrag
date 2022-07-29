@@ -1,0 +1,11 @@
+./../../class/lib/xbuild_14/xbuild.exe: ../../build/common/Consts.cs
+./../../class/lib/xbuild_14/xbuild.exe: ../../class/Microsoft.Build.Engine/Microsoft.Build.BuildEngine/UnknownToolsVersionException.cs
+./../../class/lib/xbuild_14/xbuild.exe: ../../class/Microsoft.Build.Framework/Mono.XBuild.Framework/AssemblyLoadInfo.cs
+./../../class/lib/xbuild_14/xbuild.exe: XBuildConsts.cs
+./../../class/lib/xbuild_14/xbuild.exe: AssemblyInfo.cs
+./../../class/lib/xbuild_14/xbuild.exe: CommandLineException.cs
+./../../class/lib/xbuild_14/xbuild.exe: ErrorUtilities.cs
+./../../class/lib/xbuild_14/xbuild.exe: LoggerInfo.cs
+./../../class/lib/xbuild_14/xbuild.exe: Main.cs
+./../../class/lib/xbuild_14/xbuild.exe: Parameters.cs
+./../../class/lib/xbuild_14/xbuild.exe: SolutionParser.cs

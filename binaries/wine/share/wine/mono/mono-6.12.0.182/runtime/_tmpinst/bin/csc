@@ -1,0 +1,2 @@
+#! /bin/sh
+exec "/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/runtime/_tmpinst/bin/mono" "/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/roslyn-binaries/Microsoft.Net.Compilers/3.9.0/csc.exe" "$@"

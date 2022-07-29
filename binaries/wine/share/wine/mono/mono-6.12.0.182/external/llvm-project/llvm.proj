@@ -1,0 +1,106 @@
+<Project>
+  <Import Project="Directory.Build.props" />
+  <Import Project="Directory.Build.targets" />
+
+  <PropertyGroup>
+    <_LLVMSourceDir Condition="'$(_LLVMBuildDir)'==''">$(MSBuildProjectDirectory)/llvm</_LLVMSourceDir>
+    <_LLVMBuildDir Condition="'$(_LLVMBuildDir)'==''">$(MSBuildProjectDirectory)/artifacts/tmp/BuildRoot</_LLVMBuildDir>
+    <_LLVMInstallDir Condition="'$(_LLVMInstallDir)'==''">$(MSBuildProjectDirectory)/artifacts/tmp/InstallRoot</_LLVMInstallDir>
+  </PropertyGroup>
+
+  <Target Name="_LLVMBeforeBuild">
+    <MakeDir Directories="$(_LLVMBuildDir)" Condition="!Exists('$(_LLVMBuildDir)')" />
+  </Target>
+
+  <Target Name="_LLVMAfterBuild">
+    <RemoveDir Directories="$(_LLVMInstallDir)/share" />
+    <ItemGroup>
+      <FilesToDelete Include="$(_LLVMInstallDir)/lib/libLTO*" />
+      <FilesToDelete Include="$(_LLVMInstallDir)/lib/LLVMHello*" />
+      <FilesToDelete Include="$(_LLVMInstallDir)/lib/BugpointPasses.*" />
+    </ItemGroup>
+    <Delete Files="@(FilesToDelete)" ContinueOnError="true" TreatErrorsAsWarnings="true" />
+  </Target>
+
+  <Target Name="_LLVMBuildWindows" Condition="'$(BuildOS)' == 'Windows_NT'">
+    <Exec WorkingDirectory="$(_LLVMBuildDir)"
+          Command="$(_LLVMSourceDir)/scripts/ci/run-jenkins-windows.bat &quot;$(_LLVMSourceDir)&quot; &quot;$(_LLVMBuildDir)&quot; &quot;$(_LLVMInstallDir)&quot;"
+          IgnoreStandardErrorWarningFormat="true" />
+  </Target>
+
+  <Target Name="_LLVMBuildNoneWindows" Condition="'$(BuildOS)' != 'Windows_NT'">
+    <PropertyGroup Condition=" '$(TargetArchitecture)' == 'arm64' ">
+      <_CrossCFlags>--target=aarch64-linux-gnu --sysroot=$(ROOTFS_DIR)</_CrossCFlags>
+    </PropertyGroup>
+    <ItemGroup Condition=" '$(TargetArchitecture)' == 'arm64' ">
+      <_LLVMBuildArgs Include="-DLLVM_TARGET_ARCH=AARCH64" />
+      <_LLVMBuildArgs Include="-DLLVM_DEFAULT_TARGET_TRIPLE=aarch64-linux-gnu" />
+    </ItemGroup>
+
+    <PropertyGroup Condition=" '$(TargetArchitecture)' == 'arm' ">
+      <_CrossCFlags>--target=arm-linux-gnueabihf --sysroot=$(ROOTFS_DIR)</_CrossCFlags>
+    </PropertyGroup>
+    <ItemGroup Condition=" '$(TargetArchitecture)' == 'arm' ">
+      <_LLVMBuildArgs Include="-DLLVM_TARGET_ARCH=ARM" />
+      <_LLVMBuildArgs Include="-DLLVM_DEFAULT_TARGET_TRIPLE=arm-linux-gnueabihf" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetArchitecture)' == 'arm' Or '$(TargetArchitecture)' == 'arm64' ">
+      <_LLVMBuildArgs Include="-DCMAKE_CROSSCOMPILING:BOOL=ON" />
+      <_LLVMBuildArgs Include='-DCMAKE_EXE_LINKER_FLAGS="$(_CrossCFlags)"' />
+      <_LLVMBuildArgs Include='-DCMAKE_MODULE_LINKER_FLAGS="$(_CrossCFlags)"' />
+      <_LLVMBuildArgs Include='-DCMAKE_SHARED_LINKER_FLAGS="$(_CrossCFlags)"' />
+      <_LLVMBuildArgs Include='-DLLVM_TABLEGEN="/usr/bin/llvm-tblgen-6.0"' />
+      <_LLVMBuildArgs Include="-DCMAKE_C_COMPILER=clang-9" />
+      <_LLVMBuildArgs Include="-DCMAKE_CXX_COMPILER=clang++-9" />
+    </ItemGroup>
+
+	<!--
+       MXE BUILD:
+# -DCROSS_TOOLCHAIN_FLAGS_NATIVE is needed to compile the native tools (tlbgen) using the host compilers
+# -DLLVM_ENABLE_THREADS=0 is needed because mxe doesn't define std::mutex etc.
+# -DLLVM_BUILD_EXECUTION_ENGINE=Off is needed because it depends on threads
+# -DCMAKE_EXE_LINKER_FLAGS=-static is needed so that we don't dynamically link with any of the mingw gcc support libs.
+-->
+	<ItemGroup Condition=" '$(TargetArchitecture)' == 'x64-mxe' ">
+	  <_LLVMBuildArgs Include="-DCMAKE_EXE_LINKER_FLAGS=-static"/>
+	  <_LLVMBuildArgs Include="-DCROSS_TOOLCHAIN_FLAGS_NATIVE=-DCMAKE_TOOLCHAIN_FILE=cmake/modules/NATIVE.cmake"/>
+	  <_LLVMBuildArgs Include="-DCMAKE_TOOLCHAIN_FILE=cmake/modules/mxe-Win64.cmake"/>
+	  <_LLVMBuildArgs Include="-DLLVM_ENABLE_THREADS=Off"/>
+	  <_LLVMBuildArgs Include="-DLLVM_BUILD_EXECUTION_ENGINE=Off"/>
+	  </ItemGroup>
+
+    <ItemGroup>
+      <_LLVMBuildArgs Include="-DCMAKE_BUILD_TYPE=Release" />
+      <_LLVMBuildArgs Include="-DLLVM_INCLUDE_TESTS:BOOL=OFF" />
+      <_LLVMBuildArgs Include='-DCMAKE_C_FLAGS="-I../llvm/include -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -DNDEBUG -D__NO_CTYPE_INLINE -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS $(_CrossCFlags)"' />
+      <_LLVMBuildArgs Include='-DCMAKE_CXX_FLAGS="-I../llvm/include -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS -DNDEBUG -D__NO_CTYPE_INLINE -D_GNU_SOURCE -D__STDC_CONSTANT_MACROS -D__STDC_FORMAT_MACROS -D__STDC_LIMIT_MACROS $(_CrossCFlags) "' />
+      <_LLVMBuildArgs Condition="'$(BuildOS)' == 'Linux'" Include='-DCMAKE_EXE_LINKER_FLAGS="-Wl,--build-id"' />
+      <_LLVMBuildArgs Include='-DLLVM_TARGETS_TO_BUILD="X86%3BAArch64%3BARM"' />
+      <_LLVMBuildArgs Include='-DLLVM_BUILD_TESTS:BOOL=OFF' />
+      <_LLVMBuildArgs Include='-DLLVM_BUILD_EXAMPLES:BOOL=OFF' />
+      <_LLVMBuildArgs Include='-DLLVM_INCLUDE_EXAMPLES:BOOL=OFF' />
+      <_LLVMBuildArgs Include='-DLLVM_TOOLS_TO_BUILD="opt%3Bllc%3Bllvm-config%3Bllvm-dis%3Bllvm-mc%3Bllvm-as"' />
+      <_LLVMBuildArgs Include='-DLLVM_ENABLE_LIBXML2:BOOL=OFF' />
+      <_LLVMBuildArgs Include='-DLLVM_ENABLE_TERMINFO:BOOL=OFF' />
+    </ItemGroup>
+
+    <Exec WorkingDirectory="$(_LLVMBuildDir)"
+          Command="cmake $(_LLVMSourceDir) @(_LLVMBuildArgs->'%(Identity)',' ')"
+          Condition="!Exists('$(_LLVMBuildDir)/CMakeCache.txt')"
+          IgnoreStandardErrorWarningFormat="true" />
+    <Exec WorkingDirectory="$(_LLVMBuildDir)"
+          Command="make all -j8"
+          IgnoreStandardErrorWarningFormat="true"  />
+    <Exec WorkingDirectory="$(_LLVMBuildDir)"
+          Command="cmake -DCMAKE_INSTALL_PREFIX=$(_LLVMInstallDir) -P cmake_install.cmake" />
+  </Target>
+
+  <Target Name="Build" DependsOnTargets="_LLVMBeforeBuild;_LLVMBuildWindows;_LLVMBuildNoneWindows;_LLVMAfterBuild" />
+  <Target Name="Restore" />
+  <Target Name="Test" />
+  <Target Name="Pack" DependsOnTargets="Build">
+    <MSBuild Projects="nuget/packages.builds" Targets="Build" />
+  </Target>
+</Project>
+

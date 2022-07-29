@@ -1,0 +1,31 @@
+commit 0fb9feb1c32491aaf00350c1038367d5614e9574
+Author: Yusuke Yamada <yamachu.dev@gmail.com>
+Date:   Mon Sep 18 11:06:12 2017 +0900
+
+    [gtk] Fix crashing when using Third-party IME
+
+diff --git a/gdk/quartz/gdkkeys-quartz.c b/gdk/quartz/gdkkeys-quartz.c
+index b96683c488..9a66d13902 100644
+--- a/gdk/quartz/gdkkeys-quartz.c
++++ b/gdk/quartz/gdkkeys-quartz.c
+@@ -56,6 +56,7 @@
+ #include "gdk.h"
+ #include "gdkkeysyms.h"
+ #include "gdkprivate-quartz.h"
++#include <Foundation/Foundation.h>
+ 
+ #define NUM_KEYCODES 128
+ #define KEYVALS_PER_KEYCODE 4
+@@ -286,6 +287,12 @@ update_keymap (void)
+   keyval_array = g_new0 (guint, NUM_KEYCODES * KEYVALS_PER_KEYCODE);
+ 
+ #ifdef __LP64__
++  TISInputSourceRef new_ascii_layout = TISCopyCurrentASCIICapableKeyboardInputSource();
++  NSString *sourceId = TISGetInputSourceProperty(new_ascii_layout, kTISPropertyInputSourceID);
++  if ([sourceId hasPrefix:@"com.apple.keylayout"])
++    {
++      new_layout = new_ascii_layout;
++    }
+   layout_data_ref = (CFDataRef) TISGetInputSourceProperty
+     (new_layout, kTISPropertyUnicodeKeyLayoutData);
+ 

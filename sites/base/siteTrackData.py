@@ -21,9 +21,9 @@ class siteTrackData(TracksData):
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
-    def addTracks(self, quicksum, playlistNum, source, output):
+    def addTracks(self, quicksum, playlistNum, playlistFile, source, output):
         self.updateRawTracksDict(
-            quicksum, playlistNum, source, output)
+            quicksum, playlistNum, playlistFile, source, output)
         current_tracks = self.filterBySource(source)["tracks"]
         self._updateTrackDictNames(current_tracks)
         self._updateTrackDictEac3to(current_tracks)
@@ -121,7 +121,8 @@ class siteTrackData(TracksData):
         bdinfo = re.sub("/ *", "/ ", bdinfo)
         site_title = None
         if re.search("DTS Core", bdinfo):
-            return
+            match = re.search(".*?:.*?([0-9].*(bit|kbps))", bdinfo).group(1)
+            site_title = f"Compatibility Track / {match}"
         elif not re.search("True", parent, re.IGNORECASE):
             return
         elif re.search("Dolby Digital", bdinfo):
@@ -176,4 +177,3 @@ class siteTrackData(TracksData):
                 track["site_title"] = title
                 track["file"] = file
                 track["eac3to"] = eac3to
-

@@ -1,0 +1,8 @@
+<!-- Not a bug. clrcompression.dll is a native component that ships as part of the package. -->
+clrcompression.dll!crc32
+clrcompression.dll!deflate
+clrcompression.dll!deflateEnd
+clrcompression.dll!deflateInit2_
+clrcompression.dll!inflate
+clrcompression.dll!inflateEnd
+clrcompression.dll!inflateInit2_

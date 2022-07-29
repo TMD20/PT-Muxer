@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Newtonsoft.Json.Test", "Newtonsoft.Json.Test\Newtonsoft.Json.Test.csproj", "{60AB6877-D50D-4633-8453-564182E479D2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhone = Release|iPhone
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{60AB6877-D50D-4633-8453-564182E479D2}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{60AB6877-D50D-4633-8453-564182E479D2}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{60AB6877-D50D-4633-8453-564182E479D2}.Release|iPhone.ActiveCfg = Release|iPhone
+		{60AB6877-D50D-4633-8453-564182E479D2}.Release|iPhone.Build.0 = Release|iPhone
+		{60AB6877-D50D-4633-8453-564182E479D2}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{60AB6877-D50D-4633-8453-564182E479D2}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{60AB6877-D50D-4633-8453-564182E479D2}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{60AB6877-D50D-4633-8453-564182E479D2}.Debug|iPhone.Build.0 = Debug|iPhone
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,38 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" Condition="'$(IsProjectNLibrary)' != 'true'"/>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>ILCompiler.MetadataTransform</AssemblyName>
+    <TargetFramework>netstandard1.3</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IsProjectNLibrary)' != 'true'">
+    <ProjectReference Include="..\..\ILCompiler.MetadataWriter\src\ILCompiler.MetadataWriter.csproj" />
+    <ProjectReference Include="..\..\ILCompiler.TypeSystem\src\ILCompiler.TypeSystem.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Reflection.Metadata">
+      <Version>1.4.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ILCompiler\Metadata\EntityMap.cs" />
+    <Compile Include="ILCompiler\Metadata\ExplicitScopeAssemblyPolicyMixin.cs" />
+    <Compile Include="ILCompiler\Metadata\IMetadataPolicy.cs" />
+    <Compile Include="ILCompiler\Metadata\MetadataTransform.cs" />
+    <Compile Include="ILCompiler\Metadata\MetadataTransformResult.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Constant.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.CustomAttribute.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Event.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Field.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Method.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Namespace.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Parameter.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Property.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Scope.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.String.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.Type.cs" />
+    <Compile Include="ILCompiler\Metadata\Transform.TypeForwarders.cs" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" Condition="'$(IsProjectNLibrary)' != 'true'"/>
+</Project>

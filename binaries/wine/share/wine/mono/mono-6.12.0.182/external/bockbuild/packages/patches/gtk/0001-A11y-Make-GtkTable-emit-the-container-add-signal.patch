@@ -1,0 +1,35 @@
+From 3a4459bea72508236d9c0c4af77c39a15c4e03fd Mon Sep 17 00:00:00 2001
+From: iain holmes <iain@xamarin.com>
+Date: Thu, 25 May 2017 18:21:09 +0100
+Subject: [PATCH] [A11y] Make GtkTable emit the container::add signal
+
+---
+ gtk/gtktable.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/gtk/gtktable.c b/gtk/gtktable.c
+index 22a283836..ba017f327 100644
+--- a/gtk/gtktable.c
++++ b/gtk/gtktable.c
+@@ -597,6 +597,7 @@ gtk_table_attach (GtkTable	  *table,
+   table->children = g_list_prepend (table->children, table_child);
+   
+   gtk_widget_set_parent (child, GTK_WIDGET (table));
++  g_signal_emit_by_name (G_OBJECT (table), "add", child);
+ }
+ 
+ void
+@@ -880,6 +881,10 @@ static void
+ gtk_table_add (GtkContainer *container,
+ 	       GtkWidget    *widget)
+ {
++  /* Protect against the signal emission in gtk_tabel_attach */
++  if (widget->parent == container) {
++    return;
++  }
+   gtk_table_attach_defaults (GTK_TABLE (container), widget, 0, 1, 0, 1);
+ }
+ 
+-- 
+2.11.0 (Apple Git-81)
+

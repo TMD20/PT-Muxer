@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <ProjectGuid>{7C70BB15-870B-4946-8098-625DACD645A6}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'uapaot-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'uapaot-Release|AnyCPU'" />
+  <ItemGroup Condition="'$(TargetGroup)'=='netcoreapp'">
+    <Compile Include="AppendPrependTests.cs" />
+    <Compile Include="SkipLastTests.cs" />
+    <Compile Include="TakeLastTests.cs" />
+    <Compile Include="OrderByTests.cs" />
+    <Compile Include="ToHashSetTests.cs" />
+    <Compile Include="SelectManyTests.netcoreapp.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AggregateTests.cs" />
+    <Compile Include="AllTests.cs" />
+    <Compile Include="AnyTests.cs" />
+    <Compile Include="AsEnumerableTests.cs" />
+    <Compile Include="AverageTests.cs" />
+    <Compile Include="CastTests.cs" />
+    <Compile Include="ConcatTests.cs" />
+    <Compile Include="ConsistencyTests.cs" />
+    <Compile Include="ContainsTests.cs" />
+    <Compile Include="CountTests.cs" />
+    <Compile Include="DefaultIfEmptyTests.cs" />
+    <Compile Include="DistinctTests.cs" />
+    <Compile Include="ElementAtOrDefaultTests.cs" />
+    <Compile Include="ElementAtTests.cs" />
+    <Compile Include="EmptyEnumerable.cs" />
+    <Compile Include="EmptyPartitionTests.cs" />
+    <Compile Include="EnumerableTests.cs" />
+    <Compile Include="ExceptTests.cs" />
+    <Compile Include="FirstOrDefaultTests.cs" />
+    <Compile Include="FirstTests.cs" />
+    <Compile Include="GroupByTests.cs" />
+    <Compile Include="GroupJoinTests.cs" />
+    <Compile Include="IntersectTests.cs" />
+    <Compile Include="JoinTests.cs" />
+    <Compile Include="LastOrDefaultTests.cs" />
+    <Compile Include="LastTests.cs" />
+    <Compile Include="LongCountTests.cs" />
+    <Compile Include="MaxTests.cs" />
+    <Compile Include="MinTests.cs" />
+    <Compile Include="OfTypeTests.cs" />
+    <Compile Include="OrderByDescendingTests.cs" />
+    <Compile Include="OrderedSubsetting.cs" />
+    <Compile Include="RangeTests.cs" />
+    <Compile Include="RepeatTests.cs" />
+    <Compile Include="ReverseTests.cs" />
+    <Compile Include="SelectManyTests.cs" />
+    <Compile Include="SelectTests.cs" />
+    <Compile Include="SequenceEqualTests.cs" />
+    <Compile Include="ShortCircuitingTests.cs" />
+    <Compile Include="Shuffler.cs" />
+    <Compile Include="SingleOrDefaultTests.cs" />
+    <Compile Include="SingleTests.cs" />
+    <Compile Include="SkipTests.cs" />
+    <Compile Include="SkipWhileTests.cs" />
+    <Compile Include="SumTests.cs" />
+    <Compile Include="TakeTests.cs" />
+    <Compile Include="TakeWhileTests.cs" />
+    <Compile Include="TestExtensions.cs" />
+    <Compile Include="ThenByDescendingTests.cs" />
+    <Compile Include="ThenByTests.cs" />
+    <Compile Include="ToArrayTests.cs" />
+    <Compile Include="ToDictionaryTests.cs" />
+    <Compile Include="ToListTests.cs" />
+    <Compile Include="ToLookupTests.cs" />
+    <Compile Include="UnionTests.cs" />
+    <Compile Include="WhereTests.cs" />
+    <Compile Include="ZipTests.cs" />
+    <Compile Include="$(CommonTestPath)\System\Linq\SkipTakeData.cs">
+      <Link>Common\System\Linq\SkipTakeData.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <!-- DebuggerAttribute tests require internal framework Reflection and will not work on AoT platforms.
+       The proper way to test these is via the debugger expression evaluator, not Reflection. -->
+  <ItemGroup Condition="'$(TargetGroup)'!='uapaot'">
+    <Compile Include="$(CommonTestPath)\System\Diagnostics\DebuggerAttributes.cs">
+      <Link>Common\System\Diagnostics\DebuggerAttributes.cs</Link>
+    </Compile>
+    <Compile Include="GroupByTests.DebuggerAttributes.cs" />
+    <Compile Include="ToLookupTests.DebuggerAttributes.cs" />
+    <Compile Include="EnumerableDebugViewTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\$(AssemblyName).rd.xml" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

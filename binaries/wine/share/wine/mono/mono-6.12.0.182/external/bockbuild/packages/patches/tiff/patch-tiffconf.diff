@@ -1,0 +1,26 @@
+--- libtiff/tiffconf.h.orig	2019-08-29 15:37:19.000000000 +0200
++++ libtiff/tiffconf.h	2019-08-29 15:38:25.000000000 +0200
+@@ -15,7 +15,11 @@
+ #define TIFF_INT32_T signed int
+ 
+ /* Signed 64-bit type */
++#ifdef __LP64__
+ #define TIFF_INT64_T signed long
++#else
++#define TIFF_INT64_T signed long long
++#endif
+ 
+ /* Signed 8-bit type */
+ #define TIFF_INT8_T signed char
+@@ -27,7 +31,11 @@
+ #define TIFF_UINT32_T unsigned int
+ 
+ /* Unsigned 64-bit type */
++#ifdef __LP64__
+ #define TIFF_UINT64_T unsigned long
++#else
++#define TIFF_UINT64_T unsigned long long
++#endif
+ 
+ /* Unsigned 8-bit type */
+ #define TIFF_UINT8_T unsigned char

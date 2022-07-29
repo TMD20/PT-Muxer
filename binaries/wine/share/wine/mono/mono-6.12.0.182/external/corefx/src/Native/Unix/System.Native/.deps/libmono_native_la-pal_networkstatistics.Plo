@@ -1,0 +1,9 @@
+../../external/corefx/src/Native/Unix/System.Native/libmono_native_la-pal_networkstatistics.lo: \
+ ../../external/corefx/src/Native/Unix/System.Native/pal_networkstatistics.c \
+ /usr/include/stdc-predef.h pal_config.h ../../config.h
+
+/usr/include/stdc-predef.h:
+
+pal_config.h:
+
+../../config.h:

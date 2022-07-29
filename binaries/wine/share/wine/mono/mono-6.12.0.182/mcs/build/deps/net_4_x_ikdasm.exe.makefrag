@@ -1,0 +1,20 @@
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/CABlob.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/Disassembler.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/ExportedMethods.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/IL.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/Keywords.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/LineWriter.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/Program.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/Util.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/VTableFixups.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikdasm/TableDumper.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: 
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/*.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/Emit/*.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/Metadata/*.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/Reader/*.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/Writer/*.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/Impl/ITypeOwner.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../../external/ikvm/reflect/Impl/SymbolSupport.cs
+./../../class/lib/net_4_x-linux/ikdasm.exe: 
+./../../class/lib/net_4_x-linux/ikdasm.exe: ../../class/Mono.Options/Mono.Options/Options.cs

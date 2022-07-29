@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{45377009-1425-47FC-985E-05F98022F9E3}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Tests.System.Reactive</AssemblyName>
+    <ProductSignAssembly>true</ProductSignAssembly>
+    <DefineConstants>NUNIT;NO_TASK_DELAY;PREFER_ASYNC;HAS_APTCA;NO_WINDOWS_THREADING;NO_SERIALIZABLE;NO_REFLECTION_EMIT;PLIB</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;MONOTOUCH;NUNIT;NO_TASK_DELAY;PREFER_ASYNC;HAS_APTCA;NO_WINDOWS_THREADING;NO_SERIALIZABLE;NO_REFLECTION_EMIT;PLIB</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>MONOTOUCH;NO_TASK_DELAY;PREFER_ASYNC;HAS_APTCA;NO_WINDOWS_THREADING;NO_SERIALIZABLE;NO_REFLECTION_EMIT;PLIB</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NO_EVENTARGS_CONSTRAINT;HAS_PROGRESS;PREFER_ASYNC;HAS_APTCA;NO_REMOTING;NO_SERIALIZABLE;NO_THREAD;CRIPPLED_REFLECTION;PLIB</DefineConstants>
+    <!--
+    <TargetFrameworkIdentifier>iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v2.0.5</TargetFrameworkVersion>
+    -->
+    <!-- NoStdLib>true</NoStdLib -->
+    <BuildPlatform>MOBILE</BuildPlatform>
+    <BuildFlavor>MONOTOUCH</BuildFlavor>
+  </PropertyGroup>
+  <Import Project="..\..\..\Common.targets" />
+  <PropertyGroup>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="MonoTouch.NUnitLite" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+    <Compile Include="..\..\..\Tests.System.Reactive\App.cs">
+      <Link>App.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\DispatcherHelpers.cs">
+      <Link>DispatcherHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Semaphore.cs">
+      <Link>Semaphore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Core\Disposables\Composite.cs">
+      <Link>Stress\Core\Disposables\Composite.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Core\Disposables\Serial.cs">
+      <Link>Stress\Core\Disposables\Serial.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Core\Disposables\SingleAssignment.cs">
+      <Link>Stress\Core\Disposables\SingleAssignment.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Core\Disposables\RefCount.cs">
+      <Link>Stress\Core\Disposables\RefCount.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Linq\Delay.cs">
+      <Link>Stress\Linq\Delay.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Linq\FromEvent.cs">
+      <Link>Stress\Linq\FromEvent.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Helpers.cs">
+      <Link>Stress\Helpers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Stress\Linq\Replay.cs">
+      <Link>Stress\Linq\Replay.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\TestBase.cs">
+      <Link>TestBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\TestLongRunningScheduler.cs">
+      <Link>TestLongRunningScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\AnonymousTest.cs">
+      <Link>Tests\AnonymousTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\AsyncLockTest.cs">
+      <Link>Tests\AsyncLockTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ConcurrencyTest.cs">
+      <Link>Tests\ConcurrencyTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ConnectableObservable.cs">
+      <Link>Tests\ConnectableObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ConnectableObservableTest.cs">
+      <Link>Tests\ConnectableObservableTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ControlSchedulerTest.cs">
+      <Link>Tests\ControlSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableSafetyTest.cs">
+      <Link>Tests\ObservableSafetyTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\QbservableExTest.cs">
+      <Link>Tests\QbservableExTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\RogueEnumerable.cs">
+      <Link>Tests\RogueEnumerable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ScheduledItemTest.cs">
+      <Link>Tests\ScheduledItemTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\StopwatchTest.cs">
+      <Link>Tests\StopwatchTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\SystemClockTest.cs">
+      <Link>Tests\SystemClockTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\DefaultConcurrencyAbstractionLayerTest.cs">
+      <Link>Tests\DefaultConcurrencyAbstractionLayerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\EventPatternSourceBaseTest.cs">
+      <Link>Tests\EventPatternSourceBaseTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\SynchronizationTest.cs">
+      <Link>Tests\SynchronizationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\DefaultSchedulerTest.cs">
+      <Link>Tests\DefaultSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\CurrentThreadSchedulerTest.cs">
+      <Link>Tests\CurrentThreadSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\DisposableTests.cs">
+      <Link>Tests\DisposableTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\EventLoopSchedulerTest.cs">
+      <Link>Tests\EventLoopSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\HistoricalSchedulerTest.cs">
+      <Link>Tests\HistoricalSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ImmediateSchedulerTest.cs">
+      <Link>Tests\ImmediateSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\MySubject.cs">
+      <Link>Tests\MySubject.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\NewThreadSchedulerTest.cs">
+      <Link>Tests\NewThreadSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\NotificationTest.cs">
+      <Link>Tests\NotificationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableEventsTest.cs">
+      <Link>Tests\ObservableEventsTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableImperativeTest.cs">
+      <Link>Tests\ObservableImperativeTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\SchedulerTest.cs">
+      <Link>Tests\SchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\SynchronizationContextSchedulerTest.cs">
+      <Link>Tests\SynchronizationContextSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\TaskObservableExtensionsTest.cs">
+      <Link>Tests\TaskObservableExtensionsTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\TaskPoolSchedulerTest.cs">
+      <Link>Tests\TaskPoolSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ThreadPoolSchedulerTest.cs">
+      <Link>Tests\ThreadPoolSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\TimeTests.cs">
+      <Link>Tests\TimeTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\UnitTest.cs">
+      <Link>Tests\UnitTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\VirtualSchedulerTest.cs">
+      <Link>Tests\VirtualSchedulerTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Dummies\DummyDisposable.cs">
+      <Link>Dummies\DummyDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Dummies\DummyEnumerable.cs">
+      <Link>Dummies\DummyEnumerable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Dummies\DummyFunc.cs">
+      <Link>Dummies\DummyFunc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Dummies\DummyObservable.cs">
+      <Link>Dummies\DummyObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Dummies\DummyObserver.cs">
+      <Link>Dummies\DummyObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Dummies\DummyScheduler.cs">
+      <Link>Dummies\DummyScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Extensions.cs">
+      <Link>Extensions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\MockDisposable.cs">
+      <Link>MockDisposable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\MockEnumerable.cs">
+      <Link>MockEnumerable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\NullErrorObservable.cs">
+      <Link>NullErrorObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\AsyncSubjectTest.cs">
+      <Link>Tests\AsyncSubjectTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\BehaviorSubjectTest.cs">
+      <Link>Tests\BehaviorSubjectTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\SubjectTest.cs">
+      <Link>Tests\SubjectTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ListObservableTest.cs">
+      <Link>Tests\ListObservableTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableAggregateTest.cs">
+      <Link>Tests\ObservableAggregateTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableAsyncTest.cs">
+      <Link>Tests\ObservableAsyncTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableAwaiterTest.cs">
+      <Link>Tests\ObservableAwaiterTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableBindingTest.cs">
+      <Link>Tests\ObservableBindingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableBlockingTest.cs">
+      <Link>Tests\ObservableBlockingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableConversionTests.cs">
+      <Link>Tests\ObservableConversionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableCreationTest.cs">
+      <Link>Tests\ObservableCreationTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableExtensionsTest.cs">
+      <Link>Tests\ObservableExtensionsTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableJoinsTest.cs">
+      <Link>Tests\ObservableJoinsTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableMultipleTest.cs">
+      <Link>Tests\ObservableMultipleTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableRemotingTest.cs">
+      <Link>Tests\ObservableRemotingTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableSingleTest.cs">
+      <Link>Tests\ObservableSingleTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableStandardQueryOperatorTest.cs">
+      <Link>Tests\ObservableStandardQueryOperatorTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObservableTimeTest.cs">
+      <Link>Tests\ObservableTimeTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ObserverTest.cs">
+      <Link>Tests\ObserverTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\PrivateTypesTest.cs">
+      <Link>Tests\PrivateTypesTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\QbservableTest.cs">
+      <Link>Tests\QbservableTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\RegressionTest.cs">
+      <Link>Tests\RegressionTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Tests\ReplaySubjectTest.cs">
+      <Link>Tests\ReplaySubjectTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\TestTaskScheduler.cs">
+      <Link>TestTaskScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Tests.System.Reactive\Utils.cs">
+      <Link>Utils.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Mono.Reactive.Testing\ios_Mono.Reactive.Testing.csproj">
+      <Project>{47D85A91-E8E2-4088-BF5A-68A161754D48}</Project>
+      <Name>ios_Mono.Reactive.Testing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Core\ios_System.Reactive.Core.csproj">
+      <Project>{A67F34B5-75C1-4319-A93E-93DF87E728A4}</Project>
+      <Name>ios_System.Reactive.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Debugger\ios_System.Reactive.Debugger.csproj">
+      <Project>{B41CB61A-DCA0-4539-8F99-7B3499E18E6D}</Project>
+      <Name>ios_System.Reactive.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Experimental\ios_System.Reactive.Experimental.csproj">
+      <Project>{24F995BD-7075-489C-B7A5-7FDE08C304B6}</Project>
+      <Name>ios_System.Reactive.Experimental</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Interfaces\ios_System.Reactive.Interfaces.csproj">
+      <Project>{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}</Project>
+      <Name>ios_System.Reactive.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Linq\ios_System.Reactive.Linq.csproj">
+      <Project>{0A977063-0796-4CD4-84B8-AEDB2D648B26}</Project>
+      <Name>ios_System.Reactive.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.PlatformServices\ios_System.Reactive.PlatformServices.csproj">
+      <Project>{79A43CEB-1A18-49EA-AAC4-B72B9C90BF5A}</Project>
+      <Name>ios_System.Reactive.PlatformServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Runtime.Remoting\ios_System.Reactive.Runtime.Remoting.csproj">
+      <Project>{92857C8E-0E83-4D02-A831-8AF3FED43336}</Project>
+      <Name>ios_System.Reactive.Runtime.Remoting</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

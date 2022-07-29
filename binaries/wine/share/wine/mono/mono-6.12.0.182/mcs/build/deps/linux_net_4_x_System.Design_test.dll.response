@@ -1,0 +1,12 @@
+Test/System.ComponentModel.Design/DesignerActionListsChangedEventArgsTest.cs
+Test/System.ComponentModel.Design/DesignerActionMethodItemTest.cs
+Test/System.ComponentModel.Design/DesignerActionPropertyItemTest.cs
+Test/System.Diagnostics.Design/StringValueConverterTest.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderBaseNameTests.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderCodeDomTest.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderNamespaceTests.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderOtherTests.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderResourceNameTests.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderResxFileTests.cs
+Test/System.Resources.Tools/StronglyTypedResourceBuilderVerifyResourceNameTests.cs
+Test/System.Windows.Forms.Design/MenuCommandsTest.cs

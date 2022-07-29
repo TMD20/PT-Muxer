@@ -1,0 +1,12 @@
+build
+bin
+obj
+*.suo
+*.vssscc
+*.vspscc
+*.csproj.user
+*.pidb
+*.userprefs
+package
+TestResults
+_TEMP.nuspec

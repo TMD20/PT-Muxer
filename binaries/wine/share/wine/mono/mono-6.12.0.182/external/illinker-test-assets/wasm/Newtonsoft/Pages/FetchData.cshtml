@@ -1,0 +1,66 @@
+﻿@page "/fetchdata"
+@inject HttpClient Http
+@using Newtonsoft.Json
+
+<h1>Weather forecast</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Temp. (C)</th>
+                <th>Temp. (F)</th>
+                <th>Summary</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in forecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@functions {
+    WeatherForecast[] forecasts;
+    String serialized;
+
+    protected override async Task OnInitAsync()
+    {
+        var text = await Http.GetStringAsync ("sample-data/weather.json");
+        forecasts = JsonConvert.DeserializeObject<List<WeatherForecast>>(text).Append (
+            new WeatherForecast { 
+                Date = DateTime.Parse ("08/18/2018 07:22:16"),
+                TemperatureC = -28,
+                TemperatureF = -18,
+                Summary = "Why are temperatures ints??"
+            }).ToArray();
+
+        serialized = JsonConvert.SerializeObject (forecasts);
+    }
+
+    class WeatherForecast
+    {
+        public DateTime Date { get; set; }
+
+        public int TemperatureC { get; set; }
+
+        public int TemperatureF { get; set; }
+
+        public string Summary { get; set; }
+    }
+}

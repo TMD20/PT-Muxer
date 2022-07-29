@@ -1,0 +1,94 @@
+From dc7a4906b15e3896bdac641730ac8e85dd90be24 Mon Sep 17 00:00:00 2001
+From: Vsevolod Kukol <sevo@xamarin.com>
+Date: Sun, 7 Mar 2021 21:07:30 +0100
+Subject: [PATCH] gdk: quartz: Remove titlebar handling from
+ find_child_window_helper
+
+Being run on Idle to handle tooltips this can crash if the
+NSWindow has been released in between.
+With https://github.com/GNOME/gtk/commit/f91b42983937c94a2875af3498fa2ea6078ec58d
+this should not be necessary anymore and can be removed.
+---
+ gdk/quartz/gdkevents-quartz.c | 23 +++++++++++++++++++++++
+ gdk/quartz/gdkwindow-quartz.c | 31 -------------------------------
+ 2 files changed, 23 insertions(+), 31 deletions(-)
+
+diff --git a/gdk/quartz/gdkevents-quartz.c b/gdk/quartz/gdkevents-quartz.c
+index 24d5094a4e..4e75aaf102 100644
+--- a/gdk/quartz/gdkevents-quartz.c
++++ b/gdk/quartz/gdkevents-quartz.c
+@@ -567,6 +567,29 @@ get_toplevel_from_ns_event (NSEvent *nsevent,
+            * here, not very nice.
+            */
+           _gdk_quartz_events_break_all_grabs (get_time_from_ns_event (nsevent));
++
++          /* Check if the event occurred on the titlebar. If it did,
++           * explicitly return NULL to prevent going through the
++           * fallback path, which could match the window that is
++           * directly under the titlebar.
++           */
++          if (view_point.y < 0 &&
++              view_point.x >= view_frame.origin.x &&
++              view_point.x < view_frame.origin.x + view_frame.size.width)
++            {
++              NSView *superview = [view superview];
++              if (superview)
++                {
++                  NSRect superview_frame = [superview frame];
++                  int titlebar_height = superview_frame.size.height -
++                                        view_frame.size.height;
++
++                  if (titlebar_height > 0 && view_point.y >= -titlebar_height)
++                    {
++                      return NULL;
++                    }
++                }
++            }
+         }
+       else
+         {
+diff --git a/gdk/quartz/gdkwindow-quartz.c b/gdk/quartz/gdkwindow-quartz.c
+index cd5cc26415..12ebc9cc26 100644
+--- a/gdk/quartz/gdkwindow-quartz.c
++++ b/gdk/quartz/gdkwindow-quartz.c
+@@ -757,37 +757,6 @@ find_child_window_helper (GdkWindow *window,
+       temp_x = x_offset + child_private->x;
+       temp_y = y_offset + child_private->y;
+ 
+-      /* Special-case the root window. We have to include the title
+-       * bar in the checks, otherwise the window below the title bar
+-       * will be found i.e. events punch through. (If we can find a
+-       * better way to deal with the events in gdkevents-quartz, this
+-       * might not be needed.)
+-       */
+-      if (window == _gdk_root)
+-        {
+-          NSRect frame = NSMakeRect (0, 0, 100, 100);
+-          NSRect content;
+-          NSUInteger mask;
+-          int titlebar_height;
+-
+-          mask = [child_impl->toplevel styleMask];
+-
+-          /* Get the title bar height. */
+-          content = [NSWindow contentRectForFrameRect:frame
+-                                            styleMask:mask];
+-          titlebar_height = frame.size.height - content.size.height;
+-
+-          if (titlebar_height > 0 &&
+-              x >= temp_x && y >= temp_y - titlebar_height &&
+-              x < temp_x + child_private->width && y < temp_y)
+-            {
+-              /* The root means "unknown" i.e. a window not managed by
+-               * GDK.
+-               */
+-              return (GdkWindow *)_gdk_root;
+-            }
+-        }
+-
+       if (x >= temp_x && y >= temp_y &&
+ 	  x < temp_x + child_private->width && y < temp_y + child_private->height)
+ 	{
+-- 
+2.21.1 (Apple Git-122.3)
+

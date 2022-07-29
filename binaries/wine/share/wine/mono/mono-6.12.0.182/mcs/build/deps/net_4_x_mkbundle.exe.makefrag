@@ -1,0 +1,8 @@
+./../../class/lib/net_4_x-linux/mkbundle.exe: mkbundle.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/*.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/Emit/*.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/Metadata/*.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/Reader/*.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/Writer/*.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/Impl/ITypeOwner.cs
+./../../class/lib/net_4_x-linux/mkbundle.exe: ../../../external/ikvm/reflect/Impl/SymbolSupport.cs

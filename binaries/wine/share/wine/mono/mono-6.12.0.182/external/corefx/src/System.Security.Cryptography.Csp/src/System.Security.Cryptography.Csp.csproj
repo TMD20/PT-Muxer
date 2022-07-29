@@ -1,0 +1,111 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <ProjectGuid>{3B7F91D7-0677-40CA-B4E7-D4E09D89A74E}</ProjectGuid>
+    <AssemblyName>System.Security.Cryptography.Csp</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn Condition="'$(TargetsUnix)' == 'true'">CS0809</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Unix-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Unix-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Windows_NT-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Windows_NT-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'uap-Windows_NT-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'uap-Windows_NT-Release|AnyCPU'" />
+  <ItemGroup>
+    <Compile Include="System\Security\Cryptography\AesCryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\CapiHelper.DSA.Shared.cs" />
+    <Compile Include="System\Security\Cryptography\CapiHelper.Shared.cs" />
+    <Compile Include="System\Security\Cryptography\CspParameters.cs" />
+    <Compile Include="System\Security\Cryptography\CspProviderFlags.cs" />
+    <Compile Include="System\Security\Cryptography\ICspAsymmetricAlgorithm.cs" />
+    <Compile Include="System\Security\Cryptography\KeyNumber.cs" />
+    <Compile Include="System\Security\Cryptography\MD5CryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\PasswordDeriveBytes.cs" />
+    <Compile Include="System\Security\Cryptography\RNGCryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\SHA1CryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\SHA256CryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\SHA384CryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\SHA512CryptoServiceProvider.cs" />
+    <Compile Include="System\Security\Cryptography\TripleDESCryptoServiceProvider.cs" />
+    <Compile Include="Internal\Cryptography\Helpers.cs" />
+    <Compile Include="$(CommonPath)\Internal\Cryptography\Helpers.cs">
+      <Link>Internal\Cryptography\Helpers.cs</Link>
+    </Compile>
+  </ItemGroup>
+    <ItemGroup Condition="'$(TargetsUnix)' == 'true'">
+    <Compile Include="System\Security\Cryptography\CapiHelper.Unix.cs" />
+    <Compile Include="System\Security\Cryptography\CspKeyContainerInfo.Unix.cs" />
+    <Compile Include="System\Security\Cryptography\DESCryptoServiceProvider.Unix.cs" />
+    <Compile Include="System\Security\Cryptography\DSACryptoServiceProvider.Unix.cs" />
+    <Compile Include="System\Security\Cryptography\PasswordDeriveBytes.Unix.cs" />
+    <Compile Include="System\Security\Cryptography\RC2CryptoServiceProvider.Unix.cs" />
+    <Compile Include="System\Security\Cryptography\RSACryptoServiceProvider.Unix.cs" />
+    <Compile Include="Internal\Cryptography\Unix\HashAlgorithmNames.cs" />
+    <Compile Include="$(CommonPath)\Internal\Cryptography\AsymmetricAlgorithmHelpers.Hash.cs">
+      <Link>Common\Internal\Cryptography\AsymmetricAlgorithmHelpers.Hash.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetsWindows)' == 'true'">
+    <Compile Include="System\Security\Cryptography\CspKeyContainerInfo.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\DESCryptoServiceProvider.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\DSACryptoServiceProvider.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\PasswordDeriveBytes.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\RC2CryptoServiceProvider.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\RSACryptoServiceProvider.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\CapiHelper.DSA.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\CapiHelper.Windows.cs" />
+    <Compile Include="System\Security\Cryptography\CapiHelper.SymmetricKey.cs" />
+    <Compile Include="System\Security\Cryptography\SafeCryptoHandles.cs" />
+    <Compile Include="System\Security\Cryptography\Utils.cs" />
+    <Compile Include="Internal\Cryptography\BasicSymmetricCipherCsp.cs" />
+    <Compile Include="$(CommonPath)\Internal\Cryptography\BasicSymmetricCipher.cs">
+      <Link>Internal\Cryptography\BasicSymmetricCipher.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Internal\Cryptography\UniversalCryptoTransform.cs">
+      <Link>Internal\Cryptography\UniversalCryptoTransform.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Internal\Cryptography\UniversalCryptoEncryptor.cs">
+      <Link>Internal\Cryptography\UniversalCryptoEncryptor.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Internal\Cryptography\UniversalCryptoDecryptor.cs">
+      <Link>Internal\Cryptography\UniversalCryptoDecryptor.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Internal\Cryptography\Windows\CryptoThrowHelper.cs">
+      <Link>Internal\Cryptography\Windows\CryptoThrowHelper.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\advapi32\Interop.CryptGetProvParam.cs">
+      <Link>Common\Interop\Windows\advapi32\Interop.CryptGetProvParam.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\Crypt32\Interop.FindOidInfo.cs">
+      <Link>Common\Interop\Windows\Crypt32\Interop.FindOidInfo.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\kernel32\Interop.FormatMessage.cs">
+      <Link>Common\Interop\Windows\kernel32\Interop.FormatMessage.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\Interop.Libraries.cs">
+      <Link>Common\Interop\Windows\Interop.Libraries.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Microsoft\Win32\SafeHandles\SafeHandleCache.cs">
+      <Link>Common\Microsoft\Win32\SafeHandles\SafeHandleCache.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Buffers" />
+    <Reference Include="System.Diagnostics.Debug" />
+    <Reference Include="System.Diagnostics.Tools" />
+    <Reference Include="System.Memory" />
+    <Reference Include="System.Resources.ResourceManager" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Extensions" />
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Security.Cryptography.Algorithms" />
+    <Reference Include="System.Security.Cryptography.Encoding" />
+    <Reference Include="System.Security.Cryptography.Primitives" />
+    <Reference Include="System.Text.Encoding.Extensions" />
+    <Reference Include="System.Threading" />
+    <Reference Include="System.Threading.Thread" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

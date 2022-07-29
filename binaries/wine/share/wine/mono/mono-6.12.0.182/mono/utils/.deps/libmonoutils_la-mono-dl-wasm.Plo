@@ -1,0 +1,6 @@
+libmonoutils_la-mono-dl-wasm.lo: mono-dl-wasm.c \
+ /usr/include/stdc-predef.h ../../config.h
+
+/usr/include/stdc-predef.h:
+
+../../config.h:

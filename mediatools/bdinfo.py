@@ -24,6 +24,7 @@ class Bdinfo():
         self.set_mediaDir(subfolder)
         self._generate_playlists()
         self._playListSelect()
+        self._chapterFile=False
 
     def process(self):
         bdinfo = self._bdinfo()
@@ -38,6 +39,9 @@ class Bdinfo():
                 lines = lines[i:len(lines)]
                 break
         return lines
+
+    def checkchapterFile():
+        re.search("cha")
 
     '''
     Getter Functions
@@ -59,9 +63,17 @@ class Bdinfo():
     """
     Path to the Full bdinfo Path
     """
+
     @property
     def bdinfoPath(self):
         return self._bdinfoPath
+
+    """
+    playlist file name
+    """
+    @property
+    def playlistFile(self):
+        return self._playlistFile
     '''
     Setter Functions
     '''
@@ -80,6 +92,10 @@ class Bdinfo():
     def _getIndex(self):
         self._playlistNum = utils.getIntInput("Enter playlist number: ")
 
+    def _getplaylistFile(self):
+        self._playlistFile = re.findall(
+            "[0-9]+\.MPLS", self._playlist)[int(self._playlistNum)-1]
+
     @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
 
@@ -97,6 +113,7 @@ class Bdinfo():
     def _playListSelect(self):
         print(self._playlist)
         self._getIndex()
+        self._getplaylistFile()
 
     def _bdinfo(self):
         bdinfoBin = config.bdinfoLinuxPath
@@ -106,7 +123,6 @@ class Bdinfo():
         wineBin = config.wineLinuxPath
         if not os.path.isfile(wineBin):
             wineBin = config.wineProjectPath
-
 
         selection = self._playlist.splitlines()[2+int(self._playlistNum)]
         match = re.search("[0-9]+.MPLS", selection)

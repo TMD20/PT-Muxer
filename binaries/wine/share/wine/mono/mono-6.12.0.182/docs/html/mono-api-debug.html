@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>mono-api-debug.html</title>
+    <style type="text/css">
+SCALAR(0x55eb08c9ad00)
+   </style>
+</head>
+<body>
+<div class="mapi-docs">
+
+<h3>Mono Debugger Interface</h3>
+
+	<p>These are methods that are invoked by the debugger at
+	runtime.
+	
+<a name="api:mono_debugger_insert_breakpoint"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debugger_insert_breakpoint</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debugger_insert_breakpoint</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debugger_method_has_breakpoint"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debugger_method_has_breakpoint</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debugger_method_has_breakpoint</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+
+<h3>Debugging Symbols</h3>
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_open_mono_symbols"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_open_mono_symbols</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoSymbolFile*
+mono_debug_open_mono_symbols (MonoDebugHandle *handle, const uint8_t *raw_contents,
+			      int size, gboolean in_the_debugger)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_symfile_free_location"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_symfile_free_location</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_debug_symfile_free_location (MonoDebugSourceLocation  *location)
+
+</div>
+            <p>
+             <div class="mapi-section">Description</div>
+             <div>
+<p>
+ Free a <code>MonoDebugSourceLocation</code> returned by
+ <code>mono_debug_symfile_lookup_location</code></div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_symfile_is_loaded"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_symfile_is_loaded</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_bool
+mono_debug_symfile_is_loaded (MonoSymbolFile *symfile)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_symfile_lookup_locals"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_symfile_lookup_locals</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDebugLocalsInfo*
+mono_debug_symfile_lookup_locals (MonoDebugMethodInfo *minfo)
+
+</div>
+            <p>
+             <div class="mapi-section">Description</div>
+             <div>
+<p>
+ Return information about the local variables of <i>minfo</i> from the symbol file.
+ Return <code>NULL</code> if no information can be found.
+ The result should be freed using <code>mono_debug_symfile_free_locals</code>.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_symfile_lookup_location"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_symfile_lookup_location</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDebugSourceLocation*
+mono_debug_symfile_lookup_location (MonoDebugMethodInfo *minfo, uint32_t offset)
+
+</div>
+            <p>
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>minfo</i></td><td> A <code>MonoDebugMethodInfo</code> which can be retrieved by <code>mono_debug_lookup_method</code>.</td></tr><tr><td><i>offset</i></td><td> IL offset within the corresponding method's CIL code.</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+<p>
+ This function is similar to <code>mono_debug_lookup_location</code>, but we
+ already looked up the method and also already did the
+ native address -> IL offset mapping.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_symfile_lookup_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_symfile_lookup_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDebugMethodInfo*
+mono_debug_symfile_lookup_method (MonoDebugHandle *handle, MonoMethod *method)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+
+<h3>Internal Debugging </h3>
+
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_add_delegate_trampoline"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_add_delegate_trampoline</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_debug_add_delegate_trampoline (gpointer code, int size)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_close_image"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_close_image</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_debug_close_image (MonoImage *image)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_domain_create"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_domain_create</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_debug_domain_create (MonoDomain *domain)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_domain_unload"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_domain_unload</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debug_domain_unload</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_enabled"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_enabled</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_bool
+mono_debug_enabled (void)
+
+</div>
+            <p>
+             <div class="mapi-section">Description</div>
+             <div>
+<p>
+ Returns true is debug information is enabled. This doesn't relate if a debugger is present or not.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_free_method_jit_info"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_free_method_jit_info</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debug_free_method_jit_info</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_free_source_location"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_free_source_location</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_debug_free_source_location (MonoDebugSourceLocation *location)
+
+</div>
+            <p>
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>location</i></td><td> A <code>MonoDebugSourceLocation</code></td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Frees the <i>location</i>.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_lookup_locals"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_lookup_locals</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debug_lookup_locals</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_lookup_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_lookup_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDebugMethodInfo*
+mono_debug_lookup_method (MonoMethod *method)
+
+</div>
+            <p>
+             <div class="mapi-section">Description</div>
+             <div>
+<p>
+ Lookup symbol file information for the method <i>method</i>.  The returned
+ <code>MonoDebugMethodInfo</code> is a private structure, but it can be passed to
+ <code>mono_debug_symfile_lookup_location</code>.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_lookup_method_addresses"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_lookup_method_addresses</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debug_lookup_method_addresses</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_lookup_source_location"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_lookup_source_location</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDebugSourceLocation*
+mono_debug_lookup_source_location (MonoMethod *method, guint32 address, MonoDomain *domain)
+
+</div>
+            <p>
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>address</i></td><td> Native offset within the <i>method</i>'s machine code.</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Lookup the source code corresponding to the machine instruction located at
+ native offset <i>address</i> within <i>method</i>.
+ The returned <code>MonoDebugSourceLocation</code> contains both file / line number
+ information and the corresponding IL offset.  It must be freed by
+ <code>mono_debug_free_source_location</code>.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_open_image_from_memory"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_open_image_from_memory</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debug_open_image_from_memory</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_print_stack_frame"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_print_stack_frame</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">gchar*
+mono_debug_print_stack_frame (MonoMethod *method, guint32 native_offset, MonoDomain *domain)
+
+</div>
+            <p>
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>native_offset</i></td><td> Native offset within the <i>method</i>'s machine code.</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Conventient wrapper around <code>mono_debug_lookup_source_location</code> which can be
+ used if you only want to use the location to print a stack frame.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_remove_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_remove_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_debug_remove_method</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_il_offset_from_address"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_il_offset_from_address</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">gint32
+mono_debug_il_offset_from_address (MonoMethod *method, MonoDomain *domain, guint32 native_offset)
+
+</div>
+            <p>
+             <div class="mapi-section">Description</div>
+             <div>
+<p>
+ Compute the IL offset corresponding to <i>native_offset</i> inside the native
+ code of <i>method</i> in <i>domain</i>.</div>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_add_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_add_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDebugMethodAddress*
+mono_debug_add_method (MonoMethod *method, MonoDebugMethodJitInfo *jit, MonoDomain *domain)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+</div> <!-- class=mapi -->
+
+<a name="api:mono_debug_close_mono_symbol_file"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_debug_close_mono_symbol_file</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_debug_close_mono_symbol_file (MonoSymbolFile *symfile)
+
+</div>
+            <p>
+        </div><!--mapi-description-->
+    </div><!--height container-->
+   </div></body></html>

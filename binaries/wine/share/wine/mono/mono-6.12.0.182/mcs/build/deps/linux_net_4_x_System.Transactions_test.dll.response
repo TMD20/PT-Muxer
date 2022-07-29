@@ -1,0 +1,4 @@
+Test/AsyncTest.cs
+Test/EnlistTest.cs
+Test/IntResourceManager.cs
+Test/TransactionScopeTest.cs

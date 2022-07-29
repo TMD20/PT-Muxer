@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{220AD2F1-FEE9-4514-8F36-6BE37F0AAD7F}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>System.Interactive.Async</AssemblyName>
+    <ProductSignAssembly>true</ProductSignAssembly>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;NO_REFLECTION_EMIT;NO_EXPRESSIONS;HAS_AWAIT;NUNIT;$(SignAssemblySpec)</DefineConstants>
+    <additionalargs>-delaySign</additionalargs>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;NO_REFLECTION_EMIT;NO_EXPRESSIONS;HAS_AWAIT;NUNIT;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <!--
+    <TargetFrameworkIdentifier>iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v2.0.5</TargetFrameworkVersion>
+    -->
+    <!-- NoStdLib>true</NoStdLib -->
+    <BuildPlatform>MOBILE</BuildPlatform>
+    <BuildFlavor>MONOTOUCH</BuildFlavor>
+  </PropertyGroup>
+  <Import Project="..\..\..\Common.targets" />
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="MonoTouch.NUnitLite" />
+    
+  </ItemGroup>
+  <ItemGroup>
+    
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+        <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Conversions.cs">
+      <Link>AsyncEnumerable.Conversions.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Creation.cs">
+      <Link>AsyncEnumerable.Creation.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Exceptions.cs">
+      <Link>AsyncEnumerable.Exceptions.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Generated.cs">
+      <Link>AsyncEnumerable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Single.cs">
+      <Link>AsyncEnumerable.Single.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Multiple.cs">
+      <Link>AsyncEnumerable.Multiple.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerable.Aggregates.cs">
+      <Link>AsyncEnumerable.Aggregates.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/AsyncEnumerator.cs">
+      <Link>AsyncEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/Disposables.cs">
+      <Link>Disposables.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/EnumerableGrouping.cs">
+      <Link>EnumerableGrouping.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/IAsyncEnumerable.cs">
+      <Link>IAsyncEnumerable.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/IAsyncEnumerator.cs">
+      <Link>IAsyncEnumerator.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/IAsyncGrouping.cs">
+      <Link>IAsyncGrouping.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/IOrderedAsyncEnumerable.cs">
+      <Link>IOrderedAsyncEnumerable.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/Properties/AssemblyInfo.cs">
+      <Link>Properties/AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="../../../../System.Interactive.Async/TaskExt.cs">
+      <Link>TaskExt.cs</Link>
+    </Compile>
+
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+    
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,13 @@
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataRowComparer.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataRowExtensions.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataSetUtil.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/DataTableExtensions.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/EnumerableRowCollection.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/EnumerableRowCollectionExtensions.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/OrderedEnumerableRowCollection.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/SortExpressionBuilder.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/TypedTableBase.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../../external/corefx/src/System.Data.DataSetExtensions/src/System/Data/TypedTableBaseExtensions.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/System.Data.DataSetExtensions.dll: corefx/SR.cs

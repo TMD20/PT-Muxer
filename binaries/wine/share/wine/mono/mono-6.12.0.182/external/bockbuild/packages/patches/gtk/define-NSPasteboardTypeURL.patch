@@ -1,0 +1,15 @@
+diff --git a/gdk/quartz/gdkquartz.h b/gdk/quartz/gdkquartz.h
+index 558c53535e..6ee894533f 100644
+--- a/gdk/quartz/gdkquartz.h
++++ b/gdk/quartz/gdkquartz.h
+@@ -39,6 +39,10 @@ typedef unsigned int NSUInteger;
+ typedef float CGFloat;
+ #endif
+ 
++#ifndef NSPasteboardTypeURL
++#define NSPasteboardTypeURL NSURLPboardType
++#endif
++
+ typedef enum
+ {
+   GDK_OSX_UNSUPPORTED = 0,

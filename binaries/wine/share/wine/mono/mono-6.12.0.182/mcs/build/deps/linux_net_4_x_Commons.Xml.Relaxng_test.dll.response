@@ -1,0 +1,8 @@
+../test-helpers/TestResourceHelper.cs
+Test/NvdlValidatingReaderTests.cs
+Test/RdpPatternTests.cs
+Test/RelaxngDatatypeProviderTests.cs
+Test/RelaxngReaderTests.cs
+Test/RelaxngValidatingReaderTests.cs
+Test/RncTests.cs
+Test/XsdDatatypeTests.cs

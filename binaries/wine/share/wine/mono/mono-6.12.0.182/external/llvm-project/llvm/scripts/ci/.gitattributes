@@ -1,0 +1,3 @@
+# Windows line ending
+*.sh text eol=lf
+*.bat text eol=crlf

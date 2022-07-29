@@ -1,0 +1,5 @@
+#! /bin/sh
+r='/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182'
+MONO_CFG_DIR='/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/runtime/etc'
+export MONO_CFG_DIR
+exec "$r/libtool" --mode=execute -dlopen "$r/mono/mini/libmono-2.0.la" "$r/mono/dis/monodis" "$@"

@@ -1,0 +1,880 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>mono-api-reflection.html</title>
+    <style type="text/css">
+    .mapi-docs {
+	line-height: 1.5;
+	padding-left: 2em;
+	padding-right: 2em;
+    }
+    .mapi-docs p {
+	max-width: 60em;
+    }
+    .mapi-docs .mapi-body {
+	max-width: 60em;
+    }
+    .mapi-docs code {
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.5em;
+    }
+    .mapi-description code {
+        font-family: "Consolas", "Courier", monospace;
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.2em;
+    }
+
+    .mapi-header {
+        padding: 0 0 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code {
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code:first-line {
+        line-height: 0px;
+    }
+
+    .mapi-codeblock {
+        display: block;
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+        background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-entry code {
+        border: none;
+        background-color: transparent;
+    }
+    
+    .mapi-parameters {
+        border-collapse: collapse;
+        border-spacing: 0;
+        empty-cells: hide;
+        border: 0;
+        margin: 5px 0 26px;	    
+    }
+
+    .mapi-parameters td {
+        border: 1px solid rgba(214,214,214,1);
+	  border-left-style: none;
+	padding: 5px 25px 5px 10px;
+    }
+
+    .mapi-parameters tr>td:last-child  {
+        border-right: 0;
+    }
+	
+    .mapi-parameters td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+    .mapi-parameters tr:last-child>td {
+        border-bottom: 0;
+    }
+
+    .mapi-parameters tr:first-child>td {
+        border-top: 0;
+    }
+
+    .mapi-parameters tr td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+   .mapi {
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;
+    } 
+
+    .mapi-description {
+        background: rgba(249,249,249,1);
+        border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;	 
+    }
+
+     .mapi-entry {
+         background: transparent;
+     }
+
+     .mapi-docs {
+     }
+	
+     .mapi-prototype {
+         border-left: 5px solid rgba(205,233,244,1);
+         padding: .5em;
+         margin-top: 5pt;
+         margin-bottom: 5pt;
+         font-family: "Consolas", "Courier", monospace;
+         display: block;
+         overflow: auto;
+         background-color: #f9f9f9;
+    } 
+
+    .mapi-declaration {
+	margin-top: 21px;
+    }
+
+    .mapi-section {
+        font-size: smaller;
+	font-weight: bold;
+	margin-top: 21px;
+	line-height: 1.5;
+    }
+	
+    .mapi-strike {
+        text-decoration: line-through;
+    }
+
+    .mapi-deprecated {
+        color: red;
+    }
+
+    .mapi-ptr-container {
+        background: white;
+	border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-bottom: 13px;
+        position: relative;
+        width: 100%;
+    }
+
+    .mapi-ptr {
+        background: rgba(249,249,249,1);
+	border-left: 1px solid rgba(233,233,233,1);
+	border-top: 1px solid rgba(233,233,233,1);
+        height: 12px;
+        left: 37px;
+        top: -7px;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        width: 12px;
+    }
+
+    .mapi-height-container {
+        left: -25px;
+        padding: 0 25px;
+        position: relative;
+        width: 100%;
+    }
+	
+</style>
+</head>
+<body>
+<div class="mapi-docs">
+<h2>Fetching Types, and Basic Reflection</h2>
+
+<a name="api:mono_custom_attrs_get_attr"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_get_attr</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoObject*
+mono_custom_attrs_get_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_assembly_get_assembly"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_assembly_get_assembly</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoAssembly*
+mono_reflection_assembly_get_assembly (MonoReflectionAssembly *refassembly)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>refassembly</i></td><td> the <code>System.Reflection.Assembly</code> object</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the <code>MonoAssembly*</code> associated with the C# <code>System.Reflection.Assembly</code> object <i>refassembly</i>.
+</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_free_type_info"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_free_type_info</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_reflection_free_type_info (MonoTypeNameParse *info)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_custom_attrs_blob"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_custom_attrs_blob</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoArray*
+mono_reflection_get_custom_attrs_blob (MonoReflectionAssembly *assembly, MonoObject *ctor, MonoArray *ctorArgs, MonoArray *properties, MonoArray *propValues, MonoArray *fields, MonoArray* fieldValues)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>ctor</i></td><td> custom attribute constructor</td></tr><tr><td><i>ctorArgs</i></td><td> arguments o the constructor</td></tr><tr><td><i>properties</i></td><td></td></tr><tr><td><i>propValues</i></td><td></td></tr><tr><td><i>fields</i></td><td></td></tr><tr><td><i>fieldValues</i></td><td></td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 a <code>Byte</code> array representing the blob of data.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ Creates the blob of data that needs to be saved in the metadata and that represents
+ the custom attributed described by <i>ctor</i>, <i>ctorArgs</i> etc.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_custom_attrs_by_type"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_custom_attrs_by_type</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoArray*
+mono_reflection_get_custom_attrs_by_type (MonoObject *obj_raw, MonoClass *attr_klass, MonoError *error)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>obj</i></td><td> a reflection object handle</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 an array with all the custom attributes defined of the
+
+	 reflection handle <i>obj</i>. If <i>attr_klass</i> is non-<code>NULL</code>, only custom attributes 
+	 of that type are returned. The objects are fully build. Return <code>NULL</code> if a loading error
+	 occurs.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_custom_attrs_data"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_custom_attrs_data</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoArray*
+mono_reflection_get_custom_attrs_data (MonoObject *obj_raw)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>obj</i></td><td> a reflection obj handle</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 an array of <code>System.Reflection.CustomAttributeData</code>,
+
+	 which include information about attributes reflected on
+	 types loaded using the Reflection Only methods</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_custom_attrs"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_custom_attrs</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoArray*
+mono_reflection_get_custom_attrs (MonoObject *obj_raw)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>obj</i></td><td> a reflection object handle</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 an array with all the custom attributes defined of the
+
+	 reflection handle <i>obj</i>. The objects are fully build. Return <code>NULL</code> if a loading error
+	 occurs.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_token"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_token</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">guint32
+mono_reflection_get_token (MonoObject *obj_raw)
+
+</div>
+            <p />
+             <div class="mapi-section">Return value</div>
+             <div>	 the metadata token of <i>obj</i> which should be an object
+
+	 representing a metadata element.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_type"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_type</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoType*
+mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ignorecase, gboolean *type_resolve)
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>image</i></td><td> a metadata context</td></tr><tr><td><i>info</i></td><td> type description structure</td></tr><tr><td><i>ignorecase</i></td><td> flag for case-insensitive string compares</td></tr><tr><td><i>type_resolve</i></td><td> whenever type resolve was already tried</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Build a MonoType from the type description in <i>info</i>.
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_parse_type"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_parse_type</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">int
+mono_reflection_parse_type (char *name, MonoTypeNameParse *info)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_type_get_type"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_type_get_type</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoType*
+mono_reflection_type_get_type (MonoReflectionType *reftype)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>reftype</i></td><td> the <code>System.Type</code> object</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the <code>MonoType*</code> associated with the C# <code>System.Type</code> object <i>reftype</i>.
+</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_type_from_name"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_type_from_name</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoType*
+mono_reflection_type_from_name (char *name, MonoImage *image)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>name</i></td><td> type name.</td></tr><tr><td><i>image</i></td><td> a metadata context (can be <code>NULL</code>).</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Retrieves a <code>MonoType</code> from its <i>name</i>. If the name is not fully qualified,
+ it defaults to get the type from <i>image</i> or, if <i>image</i> is <code>NULL</code> or loading
+ from it fails, uses corlib.
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_reflection_get_custom_attrs_info"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_reflection_get_custom_attrs_info</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_reflection_get_custom_attrs_info (MonoObject *obj_raw)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>obj</i></td><td> a reflection object handle</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the custom attribute info for attributes defined for the
+
+	 reflection handle <i>obj</i>. The objects.
+	<p />
+	 FIXME this function leaks like a sieve for SRE objects.</div>
+             <div class="mapi-section">Description</div>
+             <div>
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+
+<h2>Custom Attributes</h2>
+
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_construct"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_construct</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoArray*
+mono_custom_attrs_construct (MonoCustomAttrInfo *cinfo)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_free"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_free</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_custom_attrs_free (MonoCustomAttrInfo *ainfo)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_assembly"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_assembly</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_assembly (MonoAssembly *assembly)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_class"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_class</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_class (MonoClass *klass)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_event"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_event</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_event (MonoClass *klass, MonoEvent *event)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_field"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_field</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_field (MonoClass *klass, MonoClassField *field)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_index"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_index</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_index (MonoImage *image, guint32 idx)
+
+</div>
+            <p />
+             <div class="mapi-section">Return value</div>
+             <div>	 <code>NULL</code> if no attributes are found or if a loading error occurs.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_method (MonoMethod *method)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_param"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_param</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_param (MonoMethod *method, guint32 param)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>method</i></td><td> handle to the method that we want to retrieve custom parameter information from</td></tr><tr><td><i>param</i></td><td> parameter number, where zero represent the return value, and one is the first parameter in the method</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the custom attribute object for the specified parameter, or <code>NULL</code> if there are none.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ The result must be released with mono_custom_attrs_free().
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_from_property"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_from_property</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoCustomAttrInfo*
+mono_custom_attrs_from_property (MonoClass *klass, MonoProperty *property)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_custom_attrs_has_attr"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_custom_attrs_has_attr</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">gboolean
+mono_custom_attrs_has_attr (MonoCustomAttrInfo *ainfo, MonoClass *attr_klass)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+
+<h2></h2>
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_module_file_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_module_file_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionModule*
+mono_module_file_get_object (MonoDomain *domain, MonoImage *image, int table_index)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_module_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_module_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionModule*   
+mono_module_get_object   (MonoDomain *domain, MonoImage *image)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_method_body_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_method_body_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionMethodBody*
+mono_method_body_get_object (MonoDomain *domain, MonoMethod *method)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain</i></td><td> an app domain</td></tr><tr><td><i>method</i></td><td> a method</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 A <code>System.Reflection.MethodBody/RuntimeMethodBody</code> object representing the method <i>method</i>.
+</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_event_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_event_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionEvent*
+mono_event_get_object (MonoDomain *domain, MonoClass *klass, MonoEvent *event)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain</i></td><td> an app domain</td></tr><tr><td><i>klass</i></td><td> a type</td></tr><tr><td><i>event</i></td><td> a event</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 A <code>System.Reflection.MonoEvent</code> object representing the event <i>event</i>
+
+	 in class <i>klass</i>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_assembly_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_assembly_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionAssembly*
+mono_assembly_get_object (MonoDomain *domain, MonoAssembly *assembly)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain</i></td><td> an app domain</td></tr><tr><td><i>assembly</i></td><td> an assembly</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 a <code>System.Reflection.Assembly</code> object representing the <code>MonoAssembly</code> <i>assembly</i>.
+</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_param_get_objects"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_param_get_objects</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoArray*
+mono_param_get_objects (MonoDomain *domain, MonoMethod *method)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_field_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_field_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionField*
+mono_field_get_object (MonoDomain *domain, MonoClass *klass, MonoClassField *field)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain</i></td><td> an app domain</td></tr><tr><td><i>klass</i></td><td> a type</td></tr><tr><td><i>field</i></td><td> a field</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 A <code>System.Reflection.MonoField</code> object representing the field <i>field</i>
+
+	 in class <i>klass</i>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_property_get_object"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_property_get_object</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoReflectionProperty*
+mono_property_get_object_checked (MonoDomain *domain, MonoClass *klass, MonoProperty *property, MonoError *error)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain</i></td><td> an app domain</td></tr><tr><td><i>klass</i></td><td> a type</td></tr><tr><td><i>property</i></td><td> a property</td></tr><tr><td><i>error</i></td><td> set on error</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 a <code>System.Reflection.MonoProperty</code> object representing the property <i>property</i>
+
+	 in class <i>klass</i>.  On error returns <code>NULL</code> and sets <i>error</i>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->

@@ -1,0 +1,16 @@
+./../../class/lib/net_4_x-linux/monop.exe: monop.cs
+./../../class/lib/net_4_x-linux/monop.exe: options.cs
+./../../class/lib/net_4_x-linux/monop.exe: outline.cs
+./../../class/lib/net_4_x-linux/monop.exe: TypeSorter.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../class/Mono.CompilerServices.SymbolWriter/SourceMethodBuilder.cs
+./../../class/lib/net_4_x-linux/monop.exe: 
+./../../class/lib/net_4_x-linux/monop.exe: ../../class/Mono.Security/Mono.Security.Cryptography/CryptoConvert.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/*.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/Emit/*.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/Metadata/*.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/Reader/*.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/Writer/*.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/Impl/ITypeOwner.cs
+./../../class/lib/net_4_x-linux/monop.exe: ../../../external/ikvm/reflect/Impl/SymbolSupport.cs

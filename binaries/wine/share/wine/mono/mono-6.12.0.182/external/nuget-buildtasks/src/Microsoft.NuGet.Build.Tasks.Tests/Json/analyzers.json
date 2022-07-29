@@ -1,0 +1,201 @@
+{
+  "locked": false,
+  "version": -9996,
+  "targets": {
+    ".NETCore,Version=v5.0": {
+      "Microsoft.AnalyzerPowerPack/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+    },
+      "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+},
+      "System.Runtime.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.InteropServices.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      }
+    },
+    ".NETCore,Version=v5.0/win10-x64": {
+      "Microsoft.AnalyzerPowerPack/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.InteropServices.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      }
+    },
+    ".NETCore,Version=v5.0/win10-x64-aot": {
+      "Microsoft.AnalyzerPowerPack/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.InteropServices.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      }
+    },
+    ".NETCore,Version=v5.0/win10-x86": {
+      "Microsoft.AnalyzerPowerPack/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.InteropServices.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      }
+    },
+    ".NETCore,Version=v5.0/win10-x86-aot": {
+      "Microsoft.AnalyzerPowerPack/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      },
+      "System.Runtime.InteropServices.Analyzers/1.0.0": {
+        "frameworkAssemblies": [
+          "System"
+        ]
+      }
+    }
+  },
+  "libraries": {
+    "Microsoft.AnalyzerPowerPack/1.0.0": {
+      "sha512": "lpBEoZTUdDgs41plPw9X9pmbLCsdqchE0bY0+Nvxo07WxXR76O26MP6Buo46tkCiY1yX6vYEjN7PKX1sAnZ+1A==",
+      "files": [
+        "_rels/.rels",
+        "Microsoft.AnalyzerPowerPack.nuspec",
+        "analyzers/dotnet/cs/Microsoft.AnalyzerPowerPack.Common.dll",
+        "analyzers/dotnet/cs/Microsoft.AnalyzerPowerPack.CSharp.dll",
+        "analyzers/dotnet/vb/Microsoft.AnalyzerPowerPack.Common.dll",
+        "analyzers/dotnet/vb/Microsoft.AnalyzerPowerPack.VisualBasic.dll",
+        "build/AnalyzerPowerPack.props",
+        "build/AnalyzerPowerPack.Common.props",
+        "build/AnalyzerPowerPack.CSharp.props",
+        "build/AnalyzerPowerPack.VisualBasic.props",
+        "tools/install.ps1",
+        "tools/uninstall.ps1",
+        "ThirdPartyNotices.rtf",
+        "package/services/metadata/core-properties/5573a86c260446399d8bf7377b1ee14c.psmdcp",
+        "[Content_Types].xml"
+      ]
+    },
+    "Microsoft.CodeAnalysis.Analyzers/1.0.0": {
+      "sha512": "Wr4wqjbnr4IWe1q11PQ2iUdvrBiasGt2XSiwHFdQJdl2TOfG5cKhGuQxr5s/wURRTCgNjIejlbRlGo7U+iB2zA==",
+      "files": [
+        "_rels/.rels",
+        "Microsoft.CodeAnalysis.Analyzers.nuspec",
+        "analyzers/dotnet/cs/Microsoft.CodeAnalysis.Analyzers.dll",
+        "analyzers/dotnet/cs/Microsoft.CodeAnalysis.CSharp.Analyzers.dll",
+        "analyzers/dotnet/vb/Microsoft.CodeAnalysis.Analyzers.dll",
+        "analyzers/dotnet/vb/Microsoft.CodeAnalysis.VisualBasic.Analyzers.dll",
+        "tools/install.ps1",
+        "tools/uninstall.ps1",
+        "ThirdPartyNotices.rtf",
+        "package/services/metadata/core-properties/13e529baccc44c33b03965c3db1bd9cc.psmdcp",
+        "[Content_Types].xml"
+      ]
+    },
+    "System.Runtime.Analyzers/1.0.0": {
+      "sha512": "MnO/DOJigl4DUnaF3gJWmX6Xr2z7ejJRkdvllH7ljRSqcXj5091HVzyEiX/98HFYTbi1IRml+mu4kG4hygrP+A==",
+      "files": [
+        "_rels/.rels",
+        "System.Runtime.Analyzers.nuspec",
+        "analyzers/dotnet/cs/System.Runtime.Analyzers.dll",
+        "analyzers/dotnet/cs/System.Runtime.CSharp.Analyzers.dll",
+        "analyzers/dotnet/vb/System.Runtime.Analyzers.dll",
+        "analyzers/dotnet/vb/System.Runtime.VisualBasic.Analyzers.dll",
+        "build/System.Runtime.Analyzers.props",
+        "build/System.Runtime.Analyzers.Common.props",
+        "build/System.Runtime.CSharp.Analyzers.props",
+        "build/System.Runtime.VisualBasic.Analyzers.props",
+        "tools/install.ps1",
+        "tools/uninstall.ps1",
+        "ThirdPartyNotices.rtf",
+        "package/services/metadata/core-properties/26f8afd54b99434388056543bd1d55d0.psmdcp",
+        "[Content_Types].xml"
+      ]
+    },
+    "System.Runtime.InteropServices.Analyzers/1.0.0": {
+      "sha512": "DUHZ0yl7qnI3i5e/wVODDO2aIezTnJ4EvdKZudJn9yNToN9gdMNNTZgjl3rOLcxHIVI8OWQW0WuoqUL7x5sKKg==",
+      "files": [
+        "_rels/.rels",
+        "System.Runtime.InteropServices.Analyzers.nuspec",
+        "analyzers/dotnet/cs/System.Runtime.InteropServices.Analyzers.dll",
+        "analyzers/dotnet/cs/System.Runtime.InteropServices.CSharp.Analyzers.dll",
+        "analyzers/dotnet/vb/System.Runtime.InteropServices.Analyzers.dll",
+        "analyzers/dotnet/vb/System.Runtime.InteropServices.VisualBasic.Analyzers.dll",
+        "build/System.Runtime.InteropServices.Analyzers.props",
+        "build/System.Runtime.InteropServices.Analyzers.Common.props",
+        "tools/install.ps1",
+        "tools/uninstall.ps1",
+        "ThirdPartyNotices.rtf",
+        "package/services/metadata/core-properties/70736d925f2649508a5ffd07c1fc71f5.psmdcp",
+        "[Content_Types].xml"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "": [
+      "Microsoft.AnalyzerPowerPack [1.0.0, )",
+      "Microsoft.CodeAnalysis.Analyzers [1.0.0, )",
+      "System.Runtime.Analyzers [1.0.0, )",
+      "System.Runtime.InteropServices.Analyzers [1.0.0, )"
+    ],
+    ".NETCore,Version=v5.0": []
+  }
+}

@@ -33,8 +33,11 @@ def getRemuxConfigs(path):
 
 
 def chapterListParser(chapterList):
+    if chapterList==None:
+        return
     tempData = tempfile.mkstemp()
     file = tempData[1]
+
     with open(file, "w") as p:
         for dict in chapterList:
             p.write(dict["time"])

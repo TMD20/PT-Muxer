@@ -1,0 +1,4 @@
+Test/Mono.Messaging.RabbitMQ/FailuresTest.cs
+Test/Mono.Messaging.RabbitMQ/MessageBaseTest.cs
+Test/Mono.Messaging.RabbitMQ/RabbitMQMessagingProviderTest.cs
+Test/Mono.Messaging.RabbitMQ/TestUtils.cs

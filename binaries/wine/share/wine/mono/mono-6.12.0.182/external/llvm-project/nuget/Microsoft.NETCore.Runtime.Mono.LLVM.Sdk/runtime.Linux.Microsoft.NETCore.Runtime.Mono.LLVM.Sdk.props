@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ItemGroup>
+    <File Include="..\..\artifacts\tmp\InstallRoot\bin\llvm-config" TargetPath="tools\$(PackageTargetRuntime)\bin\" />
+    <File Include="..\..\artifacts\tmp\InstallRoot\bin\llvm-dis" TargetPath="tools\$(PackageTargetRuntime)\bin\" />
+    <File Include="..\..\artifacts\tmp\InstallRoot\bin\llvm-tblgen" TargetPath="tools\$(PackageTargetRuntime)\bin\" />
+    <File Include="..\..\artifacts\tmp\InstallRoot\lib\**" Exclude="libLTO*" TargetPath="tools\$(PackageTargetRuntime)\lib\%(RecursiveDir)%(Filename)%(Extension)" />
+    <File Include="..\..\artifacts\tmp\InstallRoot\include\**" Exclude="libLTO*" TargetPath="tools\$(PackageTargetRuntime)\include\%(RecursiveDir)%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

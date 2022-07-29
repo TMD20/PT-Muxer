@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Microsoft.AspNetCore.Components.Browser</name>
+    </assembly>
+    <members>
+        <member name="T:Microsoft.AspNetCore.Components.Browser.RendererRegistry">
+            <summary>
+            Framework infrastructure, not intended to be used by application code.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.Browser.RendererRegistry.Current">
+            <summary>
+            Framework infrastructure, not intended to be used by application code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.Browser.RendererRegistry.SetCurrentRendererRegistry(Microsoft.AspNetCore.Components.Browser.RendererRegistry)">
+            <summary>
+            Framework infrastructure, not intended by used by application code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.Browser.RendererRegistry.Add(Microsoft.AspNetCore.Components.Rendering.Renderer)">
+            <summary>
+            Framework infrastructure, not intended by used by application code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.Browser.RendererRegistry.Find(System.Int32)">
+            <summary>
+            Framework infrastructure, not intended by used by application code.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.Browser.RendererRegistry.TryRemove(System.Int32)">
+            <summary>
+            Framework infrastructure, not intended by used by application code.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher">
+            <summary>
+            Provides mechanisms for dispatching events to components in a <see cref="T:Microsoft.AspNetCore.Components.Rendering.Renderer"/>.
+            </summary>
+        </member>
+        <member name="M:Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher.DispatchEvent(Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher.BrowserEventDescriptor,System.String)">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="T:Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher.BrowserEventDescriptor">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher.BrowserEventDescriptor.BrowserRendererId">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher.BrowserEventDescriptor.EventHandlerId">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+        <member name="P:Microsoft.AspNetCore.Components.Browser.RendererRegistryEventDispatcher.BrowserEventDescriptor.EventArgsType">
+            <summary>
+            For framework use only.
+            </summary>
+        </member>
+    </members>
+</doc>

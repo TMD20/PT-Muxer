@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/boringssl/crypto/rc4/rc4.c
+openssl/rc4.h
+-
+
+/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/boringssl/include/openssl/base.h
+stddef.h
+-
+stdint.h
+-
+sys/types.h
+-
+openssl/opensslconf.h
+-
+boringssl_prefix_symbols.h
+-
+
+/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/boringssl/include/openssl/opensslconf.h
+
+/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/boringssl/include/openssl/rc4.h
+openssl/base.h
+-
+

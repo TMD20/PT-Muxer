@@ -57,7 +57,7 @@ def Remux(args):
         remuxConfigs.append(remuxConfig)
         if movie == None:
             movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
-        kind = movieData.getKind(movie)
+        kind = args.kind or movieData.getKind(movie)
         os.chdir(args.outpath)
         fileName = muxGenerator.getFileName(
             kind, remuxConfig, movie, args.group)
@@ -97,9 +97,12 @@ def ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator):
             remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], season, episode)
 
     muxGenerator.generateMuxData(remuxConfig)
-
-    muxGenerator.createMKV(fileName, movieTitle,
+    if chaptersTemp:
+        muxGenerator.createMKV(fileName, movieTitle,
                            chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
 
-    os.close(chaptersTemp[0])
+        os.close(chaptersTemp[0])
+    else:
+        muxGenerator.createMKV(fileName, movieTitle,
+        None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
     os.close(xmlTemp[0])

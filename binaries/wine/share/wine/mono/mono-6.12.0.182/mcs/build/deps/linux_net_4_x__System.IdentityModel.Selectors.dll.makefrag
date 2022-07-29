@@ -1,0 +1,15 @@
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: ../../build/common/Locale.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: ../../build/common/MonoTODOAttribute.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/CardSpaceException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/CardSpacePolicyElement.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/CardSpaceSelector.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/IdentityValidationException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/PolicyValidationException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/ServiceBusyException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/ServiceNotStartedException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/StsCommunicationException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/UnsupportedPolicyOptionsException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/UntrustedRecipientException.cs
+./../../class/lib/net_4_x-linux/System.IdentityModel.Selectors.dll: System.IdentityModel.Selectors/UserCancellationException.cs

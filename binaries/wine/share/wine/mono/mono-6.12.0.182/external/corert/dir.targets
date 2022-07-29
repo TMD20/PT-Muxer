@@ -1,0 +1,68 @@
+<Project InitialTargets="CheckForBuildTools" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="CheckForBuildTools">
+    <Error Condition="!Exists('$(ToolsDir)') and '$(OverrideToolsDir)'=='true'"
+           Text="The tools directory [$(ToolsDir)] does not exist. Please run sync in your enlistment to ensure the tools are installed before attempting to build an individual project." />
+    <Error Condition="!Exists('$(ToolsDir)') and '$(OverrideToolsDir)'!='true'"
+           Text="The tools directory [$(ToolsDir)] does not exist. Please run init-tools.cmd in your enlistment to ensure the tools are installed before attempting to build an individual project." />
+  </Target>
+
+  <!-- Provide default targets which can be hooked onto or overridden as necessary -->
+  <Target Name="BuildAndTest" DependsOnTargets="Build;Test" />
+  <Target Name="RebuildAndTest" DependsOnTargets="Rebuild;Test" />
+  <Target Name="Test" />
+
+  <!-- CoreRT projects are not CLSCompliant by default -->
+  <PropertyGroup>
+    <CLSCompliant Condition="'$(CLSCompliant)'==''">false</CLSCompliant>
+  </PropertyGroup>
+
+  <!-- Set default references for netcoreapp2.1 -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
+    <!-- This tells VS that this is .NET Core app - uses .NET Core debugger, IntelliSense, etc. -->
+    <TargetFrameworkIdentifier>.NETCoreApp</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v2.1</TargetFrameworkVersion>
+  </PropertyGroup>
+
+  <!-- Set default references for netstandard1.3 -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <NuGetTargetMoniker>.NETStandard,Version=v1.3</NuGetTargetMoniker>
+    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v1.3</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
+    <PackageReference Include="NETStandard.Library">
+      <Version>1.6.1</Version>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Set default references for netstandard2.0 -->
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <NuGetTargetMoniker>.NETStandard,Version=v2.0</NuGetTargetMoniker>
+    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="NETStandard.Library">
+      <Version>2.0.3</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ImportGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <Import Project="$(PackagesDir)netstandard.library\2.0.3\build\netstandard2.0\NETStandard.Library.targets" Condition="Exists('$(PackagesDir)netstandard.library\2.0.3\build\netstandard2.0\NETStandard.Library.targets')" />
+  </ImportGroup>
+
+  <!-- Set non-empty TargetFrameworkIdentifier to avoid defaulting to .NETPortable -->
+  <PropertyGroup Condition="'$(TargetFrameworkIdentifier)' == ''">
+    <TargetFrameworkIdentifier>.NETStandard</TargetFrameworkIdentifier>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NugetRuntimeIdentifier Condition="'$(NugetRuntimeIdentifier)' == ''">$(RuntimeIdentifiers)</NugetRuntimeIdentifier>
+  </PropertyGroup>
+
+  <Import Project="$(ToolsDir)Build.Common.targets" Condition="Exists('$(ToolsDir)Build.Common.targets')" />
+
+  <!-- Override corefx multi targeting support -->
+  <Target Name="ConvertCommonMetadataToAdditionalProperties" BeforeTargets="AssignProjectConfiguration" />
+
+</Project>

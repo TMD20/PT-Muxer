@@ -1,0 +1,36 @@
+diff --git a/gdk/quartz/gdkwindow-quartz.c b/gdk/quartz/gdkwindow-quartz.c
+index 35450a0c5..b4973d199 100644
+--- a/gdk/quartz/gdkwindow-quartz.c
++++ b/gdk/quartz/gdkwindow-quartz.c
+@@ -461,7 +461,14 @@ _gdk_windowing_before_process_all_updates (void)
+ {
+   in_process_all_updates = TRUE;
+ 
+-  NSDisableScreenUpdates ();
++  if (gdk_quartz_osx_version () >= GDK_OSX_EL_CAPITAN)
++    {
++      [NSAnimationContext endGrouping];
++    }
++  else
++    {
++      NSDisableScreenUpdates ();
++    }
+ }
+ 
+ void
+@@ -491,7 +498,14 @@ _gdk_windowing_after_process_all_updates (void)
+ 
+   in_process_all_updates = FALSE;
+ 
+-  NSEnableScreenUpdates ();
++  if (gdk_quartz_osx_version() >= GDK_OSX_EL_CAPITAN)
++    {
++      [NSAnimationContext beginGrouping];
++    }
++  else
++    {
++      NSEnableScreenUpdates ();
++    }
+ }
+ 
+ static void

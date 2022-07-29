@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E662282B-4341-4F86-AAAA-A942335B47FB}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <AssemblyName>System.Reactive.Providers</AssemblyName>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+
+<ProjectReference Include="..\System.Reactive.Core\android_System.Reactive.Core.csproj">
+  <Project>{4E516F10-DA7A-4D43-963E-A93865ABEA5B}</Project>
+  <Name>android_System.Reactive.Core</Name>
+</ProjectReference><ProjectReference Include="..\System.Reactive.Interfaces\android_System.Reactive.Interfaces.csproj">
+  <Project>{9E9B9C60-98B0-40FA-9C2B-1218D417CAA4}</Project>
+  <Name>android_System.Reactive.Interfaces</Name>
+</ProjectReference><ProjectReference Include="..\System.Reactive.Linq\android_System.Reactive.Linq.csproj">
+  <Project>{63252AE9-5186-45CA-BFCD-FA51C6B66A43}</Project>
+  <Name>android_System.Reactive.Linq</Name>
+</ProjectReference>
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Internal\Constants.cs">
+      <Link>Reactive\Internal\Constants.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Joins\QueryablePattern.cs">
+      <Link>Reactive\Joins\QueryablePattern.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Joins\QueryablePlan.cs">
+      <Link>Reactive\Joins\QueryablePlan.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Linq\ExpressionVisitor.cs">
+      <Link>Reactive\Linq\ExpressionVisitor.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Linq\Observable.Queryable.cs">
+      <Link>Reactive\Linq\Observable.Queryable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Linq\Qbservable.cs">
+      <Link>Reactive\Linq\Qbservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Linq\Qbservable.Generated.cs">
+      <Link>Reactive\Linq\Qbservable.Generated.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\Linq\Qbservable.Joins.cs">
+      <Link>Reactive\Linq\Qbservable.Joins.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Reactive\ObservableQuery.cs">
+      <Link>Reactive\ObservableQuery.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.Providers\Strings_Providers.Generated.cs">
+      <Link>Strings_Providers.Generated.cs</Link>
+    </Compile>
+
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+    <EmbeddedResource Include='..\..\..\..\..\..\../../../external/rx/Rx/NET/Source/System.Reactive.Providers/Strings_Providers.resx'>
+      <Link>Strings_Providers.resx</Link>
+    </EmbeddedResource>
+
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+</Project>

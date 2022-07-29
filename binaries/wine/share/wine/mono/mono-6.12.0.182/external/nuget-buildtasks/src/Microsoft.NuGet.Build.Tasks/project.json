@@ -1,0 +1,12 @@
+﻿{
+  "dependencies": {
+    "Microsoft.Build.Utilities.Core": "14.3.0",
+    "Newtonsoft.Json": "6.0.4"
+  },
+  "frameworks": {
+    "net45": {}
+  },
+  "runtimes": {
+    "win": {}
+  }
+}

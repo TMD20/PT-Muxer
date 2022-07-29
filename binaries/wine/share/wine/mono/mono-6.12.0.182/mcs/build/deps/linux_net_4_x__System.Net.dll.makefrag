@@ -1,0 +1,5 @@
+./../../class/lib/net_4_x-linux/System.Net.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/System.Net.dll: ../../build/common/MonoTODOAttribute.cs
+./../../class/lib/net_4_x-linux/System.Net.dll: ../referencesource/System.Net/net/IPEndPointCollection.cs
+./../../class/lib/net_4_x-linux/System.Net.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/System.Net.dll: Assembly/TypeForwarders.cs

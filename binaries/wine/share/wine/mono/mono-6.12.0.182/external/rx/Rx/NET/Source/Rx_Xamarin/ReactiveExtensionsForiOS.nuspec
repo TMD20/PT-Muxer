@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>ReactiveExtensionsForiOS</id>
+    <version>2.1.0</version>
+    <authors>Microsoft Open Technologies, Inc</authors>
+    <owners>Xamarin Inc.</owners>
+    <licenseUrl>https://raw.github.com/mono/rx/master/Rx/NET/Source/license.txt</licenseUrl>
+    <projectUrl>https://github.com/mono/rx</projectUrl>
+    <iconUrl>https://raw.github.com/mono/rx/master/Rx/NET/Resources/Artwork/Logo_Color.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>a library for composing asynchronous and event-based programs using observable sequences and LINQ-style query operators. (iOS)</description>
+    <releaseNotes>Initial NuGet package release. WARNING: Rx depends on generics a lot, and they will fail on device. You should really test your code on device. Also you want to use the generic enhanced versions of Xamarin.iOS.</releaseNotes>
+    <copyright>Copyright (c) Microsoft Open Technologies, Inc.  All rights reserved.</copyright>
+    <tags>Rx Reactive Linq Xamarin iOS</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework="MonoTouch" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+	<file target="lib/MonoTouch" src="iOS/rx/System.Reactive.Interfaces/bin/Release/System.Reactive.Interfaces.dll" />
+	<file target="lib/MonoTouch" src="iOS/rx/System.Reactive.Core/bin/Release/System.Reactive.Core.dll" />
+	<file target="lib/MonoTouch" src="iOS/rx/System.Reactive.Linq/bin/Release/System.Reactive.Linq.dll" />
+	<file target="lib/MonoTouch" src="iOS/rx/System.Reactive.PlatformServices/bin/Release/System.Reactive.PlatformServices.dll" />
+	<file target="lib/MonoTouch" src="iOS/rx/System.Reactive.Debugger/bin/Release/System.Reactive.Debugger.dll" />
+	<file target="lib/MonoTouch" src="iOS/rx/System.Reactive.Experimental/bin/Release/System.Reactive.Experimental.dll" />
+  </files>
+</package>

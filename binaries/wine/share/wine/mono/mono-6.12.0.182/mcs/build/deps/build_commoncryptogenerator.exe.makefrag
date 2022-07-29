@@ -1,0 +1,3 @@
+./../../class/lib/build-linux/commoncryptogenerator.exe: CommonCryptorGenerator.cs
+./../../class/lib/build-linux/commoncryptogenerator.exe: generator.cs
+./../../class/lib/build-linux/commoncryptogenerator.exe: CommonDigestGenerator.cs

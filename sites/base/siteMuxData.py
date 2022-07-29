@@ -146,6 +146,7 @@ class MuxOBj():
 
         season = remuxConfig.get("Season")
         episode = remuxConfig.get("Episode")
+        
 
         if kind == "movie":
             fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
@@ -173,6 +174,9 @@ class MuxOBj():
 
         command = list(itertools.chain.from_iterable(
             [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
+        if chapters==None:
+            command = list(itertools.chain.from_iterable(
+                [[mkvmergeBin, "--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
         commandStr = " ".join(command)
         print(f"Running This Command\n{commandStr}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:

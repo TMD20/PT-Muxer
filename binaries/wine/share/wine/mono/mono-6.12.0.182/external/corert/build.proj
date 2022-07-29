@@ -1,0 +1,22 @@
+<Project DefaultTargets="BuildAndTest" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="dir.props" />
+
+  <!-- required to build the projects in their specified order -->
+  <PropertyGroup>
+    <SerializeProjects>true</SerializeProjects>
+  </PropertyGroup>
+
+  <Import Project="$(ToolsDir)VersionTools.targets" Condition="Exists('$(ToolsDir)VersionTools.targets')" />
+
+  <ItemGroup>
+    <Project Include="src\Common\test-runtime\XUnit.Runtime.depproj" />
+    <Project Include="src\dirs.proj" />
+  </ItemGroup>
+
+  <Import Project="dir.targets" />
+
+  <Import Project="dir.traversal.targets" />
+
+  <Import Project="$(ToolsDir)clean.targets" />
+
+</Project>

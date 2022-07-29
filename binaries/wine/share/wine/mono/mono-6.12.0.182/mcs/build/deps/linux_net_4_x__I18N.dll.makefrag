@@ -1,0 +1,10 @@
+./../../../class/lib/net_4_x-linux/I18N.dll: ../../../build/common/Consts.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: ../Assembly/AssemblyInfo.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: ByteEncoding.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: ByteSafeEncoding.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: DefaultEncoder.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: Handlers.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: Manager.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: MonoEncoding.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: MonoSafeEncoding.cs
+./../../../class/lib/net_4_x-linux/I18N.dll: Strings.cs

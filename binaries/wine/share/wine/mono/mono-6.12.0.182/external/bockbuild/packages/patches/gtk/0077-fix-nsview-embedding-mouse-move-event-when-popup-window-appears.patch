@@ -1,0 +1,13 @@
+diff --git a/gdk/quartz/gdkevents-quartz.c b/gdk/quartz/gdkevents-quartz.c
+index 195899b13..3eecdde42 100644
+--- a/gdk/quartz/gdkevents-quartz.c
++++ b/gdk/quartz/gdkevents-quartz.c
+@@ -932,7 +932,7 @@ find_window_for_ns_event (NSEvent *nsevent,
+                 toplevel_private = (GdkWindowObject *)toplevel;
+                 toplevel_impl = (GdkWindowImplQuartz *)toplevel_private->impl;
+ 
+-                subview = find_nsview_at_pos (toplevel_impl, *x, *y);
++                subview = find_nsview_at_pos (toplevel_impl, x_tmp, y_tmp);
+                 if (subview != NULL && ![subview isKindOfClass:[GdkQuartzView class]]) {
+                   g_signal_emit_by_name (toplevel, "native-child-event",
+                                          subview, nsevent);

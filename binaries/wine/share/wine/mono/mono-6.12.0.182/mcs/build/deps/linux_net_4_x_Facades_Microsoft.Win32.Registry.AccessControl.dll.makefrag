@@ -1,0 +1,3 @@
+./../../../class/lib/net_4_x-linux/Facades/Microsoft.Win32.Registry.AccessControl.dll: ../../../../external/corefx/src/Microsoft.Win32.Registry.AccessControl/src/Microsoft/Win32/RegistryAclExtensions.cs
+./../../../class/lib/net_4_x-linux/Facades/Microsoft.Win32.Registry.AccessControl.dll: AssemblyInfo.cs
+./../../../class/lib/net_4_x-linux/Facades/Microsoft.Win32.Registry.AccessControl.dll: TypeForwarders.cs

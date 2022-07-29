@@ -1,0 +1,3 @@
+#! /bin/sh
+r='/usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182'
+exec "$r/tools/mono-hang-watchdog/mono-hang-watchdog" "$@"

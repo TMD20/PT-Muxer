@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/local/bin/mine/remux/binaries/wine/bin/pedump $MONO_OPTIONS --verify metadata,code "$@"

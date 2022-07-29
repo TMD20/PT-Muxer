@@ -1,0 +1,5 @@
+../../../external/corefx/src/CoreFx.Private.TestUtilities/src/System/AssertExtensions.cs
+../../../external/corefx/src/System.Json/tests/JsonArrayTests.cs
+../../../external/corefx/src/System.Json/tests/JsonObjectTests.cs
+../../../external/corefx/src/System.Json/tests/JsonPrimitiveTests.cs
+../../../external/corefx/src/System.Json/tests/JsonValueTests.cs

@@ -1,0 +1,875 @@
+﻿<?xml version="1.0" encoding="utf-8"?><span>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>mono-api-embedding.html</title>
+    <style type="text/css">
+//<![CDATA[
+
+SCALAR(0x55eb08c9ad00)
+   
+//]]>//
+</style>
+</head>
+<body>
+<div class="mapi-docs">
+<h2>Embedding Mono</h2>
+
+	<p />The Mono runtime can be embedded into C and C++
+	applications.   Your C/C++ code can invoke managed code
+	running in the Mono/.NET world and you can also surface your
+	internal application APIs to Mono and .NET.
+
+	<p />For an overview of how to embed Mono into your application
+	and the strategies that you can use to embed Mono, check the
+	Mono
+	website's <a href="http://www.mono-project.com/docs/advanced/embedding/">Embedding
+	Mono</a> page.
+
+	<p />This page is the companion API reference for the above guide.
+	
+	<p />The simplest way of embedding Mono is illustrated here:
+<pre>
+int main (int argc, char *argv)
+{
+	/*
+	 * Load the default Mono configuration file, this is needed
+	 * if you are planning on using the dllmaps defined on the
+	 * system configuration
+	 */
+	mono_config_parse (NULL);
+
+	/*
+	 * mono_jit_init() creates a domain: each assembly is
+	 * loaded and run in a MonoDomain.
+	 */
+	MonoDomain *domain = mono_jit_init (&quot;startup.exe&quot;);
+
+	/*
+	 * Optionally, add an internal call that your startup.exe
+	 * code can call, this will bridge startup.exe to Mono
+	 */
+	mono_add_internal_call (&quot;Sample::GetMessage&quot;, getMessage);
+
+	/*
+	 * Open the executable, and run the Main method declared
+	 * in the executable
+	 */
+	MonoAssembly *assembly = mono_domain_assembly_open (domain, &quot;startup.exe&quot;);
+
+	if (!assembly)
+		exit (2);
+	/*
+	 * mono_jit_exec() will run the Main() method in the assembly.
+	 * The return value needs to be looked up from
+	 * System.Environment.ExitCode.
+	 */
+	mono_jit_exec (domain, assembly, argc, argv);
+}
+
+/* The C# signature for this method is: string GetMessage () in class Sample */
+MonoString*
+getMessage ()
+{
+	return mono_string_new (mono_domain_get (), &quot;Hello, world&quot;);
+}
+</pre>
+
+<a name="api:mono_jit_init"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_init</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDomain* 
+mono_jit_init (const char *file)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_jit_parse_options"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_parse_options</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_jit_parse_options (int argc, char * argv[])
+
+</div>
+            <p />
+             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Process the command line options in <i>argv</i> as done by the runtime executable.
+ This should be called before <code>mono_jit_init</code>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_jit_exec"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_exec</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">int 
+mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>assembly</i></td><td> reference to an assembly</td></tr><tr><td><i>argc</i></td><td> argument count</td></tr><tr><td><i>argv</i></td><td> argument vector</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Start execution of a program.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_set_dirs"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_set_dirs</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_set_dirs (const char *assembly_dir, const char *config_dir)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>assembly_dir</i></td><td> the base directory for assemblies</td></tr><tr><td><i>config_dir</i></td><td> the base directory for configuration files</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ This routine is used internally and by developers embedding
+ the runtime into their own applications.
+<p />
+ There are a number of cases to consider: Mono as a system-installed
+ package that is available on the location preconfigured or Mono in
+ a relocated location.
+<p />
+ If you are using a system-installed Mono, you can pass <code>NULL</code>
+ to both parameters.  If you are not, you should compute both
+ directory values and call this routine.
+<p />
+ The values for a given PREFIX are:
+<p />
+    assembly_dir: PREFIX/lib
+    config_dir:   PREFIX/etc
+<p />
+ Notice that embedders that use Mono in a relocated way must
+ compute the location at runtime, as they will be in control
+ of where Mono is installed.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_parse_default_optimizations"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_parse_default_optimizations</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">int
+mono_parse_default_optimizations (const char* p)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_runtime_set_main_args"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_runtime_set_main_args</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">int
+mono_runtime_set_main_args (int argc, char* argv[])
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>argc</i></td><td> number of arguments from the command line</td></tr><tr><td><i>argv</i></td><td> array of strings from the command line</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Set the command line arguments from an embedding application that doesn't otherwise call
+ <code>mono_runtime_run_main</code>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_jit_cleanup"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_cleanup</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void        
+mono_jit_cleanup (MonoDomain *domain)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_jit_set_trace_options"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_set_trace_options</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">gboolean
+mono_jit_set_trace_options (const char* options)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>options</i></td><td> string representing the trace options</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 <code>TRUE</code> if the options were parsed and set correctly, <code>FALSE</code> otherwise.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ Set the options of the tracing engine. This function can be called before initializing
+ the mono runtime. See the --trace mono(1) manpage for the options format.
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+
+
+<h3>Internal Calls</h3>
+
+	<p />The Mono runtime provides two mechanisms to expose C code
+	to the CIL universe: internal calls and native C
+	code. Internal calls are tightly integrated with the runtime,
+	and have the least overhead, as they use the same data types
+	that the runtime uses.
+
+	<p />The other option is to use the Platform Invoke (P/Invoke)
+	to call C code from the CIL universe, using the standard
+	<a href="http://www.mono-project.com/Interop_with_Native_Libraries">P/Invoke</a>
+	mechanisms.
+
+	<p />To register an internal call, use this call you use the
+	<a href="#api:mono_add_internal_call"><tt>mono_add_internal_call</tt>
+	routine.
+
+</a></div> <!-- class=mapi  -->
+
+<a name="api:mono_add_internal_call"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_add_internal_call</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_add_internal_call (const char *name, gconstpointer method)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>name</i></td><td> method specification to surface to the managed world</td></tr><tr><td><i>method</i></td><td> pointer to a C method to invoke when the method is called</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ This method surfaces the C function pointed by <i>method</i> as a method
+ that has been surfaced in managed code with the method specified in
+ <i>name</i> as an internal call.
+<p />
+ Internal calls are surfaced to all app domains loaded and they are
+ accessibly by a type with the specified name.
+<p />
+ You must provide a fully qualified type name, that is namespaces
+ and type name, followed by a colon and the method name, with an
+ optional signature to bind.
+<p />
+ For example, the following are all valid declarations:
+<p />
+ <code>MyApp.Services.ScriptService:Accelerate</code>
+<p />
+ <code>MyApp.Services.ScriptService:Slowdown(int,bool)</code>
+<p />
+ You use method parameters in cases where there might be more than
+ one surface method to managed code.  That way you can register different
+ internal calls for different method overloads.
+<p />
+ The internal calls are invoked with no marshalling.   This means that .NET
+ types like <code>System.String</code> are exposed as <code>MonoString*</code> parameters.   This is
+ different than the way that strings are surfaced in P/Invoke.
+<p />
+ For more information on how the parameters are marshalled, see the
+ <a href="http://www.mono-project.com/docs/advanced/embedding/">Mono Embedding</a>
+ page.
+<p />
+ See the <a href="mono-api-methods.html&lt;code&gt;method&lt;/code&gt;-desc">Method Description</a>
+ reference for more information on the format of method descriptions.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+
+<h3>P/Invoke with embedded applications</h3>
+
+	<p />Unlike internal calls, Platform/Invoke is easier to use and
+	more portable.  It allows you to share code with Windows and
+	.NET that have a different setup for internal calls to their
+	own runtime.
+
+	<p />Usually P/Invoke declarations reference external libraries
+	like:
+
+	<pre>
+	[DllImport (&quot;opengl&quot;)]
+	void glBegin (GLEnum mode)
+	</pre>
+
+	<p />Mono extends P/Invoke to support looking up symbols not in
+	an external library, but looking up those symbols into the
+	same address space as your program, to do this, use the
+	special library name &quot;__Internal&quot;.   This will direct Mono to
+	lookup the method in your own process.
+
+	<p />There are situations where the host operating system does
+	not support looking up symbols on the process address space.
+	For situations like this you can use
+	the <a href="#api:mono_dl_register_library">mono_dl_register_library</a>. 
+
+</div>
+<h4><a name="api:mono_dl_register_library">mono_dl_register_library</a></h4>
+	
+<h3>Data Marshalling</h3>
+
+	<p />Managed objects are represented as <tt>MonoObject*</tt>
+	types.  Those objects that the runtime consumes directly have
+	more specific C definitions (for example strings are of type
+	<tt>MonoString *</tt>, delegates are of type
+	<tt>MonoDelegate*</tt> but they are still <tt>MonoObject
+	*</tt>s).
+
+	<p />As of Mono 1.2.x types defined in mscorlib.dll do not have
+	their fields reordered in any way.   But other libraries might
+	have their fields reordered.   In these cases, Managed
+	structures and objects have the same layout in the C# code as
+	they do in the unmanaged world.
+
+	<p />Structures defined outside corlib must have a specific
+	StructLayout definition, and have it set as sequential if you
+	plan on accessing these fields directly from C code.
+
+	<p /><b>Important</b> Internal calls do not provide support for
+	marshalling structures.  This means that any API calls that
+	take a structure (excluding the system types like int32,
+	int64, etc) must be passed as a pointer, in C# this means
+	passing the value as a &quot;ref&quot; or &quot;out&quot; parameter.
+
+<h3>Mono Runtime Configuration</h3>
+
+	<p />Certain features of the Mono runtime, like DLL mapping, are
+	available through a configuration file that is loaded at
+	runtime.   The default Mono implementation loads the
+	configuration file from <tt>$sysconfig/mono/config</tt>
+	(typically this is <tt>/etc/mono/config</tt>).
+
+	<p />See the <tt>mono-config(5)</tt> man page for more details
+	on what goes in this file.
+
+	<p />The following APIs expose this functionality:
+	
+<a name="api:mono_config_cleanup"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_config_cleanup</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_config_cleanup (void)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_config_is_server_mode"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_config_is_server_mode</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_bool
+mono_config_is_server_mode (void)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_config_parse"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_config_parse</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_config_parse (const char *filename)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>filename</i></td><td> the filename to load the configuration variables from.</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Pass a <code>NULL</code> filename to parse the default config files
+ (or the file in the <code>MONO_CONFIG</code> env var).</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_config_parse_memory"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_config_parse_memory</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_config_parse_memory (const char *buffer)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>buffer</i></td><td> a pointer to an string XML representation of the configuration</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Parses the configuration from a buffer</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_config_set_server_mode"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_config_set_server_mode</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_config_set_server_mode (mono_bool server_mode)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_config_string_for_assembly_file"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_config_string_for_assembly_file</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">const char *
+mono_config_string_for_assembly_file (const char *filename)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_get_config_dir"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_get_config_dir</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">const char* 
+mono_get_config_dir (void)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_get_machine_config"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_get_machine_config</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">const char *
+mono_get_machine_config (void)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_register_machine_config"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_register_machine_config</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_register_machine_config (const char *config_xml)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_set_config_dir"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_set_config_dir</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_set_config_dir (const char *dir)
+
+</div>
+            <p />
+             <div class="mapi-section">Description</div>
+             <div>
+ Invoked during startup</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+
+<h3>Advanced Execution Setups</h3>
+
+	<p />These are not recommended ways of initializing Mono, they
+	are done internally by mono_jit_init, but are here to explain
+	what happens internally.
+	
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_runtime_exec_managed_code"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_runtime_exec_managed_code</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_runtime_exec_managed_code (MonoDomain *domain,
+				MonoMainThreadFunc mfunc,
+				gpointer margs)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain</i></td><td> Application domain</td></tr><tr><td><i>main_func</i></td><td> function to invoke from the execution thread</td></tr><tr><td><i>main_args</i></td><td> parameter to the main_func</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Launch a new thread to execute a function
+<p />
+ <i>main_func</i> is called back from the thread with main_args as the
+ parameter.  The callback function is expected to start <code>Main</code>
+ eventually.  This function then waits for all managed threads to
+ finish.
+ It is not necessary anymore to execute managed code in a subthread,
+ so this function should not be used anymore by default: just
+ execute the code and then call mono_thread_manage().</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_runtime_exec_main"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_runtime_exec_main</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">mono_runtime_exec_main</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_init"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_init</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDomain*
+mono_init (const char *domain_name)
+
+</div>
+            <p />
+             <div class="mapi-section">Return value</div>
+             <div>	 the initial domain.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Creates the initial application domain and initializes the mono_defaults
+ structure.
+<p />
+ This function is guaranteed to not run any IL code.
+ The runtime is initialized using the default runtime version.
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_init_from_assembly"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_init_from_assembly</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDomain*
+mono_init_from_assembly (const char *domain_name, const char *filename)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>domain_name</i></td><td> name to give to the initial domain</td></tr><tr><td><i>filename</i></td><td> filename to load on startup</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the initial domain.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Used by the runtime, users should use mono_jit_init instead.
+<p />
+ Creates the initial application domain and initializes the mono_defaults
+ structure.
+ This function is guaranteed to not run any IL code.
+ The runtime is initialized using the runtime version required by the
+ provided executable. The version is determined by looking at the exe 
+ configuration file and the version PE field)
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_init_version"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_init_version</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoDomain*
+mono_init_version (const char *domain_name, const char *version)
+
+</div>
+            <p />
+             <div class="mapi-section">Return value</div>
+             <div>	 the initial domain.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Used by the runtime, users should use <code>mono_jit_init</code> instead.
+<p />
+ Creates the initial application domain and initializes the <code>mono_defaults</code>
+ structure.
+<p />
+ This function is guaranteed to not run any IL code.
+ The runtime is initialized using the provided rutime version.
+<p /></div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_jit_exec"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_exec</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">int 
+mono_jit_exec (MonoDomain *domain, MonoAssembly *assembly, int argc, char *argv[])
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>assembly</i></td><td> reference to an assembly</td></tr><tr><td><i>argc</i></td><td> argument count</td></tr><tr><td><i>argv</i></td><td> argument vector</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Start execution of a program.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_jit_set_aot_mode"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_jit_set_aot_mode</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_jit_set_aot_mode (MonoAotMode mode)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_set_break_policy"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_set_break_policy</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_set_break_policy (MonoBreakPolicyFunc policy_callback)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>policy_callback</i></td><td> the new callback function</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Allow embedders to decide whether to actually obey breakpoint instructions
+ (both break IL instructions and <code>Debugger.Break</code> method calls), for example
+ to not allow an app to be aborted by a perfectly valid IL opcode when executing
+ untrusted or semi-trusted code.
+<p />
+ <i>policy_callback</i> will be called every time a break point instruction needs to
+ be inserted with the method argument being the method that calls <code>Debugger.Break</code>
+ or has the IL <code>break</code> instruction. The callback should return <code>MONO_BREAK_POLICY_NEVER</code>
+ if it wants the breakpoint to not be effective in the given method.
+ <code>MONO_BREAK_POLICY_ALWAYS</code> is the default.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_get_runtime_build_info"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_get_runtime_build_info</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">char*
+mono_get_runtime_build_info (void)
+
+</div>
+            <p />
+             <div class="mapi-section">Return value</div>
+             <div>	 the runtime version + build date in string format.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ The returned string is owned by the caller. The returned string
+ format is <code>VERSION (FULL_VERSION BUILD_DATE)</code> and build date is optional.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+
+<h3>Signal Chaining</h3>
+
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_set_signal_chaining"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_set_signal_chaining</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">void
+mono_set_signal_chaining (gboolean chain_signals)
+
+</div>
+            <p />
+             <div class="mapi-section">Description</div>
+             <div>
+<p />
+ Enable/disable signal chaining. This should be called before <code>mono_jit_init</code>.
+ If signal chaining is enabled, the runtime saves the original signal handlers before
+ installing its own handlers, and calls the original ones in the following cases:
+ - a <code>SIGSEGV</code> / <code>SIGABRT</code> signal received while executing native (i.e. not JITted) code.
+ - <code>SIGPROF</code>
+ - <code>SIGFPE</code>
+ - <code>SIGQUIT</code>
+ - <code>SIGUSR2</code>
+ Signal chaining only works on POSIX platforms.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+   </div></div></body></html></span>

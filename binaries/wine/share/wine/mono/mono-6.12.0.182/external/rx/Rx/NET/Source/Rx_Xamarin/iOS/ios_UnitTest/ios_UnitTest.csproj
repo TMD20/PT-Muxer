@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">iPhoneSimulator</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{42520E71-AD33-45A4-90C8-92F87B0EB119}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>ios_UnitTest</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>ios_UnitTest</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <MtouchDebug>True</MtouchDebug>
+    <MtouchLink>None</MtouchLink>
+    <ConsolePause>False</ConsolePause>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhoneSimulator\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <MtouchLink>None</MtouchLink>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\iPhone\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <CodesignKey>iPhone Developer</CodesignKey>
+    <ConsolePause>False</ConsolePause>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Developer</CodesignKey>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+    <BuildIpa>True</BuildIpa>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\iPhone\AppStore</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <CodesignProvision>Automatic:AppStore</CodesignProvision>
+    <CodesignKey>iPhone Distribution</CodesignKey>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="monotouch" />
+    <Reference Include="MonoTouch.NUnitLite" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Info.plist" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Main.cs" />
+    <Compile Include="UnitTestAppDelegate.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <ProjectReference Include="..\rx\System.Reactive.PlatformServices\ios_System.Reactive.PlatformServices.csproj">
+      <Project>{79A43CEB-1A18-49EA-AAC4-B72B9C90BF5A}</Project>
+      <Name>ios_System.Reactive.PlatformServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Linq\ios_System.Reactive.Linq.csproj">
+      <Project>{0A977063-0796-4CD4-84B8-AEDB2D648B26}</Project>
+      <Name>ios_System.Reactive.Linq</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Interfaces\ios_System.Reactive.Interfaces.csproj">
+      <Project>{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}</Project>
+      <Name>ios_System.Reactive.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Experimental\ios_System.Reactive.Experimental.csproj">
+      <Project>{24F995BD-7075-489C-B7A5-7FDE08C304B6}</Project>
+      <Name>ios_System.Reactive.Experimental</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Debugger\ios_System.Reactive.Debugger.csproj">
+      <Project>{B41CB61A-DCA0-4539-8F99-7B3499E18E6D}</Project>
+      <Name>ios_System.Reactive.Debugger</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Core\ios_System.Reactive.Core.csproj">
+      <Project>{A67F34B5-75C1-4319-A93E-93DF87E728A4}</Project>
+      <Name>ios_System.Reactive.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\Mono.Reactive.Testing\ios_Mono.Reactive.Testing.csproj">
+      <Project>{47D85A91-E8E2-4088-BF5A-68A161754D48}</Project>
+      <Name>ios_Mono.Reactive.Testing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\Tests.System.Reactive\ios_Tests.System.Reactive.csproj">
+      <Project>{45377009-1425-47FC-985E-05F98022F9E3}</Project>
+      <Name>ios_Tests.System.Reactive</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

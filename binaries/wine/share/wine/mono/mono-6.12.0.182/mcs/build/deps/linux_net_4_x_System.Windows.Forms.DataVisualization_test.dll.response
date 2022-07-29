@@ -1,0 +1,5 @@
+Test/System.Windows.Forms.DataVisualization.Charting/AnnotationPathPointTest.cs
+Test/System.Windows.Forms.DataVisualization.Charting/AnovaResultTest.cs
+Test/System.Windows.Forms.DataVisualization.Charting/ArrowAnnotationTest.cs
+Test/System.Windows.Forms.DataVisualization.Charting/AxisScaleBreakStyleTest.cs
+Test/System.Windows.Forms.DataVisualization.Charting/ChartElementTest.cs

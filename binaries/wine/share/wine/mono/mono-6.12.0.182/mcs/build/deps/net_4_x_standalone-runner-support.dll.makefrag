@@ -1,0 +1,28 @@
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/AssemblyInfo.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/crc32.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/Header.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlAttribute.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlDocument.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlEntity.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlNode.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlNodeNavigator.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/HtmlWeb.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/MixedCodeDocument.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/ParseReader.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/tools.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/NunitWebTest.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/MainsoftWebTest/XmlComparer.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: 
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/mainsoft/NunitWeb/NunitWeb/Response.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: 
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/Helpers.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/ITestCase.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/ITestRunner.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/StandaloneTest.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/TestCallback.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/TestCaseAttribute.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/TestCaseFailureException.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/TestRunItem.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/TestRunner.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/TestWorkerRequest.cs
+./../../class/lib/net_4_x/standalone-runner-support.dll: Test/standalone-runner-support/SerializableDictionary.cs

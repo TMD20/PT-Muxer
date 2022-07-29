@@ -1,0 +1,6 @@
+Mono Ahead of Time compiler - compiling assembly /usr/local/bin/mine/remux/binaries/wine/mono/mono-6.12.0.182/external/roslyn-binaries/Microsoft.Net.Compilers/3.9.0/Microsoft.CodeAnalysis.CSharp.dll
+AOTID 938C3431-A3A0-5AE8-4527-015E9B654EC1
+Compiled: 36805/36805
+Executing the native assembler: "as" --64  -o /tmp/mono_aot_TMiiFt.o /tmp/mono_aot_TMiiFt
+Executing the native linker: "ld" -shared -o ./../../class/lib/net_4_x-linux//Microsoft.CodeAnalysis.CSharp.dll.so.tmp  /tmp/mono_aot_TMiiFt.o 
+JIT time: 1726 ms, Generation time: 932 ms, Assembly+Link time: 3940 ms.

@@ -1,0 +1,109 @@
+diff --git a/gtk/gtkviewport.c b/gtk/gtkviewport.c
+index e564b9af5..24dd9f099 100644
+--- a/gtk/gtkviewport.c
++++ b/gtk/gtkviewport.c
+@@ -26,6 +26,7 @@
+ 
+ #include "config.h"
+ #include "gtkviewport.h"
++#include "gtkwindow.h"
+ #include "gtkintl.h"
+ #include "gtkmarshalers.h"
+ #include "gtkprivate.h"
+@@ -87,6 +88,8 @@ static void gtk_viewport_adjustment_value_changed (GtkAdjustment    *adjustment,
+ 						   gpointer          data);
+ static void gtk_viewport_style_set                (GtkWidget *widget,
+ 			                           GtkStyle  *previous_style);
++static void gtk_viewport_set_focus_child          (GtkContainer     *container,
++                                                   GtkWidget        *child);
+ 
+ G_DEFINE_TYPE (GtkViewport, gtk_viewport, GTK_TYPE_BIN)
+ 
+@@ -114,8 +117,9 @@ gtk_viewport_class_init (GtkViewportClass *class)
+   widget_class->size_request = gtk_viewport_size_request;
+   widget_class->size_allocate = gtk_viewport_size_allocate;
+   widget_class->style_set = gtk_viewport_style_set;
+-  
++
+   container_class->add = gtk_viewport_add;
++  container_class->set_focus_child = gtk_viewport_set_focus_child;
+ 
+   class->set_scroll_adjustments = gtk_viewport_set_scroll_adjustments;
+ 
+@@ -758,6 +762,76 @@ gtk_viewport_add (GtkContainer *container,
+   GTK_CONTAINER_CLASS (gtk_viewport_parent_class)->add (container, child);
+ }
+ 
++static gboolean
++set_focus_child_cb (gpointer data)
++{
++  GtkWidget *widget;
++  GtkViewport *viewport;
++  GtkWidget *toplevel;
++  GtkWidget *focus;
++  GtkAdjustment *adj;
++  int x, y;
++  GtkAllocation widget_alloc;
++  GtkAllocation focus_alloc;
++  gdouble value;
++
++  widget = (GtkWidget *)data;
++  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
++
++  toplevel = gtk_widget_get_toplevel (widget);
++  g_return_val_if_fail (GTK_IS_WIDGET (toplevel), FALSE);
++
++  focus = gtk_window_get_focus (GTK_WINDOW (toplevel));
++  if (focus == NULL)
++    return FALSE;
++
++  viewport = GTK_VIEWPORT (widget);
++
++  gtk_widget_get_allocation (focus, &focus_alloc);
++  gtk_widget_get_allocation (widget, &widget_alloc);
++  gtk_widget_translate_coordinates (focus, widget, 0, 0, &x, &y);
++
++  /* Do we need to move vertically? */
++  if (y + focus_alloc.height >= widget_alloc.height)
++    {
++      adj = gtk_viewport_get_vadjustment (viewport);
++      value = gtk_adjustment_get_value (adj) + (y + focus_alloc.height - widget_alloc.height);
++      gtk_adjustment_set_value (adj, value);
++    }
++  else if (y <= widget_alloc.y)
++    {
++      adj = gtk_viewport_get_vadjustment (viewport);
++      value = gtk_adjustment_get_value (adj) - (widget_alloc.y - y);
++      gtk_adjustment_set_value (adj, value);
++    }
++
++  /* Do we need to move horizontally? */
++  if (x + focus_alloc.width >= widget_alloc.width)
++    {
++      adj = gtk_viewport_get_hadjustment (viewport);
++      value = gtk_adjustment_get_value (adj) + (x + focus_alloc.width - widget_alloc.width);
++      gtk_adjustment_set_value (adj, value);
++    }
++  else if (x <= widget_alloc.x)
++    {
++      adj = gtk_viewport_get_hadjustment (viewport);
++      value = gtk_adjustment_get_value (adj) - (widget_alloc.x - x);
++      gtk_adjustment_set_value (adj, value);
++    }
++
++  return FALSE;
++}
++
++static void
++gtk_viewport_set_focus_child (GtkContainer *container,
++                              GtkWidget    *child)
++{
++  if (child == NULL)
++    return;
++
++  g_idle_add (set_focus_child_cb, container);
++}
++
+ static void
+ gtk_viewport_size_request (GtkWidget      *widget,
+ 			   GtkRequisition *requisition)

@@ -1,0 +1,135 @@
+
+System.Collections.Concurrent:  System
+System.Collections:  System System.Core
+System.ComponentModel.Annotations:  System.ComponentModel.DataAnnotations
+System.ComponentModel.EventBasedAsync:  System
+System.ComponentModel:  System
+System.Diagnostics.Contracts:  
+System.Diagnostics.Debug:  System
+System.Diagnostics.Tracing:  
+System.Diagnostics.Tools:  System
+System.Dynamic.Runtime:  System.Core System
+System.Globalization:  
+System.IO:  System
+System.Linq.Expressions:  System.Core
+System.Linq.Parallel:  System.Core
+System.Linq.Queryable:  System.Core
+System.Linq:  System.Core
+System.Net.NetworkInformation:  System
+System.Net.Primitives:  System
+System.Net.Requests:  System
+System.ObjectModel:  System
+System.Reflection.Extensions:  
+System.Reflection.Primitives:  
+System.Reflection:  
+System.Resources.ResourceManager:  
+System.Runtime.Extensions:  System
+System.Runtime.InteropServices:  System System.Core
+System.Runtime.InteropServices.WindowsRuntime:  
+System.Runtime.Numerics:  System.Numerics
+System.Runtime.Serialization.Json:  System.Runtime.Serialization
+System.Runtime:  System System.ComponentModel.Composition System.Core
+System.Security.Principal:  
+System.ServiceModel.Http:  System.ServiceModel
+System.ServiceModel.Security:  System.ServiceModel
+System.Text.Encoding.Extensions:  
+System.Text.Encoding:  
+System.Text.RegularExpressions:  System
+System.Threading.Tasks.Parallel:  
+System.Threading.Tasks:  System.Core
+System.Threading.Timer:  System System.Core
+System.Threading:  System System.Core
+System.Xml.ReaderWriter:  System.Xml
+System.Xml.XDocument:  System.Xml.Linq System.Xml
+System.Xml.XmlSerializer:  System.Xml
+System.Runtime.Handles:  System System.Core
+System.ServiceModel.Duplex:  System.ServiceModel
+System.ServiceModel.NetTcp:  System.ServiceModel
+Microsoft.Win32.Primitives:  System
+Microsoft.Win32.Registry:  System
+System.AppContext:  System
+System.Collections.NonGeneric:  System
+System.Collections.Specialized:  System
+System.ComponentModel.Primitives:  System
+System.ComponentModel.TypeConverter:  System
+System.Console:  System
+System.Data.SqlClient:  System System.Data System.Xml
+System.Diagnostics.FileVersionInfo:  System
+System.Diagnostics.Process:  System
+System.Diagnostics.TextWriterTraceListener:  System
+System.Diagnostics.TraceEvent:  System
+System.Diagnostics.TraceSource:  System
+System.Globalization.Calendars:  System
+System.IO.Compression.ZipFile:  System System.IO.Compression.FileSystem
+System.IO.FileSystem:  System
+System.IO.FileSystem.DriveInfo:  System
+System.IO.FileSystem.Primitives:  System
+System.IO.IsolatedStorage:  System
+System.IO.MemoryMappedFiles:  System System.Core
+System.IO.UnmanagedMemoryStream:  System
+System.Net.AuthenticationManager:  System
+System.Net.Cache:  System
+System.Net.HttpListener:  System
+System.Net.Mail:  System
+System.Net.NameResolution:  System
+System.Net.Security:  System
+System.Net.ServicePoint:  System
+System.Net.Sockets:  System
+System.Net.Utilities:  System
+System.Net.WebHeaderCollection:  System
+System.Net.WebSockets:  System
+System.Net.WebSockets.Client:  System
+System.Resources.ReaderWriter:  System
+System.Runtime.CompilerServices.VisualC:  System
+System.Security.AccessControl:  System
+System.Security.Claims:  System
+System.Security.Cryptography.DeriveBytes:  System
+System.Security.Cryptography.Encoding:  System
+System.Security.Cryptography.Encryption:  System
+System.Security.Cryptography.Encryption.Aes:  System
+System.Security.Cryptography.Encryption.ECDiffieHellman:  System System.Core
+System.Security.Cryptography.Encryption.ECDsa:  System System.Core
+System.Security.Cryptography.Hashing:  System
+System.Security.Cryptography.Hashing.Algorithms:  System
+System.Security.Cryptography.RSA:  System
+System.Security.Cryptography.RandomNumberGenerator:  System
+System.Security.Principal.Windows:  System
+System.Threading.Thread:  System
+System.Threading.ThreadPool:  System
+System.Xml.XPath:  System System.Xml
+System.Xml.XmlDocument:  System System.Xml
+System.Xml.Xsl.Primitives:  System System.Xml
+Microsoft.Win32.Registry.AccessControl:  System
+System.IO.FileSystem.AccessControl:  System
+System.Reflection.TypeExtensions:  System
+System.Reflection.Emit.Lightweight:  
+System.Reflection.Emit.ILGeneration:  
+System.Reflection.Emit:  
+System.Threading.AccessControl:  System
+System.ValueTuple:  
+System.Security.Cryptography.Primitives:  System
+System.Text.Encoding.CodePages:  System
+System.IO.FileSystem.Watcher:  System
+System.Security.Cryptography.ProtectedData:  System System.Security
+System.ServiceProcess.ServiceController:  System System.ServiceProcess
+System.IO.Pipes:  System System.Core
+System.Net.Ping:  System
+System.Resources.Reader:  System
+System.Resources.Writer:  System
+System.Runtime.Serialization.Formatters:  System
+System.Security.Cryptography.Csp:  System
+System.Runtime.InteropServices.RuntimeInformation:  
+System.Xml.XPath.XDocument:  System System.Xml System.Xml.Linq
+System.Threading.Overlapped:  System
+System.Security.SecureString:  System
+System.Diagnostics.StackTrace:  System
+System.Data.Common:  System System.Data System.Xml
+System.Globalization.Extensions:  System
+System.Runtime.Serialization.Xml:  System System.Runtime.Serialization System.Xml
+System.ServiceModel.Primitives:  System System.ServiceModel System.Xml System.IdentityModel
+System.Security.Cryptography.X509Certificates:  System System.Core
+System.Runtime.Serialization.Primitives:  System.Runtime.Serialization
+System.Security.Cryptography.Algorithms:  System System.Core
+netstandard:  System System.Xml System.Xml.Linq System.Core System.Numerics System.Net.Http System.IO.Compression System.ComponentModel.Composition System.IO.Compression.FileSystem System.Web System.Transactions System.Runtime.Serialization System.Data System.Data.DataSetExtensions System.Drawing
+System.Drawing.Primitives:  System System.Drawing
+System.Net.Http.Rtc:  System

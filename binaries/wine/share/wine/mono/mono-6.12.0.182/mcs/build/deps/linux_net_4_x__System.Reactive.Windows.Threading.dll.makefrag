@@ -1,0 +1,9 @@
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/GlobalSuppressions.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Properties/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Concurrency/CoreDispatcherScheduler.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Concurrency/DispatcherScheduler.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Internal/Constants.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Linq/CoreDispatcherObservable.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Reactive/Linq/DispatcherObservable.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: ../../../external/rx/Rx/NET/Source/System.Reactive.Windows.Threading/Strings_WindowsThreading.Generated.cs
+./../../class/lib/net_4_x-linux/System.Reactive.Windows.Threading.dll: Assembly/AssemblyInfo.cs

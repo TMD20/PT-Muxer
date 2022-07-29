@@ -1,0 +1,15 @@
+diff --git a/Rx/NET/Source/Microsoft.Reactive.Testing/ReactiveAssert.cs b/Rx/NET/Source/Microsoft.Reactive.Testing/ReactiveAssert.cs
+index e9715a4..86cd62e 100644
+--- a/Rx/NET/Source/Microsoft.Reactive.Testing/ReactiveAssert.cs
++++ b/Rx/NET/Source/Microsoft.Reactive.Testing/ReactiveAssert.cs
+@@ -8,7 +8,9 @@
+ using System.Reactive.Disposables;
+ using System.Reactive.Linq;
+ 
+-#if WINDOWS8
++#if NUNIT
++using NUnit.Framework;
++#elif WINDOWS8
+ using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+ #else
+ using Microsoft.VisualStudio.TestTools.UnitTesting;

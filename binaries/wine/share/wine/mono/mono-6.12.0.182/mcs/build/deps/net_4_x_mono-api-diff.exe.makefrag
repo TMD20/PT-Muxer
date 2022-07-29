@@ -1,0 +1,2 @@
+./../../class/lib/net_4_x-linux/mono-api-diff.exe: mono-api-diff.cs
+./../../class/lib/net_4_x-linux/mono-api-diff.exe: ../../class/Mono.Options/Mono.Options/Options.cs

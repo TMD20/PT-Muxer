@@ -1,0 +1,285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <ProjectGuid>{03D84CBD-896D-4B2F-9A22-07034F51E73D}</ProjectGuid>
+    <AssemblyName>System.Security.Cryptography.Pkcs</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <IsPartialFacadeAssembly Condition="'$(TargetGroup)' == 'netfx'">true</IsPartialFacadeAssembly>
+    <ResourcesSourceOutputDirectory Condition="'$(IsPartialFacadeAssembly)' == 'true'">None</ResourcesSourceOutputDirectory>
+    <UsePackageTargetRuntimeDefaults Condition="'$(IsPartialFacadeAssembly)' != 'true'">true</UsePackageTargetRuntimeDefaults>
+    <IncludeDllSafeSearchPathAttribute>true</IncludeDllSafeSearchPathAttribute>
+  </PropertyGroup>
+  <!-- Don't delete these clauses even if they look useless. They tell the VS IDE that "Windows_Debug", etc., are
+       valid configuration for this project and stop it from trying to "fix up" the .sln file -->
+  <!-- API types (platform independent) -->
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Windows_NT-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Windows_NT-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netfx-Windows_NT-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netfx-Windows_NT-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Windows_NT-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Windows_NT-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(TargetGroup)'=='netcoreapp'">
+    <DefineConstants>$(DefineConstants);netcoreapp</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="System\Security\Cryptography\CryptographicAttributeObject.cs" />
+    <Compile Include="System\Security\Cryptography\CryptographicAttributeObjectCollection.cs" />
+    <Compile Include="System\Security\Cryptography\CryptographicAttributeObjectEnumerator.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\AlgorithmIdentifier.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsRecipient.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsRecipientCollection.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsRecipientEnumerator.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\ContentInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\EnvelopedCms.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\KeyAgreeRecipientInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\KeyTransRecipientInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Pkcs9AttributeObject.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Pkcs9ContentType.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Pkcs9DocumentDescription.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Pkcs9DocumentName.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Pkcs9MessageDigest.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Pkcs9SigningTime.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\PublicKeyInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\RecipientInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\RecipientInfoCollection.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\RecipientInfoEnumerator.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\RecipientInfoType.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SubjectIdentifier.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SubjectIdentifierOrKey.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SubjectIdentifierOrKeyType.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SubjectIdentifierType.cs" />
+    <Compile Include="System\Security\Cryptography\Xml\X509IssuerSerial.cs" />
+  </ItemGroup>
+  <!-- Internal types (platform independent) -->
+  <ItemGroup Condition="'$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="Internal\Cryptography\DecryptorPal.cs" />
+    <Compile Include="Internal\Cryptography\KeyAgreeRecipientInfoPal.cs" />
+    <Compile Include="Internal\Cryptography\KeyLengths.cs" />
+    <Compile Include="Internal\Cryptography\KeyTransRecipientInfoPal.cs" />
+    <Compile Include="Internal\Cryptography\Oids.cs" />
+    <Compile Include="Internal\Cryptography\Helpers.cs" />
+    <Compile Include="Internal\Cryptography\PkcsPal.cs" />
+    <Compile Include="Internal\Cryptography\RecipientInfoPal.cs" />
+    <Compile Include="$(CommonPath)\Internal\Cryptography\Helpers.cs">
+      <Link>Internal\Cryptography\Helpers.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <!-- Internal types (platform: Windows) -->
+  <ItemGroup Condition="'$(TargetsWindows)' == 'true' AND '$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="Internal\Cryptography\Pal\Windows\AlgId.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\DecryptorPalWindows.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\DecryptorPalWindows.Decode.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\DecryptorPalWindows.DecodeRecipients.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\DecryptorPalWindows.Decrypt.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\HeapBlockRetainer.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\HelpersWindows.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\KeyAgreeRecipientInfoPalWindows.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\KeyTransRecipientInfoPalWindows.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\PkcsPal.Windows.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\PkcsPalWindows.cs" />
+    <Compile Include="Internal\Cryptography\Pal\Windows\PkcsPalWindows.Encrypt.cs" />
+    <Compile Include="Microsoft\Win32\SafeHandles\SafeCertContextHandle.cs" />
+    <Compile Include="Microsoft\Win32\SafeHandles\SafeCryptMsgHandle.cs" />
+    <Compile Include="Microsoft\Win32\SafeHandles\SafeHeapAllocHandle.cs" />
+    <Compile Include="Microsoft\Win32\SafeHandles\SafeProvOrNCryptKeyHandle.cs" />
+    <Compile Include="Microsoft\Win32\SafeHandles\SafeProvOrNCryptKeyHandleUwp.cs" />
+  </ItemGroup>
+  <!-- Interop types (platform: Windows) -->
+  <ItemGroup Condition="'$(TargetsWindows)' == 'true' AND '$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="$(CommonPath)\Interop\Windows\advapi32\Interop.CryptGetProvParam.cs">
+      <Link>Common\Interop\Windows\advapi32\Interop.CryptGetProvParam.cs</Link>
+    </Compile>
+    <Compile Include="Interop\Windows\Crypt32\Interop.CERT_CONTEXT.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CERT_ID.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CERT_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CERT_ISSUER_SERIAL_NUMBER.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CERT_PUBLIC_KEY_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertContextPropId.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertCreateCertificateContext.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertDuplicateCertificateContext.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertFreeCertificateContext.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertGetCertificateContextProperty.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertGetPublicKeyLength.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertIdChoice.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertNameStrTypeAndFlags.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CertNameToStr.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_CMS_RECIPIENT_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_CTRL_DECRYPT_PARA.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_CTRL_KEY_AGREE_DECRYPT_PARA.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_ENVELOPED_ENCODE_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_KEY_AGREE_RECIPIENT_ENCODE_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_KEY_AGREE_RECIPIENT_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_KEY_TRANS_RECIPIENT_ENCODE_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_KEY_TRANS_RECIPIENT_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_RC2_AUX_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_RECIPIENT_ENCODE_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_RECIPIENT_ENCRYPTED_KEY_ENCODE_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMSG_RECIPIENT_ENCRYPTED_KEY_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMsgCmsRecipientChoice.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CMsgKeyAgreeOriginatorChoice.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CmsKeyAgreeKeyChoice.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_ALGORITHM_IDENTIFIER.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_ATTRIBUTE.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_ATTRIBUTE_TYPE_VALUE.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_ATTRIBUTES.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_BIT_BLOB.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_KEY_PROV_INFO.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CRYPT_RC2_CBC_PARAMETERS.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.Crypt32.ErrorCode.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptAcquireCertificatePrivateKey.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptAcquireCertificatePrivateKeyFlags.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptDecodeObject.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptDecodeObjectStructType.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptEncodeDecodeWrappers.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptEncodeObject.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptKeySpec.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgClose.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgControl.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgGetParam.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgOpenToDecode.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgOpenToEncode.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgParamType.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgType.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptMsgUpdate.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptRc2Version.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.CryptReleaseContext.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.MsgControlType.cs" />
+    <Compile Include="Interop\Windows\Crypt32\Interop.MsgEncodingType.cs" />
+    <Compile Include="Interop\Windows\Heap\Interop.Heap.cs" />
+  </ItemGroup>
+  <!-- Common types (platform: Windows) -->
+  <ItemGroup Condition="'$(TargetsWindows)' == 'true' AND '$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="$(CommonPath)\Internal\Cryptography\Windows\CryptoThrowHelper.cs">
+      <Link>Common\Internal\Cryptography\Windows\CryptoThrowHelper.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\Crypt32\Interop.DATA_BLOB.cs">
+      <Link>Common\Interop\Windows\Crypt32\Interop.DATA_BLOB.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\Crypt32\Interop.FindOidInfo.cs">
+      <Link>Common\Interop\Windows\Crypt32\Interop.FindOidInfo.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\Interop.Libraries.cs">
+      <Link>Common\Interop\Windows\Interop.Libraries.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\kernel32\Interop.FormatMessage.cs">
+      <Link>Common\Interop\Windows\kernel32\Interop.FormatMessage.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\NCrypt\Interop.ErrorCode.cs">
+      <Link>Common\Interop\Windows\NCrypt\Interop.ErrorCode.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\Interop\Windows\NCrypt\Interop.NCryptFreeObject.cs">
+      <Link>Common\Interop\Windows\NCrypt\Interop.NCryptFreeObject.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <!-- Internal types (platform: AnyOS) -->
+  <ItemGroup Condition="'$(TargetsWindows)' != 'true' AND '$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\AsnHelpers.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.Asn.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.Decode.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.Decrypt.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.Encrypt.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.Exceptions.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.KeyAgree.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\ManagedPal.KeyTrans.cs" />
+    <Compile Include="Internal\Cryptography\Pal\AnyOS\PkcsPal.AnyOS.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\EncryptedContentInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\EnvelopedDataAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\KeyAgreeRecipientIdentifierAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\KeyAgreeRecipientInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\KeyTransRecipientInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\OriginatorIdentifierOrKeyAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\OriginatorInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\OriginatorPublicKeyAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\OtherKeyAttributeAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\Rc2CbcParameters.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\RecipientEncryptedKeyAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\RecipientIdentifierAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\RecipientInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\RecipientKeyIdentifier.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPartialFacadeAssembly)' == 'true'">
+    <Reference Include="mscorlib" />
+    <Reference Include="System.Security" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetGroup)' == 'netcoreapp'">
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.Runtime.Numerics" />
+    <Reference Include="System.Collections" />
+    <Reference Include="System.Collections.NonGeneric" />
+    <Reference Include="System.Collections.Concurrent" />
+    <Reference Include="System.Security.Cryptography.Csp" />
+    <Reference Include="System.Security.Cryptography.Encoding" />
+    <Reference Include="System.Security.Cryptography.X509Certificates" />
+    <Reference Include="System.Resources.ResourceManager" />
+    <Reference Include="System.Runtime.InteropServices" />
+    <Reference Include="System.Diagnostics.Debug" />
+    <Reference Include="System.Diagnostics.Tools" />
+    <Reference Include="System.Runtime.Extensions" />
+    <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
+    <Reference Include="System.Security.Cryptography.Primitives" />
+    <Reference Include="System.Security.Cryptography.Algorithms" />
+    <Reference Include="System.Threading" />
+    <Reference Include="System.Linq" />
+    <Reference Include="System.Text.Encoding.Extensions" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPartialFacadeAssembly)' != 'true'">
+    <Reference Include="System.Buffers" />
+    <Reference Include="System.Memory" />
+    <Reference Include="System.Security.Cryptography.Cng" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsPartialFacadeAssembly)' != 'true'">
+    <Compile Include="$(CommonPath)\System\Security\Cryptography\Asn1V2.cs">
+      <Link>Common\System\Security\Cryptography\Asn1V2.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\System\Security\Cryptography\Asn1V2.Serializer.cs">
+      <Link>Common\System\Security\Cryptography\Asn1V2.Serializer.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\System\Security\Cryptography\AsnReader.cs">
+      <Link>Common\System\Security\Cryptography\AsnReader.cs</Link>
+    </Compile>
+    <Compile Include="$(CommonPath)\System\Security\Cryptography\AsnWriter.cs">
+      <Link>Common\System\Security\Cryptography\AsnWriter.cs</Link>
+    </Compile>
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\AlgorithmIdentifierAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\AttributeAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\CertificateChoiceAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\ContentInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\EncapsulatedContentInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\GeneralName.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\IssuerAndSerialNumberAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\MessageImprint.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\PssParamsAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\Rfc3161Accuracy.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\Rfc3161TimeStampReq.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\Rfc3161TimeStampResp.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\Rfc3161TstInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\SignedDataAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\SignerIdentifierAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\SignerInfoAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\SigningCertificateAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Asn1\X509ExtensionAsn.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsSignature.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsSignature.ECDsa.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsSignature.RSA.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsSigner.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SignedCms.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SignedCms.CtorOverloads.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SignerInfo.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SignerInfoCollection.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\SignerInfoEnumerator.cs" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetGroup)' == 'netcoreapp'">
+    <Compile Include="System\Security\Cryptography\Pkcs\CmsSignature.DSA.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Rfc3161RequestResponseStatus.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Rfc3161TimestampRequest.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Rfc3161TimestampToken.cs" />
+    <Compile Include="System\Security\Cryptography\Pkcs\Rfc3161TimestampTokenInfo.cs" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

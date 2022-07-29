@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{47D85A91-E8E2-4088-BF5A-68A161754D48}</ProjectGuid>
+    <ProjectTypeGuids>{6BC8ED88-2882-458C-8E55-DFD12B67127B};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
+    <AssemblyName>Mono.Reactive.Testing</AssemblyName>
+    <ProductSignAssembly>true</ProductSignAssembly>
+    <DefineConstants>NO_TASK_DELAY;NUNIT</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>DEBUG;NUNIT</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ConsolePause>False</ConsolePause>
+    <WarningLevel>4</WarningLevel>
+    <DefineConstants>$(DefineConstants);NO_EVENTARGS_CONSTRAINT;HAS_PROGRESS;PREFER_ASYNC;HAS_APTCA;NO_REMOTING;NO_SERIALIZABLE;NO_THREAD;CRIPPLED_REFLECTION;PLIB</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);NO_EVENTARGS_CONSTRAINT;HAS_PROGRESS;PREFER_ASYNC;HAS_APTCA;NO_REMOTING;NO_SERIALIZABLE;NO_THREAD;CRIPPLED_REFLECTION;PLIB</DefineConstants>
+    <!--
+    <TargetFrameworkIdentifier>iOS</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v2.0.5</TargetFrameworkVersion>
+    -->
+    <!-- NoStdLib>true</NoStdLib -->
+    <BuildPlatform>MOBILE</BuildPlatform>
+    <BuildFlavor>MONOTOUCH</BuildFlavor>
+  </PropertyGroup>
+  <Import Project="..\..\..\Common.targets" />
+  <PropertyGroup>
+    <DocumentationFile>$(OutputPath)\$(AssemblyName).XML</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="MonoTouch.NUnitLite" />
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\HotObservable.cs">
+      <Link>HotObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ITestObservable.cs">
+      <Link>ITestObservable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ITestObserver.cs">
+      <Link>ITestObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\MockObserver.cs">
+      <Link>MockObserver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\NamespaceDoc.cs">
+      <Link>NamespaceDoc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ReactiveAssert.cs">
+      <Link>ReactiveAssert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ReactiveTest.cs">
+      <Link>ReactiveTest.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\Recorded.cs">
+      <Link>Recorded.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\Subscription.cs">
+      <Link>Subscription.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\TestScheduler.cs">
+      <Link>TestScheduler.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\rx\System.Reactive.Core\ios_System.Reactive.Core.csproj">
+      <Project>{A67F34B5-75C1-4319-A93E-93DF87E728A4}</Project>
+      <Name>ios_System.Reactive.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Interfaces\ios_System.Reactive.Interfaces.csproj">
+      <Project>{6F2675F5-FCC7-4A28-9DC3-657B4613DCC5}</Project>
+      <Name>ios_System.Reactive.Interfaces</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\rx\System.Reactive.Linq\ios_System.Reactive.Linq.csproj">
+      <Project>{0A977063-0796-4CD4-84B8-AEDB2D648B26}</Project>
+      <Name>ios_System.Reactive.Linq</Name>
+    </ProjectReference>
+  </ItemGroup>
+</Project>

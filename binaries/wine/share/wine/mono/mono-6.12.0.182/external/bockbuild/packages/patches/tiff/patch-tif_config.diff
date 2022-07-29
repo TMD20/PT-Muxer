@@ -1,0 +1,81 @@
+--- libtiff/tif_config.h.orig	2019-08-29 15:36:35.000000000 +0200
++++ libtiff/tif_config.h	2019-08-29 15:08:43.000000000 +0200
+@@ -255,7 +255,11 @@
+ #define SIZEOF_SIGNED_INT 4
+ 
+ /* The size of `signed long', as computed by sizeof. */
++#ifdef __LP64__
+ #define SIZEOF_SIGNED_LONG 8
++#else
++#define SIZEOF_SIGNED_LONG 4
++#endif
+ 
+ /* The size of `signed long long', as computed by sizeof. */
+ #define SIZEOF_SIGNED_LONG_LONG 8
+@@ -264,16 +268,28 @@
+ #define SIZEOF_SIGNED_SHORT 2
+ 
+ /* The size of `size_t', as computed by sizeof. */
++#ifdef __LP64__
+ #define SIZEOF_SIZE_T 8
++#else
++#define SIZEOF_SIZE_T 4
++#endif
+ 
+ /* The size of `unsigned char *', as computed by sizeof. */
++#ifdef __LP64__
+ #define SIZEOF_UNSIGNED_CHAR_P 8
++#else
++#define SIZEOF_UNSIGNED_CHAR_P 4
++#endif
+ 
+ /* The size of `unsigned int', as computed by sizeof. */
+ #define SIZEOF_UNSIGNED_INT 4
+ 
+ /* The size of `unsigned long', as computed by sizeof. */
++#ifdef __LP64__
+ #define SIZEOF_UNSIGNED_LONG 8
++#else
++#define SIZEOF_UNSIGNED_LONG 4
++#endif
+ 
+ /* The size of `unsigned long long', as computed by sizeof. */
+ #define SIZEOF_UNSIGNED_LONG_LONG 8
+@@ -307,10 +323,18 @@
+ #define TIFF_INT32_T signed int
+ 
+ /* Signed 64-bit type formatter */
++#ifdef __LP64__
+ #define TIFF_INT64_FORMAT "%ld"
++#else
++#define TIFF_INT64_FORMAT "%lld"
++#endif
+ 
+ /* Signed 64-bit type */
++#ifdef __LP64__
+ #define TIFF_INT64_T signed long
++#else
++#define TIFF_INT64_T signed long long
++#endif
+ 
+ /* Signed 8-bit type */
+ #define TIFF_INT8_T signed char
+@@ -343,10 +367,18 @@
+ #define TIFF_UINT32_T unsigned int
+ 
+ /* Unsigned 64-bit type formatter */
++#ifdef __LP64__
+ #define TIFF_UINT64_FORMAT "%lu"
++#else
++#define TIFF_UINT64_FORMAT "%llu"
++#endif
+ 
+ /* Unsigned 64-bit type */
++#ifdef __LP64__
+ #define TIFF_UINT64_T unsigned long
++#else
++#define TIFF_UINT64_T unsigned long long
++#endif
+ 
+ /* Unsigned 8-bit type */
+ #define TIFF_UINT8_T unsigned char

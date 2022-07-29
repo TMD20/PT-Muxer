@@ -1,0 +1,3 @@
+./../../class/lib/net_4_x-linux/System.Windows.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/System.Windows.dll: AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/System.Windows.dll: TypeForwarders.cs

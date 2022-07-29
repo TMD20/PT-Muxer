@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2337A55E-7077-4FBE-8132-2CD8DDC18671}</ProjectGuid>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <FileAlignment>512</FileAlignment>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\11.0\UITestExtensionPackages</ReferencePath>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Release|AnyCPU'" />
+  <ItemGroup>
+    <CodeAnalysisDependentAssemblyPaths Condition=" '$(VS100COMNTOOLS)' != '' " Include="$(VS100COMNTOOLS)..\IDE\PrivateAssemblies">
+      <Visible>False</Visible>
+    </CodeAnalysisDependentAssemblyPaths>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AllowedCharsBitmapTests.cs" />
+    <Compile Include="TextEncoderTests.cs" />
+    <Compile Include="ScalarTestEncoder.cs" />
+    <Compile Include="CommonTestEncoder.cs" />
+    <Compile Include="BufferInternalTests.cs" />
+    <Compile Include="EncoderCommon.cs" />
+    <Compile Include="EncoderCommonTests.cs" />
+    <Compile Include="EncoderExtensionsTests.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="HtmlEncoderTests.cs" />
+    <Compile Include="IHtmlEncoder.cs" />
+    <Compile Include="IJavaScriptStringEncoder.cs" />
+    <Compile Include="IUrlEncoder.cs" />
+    <Compile Include="JavaScriptStringEncoderTests.cs" />
+    <Compile Include="PerformanceTests.cs" />
+    <Compile Include="TemporaryEncoderAdapters.cs" />
+    <Compile Include="TemporaryEncoderExtensions.cs" />
+    <Compile Include="TemporaryInternalTypes.cs" />
+    <Compile Include="TextEncoderSettingsTests.cs" />
+    <Compile Include="UnicodeEncoderBase.cs" />
+    <Compile Include="UnicodeEncoderBaseTests.cs" />
+    <Compile Include="UnicodeHelpersTests.cs" />
+    <Compile Include="UnicodeRangesTests.cs" />
+    <Compile Include="UnicodeRangeTests.cs" />
+    <Compile Include="UrlEncoderTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(CommonTestPath)\Data\UnicodeData.8.0.txt">
+      <LogicalName>UnicodeData.8.0.txt</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\$(AssemblyName).rd.xml" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

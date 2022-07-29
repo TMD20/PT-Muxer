@@ -1,0 +1,28 @@
+language: csharp
+mono:
+  - latest
+os:
+  - linux
+  - osx
+solution: ICSharpCode.SharpZipLib.sln
+install:
+  - nuget restore ICSharpCode.SharpZipLib.sln
+script:
+  - xbuild /p:Configuration=Debug ICSharpCode.SharpZipLib.sln
+  - xbuild /p:Configuration=Release ICSharpCode.SharpZipLib.sln
+  - mono ./packages/NUnit.ConsoleRunner.3.2.1/tools/nunit3-console.exe --framework=mono-4.0 --labels=All --testlist=./ICSharpCode.SharpZipLib.Tests/PassingTests.txt --result=./Documentation/nunit3-test-results-travis.xml ./bin/Release/ICSharpCode.SharpZipLib.Tests.dll
+after_script:
+  - nuget pack Build/ICSharpCode.SharpZipLib.nuspec -BasePath Build -OutputDirectory bin/Release
+cache:
+  directories:
+    - bin
+    - Documentation
+#deploy:
+#  provider: releases
+#  api_key: "GITHUB OAUTH TOKEN"
+#  file:
+#    - "bin/Release/ICSharpCode.SharpZipLib.nupkg"
+#    - "Documentation/nunit3-test-results-travis.xml"
+#  skip_cleanup: true
+#  on:
+#    tags: true

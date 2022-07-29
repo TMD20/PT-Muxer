@@ -1,0 +1,29 @@
+﻿{
+  "locked": false,
+  "version": 2,
+  "targets": {
+    ".NETFramework,Version=v4.5.2": {
+      "ClassLibrary2/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.2"
+      },
+    },
+    ".NETFramework,Version=v4.5.2/win": {
+      "ClassLibrary2/1.0.0": {
+        "type": "project",
+        "framework": ".NETFramework,Version=v4.5.2"
+      },
+    }
+  },
+  "libraries": {
+    "ClassLibrary2/1.0.0": {
+      "type": "project",
+      "path": "../ClassLibrary2/project.json",
+      "msbuildProject": "../ClassLibrary2/ClassLibrary2.csproj"
+    },
+  },
+  "projectFileDependencyGroups": {
+    "": [ ],
+    ".NETFramework,Version=v4.5.2": [ ]
+  }
+}

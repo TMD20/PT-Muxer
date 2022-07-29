@@ -1,0 +1,89 @@
+diff --git a/gtk/gtkcombobox.c b/gtk/gtkcombobox.c
+index bd83a1e11..c2078b32e 100644
+--- a/gtk/gtkcombobox.c
++++ b/gtk/gtkcombobox.c
+@@ -227,6 +227,8 @@ enum {
+   MOVE_ACTIVE,
+   POPUP,
+   POPDOWN,
++  SHOW_POPUP,
++  HIDE_POPUP,
+   LAST_SIGNAL
+ };
+ 
+@@ -627,6 +629,15 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
+                                 NULL, NULL,
+                                 g_cclosure_marshal_VOID__VOID,
+                                 G_TYPE_NONE, 0);
++
++  combo_box_signals[SHOW_POPUP] =
++    g_signal_new (I_("xamarin-private-show-native-menu"),
++                  G_OBJECT_CLASS_TYPE (klass),
++                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
++                  0, _gtk_boolean_handled_accumulator, NULL,
++                  _gtk_marshal_BOOLEAN__VOID,
++                  G_TYPE_BOOLEAN, 0);
++
+   /**
+    * GtkComboBox::popdown:
+    * @button: the object which received the signal
+@@ -648,6 +659,14 @@ gtk_combo_box_class_init (GtkComboBoxClass *klass)
+                                 _gtk_marshal_BOOLEAN__VOID,
+                                 G_TYPE_BOOLEAN, 0);
+ 
++  combo_box_signals[HIDE_POPUP] =
++    g_signal_new (I_("xamarin-private-hide-native"),
++                  G_OBJECT_CLASS_TYPE (klass),
++                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE,
++                  0, _gtk_boolean_handled_accumulator, NULL,
++                  _gtk_marshal_BOOLEAN__VOID,
++                  G_TYPE_BOOLEAN, 0);
++
+   /* key bindings */
+   binding_set = gtk_binding_set_by_class (widget_class);
+ 
+@@ -2007,6 +2026,20 @@ update_menu_sensitivity (GtkComboBox *combo_box,
+   g_list_free (children);
+ }
+ 
++/* Offer the client a chance to handle menu popups themselves
++   For example, if a native menu was to be used instead of Gtk
++
++   If the client connects to the xamrin-private-show-menu signal
++   they should return TRUE if the native menu was shown
++*/
++static gboolean
++maybe_popup_native_menu (GtkComboBox *combo_box)
++{
++  gboolean retval = FALSE;
++  g_signal_emit (combo_box, combo_box_signals[SHOW_POPUP], 0, &retval);
++  return retval;
++}
++
+ static void 
+ gtk_combo_box_menu_popup (GtkComboBox *combo_box,
+ 			  guint        button, 
+@@ -2018,6 +2051,11 @@ gtk_combo_box_menu_popup (GtkComboBox *combo_box,
+   GtkRequisition requisition;
+   gint width;
+   
++  if (maybe_popup_native_menu (combo_box))
++  {
++    return;
++  }
++
+   update_menu_sensitivity (combo_box, priv->popup_widget);
+ 
+   active_item = -1;
+@@ -2118,6 +2156,11 @@ gtk_combo_box_real_popup (GtkComboBox *combo_box)
+   if (!gtk_widget_get_realized (GTK_WIDGET (combo_box)))
+     return;
+ 
++  if (maybe_popup_native_menu (combo_box))
++  {
++    return;
++  }
++
+   if (gtk_widget_get_mapped (priv->popup_widget))
+     return;
+ 

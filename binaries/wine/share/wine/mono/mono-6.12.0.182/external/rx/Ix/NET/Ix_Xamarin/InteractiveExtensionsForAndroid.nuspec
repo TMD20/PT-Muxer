@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package >
+  <metadata>
+    <id>InteractiveExtensionsForAndroid</id>
+    <version>2.1.0</version>
+    <authors>Microsoft Open Technologies, Inc</authors>
+    <owners>Xamarin Inc.</owners>
+    <licenseUrl>https://raw.github.com/mono/rx/master/Ix/NET/license.txt</licenseUrl>
+    <projectUrl>https://github.com/mono/rx</projectUrl>
+    <iconUrl>https://raw.github.com/mono/rx/master/Ix/NET/Resources/Artwork/Logo_Color.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>a library for composing asynchronous and event-based programs using observable sequences and LINQ-style query operators. (Android)</description>
+    <releaseNotes>Initial NuGet package release. WARNING: this won't work as expected if you are not using Xamarin.Android v4.7.x or later, which ships with some runtime bugfixes.</releaseNotes>
+    <copyright>Copyright (c) Microsoft Open Technologies, Inc.  All rights reserved.</copyright>
+    <tags>Ix Interactive Linq Xamarin Android</tags>
+    <frameworkAssemblies>
+      <frameworkAssembly assemblyName="System.Core" targetFramework="MonoAndroid" />
+    </frameworkAssemblies>
+  </metadata>
+  <files>
+	<file target="lib/MonoAndroid" src="android/ix/System.Interactive/bin/Release/System.Interactive.dll" />
+	<file target="lib/MonoAndroid" src="android/ix/System.Interactive.Async/bin/Release/System.Interactive.Async.dll" />
+	<file target="lib/MonoAndroid" src="android/ix/System.Interactive.Providers/bin/Release/System.Interactive.Providers.dll" />
+  </files>
+</package>

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D263C126-9D3C-4299-A0C1-F25C703D07C9}</ProjectGuid>
+    <ProjectTypeGuids>{EFBA0AD7-5A72-4C68-AF49-83D382785DCF};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <RootNamespace>System.Reactive</RootNamespace>
+    <AssemblyName>System.Reactive.PlatformServices</AssemblyName>
+    <DefineConstants>NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>True</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>False</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AndroidLinkMode>None</AndroidLinkMode>
+    <ConsolePause>False</ConsolePause>
+    <DefineConstants>DEBUG;NO_TASK_DELAY;NO_WINDOWS_THREADING;NO_REMOTING;HAS_AWAIT;NUNIT;MONODROID;$(SignAssemblySpec)</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>True</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ConsolePause>False</ConsolePause>
+    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+
+<ProjectReference Include="..\System.Reactive.Core\android_System.Reactive.Core.csproj">
+  <Project>{4E516F10-DA7A-4D43-963E-A93865ABEA5B}</Project>
+  <Name>android_System.Reactive.Core</Name>
+</ProjectReference><ProjectReference Include="..\System.Reactive.Interfaces\android_System.Reactive.Interfaces.csproj">
+  <Project>{9E9B9C60-98B0-40FA-9C2B-1218D417CAA4}</Project>
+  <Name>android_System.Reactive.Interfaces</Name>
+</ProjectReference><ProjectReference Include="..\System.Reactive.Linq\android_System.Reactive.Linq.csproj">
+  <Project>{63252AE9-5186-45CA-BFCD-FA51C6B66A43}</Project>
+  <Name>android_System.Reactive.Linq</Name>
+</ProjectReference>
+    <!--
+    <ProjectReference Include="..\Andr.Unit\Android.NUnitLite\Android.NUnitLite.csproj">
+      <Project>{6A005891-A3D6-4398-A729-F645397D573A}</Project>
+      <Name>Android.NUnitLite</Name>
+    </ProjectReference>
+    -->
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\GlobalSuppressions.cs">
+      <Link>GlobalSuppressions.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.Windows.cs">
+      <Link>Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.Windows.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\EventLoopScheduler.cs">
+      <Link>Reactive\Concurrency\EventLoopScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\NewThreadScheduler.cs">
+      <Link>Reactive\Concurrency\NewThreadScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.cs">
+      <Link>Reactive\Concurrency\ConcurrencyAbstractionLayerImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\Thread.Stub.cs">
+      <Link>Reactive\Concurrency\Thread.Stub.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\ThreadPoolScheduler.Windows.cs">
+      <Link>Reactive\Concurrency\ThreadPoolScheduler.Windows.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\EnlightenmentProvider.cs">
+      <Link>Reactive\EnlightenmentProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\HostLifecycleNotifications.WindowsPhone.cs">
+      <Link>Reactive\Internal\HostLifecycleNotifications.WindowsPhone.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\HostLifecycleNotifications.Windows.cs">
+      <Link>Reactive\Internal\HostLifecycleNotifications.Windows.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\PhoneShellThunks.cs">
+      <Link>Reactive\Internal\PhoneShellThunks.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\StopwatchImpl.cs">
+      <Link>Reactive\Internal\StopwatchImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\TaskPoolScheduler.cs">
+      <Link>Reactive\Concurrency\TaskPoolScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Concurrency\ThreadPoolScheduler.cs">
+      <Link>Reactive\Concurrency\ThreadPoolScheduler.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\ExceptionServicesImpl.cs">
+      <Link>Reactive\Internal\ExceptionServicesImpl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\PlatformEnlightenmentProvider.cs">
+      <Link>Reactive\Internal\PlatformEnlightenmentProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Reactive\Internal\Stubs.cs">
+      <Link>Reactive\Internal\Stubs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\..\..\System.Reactive.PlatformServices\Strings_PlatformServices.Generated.cs">
+      <Link>Strings_PlatformServices.Generated.cs</Link>
+    </Compile>
+
+    <!--
+    <Compile Include="..\..\..\Microsoft.Reactive.Testing\ColdObservable.cs">
+      <Link>ColdObservable.cs</Link>
+    </Compile>
+    -->
+    <EmbeddedResource Include='..\..\..\..\..\..\../../../external/rx/Rx/NET/Source/System.Reactive.PlatformServices/Strings_PlatformServices.resx'>
+      <Link>Strings_PlatformServices.resx</Link>
+    </EmbeddedResource>
+
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
+</Project>

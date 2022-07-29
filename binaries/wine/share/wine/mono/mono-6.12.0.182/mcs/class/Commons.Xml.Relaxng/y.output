@@ -1,0 +1,3789 @@
+   0  $accept : TopLevel $end
+
+   1  TopLevel : Preamble TopLevelBody
+
+   2  Preamble :
+   3           | Decl Preamble
+
+   4  Decl : KeywordNamespace NamespacePrefix Equal NamespaceURILiteral
+   5       | KeywordDefault KeywordNamespace Equal NamespaceURILiteral
+   6       | KeywordDefault KeywordNamespace NamespacePrefix Equal NamespaceURILiteral
+   7       | KeywordDatatypes DatatypePrefix Equal Literal
+
+   8  NamespacePrefix : IdentifierOrKeyword
+
+   9  DatatypePrefix : IdentifierOrKeyword
+
+  10  NamespaceURILiteral : Literal
+  11                      | KeywordInherit
+
+  12  TopLevelBody : Pattern
+  13               | Grammar
+
+  14  Grammar :
+  15          | Member Grammar
+
+  16  Member : AnnotatedComponent
+  17         | AnnotationElementNotKeyword
+
+  18  AnnotatedComponent : Annotations Component
+
+  19  Component : Start
+  20            | Define
+  21            | Include
+  22            | Div
+
+  23  Start : KeywordStart AssignOp Pattern
+
+  24  Define : Identifier AssignOp Pattern
+
+  25  AssignOp : Equal
+  26           | OrEquals
+  27           | AndEquals
+
+  28  Include : KeywordInclude AnyURILiteral OptInherit OptIncludeBody
+
+  29  AnyURILiteral : Literal
+
+  30  OptInherit :
+  31             | KeywordInherit Equal IdentifierOrKeyword
+
+  32  OptIncludeBody :
+  33                 | OpenCurly IncludeBody CloseCurly
+
+  34  IncludeBody :
+  35              | IncludeMember IncludeBody
+
+  36  IncludeMember : AnnotatedIncludeComponent
+  37                | AnnotationElementNotKeyword
+
+  38  AnnotatedIncludeComponent : Annotations IncludeComponent
+
+  39  IncludeComponent : Start
+  40                   | Define
+  41                   | IncludeDiv
+
+  42  Div : KeywordDiv OpenCurly Grammar CloseCurly
+
+  43  IncludeDiv : KeywordDiv OpenCurly IncludeBody CloseCurly
+
+  44  Pattern : InnerPattern
+
+  45  InnerPattern : InnerParticle
+  46               | ParticleChoice
+  47               | ParticleGroup
+  48               | ParticleInterleave
+  49               | AnnotatedDataExcept
+
+  50  ParticleChoice : Particle Bar Particle
+  51                 | Particle Bar ParticleChoice
+
+  52  ParticleGroup : Particle Comma Particle
+  53                | Particle Comma ParticleGroup
+
+  54  ParticleInterleave : Particle Amp Particle
+  55                     | Particle Amp ParticleInterleave
+
+  56  Particle : InnerParticle
+
+  57  InnerParticle : AnnotatedPrimary
+  58                | RepeatedPrimary FollowAnnotations
+
+  59  RepeatedPrimary : AnnotatedPrimary Asterisk
+  60                  | AnnotatedPrimary Plus
+  61                  | AnnotatedPrimary Question
+
+  62  AnnotatedPrimary : LeadAnnotatedPrimary FollowAnnotations
+
+  63  AnnotatedDataExcept : LeadAnnotatedDataExcept FollowAnnotations
+
+  64  LeadAnnotatedDataExcept : Annotations DataExcept
+
+  65  LeadAnnotatedPrimary : Annotations Primary
+  66                       | Annotations OpenParen InnerPattern CloseParen
+
+  67  Primary : KeywordElement NameClass OpenCurly Pattern CloseCurly
+  68          | KeywordAttribute NameClass OpenCurly Pattern CloseCurly
+  69          | KeywordMixed OpenCurly Pattern CloseCurly
+  70          | KeywordList OpenCurly Pattern CloseCurly
+  71          | DatatypeName OptParams
+  72          | DatatypeName DatatypeValue
+  73          | DatatypeValue
+  74          | KeywordEmpty
+  75          | KeywordNotAllowed
+  76          | KeywordText
+  77          | Ref
+  78          | KeywordParent Ref
+  79          | KeywordGrammar OpenCurly Grammar CloseCurly
+  80          | KeywordExternal AnyURILiteral OptInherit
+
+  81  DataExcept : DatatypeName OptParams Minus LeadAnnotatedPrimary
+
+  82  Ref : Identifier
+
+  83  DatatypeName : CName
+  84               | KeywordString
+  85               | KeywordToken
+
+  86  DatatypeValue : Literal
+
+  87  OptParams :
+  88            | OpenCurly Params CloseCurly
+
+  89  Params :
+  90         | Param Params
+
+  91  Param : Annotations IdentifierOrKeyword Equal Literal
+
+  92  NameClass : InnerNameClass
+
+  93  InnerNameClass : AnnotatedSimpleNameClass
+  94                 | NameClassChoice
+  95                 | AnnotatedExceptNameClass
+
+  96  NameClassChoice : AnnotatedSimpleNameClass Bar AnnotatedSimpleNameClass
+  97                  | AnnotatedSimpleNameClass Bar NameClassChoice
+
+  98  AnnotatedExceptNameClass : LeadAnnotatedExceptNameClass FollowAnnotations
+
+  99  LeadAnnotatedExceptNameClass : Annotations ExceptNameClass
+
+ 100  AnnotatedSimpleNameClass : LeadAnnotatedSimpleNameClass FollowAnnotations
+
+ 101  LeadAnnotatedSimpleNameClass : Annotations SimpleNameClass
+ 102                               | Annotations OpenParen InnerNameClass CloseParen
+
+ 103  ExceptNameClass : NsName Minus LeadAnnotatedSimpleNameClass
+ 104                  | Asterisk Minus LeadAnnotatedSimpleNameClass
+
+ 105  SimpleNameClass : IdentifierOrKeyword
+ 106                  | CName
+ 107                  | NsName
+ 108                  | Asterisk
+
+ 109  FollowAnnotations :
+ 110                    | TwoGreaters AnnotationElement FollowAnnotations
+
+ 111  Annotations : Documentations
+ 112              | Documentations OpenBracket AnnotationContentInAnnotations CloseBracket
+
+ 113  AnnotationContentInAnnotations :
+ 114                                 | PrefixedName Equal Literal AnnotationContentInAnnotations
+ 115                                 | PrefixedName AnnotationAttributesContent AnnotationContentInAnnotations
+ 116                                 | IdentifierOrKeyword AnnotationAttributesContent AnnotationContentInAnnotations
+
+ 117  AttributableAnnotations :
+ 118                          | AttributableAnnotations PrefixedName Equal Literal NonAttributableAnnotations
+
+ 119  NonAttributableAnnotations :
+ 120                             | PrefixedName AnnotationAttributesContent
+ 121                             | NonAttributableAnnotations IdentifierOrKeyword AnnotationAttributesContent
+
+ 122  AnnotationElement : ForeignElementName AnnotationAttributesContent
+
+ 123  ForeignElementName : IdentifierOrKeyword
+ 124                     | PrefixedName
+
+ 125  AnnotationElementNotKeyword : ERROR
+
+ 126  AnnotationAttributesContent : OpenBracket NestedAnnotationContents CloseBracket
+
+ 127  NestedAnnotationContents :
+ 128                           | PrefixedName Equal Literal NestedAnnotationContents
+ 129                           | IdentifierOrKeyword Equal Literal NestedAnnotationContents
+ 130                           | PrefixedName AnnotationAttributesContent NestedAnnotationContents
+ 131                           | IdentifierOrKeyword AnnotationAttributesContent NestedAnnotationContents
+ 132                           | Literal
+ 133                           | Literal NestedAnnotationContents
+
+ 134  NestedAnnotationAttributes :
+ 135                             | AnyAttributeName Equal Literal NestedAnnotationAttributes
+
+ 136  AnyAttributeName : IdentifierOrKeyword
+ 137                   | PrefixedName
+
+ 138  AnnotationContent :
+ 139                    | NestedAnnotationElement AnnotationContent
+ 140                    | Literal AnnotationContent
+
+ 141  NestedAnnotationElement : AnyElementName AnnotationAttributesContent
+
+ 142  AnyElementName : IdentifierOrKeyword
+ 143                 | PrefixedName
+
+ 144  PrefixedName : CName
+
+ 145  Documentations :
+ 146                 | Documentation Documentations
+
+ 147  IdentifierOrKeyword : Identifier
+ 148                      | Keyword
+
+ 149  Keyword : KeywordAttribute
+ 150          | KeywordDefault
+ 151          | KeywordDatatypes
+ 152          | KeywordDiv
+ 153          | KeywordElement
+ 154          | KeywordEmpty
+ 155          | KeywordExternal
+ 156          | KeywordGrammar
+ 157          | KeywordInclude
+ 158          | KeywordInherit
+ 159          | KeywordList
+ 160          | KeywordMixed
+ 161          | KeywordNamespace
+ 162          | KeywordNotAllowed
+ 163          | KeywordParent
+ 164          | KeywordStart
+ 165          | KeywordString
+ 166          | KeywordText
+ 167          | KeywordToken
+
+ 168  Literal : LiteralSegment
+ 169          | LiteralSegment Tilde Literal
+
+ 170  Identifier : NCName
+ 171             | QuotedIdentifier
+
+state 0
+	$accept : . TopLevel $end  (0)
+	Preamble : .  (2)
+
+	KeywordDefault  shift 1
+	KeywordDatatypes  shift 2
+	KeywordNamespace  shift 3
+	$end  reduce 2
+	ERROR  reduce 2
+	KeywordAttribute  reduce 2
+	KeywordDiv  reduce 2
+	KeywordElement  reduce 2
+	KeywordEmpty  reduce 2
+	KeywordExternal  reduce 2
+	KeywordGrammar  reduce 2
+	KeywordInclude  reduce 2
+	KeywordList  reduce 2
+	KeywordMixed  reduce 2
+	KeywordNotAllowed  reduce 2
+	KeywordParent  reduce 2
+	KeywordStart  reduce 2
+	KeywordString  reduce 2
+	KeywordText  reduce 2
+	KeywordToken  reduce 2
+	OpenParen  reduce 2
+	OpenBracket  reduce 2
+	LiteralSegment  reduce 2
+	NCName  reduce 2
+	QuotedIdentifier  reduce 2
+	Documentation  reduce 2
+	CName  reduce 2
+
+	TopLevel  goto 4
+	Preamble  goto 5
+	Decl  goto 6
+
+
+state 1
+	Decl : KeywordDefault . KeywordNamespace Equal NamespaceURILiteral  (5)
+	Decl : KeywordDefault . KeywordNamespace NamespacePrefix Equal NamespaceURILiteral  (6)
+
+	KeywordNamespace  shift 7
+	.  error
+
+
+state 2
+	Decl : KeywordDatatypes . DatatypePrefix Equal Literal  (7)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	DatatypePrefix  goto 29
+	IdentifierOrKeyword  goto 30
+	Identifier  goto 31
+	Keyword  goto 32
+
+
+state 3
+	Decl : KeywordNamespace . NamespacePrefix Equal NamespaceURILiteral  (4)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	NamespacePrefix  goto 33
+	IdentifierOrKeyword  goto 34
+	Identifier  goto 31
+	Keyword  goto 32
+
+
+state 4
+	$accept : TopLevel . $end  (0)
+
+	$end  accept
+
+
+state 5
+	TopLevel : Preamble . TopLevelBody  (1)
+	Grammar : .  (14)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	$end  reduce 14
+	KeywordAttribute  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	TopLevelBody  goto 37
+	Pattern  goto 38
+	Grammar  goto 39
+	Member  goto 40
+	AnnotatedComponent  goto 41
+	AnnotationElementNotKeyword  goto 42
+	Annotations  goto 43
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 6
+	Preamble : Decl . Preamble  (3)
+	Preamble : .  (2)
+
+	KeywordDefault  shift 1
+	KeywordDatatypes  shift 2
+	KeywordNamespace  shift 3
+	$end  reduce 2
+	ERROR  reduce 2
+	KeywordAttribute  reduce 2
+	KeywordDiv  reduce 2
+	KeywordElement  reduce 2
+	KeywordEmpty  reduce 2
+	KeywordExternal  reduce 2
+	KeywordGrammar  reduce 2
+	KeywordInclude  reduce 2
+	KeywordList  reduce 2
+	KeywordMixed  reduce 2
+	KeywordNotAllowed  reduce 2
+	KeywordParent  reduce 2
+	KeywordStart  reduce 2
+	KeywordString  reduce 2
+	KeywordText  reduce 2
+	KeywordToken  reduce 2
+	OpenParen  reduce 2
+	OpenBracket  reduce 2
+	LiteralSegment  reduce 2
+	NCName  reduce 2
+	QuotedIdentifier  reduce 2
+	Documentation  reduce 2
+	CName  reduce 2
+
+	Preamble  goto 56
+	Decl  goto 6
+
+
+state 7
+	Decl : KeywordDefault KeywordNamespace . Equal NamespaceURILiteral  (5)
+	Decl : KeywordDefault KeywordNamespace . NamespacePrefix Equal NamespaceURILiteral  (6)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	Equal  shift 57
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	NamespacePrefix  goto 58
+	IdentifierOrKeyword  goto 34
+	Identifier  goto 31
+	Keyword  goto 32
+
+
+state 8
+	Keyword : KeywordAttribute .  (149)
+
+	.  reduce 149
+
+
+state 9
+	Keyword : KeywordDefault .  (150)
+
+	.  reduce 150
+
+
+state 10
+	Keyword : KeywordDatatypes .  (151)
+
+	.  reduce 151
+
+
+state 11
+	Keyword : KeywordDiv .  (152)
+
+	.  reduce 152
+
+
+state 12
+	Keyword : KeywordElement .  (153)
+
+	.  reduce 153
+
+
+state 13
+	Keyword : KeywordEmpty .  (154)
+
+	.  reduce 154
+
+
+state 14
+	Keyword : KeywordExternal .  (155)
+
+	.  reduce 155
+
+
+state 15
+	Keyword : KeywordGrammar .  (156)
+
+	.  reduce 156
+
+
+state 16
+	Keyword : KeywordInclude .  (157)
+
+	.  reduce 157
+
+
+state 17
+	Keyword : KeywordInherit .  (158)
+
+	.  reduce 158
+
+
+state 18
+	Keyword : KeywordList .  (159)
+
+	.  reduce 159
+
+
+state 19
+	Keyword : KeywordMixed .  (160)
+
+	.  reduce 160
+
+
+state 20
+	Keyword : KeywordNamespace .  (161)
+
+	.  reduce 161
+
+
+state 21
+	Keyword : KeywordNotAllowed .  (162)
+
+	.  reduce 162
+
+
+state 22
+	Keyword : KeywordParent .  (163)
+
+	.  reduce 163
+
+
+state 23
+	Keyword : KeywordStart .  (164)
+
+	.  reduce 164
+
+
+state 24
+	Keyword : KeywordString .  (165)
+
+	.  reduce 165
+
+
+state 25
+	Keyword : KeywordText .  (166)
+
+	.  reduce 166
+
+
+state 26
+	Keyword : KeywordToken .  (167)
+
+	.  reduce 167
+
+
+state 27
+	Identifier : NCName .  (170)
+
+	.  reduce 170
+
+
+state 28
+	Identifier : QuotedIdentifier .  (171)
+
+	.  reduce 171
+
+
+state 29
+	Decl : KeywordDatatypes DatatypePrefix . Equal Literal  (7)
+
+	Equal  shift 59
+	.  error
+
+
+state 30
+	DatatypePrefix : IdentifierOrKeyword .  (9)
+
+	.  reduce 9
+
+
+state 31
+	IdentifierOrKeyword : Identifier .  (147)
+
+	.  reduce 147
+
+
+state 32
+	IdentifierOrKeyword : Keyword .  (148)
+
+	.  reduce 148
+
+
+state 33
+	Decl : KeywordNamespace NamespacePrefix . Equal NamespaceURILiteral  (4)
+
+	Equal  shift 60
+	.  error
+
+
+state 34
+	NamespacePrefix : IdentifierOrKeyword .  (8)
+
+	.  reduce 8
+
+
+state 35
+	AnnotationElementNotKeyword : ERROR .  (125)
+
+	.  reduce 125
+
+
+state 36
+	Documentations : Documentation . Documentations  (146)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Documentations  goto 61
+
+
+state 37
+	TopLevel : Preamble TopLevelBody .  (1)
+
+	.  reduce 1
+
+
+state 38
+	TopLevelBody : Pattern .  (12)
+
+	.  reduce 12
+
+
+state 39
+	TopLevelBody : Grammar .  (13)
+
+	.  reduce 13
+
+
+state 40
+	Grammar : Member . Grammar  (15)
+	Grammar : .  (14)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	$end  reduce 14
+	KeywordDiv  reduce 145
+	KeywordInclude  reduce 145
+	KeywordStart  reduce 145
+	CloseCurly  reduce 14
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	Grammar  goto 62
+	Member  goto 40
+	AnnotatedComponent  goto 41
+	AnnotationElementNotKeyword  goto 42
+	Annotations  goto 63
+	Documentations  goto 55
+
+
+state 41
+	Member : AnnotatedComponent .  (16)
+
+	.  reduce 16
+
+
+state 42
+	Member : AnnotationElementNotKeyword .  (17)
+
+	.  reduce 17
+
+
+state 43
+	AnnotatedComponent : Annotations . Component  (18)
+	LeadAnnotatedDataExcept : Annotations . DataExcept  (64)
+	LeadAnnotatedPrimary : Annotations . Primary  (65)
+	LeadAnnotatedPrimary : Annotations . OpenParen InnerPattern CloseParen  (66)
+
+	KeywordAttribute  shift 64
+	KeywordDiv  shift 65
+	KeywordElement  shift 66
+	KeywordEmpty  shift 67
+	KeywordExternal  shift 68
+	KeywordGrammar  shift 69
+	KeywordInclude  shift 70
+	KeywordList  shift 71
+	KeywordMixed  shift 72
+	KeywordNotAllowed  shift 73
+	KeywordParent  shift 74
+	KeywordStart  shift 75
+	KeywordString  shift 76
+	KeywordText  shift 77
+	KeywordToken  shift 78
+	OpenParen  shift 79
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 81
+	.  error
+
+	Literal  goto 82
+	Component  goto 83
+	Start  goto 84
+	Define  goto 85
+	Include  goto 86
+	Div  goto 87
+	Identifier  goto 88
+	DataExcept  goto 89
+	Primary  goto 90
+	DatatypeName  goto 91
+	DatatypeValue  goto 92
+	Ref  goto 93
+
+
+state 44
+	Pattern : InnerPattern .  (44)
+
+	.  reduce 44
+
+
+state 45
+	InnerPattern : InnerParticle .  (45)
+	Particle : InnerParticle .  (56)
+
+	$end  reduce 45
+	ERROR  reduce 45
+	KeywordDiv  reduce 45
+	KeywordInclude  reduce 45
+	KeywordStart  reduce 45
+	Comma  reduce 56
+	CloseCurly  reduce 45
+	CloseParen  reduce 45
+	OpenBracket  reduce 45
+	Amp  reduce 56
+	Bar  reduce 56
+	NCName  reduce 45
+	QuotedIdentifier  reduce 45
+	Documentation  reduce 45
+
+
+state 46
+	InnerPattern : ParticleChoice .  (46)
+
+	.  reduce 46
+
+
+state 47
+	InnerPattern : ParticleGroup .  (47)
+
+	.  reduce 47
+
+
+state 48
+	InnerPattern : ParticleInterleave .  (48)
+
+	.  reduce 48
+
+
+state 49
+	InnerPattern : AnnotatedDataExcept .  (49)
+
+	.  reduce 49
+
+
+state 50
+	ParticleChoice : Particle . Bar Particle  (50)
+	ParticleChoice : Particle . Bar ParticleChoice  (51)
+	ParticleGroup : Particle . Comma Particle  (52)
+	ParticleGroup : Particle . Comma ParticleGroup  (53)
+	ParticleInterleave : Particle . Amp Particle  (54)
+	ParticleInterleave : Particle . Amp ParticleInterleave  (55)
+
+	Comma  shift 94
+	Amp  shift 95
+	Bar  shift 96
+	.  error
+
+
+state 51
+	InnerParticle : AnnotatedPrimary .  (57)
+	RepeatedPrimary : AnnotatedPrimary . Asterisk  (59)
+	RepeatedPrimary : AnnotatedPrimary . Plus  (60)
+	RepeatedPrimary : AnnotatedPrimary . Question  (61)
+
+	Question  shift 97
+	Asterisk  shift 98
+	Plus  shift 99
+	$end  reduce 57
+	ERROR  reduce 57
+	KeywordDiv  reduce 57
+	KeywordInclude  reduce 57
+	KeywordStart  reduce 57
+	Comma  reduce 57
+	CloseCurly  reduce 57
+	CloseParen  reduce 57
+	OpenBracket  reduce 57
+	Amp  reduce 57
+	Bar  reduce 57
+	NCName  reduce 57
+	QuotedIdentifier  reduce 57
+	Documentation  reduce 57
+
+
+state 52
+	InnerParticle : RepeatedPrimary . FollowAnnotations  (58)
+	FollowAnnotations : .  (109)
+
+	TwoGreaters  shift 100
+	$end  reduce 109
+	ERROR  reduce 109
+	KeywordDiv  reduce 109
+	KeywordInclude  reduce 109
+	KeywordStart  reduce 109
+	Comma  reduce 109
+	CloseCurly  reduce 109
+	CloseParen  reduce 109
+	OpenBracket  reduce 109
+	Amp  reduce 109
+	Bar  reduce 109
+	NCName  reduce 109
+	QuotedIdentifier  reduce 109
+	Documentation  reduce 109
+
+	FollowAnnotations  goto 101
+
+
+state 53
+	AnnotatedPrimary : LeadAnnotatedPrimary . FollowAnnotations  (62)
+	FollowAnnotations : .  (109)
+
+	TwoGreaters  shift 100
+	$end  reduce 109
+	ERROR  reduce 109
+	KeywordDiv  reduce 109
+	KeywordInclude  reduce 109
+	KeywordStart  reduce 109
+	Comma  reduce 109
+	CloseCurly  reduce 109
+	CloseParen  reduce 109
+	OpenBracket  reduce 109
+	Amp  reduce 109
+	Bar  reduce 109
+	Question  reduce 109
+	Asterisk  reduce 109
+	Plus  reduce 109
+	NCName  reduce 109
+	QuotedIdentifier  reduce 109
+	Documentation  reduce 109
+
+	FollowAnnotations  goto 102
+
+
+state 54
+	AnnotatedDataExcept : LeadAnnotatedDataExcept . FollowAnnotations  (63)
+	FollowAnnotations : .  (109)
+
+	TwoGreaters  shift 100
+	$end  reduce 109
+	ERROR  reduce 109
+	KeywordDiv  reduce 109
+	KeywordInclude  reduce 109
+	KeywordStart  reduce 109
+	CloseCurly  reduce 109
+	CloseParen  reduce 109
+	OpenBracket  reduce 109
+	NCName  reduce 109
+	QuotedIdentifier  reduce 109
+	Documentation  reduce 109
+
+	FollowAnnotations  goto 103
+
+
+state 55
+	Annotations : Documentations .  (111)
+	Annotations : Documentations . OpenBracket AnnotationContentInAnnotations CloseBracket  (112)
+
+	OpenBracket  shift 104
+	KeywordAttribute  reduce 111
+	KeywordDefault  reduce 111
+	KeywordDatatypes  reduce 111
+	KeywordDiv  reduce 111
+	KeywordElement  reduce 111
+	KeywordEmpty  reduce 111
+	KeywordExternal  reduce 111
+	KeywordGrammar  reduce 111
+	KeywordInclude  reduce 111
+	KeywordInherit  reduce 111
+	KeywordList  reduce 111
+	KeywordMixed  reduce 111
+	KeywordNamespace  reduce 111
+	KeywordNotAllowed  reduce 111
+	KeywordParent  reduce 111
+	KeywordStart  reduce 111
+	KeywordString  reduce 111
+	KeywordText  reduce 111
+	KeywordToken  reduce 111
+	OpenParen  reduce 111
+	Asterisk  reduce 111
+	LiteralSegment  reduce 111
+	NCName  reduce 111
+	QuotedIdentifier  reduce 111
+	CName  reduce 111
+	NsName  reduce 111
+
+
+state 56
+	Preamble : Decl Preamble .  (3)
+
+	.  reduce 3
+
+
+state 57
+	Decl : KeywordDefault KeywordNamespace Equal . NamespaceURILiteral  (5)
+
+	KeywordInherit  shift 105
+	LiteralSegment  shift 80
+	.  error
+
+	NamespaceURILiteral  goto 106
+	Literal  goto 107
+
+
+state 58
+	Decl : KeywordDefault KeywordNamespace NamespacePrefix . Equal NamespaceURILiteral  (6)
+
+	Equal  shift 108
+	.  error
+
+
+state 59
+	Decl : KeywordDatatypes DatatypePrefix Equal . Literal  (7)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 109
+
+
+state 60
+	Decl : KeywordNamespace NamespacePrefix Equal . NamespaceURILiteral  (4)
+
+	KeywordInherit  shift 105
+	LiteralSegment  shift 80
+	.  error
+
+	NamespaceURILiteral  goto 110
+	Literal  goto 107
+
+
+state 61
+	Documentations : Documentation Documentations .  (146)
+
+	.  reduce 146
+
+
+state 62
+	Grammar : Member Grammar .  (15)
+
+	.  reduce 15
+
+
+state 63
+	AnnotatedComponent : Annotations . Component  (18)
+
+	KeywordDiv  shift 65
+	KeywordInclude  shift 70
+	KeywordStart  shift 75
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	Component  goto 83
+	Start  goto 84
+	Define  goto 85
+	Include  goto 86
+	Div  goto 87
+	Identifier  goto 111
+
+
+state 64
+	Primary : KeywordAttribute . NameClass OpenCurly Pattern CloseCurly  (68)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Annotations  goto 112
+	NameClass  goto 113
+	InnerNameClass  goto 114
+	AnnotatedSimpleNameClass  goto 115
+	NameClassChoice  goto 116
+	AnnotatedExceptNameClass  goto 117
+	LeadAnnotatedExceptNameClass  goto 118
+	LeadAnnotatedSimpleNameClass  goto 119
+	Documentations  goto 55
+
+
+state 65
+	Div : KeywordDiv . OpenCurly Grammar CloseCurly  (42)
+
+	OpenCurly  shift 120
+	.  error
+
+
+state 66
+	Primary : KeywordElement . NameClass OpenCurly Pattern CloseCurly  (67)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Annotations  goto 112
+	NameClass  goto 121
+	InnerNameClass  goto 114
+	AnnotatedSimpleNameClass  goto 115
+	NameClassChoice  goto 116
+	AnnotatedExceptNameClass  goto 117
+	LeadAnnotatedExceptNameClass  goto 118
+	LeadAnnotatedSimpleNameClass  goto 119
+	Documentations  goto 55
+
+
+state 67
+	Primary : KeywordEmpty .  (74)
+
+	.  reduce 74
+
+
+state 68
+	Primary : KeywordExternal . AnyURILiteral OptInherit  (80)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 122
+	AnyURILiteral  goto 123
+
+
+state 69
+	Primary : KeywordGrammar . OpenCurly Grammar CloseCurly  (79)
+
+	OpenCurly  shift 124
+	.  error
+
+
+state 70
+	Include : KeywordInclude . AnyURILiteral OptInherit OptIncludeBody  (28)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 122
+	AnyURILiteral  goto 125
+
+
+state 71
+	Primary : KeywordList . OpenCurly Pattern CloseCurly  (70)
+
+	OpenCurly  shift 126
+	.  error
+
+
+state 72
+	Primary : KeywordMixed . OpenCurly Pattern CloseCurly  (69)
+
+	OpenCurly  shift 127
+	.  error
+
+
+state 73
+	Primary : KeywordNotAllowed .  (75)
+
+	.  reduce 75
+
+
+state 74
+	Primary : KeywordParent . Ref  (78)
+
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	Identifier  goto 128
+	Ref  goto 129
+
+
+state 75
+	Start : KeywordStart . AssignOp Pattern  (23)
+
+	Equal  shift 130
+	OrEquals  shift 131
+	AndEquals  shift 132
+	.  error
+
+	AssignOp  goto 133
+
+
+state 76
+	DatatypeName : KeywordString .  (84)
+
+	.  reduce 84
+
+
+state 77
+	Primary : KeywordText .  (76)
+
+	.  reduce 76
+
+
+state 78
+	DatatypeName : KeywordToken .  (85)
+
+	.  reduce 85
+
+
+state 79
+	LeadAnnotatedPrimary : Annotations OpenParen . InnerPattern CloseParen  (66)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Annotations  goto 134
+	InnerPattern  goto 135
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 80
+	Literal : LiteralSegment .  (168)
+	Literal : LiteralSegment . Tilde Literal  (169)
+
+	Tilde  shift 136
+	$end  reduce 168
+	ERROR  reduce 168
+	KeywordAttribute  reduce 168
+	KeywordDefault  reduce 168
+	KeywordDatatypes  reduce 168
+	KeywordDiv  reduce 168
+	KeywordElement  reduce 168
+	KeywordEmpty  reduce 168
+	KeywordExternal  reduce 168
+	KeywordGrammar  reduce 168
+	KeywordInclude  reduce 168
+	KeywordInherit  reduce 168
+	KeywordList  reduce 168
+	KeywordMixed  reduce 168
+	KeywordNamespace  reduce 168
+	KeywordNotAllowed  reduce 168
+	KeywordParent  reduce 168
+	KeywordStart  reduce 168
+	KeywordString  reduce 168
+	KeywordText  reduce 168
+	KeywordToken  reduce 168
+	Comma  reduce 168
+	OpenCurly  reduce 168
+	CloseCurly  reduce 168
+	OpenParen  reduce 168
+	CloseParen  reduce 168
+	OpenBracket  reduce 168
+	CloseBracket  reduce 168
+	Amp  reduce 168
+	Bar  reduce 168
+	Question  reduce 168
+	Asterisk  reduce 168
+	Plus  reduce 168
+	TwoGreaters  reduce 168
+	LiteralSegment  reduce 168
+	NCName  reduce 168
+	QuotedIdentifier  reduce 168
+	Documentation  reduce 168
+	CName  reduce 168
+
+
+state 81
+	DatatypeName : CName .  (83)
+
+	.  reduce 83
+
+
+state 82
+	DatatypeValue : Literal .  (86)
+
+	.  reduce 86
+
+
+state 83
+	AnnotatedComponent : Annotations Component .  (18)
+
+	.  reduce 18
+
+
+state 84
+	Component : Start .  (19)
+
+	.  reduce 19
+
+
+state 85
+	Component : Define .  (20)
+
+	.  reduce 20
+
+
+state 86
+	Component : Include .  (21)
+
+	.  reduce 21
+
+
+state 87
+	Component : Div .  (22)
+
+	.  reduce 22
+
+
+state 88
+	Define : Identifier . AssignOp Pattern  (24)
+	Ref : Identifier .  (82)
+
+	Equal  shift 130
+	OrEquals  shift 131
+	AndEquals  shift 132
+	$end  reduce 82
+	Comma  reduce 82
+	Amp  reduce 82
+	Bar  reduce 82
+	Question  reduce 82
+	Asterisk  reduce 82
+	Plus  reduce 82
+	TwoGreaters  reduce 82
+
+	AssignOp  goto 137
+
+
+state 89
+	LeadAnnotatedDataExcept : Annotations DataExcept .  (64)
+
+	.  reduce 64
+
+
+state 90
+	LeadAnnotatedPrimary : Annotations Primary .  (65)
+
+	.  reduce 65
+
+
+state 91
+	Primary : DatatypeName . OptParams  (71)
+	Primary : DatatypeName . DatatypeValue  (72)
+	DataExcept : DatatypeName . OptParams Minus LeadAnnotatedPrimary  (81)
+	OptParams : .  (87)
+
+	OpenCurly  shift 138
+	LiteralSegment  shift 80
+	$end  reduce 87
+	ERROR  reduce 87
+	KeywordDiv  reduce 87
+	KeywordInclude  reduce 87
+	KeywordStart  reduce 87
+	Comma  reduce 87
+	CloseCurly  reduce 87
+	CloseParen  reduce 87
+	OpenBracket  reduce 87
+	Amp  reduce 87
+	Bar  reduce 87
+	Question  reduce 87
+	Asterisk  reduce 87
+	Plus  reduce 87
+	Minus  reduce 87
+	TwoGreaters  reduce 87
+	NCName  reduce 87
+	QuotedIdentifier  reduce 87
+	Documentation  reduce 87
+
+	Literal  goto 82
+	OptParams  goto 139
+	DatatypeValue  goto 140
+
+
+state 92
+	Primary : DatatypeValue .  (73)
+
+	.  reduce 73
+
+
+state 93
+	Primary : Ref .  (77)
+
+	.  reduce 77
+
+
+state 94
+	ParticleGroup : Particle Comma . Particle  (52)
+	ParticleGroup : Particle Comma . ParticleGroup  (53)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Annotations  goto 141
+	InnerParticle  goto 142
+	ParticleGroup  goto 143
+	Particle  goto 144
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	Documentations  goto 55
+
+
+state 95
+	ParticleInterleave : Particle Amp . Particle  (54)
+	ParticleInterleave : Particle Amp . ParticleInterleave  (55)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Annotations  goto 141
+	InnerParticle  goto 142
+	ParticleInterleave  goto 145
+	Particle  goto 146
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	Documentations  goto 55
+
+
+state 96
+	ParticleChoice : Particle Bar . Particle  (50)
+	ParticleChoice : Particle Bar . ParticleChoice  (51)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Annotations  goto 141
+	InnerParticle  goto 142
+	ParticleChoice  goto 147
+	Particle  goto 148
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	Documentations  goto 55
+
+
+state 97
+	RepeatedPrimary : AnnotatedPrimary Question .  (61)
+
+	.  reduce 61
+
+
+state 98
+	RepeatedPrimary : AnnotatedPrimary Asterisk .  (59)
+
+	.  reduce 59
+
+
+state 99
+	RepeatedPrimary : AnnotatedPrimary Plus .  (60)
+
+	.  reduce 60
+
+
+state 100
+	FollowAnnotations : TwoGreaters . AnnotationElement FollowAnnotations  (110)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	.  error
+
+	IdentifierOrKeyword  goto 150
+	Identifier  goto 31
+	AnnotationElement  goto 151
+	PrefixedName  goto 152
+	ForeignElementName  goto 153
+	Keyword  goto 32
+
+
+state 101
+	InnerParticle : RepeatedPrimary FollowAnnotations .  (58)
+
+	.  reduce 58
+
+
+state 102
+	AnnotatedPrimary : LeadAnnotatedPrimary FollowAnnotations .  (62)
+
+	.  reduce 62
+
+
+state 103
+	AnnotatedDataExcept : LeadAnnotatedDataExcept FollowAnnotations .  (63)
+
+	.  reduce 63
+
+
+state 104
+	Annotations : Documentations OpenBracket . AnnotationContentInAnnotations CloseBracket  (112)
+	AnnotationContentInAnnotations : .  (113)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 113
+
+	IdentifierOrKeyword  goto 154
+	Identifier  goto 31
+	AnnotationContentInAnnotations  goto 155
+	PrefixedName  goto 156
+	Keyword  goto 32
+
+
+state 105
+	NamespaceURILiteral : KeywordInherit .  (11)
+
+	.  reduce 11
+
+
+state 106
+	Decl : KeywordDefault KeywordNamespace Equal NamespaceURILiteral .  (5)
+
+	.  reduce 5
+
+
+state 107
+	NamespaceURILiteral : Literal .  (10)
+
+	.  reduce 10
+
+
+state 108
+	Decl : KeywordDefault KeywordNamespace NamespacePrefix Equal . NamespaceURILiteral  (6)
+
+	KeywordInherit  shift 105
+	LiteralSegment  shift 80
+	.  error
+
+	NamespaceURILiteral  goto 157
+	Literal  goto 107
+
+
+state 109
+	Decl : KeywordDatatypes DatatypePrefix Equal Literal .  (7)
+
+	.  reduce 7
+
+
+state 110
+	Decl : KeywordNamespace NamespacePrefix Equal NamespaceURILiteral .  (4)
+
+	.  reduce 4
+
+
+state 111
+	Define : Identifier . AssignOp Pattern  (24)
+
+	Equal  shift 130
+	OrEquals  shift 131
+	AndEquals  shift 132
+	.  error
+
+	AssignOp  goto 137
+
+
+state 112
+	LeadAnnotatedExceptNameClass : Annotations . ExceptNameClass  (99)
+	LeadAnnotatedSimpleNameClass : Annotations . SimpleNameClass  (101)
+	LeadAnnotatedSimpleNameClass : Annotations . OpenParen InnerNameClass CloseParen  (102)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	OpenParen  shift 158
+	Asterisk  shift 159
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 160
+	NsName  shift 161
+	.  error
+
+	IdentifierOrKeyword  goto 162
+	Identifier  goto 31
+	ExceptNameClass  goto 163
+	SimpleNameClass  goto 164
+	Keyword  goto 32
+
+
+state 113
+	Primary : KeywordAttribute NameClass . OpenCurly Pattern CloseCurly  (68)
+
+	OpenCurly  shift 165
+	.  error
+
+
+state 114
+	NameClass : InnerNameClass .  (92)
+
+	.  reduce 92
+
+
+state 115
+	InnerNameClass : AnnotatedSimpleNameClass .  (93)
+	NameClassChoice : AnnotatedSimpleNameClass . Bar AnnotatedSimpleNameClass  (96)
+	NameClassChoice : AnnotatedSimpleNameClass . Bar NameClassChoice  (97)
+
+	Bar  shift 166
+	OpenCurly  reduce 93
+	CloseParen  reduce 93
+
+
+state 116
+	InnerNameClass : NameClassChoice .  (94)
+
+	.  reduce 94
+
+
+state 117
+	InnerNameClass : AnnotatedExceptNameClass .  (95)
+
+	.  reduce 95
+
+
+state 118
+	AnnotatedExceptNameClass : LeadAnnotatedExceptNameClass . FollowAnnotations  (98)
+	FollowAnnotations : .  (109)
+
+	TwoGreaters  shift 100
+	OpenCurly  reduce 109
+	CloseParen  reduce 109
+
+	FollowAnnotations  goto 167
+
+
+state 119
+	AnnotatedSimpleNameClass : LeadAnnotatedSimpleNameClass . FollowAnnotations  (100)
+	FollowAnnotations : .  (109)
+
+	TwoGreaters  shift 100
+	OpenCurly  reduce 109
+	CloseParen  reduce 109
+	Bar  reduce 109
+
+	FollowAnnotations  goto 168
+
+
+state 120
+	Div : KeywordDiv OpenCurly . Grammar CloseCurly  (42)
+	Grammar : .  (14)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	KeywordDiv  reduce 145
+	KeywordInclude  reduce 145
+	KeywordStart  reduce 145
+	CloseCurly  reduce 14
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	Grammar  goto 169
+	Member  goto 40
+	AnnotatedComponent  goto 41
+	AnnotationElementNotKeyword  goto 42
+	Annotations  goto 63
+	Documentations  goto 55
+
+
+state 121
+	Primary : KeywordElement NameClass . OpenCurly Pattern CloseCurly  (67)
+
+	OpenCurly  shift 170
+	.  error
+
+
+state 122
+	AnyURILiteral : Literal .  (29)
+
+	.  reduce 29
+
+
+state 123
+	Primary : KeywordExternal AnyURILiteral . OptInherit  (80)
+	OptInherit : .  (30)
+
+	KeywordInherit  shift 171
+	$end  reduce 30
+	ERROR  reduce 30
+	KeywordDiv  reduce 30
+	KeywordInclude  reduce 30
+	KeywordStart  reduce 30
+	Comma  reduce 30
+	CloseCurly  reduce 30
+	CloseParen  reduce 30
+	OpenBracket  reduce 30
+	Amp  reduce 30
+	Bar  reduce 30
+	Question  reduce 30
+	Asterisk  reduce 30
+	Plus  reduce 30
+	TwoGreaters  reduce 30
+	NCName  reduce 30
+	QuotedIdentifier  reduce 30
+	Documentation  reduce 30
+
+	OptInherit  goto 172
+
+
+state 124
+	Primary : KeywordGrammar OpenCurly . Grammar CloseCurly  (79)
+	Grammar : .  (14)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	KeywordDiv  reduce 145
+	KeywordInclude  reduce 145
+	KeywordStart  reduce 145
+	CloseCurly  reduce 14
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	Grammar  goto 173
+	Member  goto 40
+	AnnotatedComponent  goto 41
+	AnnotationElementNotKeyword  goto 42
+	Annotations  goto 63
+	Documentations  goto 55
+
+
+state 125
+	Include : KeywordInclude AnyURILiteral . OptInherit OptIncludeBody  (28)
+	OptInherit : .  (30)
+
+	KeywordInherit  shift 171
+	$end  reduce 30
+	ERROR  reduce 30
+	KeywordDiv  reduce 30
+	KeywordInclude  reduce 30
+	KeywordStart  reduce 30
+	OpenCurly  reduce 30
+	CloseCurly  reduce 30
+	OpenBracket  reduce 30
+	NCName  reduce 30
+	QuotedIdentifier  reduce 30
+	Documentation  reduce 30
+
+	OptInherit  goto 174
+
+
+state 126
+	Primary : KeywordList OpenCurly . Pattern CloseCurly  (70)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Pattern  goto 175
+	Annotations  goto 134
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 127
+	Primary : KeywordMixed OpenCurly . Pattern CloseCurly  (69)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Pattern  goto 176
+	Annotations  goto 134
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 128
+	Ref : Identifier .  (82)
+
+	.  reduce 82
+
+
+state 129
+	Primary : KeywordParent Ref .  (78)
+
+	.  reduce 78
+
+
+state 130
+	AssignOp : Equal .  (25)
+
+	.  reduce 25
+
+
+state 131
+	AssignOp : OrEquals .  (26)
+
+	.  reduce 26
+
+
+state 132
+	AssignOp : AndEquals .  (27)
+
+	.  reduce 27
+
+
+state 133
+	Start : KeywordStart AssignOp . Pattern  (23)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Pattern  goto 177
+	Annotations  goto 134
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 134
+	LeadAnnotatedDataExcept : Annotations . DataExcept  (64)
+	LeadAnnotatedPrimary : Annotations . Primary  (65)
+	LeadAnnotatedPrimary : Annotations . OpenParen InnerPattern CloseParen  (66)
+
+	KeywordAttribute  shift 64
+	KeywordElement  shift 66
+	KeywordEmpty  shift 67
+	KeywordExternal  shift 68
+	KeywordGrammar  shift 69
+	KeywordList  shift 71
+	KeywordMixed  shift 72
+	KeywordNotAllowed  shift 73
+	KeywordParent  shift 74
+	KeywordString  shift 76
+	KeywordText  shift 77
+	KeywordToken  shift 78
+	OpenParen  shift 79
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 81
+	.  error
+
+	Literal  goto 82
+	Identifier  goto 128
+	DataExcept  goto 89
+	Primary  goto 90
+	DatatypeName  goto 91
+	DatatypeValue  goto 92
+	Ref  goto 93
+
+
+state 135
+	LeadAnnotatedPrimary : Annotations OpenParen InnerPattern . CloseParen  (66)
+
+	CloseParen  shift 178
+	.  error
+
+
+state 136
+	Literal : LiteralSegment Tilde . Literal  (169)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 179
+
+
+state 137
+	Define : Identifier AssignOp . Pattern  (24)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Pattern  goto 180
+	Annotations  goto 134
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 138
+	OptParams : OpenCurly . Params CloseCurly  (88)
+	Params : .  (89)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	CloseCurly  reduce 89
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	Annotations  goto 181
+	Params  goto 182
+	Param  goto 183
+	Documentations  goto 55
+
+
+state 139
+	Primary : DatatypeName OptParams .  (71)
+	DataExcept : DatatypeName OptParams . Minus LeadAnnotatedPrimary  (81)
+
+	Minus  shift 184
+	$end  reduce 71
+	ERROR  reduce 71
+	KeywordDiv  reduce 71
+	KeywordInclude  reduce 71
+	KeywordStart  reduce 71
+	Comma  reduce 71
+	CloseCurly  reduce 71
+	CloseParen  reduce 71
+	OpenBracket  reduce 71
+	Amp  reduce 71
+	Bar  reduce 71
+	Question  reduce 71
+	Asterisk  reduce 71
+	Plus  reduce 71
+	TwoGreaters  reduce 71
+	NCName  reduce 71
+	QuotedIdentifier  reduce 71
+	Documentation  reduce 71
+
+
+state 140
+	Primary : DatatypeName DatatypeValue .  (72)
+
+	.  reduce 72
+
+
+state 141
+	LeadAnnotatedPrimary : Annotations . Primary  (65)
+	LeadAnnotatedPrimary : Annotations . OpenParen InnerPattern CloseParen  (66)
+
+	KeywordAttribute  shift 64
+	KeywordElement  shift 66
+	KeywordEmpty  shift 67
+	KeywordExternal  shift 68
+	KeywordGrammar  shift 69
+	KeywordList  shift 71
+	KeywordMixed  shift 72
+	KeywordNotAllowed  shift 73
+	KeywordParent  shift 74
+	KeywordString  shift 76
+	KeywordText  shift 77
+	KeywordToken  shift 78
+	OpenParen  shift 79
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 81
+	.  error
+
+	Literal  goto 82
+	Identifier  goto 128
+	Primary  goto 90
+	DatatypeName  goto 185
+	DatatypeValue  goto 92
+	Ref  goto 93
+
+
+state 142
+	Particle : InnerParticle .  (56)
+
+	.  reduce 56
+
+
+state 143
+	ParticleGroup : Particle Comma ParticleGroup .  (53)
+
+	.  reduce 53
+
+
+state 144
+	ParticleGroup : Particle . Comma Particle  (52)
+	ParticleGroup : Particle Comma Particle .  (52)
+	ParticleGroup : Particle . Comma ParticleGroup  (53)
+
+	Comma  shift 94
+	$end  reduce 52
+	ERROR  reduce 52
+	KeywordDiv  reduce 52
+	KeywordInclude  reduce 52
+	KeywordStart  reduce 52
+	CloseCurly  reduce 52
+	CloseParen  reduce 52
+	OpenBracket  reduce 52
+	NCName  reduce 52
+	QuotedIdentifier  reduce 52
+	Documentation  reduce 52
+
+
+state 145
+	ParticleInterleave : Particle Amp ParticleInterleave .  (55)
+
+	.  reduce 55
+
+
+state 146
+	ParticleInterleave : Particle . Amp Particle  (54)
+	ParticleInterleave : Particle Amp Particle .  (54)
+	ParticleInterleave : Particle . Amp ParticleInterleave  (55)
+
+	Amp  shift 95
+	$end  reduce 54
+	ERROR  reduce 54
+	KeywordDiv  reduce 54
+	KeywordInclude  reduce 54
+	KeywordStart  reduce 54
+	CloseCurly  reduce 54
+	CloseParen  reduce 54
+	OpenBracket  reduce 54
+	NCName  reduce 54
+	QuotedIdentifier  reduce 54
+	Documentation  reduce 54
+
+
+state 147
+	ParticleChoice : Particle Bar ParticleChoice .  (51)
+
+	.  reduce 51
+
+
+state 148
+	ParticleChoice : Particle . Bar Particle  (50)
+	ParticleChoice : Particle Bar Particle .  (50)
+	ParticleChoice : Particle . Bar ParticleChoice  (51)
+
+	Bar  shift 96
+	$end  reduce 50
+	ERROR  reduce 50
+	KeywordDiv  reduce 50
+	KeywordInclude  reduce 50
+	KeywordStart  reduce 50
+	CloseCurly  reduce 50
+	CloseParen  reduce 50
+	OpenBracket  reduce 50
+	NCName  reduce 50
+	QuotedIdentifier  reduce 50
+	Documentation  reduce 50
+
+
+state 149
+	PrefixedName : CName .  (144)
+
+	.  reduce 144
+
+
+state 150
+	ForeignElementName : IdentifierOrKeyword .  (123)
+
+	.  reduce 123
+
+
+state 151
+	FollowAnnotations : TwoGreaters AnnotationElement . FollowAnnotations  (110)
+	FollowAnnotations : .  (109)
+
+	TwoGreaters  shift 100
+	$end  reduce 109
+	ERROR  reduce 109
+	KeywordDiv  reduce 109
+	KeywordInclude  reduce 109
+	KeywordStart  reduce 109
+	Comma  reduce 109
+	OpenCurly  reduce 109
+	CloseCurly  reduce 109
+	CloseParen  reduce 109
+	OpenBracket  reduce 109
+	Amp  reduce 109
+	Bar  reduce 109
+	Question  reduce 109
+	Asterisk  reduce 109
+	Plus  reduce 109
+	NCName  reduce 109
+	QuotedIdentifier  reduce 109
+	Documentation  reduce 109
+
+	FollowAnnotations  goto 186
+
+
+state 152
+	ForeignElementName : PrefixedName .  (124)
+
+	.  reduce 124
+
+
+state 153
+	AnnotationElement : ForeignElementName . AnnotationAttributesContent  (122)
+
+	OpenBracket  shift 187
+	.  error
+
+	AnnotationAttributesContent  goto 188
+
+
+state 154
+	AnnotationContentInAnnotations : IdentifierOrKeyword . AnnotationAttributesContent AnnotationContentInAnnotations  (116)
+
+	OpenBracket  shift 187
+	.  error
+
+	AnnotationAttributesContent  goto 189
+
+
+state 155
+	Annotations : Documentations OpenBracket AnnotationContentInAnnotations . CloseBracket  (112)
+
+	CloseBracket  shift 190
+	.  error
+
+
+state 156
+	AnnotationContentInAnnotations : PrefixedName . Equal Literal AnnotationContentInAnnotations  (114)
+	AnnotationContentInAnnotations : PrefixedName . AnnotationAttributesContent AnnotationContentInAnnotations  (115)
+
+	Equal  shift 191
+	OpenBracket  shift 187
+	.  error
+
+	AnnotationAttributesContent  goto 192
+
+
+state 157
+	Decl : KeywordDefault KeywordNamespace NamespacePrefix Equal NamespaceURILiteral .  (6)
+
+	.  reduce 6
+
+
+state 158
+	LeadAnnotatedSimpleNameClass : Annotations OpenParen . InnerNameClass CloseParen  (102)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Annotations  goto 112
+	InnerNameClass  goto 193
+	AnnotatedSimpleNameClass  goto 115
+	NameClassChoice  goto 116
+	AnnotatedExceptNameClass  goto 117
+	LeadAnnotatedExceptNameClass  goto 118
+	LeadAnnotatedSimpleNameClass  goto 119
+	Documentations  goto 55
+
+
+state 159
+	ExceptNameClass : Asterisk . Minus LeadAnnotatedSimpleNameClass  (104)
+	SimpleNameClass : Asterisk .  (108)
+
+	Minus  shift 194
+	OpenCurly  reduce 108
+	CloseParen  reduce 108
+	Bar  reduce 108
+	TwoGreaters  reduce 108
+
+
+state 160
+	SimpleNameClass : CName .  (106)
+
+	.  reduce 106
+
+
+state 161
+	ExceptNameClass : NsName . Minus LeadAnnotatedSimpleNameClass  (103)
+	SimpleNameClass : NsName .  (107)
+
+	Minus  shift 195
+	OpenCurly  reduce 107
+	CloseParen  reduce 107
+	Bar  reduce 107
+	TwoGreaters  reduce 107
+
+
+state 162
+	SimpleNameClass : IdentifierOrKeyword .  (105)
+
+	.  reduce 105
+
+
+state 163
+	LeadAnnotatedExceptNameClass : Annotations ExceptNameClass .  (99)
+
+	.  reduce 99
+
+
+state 164
+	LeadAnnotatedSimpleNameClass : Annotations SimpleNameClass .  (101)
+
+	.  reduce 101
+
+
+state 165
+	Primary : KeywordAttribute NameClass OpenCurly . Pattern CloseCurly  (68)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Pattern  goto 196
+	Annotations  goto 134
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 166
+	NameClassChoice : AnnotatedSimpleNameClass Bar . AnnotatedSimpleNameClass  (96)
+	NameClassChoice : AnnotatedSimpleNameClass Bar . NameClassChoice  (97)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Annotations  goto 197
+	AnnotatedSimpleNameClass  goto 198
+	NameClassChoice  goto 199
+	LeadAnnotatedSimpleNameClass  goto 119
+	Documentations  goto 55
+
+
+state 167
+	AnnotatedExceptNameClass : LeadAnnotatedExceptNameClass FollowAnnotations .  (98)
+
+	.  reduce 98
+
+
+state 168
+	AnnotatedSimpleNameClass : LeadAnnotatedSimpleNameClass FollowAnnotations .  (100)
+
+	.  reduce 100
+
+
+state 169
+	Div : KeywordDiv OpenCurly Grammar . CloseCurly  (42)
+
+	CloseCurly  shift 200
+	.  error
+
+
+state 170
+	Primary : KeywordElement NameClass OpenCurly . Pattern CloseCurly  (67)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Pattern  goto 201
+	Annotations  goto 134
+	InnerPattern  goto 44
+	InnerParticle  goto 45
+	ParticleChoice  goto 46
+	ParticleGroup  goto 47
+	ParticleInterleave  goto 48
+	AnnotatedDataExcept  goto 49
+	Particle  goto 50
+	AnnotatedPrimary  goto 51
+	RepeatedPrimary  goto 52
+	LeadAnnotatedPrimary  goto 53
+	LeadAnnotatedDataExcept  goto 54
+	Documentations  goto 55
+
+
+state 171
+	OptInherit : KeywordInherit . Equal IdentifierOrKeyword  (31)
+
+	Equal  shift 202
+	.  error
+
+
+state 172
+	Primary : KeywordExternal AnyURILiteral OptInherit .  (80)
+
+	.  reduce 80
+
+
+state 173
+	Primary : KeywordGrammar OpenCurly Grammar . CloseCurly  (79)
+
+	CloseCurly  shift 203
+	.  error
+
+
+state 174
+	Include : KeywordInclude AnyURILiteral OptInherit . OptIncludeBody  (28)
+	OptIncludeBody : .  (32)
+
+	OpenCurly  shift 204
+	$end  reduce 32
+	ERROR  reduce 32
+	KeywordDiv  reduce 32
+	KeywordInclude  reduce 32
+	KeywordStart  reduce 32
+	CloseCurly  reduce 32
+	OpenBracket  reduce 32
+	NCName  reduce 32
+	QuotedIdentifier  reduce 32
+	Documentation  reduce 32
+
+	OptIncludeBody  goto 205
+
+
+state 175
+	Primary : KeywordList OpenCurly Pattern . CloseCurly  (70)
+
+	CloseCurly  shift 206
+	.  error
+
+
+state 176
+	Primary : KeywordMixed OpenCurly Pattern . CloseCurly  (69)
+
+	CloseCurly  shift 207
+	.  error
+
+
+state 177
+	Start : KeywordStart AssignOp Pattern .  (23)
+
+	.  reduce 23
+
+
+state 178
+	LeadAnnotatedPrimary : Annotations OpenParen InnerPattern CloseParen .  (66)
+
+	.  reduce 66
+
+
+state 179
+	Literal : LiteralSegment Tilde Literal .  (169)
+
+	.  reduce 169
+
+
+state 180
+	Define : Identifier AssignOp Pattern .  (24)
+
+	.  reduce 24
+
+
+state 181
+	Param : Annotations . IdentifierOrKeyword Equal Literal  (91)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	IdentifierOrKeyword  goto 208
+	Identifier  goto 31
+	Keyword  goto 32
+
+
+state 182
+	OptParams : OpenCurly Params . CloseCurly  (88)
+
+	CloseCurly  shift 209
+	.  error
+
+
+state 183
+	Params : Param . Params  (90)
+	Params : .  (89)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	CloseCurly  reduce 89
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	Annotations  goto 181
+	Params  goto 210
+	Param  goto 183
+	Documentations  goto 55
+
+
+state 184
+	DataExcept : DatatypeName OptParams Minus . LeadAnnotatedPrimary  (81)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	LiteralSegment  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+
+	Annotations  goto 141
+	LeadAnnotatedPrimary  goto 211
+	Documentations  goto 55
+
+
+state 185
+	Primary : DatatypeName . OptParams  (71)
+	Primary : DatatypeName . DatatypeValue  (72)
+	OptParams : .  (87)
+
+	OpenCurly  shift 138
+	LiteralSegment  shift 80
+	$end  reduce 87
+	ERROR  reduce 87
+	KeywordDiv  reduce 87
+	KeywordInclude  reduce 87
+	KeywordStart  reduce 87
+	Comma  reduce 87
+	CloseCurly  reduce 87
+	CloseParen  reduce 87
+	OpenBracket  reduce 87
+	Amp  reduce 87
+	Bar  reduce 87
+	Question  reduce 87
+	Asterisk  reduce 87
+	Plus  reduce 87
+	TwoGreaters  reduce 87
+	NCName  reduce 87
+	QuotedIdentifier  reduce 87
+	Documentation  reduce 87
+
+	Literal  goto 82
+	OptParams  goto 212
+	DatatypeValue  goto 140
+
+
+state 186
+	FollowAnnotations : TwoGreaters AnnotationElement FollowAnnotations .  (110)
+
+	.  reduce 110
+
+
+state 187
+	AnnotationAttributesContent : OpenBracket . NestedAnnotationContents CloseBracket  (126)
+	NestedAnnotationContents : .  (127)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 127
+
+	Literal  goto 213
+	IdentifierOrKeyword  goto 214
+	Identifier  goto 31
+	PrefixedName  goto 215
+	NestedAnnotationContents  goto 216
+	Keyword  goto 32
+
+
+state 188
+	AnnotationElement : ForeignElementName AnnotationAttributesContent .  (122)
+
+	.  reduce 122
+
+
+state 189
+	AnnotationContentInAnnotations : IdentifierOrKeyword AnnotationAttributesContent . AnnotationContentInAnnotations  (116)
+	AnnotationContentInAnnotations : .  (113)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 113
+
+	IdentifierOrKeyword  goto 154
+	Identifier  goto 31
+	AnnotationContentInAnnotations  goto 217
+	PrefixedName  goto 156
+	Keyword  goto 32
+
+
+state 190
+	Annotations : Documentations OpenBracket AnnotationContentInAnnotations CloseBracket .  (112)
+
+	.  reduce 112
+
+
+state 191
+	AnnotationContentInAnnotations : PrefixedName Equal . Literal AnnotationContentInAnnotations  (114)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 218
+
+
+state 192
+	AnnotationContentInAnnotations : PrefixedName AnnotationAttributesContent . AnnotationContentInAnnotations  (115)
+	AnnotationContentInAnnotations : .  (113)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 113
+
+	IdentifierOrKeyword  goto 154
+	Identifier  goto 31
+	AnnotationContentInAnnotations  goto 219
+	PrefixedName  goto 156
+	Keyword  goto 32
+
+
+state 193
+	LeadAnnotatedSimpleNameClass : Annotations OpenParen InnerNameClass . CloseParen  (102)
+
+	CloseParen  shift 220
+	.  error
+
+
+state 194
+	ExceptNameClass : Asterisk Minus . LeadAnnotatedSimpleNameClass  (104)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Annotations  goto 197
+	LeadAnnotatedSimpleNameClass  goto 221
+	Documentations  goto 55
+
+
+state 195
+	ExceptNameClass : NsName Minus . LeadAnnotatedSimpleNameClass  (103)
+	Documentations : .  (145)
+
+	Documentation  shift 36
+	KeywordAttribute  reduce 145
+	KeywordDefault  reduce 145
+	KeywordDatatypes  reduce 145
+	KeywordDiv  reduce 145
+	KeywordElement  reduce 145
+	KeywordEmpty  reduce 145
+	KeywordExternal  reduce 145
+	KeywordGrammar  reduce 145
+	KeywordInclude  reduce 145
+	KeywordInherit  reduce 145
+	KeywordList  reduce 145
+	KeywordMixed  reduce 145
+	KeywordNamespace  reduce 145
+	KeywordNotAllowed  reduce 145
+	KeywordParent  reduce 145
+	KeywordStart  reduce 145
+	KeywordString  reduce 145
+	KeywordText  reduce 145
+	KeywordToken  reduce 145
+	OpenParen  reduce 145
+	OpenBracket  reduce 145
+	Asterisk  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+	CName  reduce 145
+	NsName  reduce 145
+
+	Annotations  goto 197
+	LeadAnnotatedSimpleNameClass  goto 222
+	Documentations  goto 55
+
+
+state 196
+	Primary : KeywordAttribute NameClass OpenCurly Pattern . CloseCurly  (68)
+
+	CloseCurly  shift 223
+	.  error
+
+
+state 197
+	LeadAnnotatedSimpleNameClass : Annotations . SimpleNameClass  (101)
+	LeadAnnotatedSimpleNameClass : Annotations . OpenParen InnerNameClass CloseParen  (102)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	OpenParen  shift 158
+	Asterisk  shift 224
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 160
+	NsName  shift 225
+	.  error
+
+	IdentifierOrKeyword  goto 162
+	Identifier  goto 31
+	SimpleNameClass  goto 164
+	Keyword  goto 32
+
+
+state 198
+	NameClassChoice : AnnotatedSimpleNameClass . Bar AnnotatedSimpleNameClass  (96)
+	NameClassChoice : AnnotatedSimpleNameClass Bar AnnotatedSimpleNameClass .  (96)
+	NameClassChoice : AnnotatedSimpleNameClass . Bar NameClassChoice  (97)
+
+	Bar  shift 166
+	OpenCurly  reduce 96
+	CloseParen  reduce 96
+
+
+state 199
+	NameClassChoice : AnnotatedSimpleNameClass Bar NameClassChoice .  (97)
+
+	.  reduce 97
+
+
+state 200
+	Div : KeywordDiv OpenCurly Grammar CloseCurly .  (42)
+
+	.  reduce 42
+
+
+state 201
+	Primary : KeywordElement NameClass OpenCurly Pattern . CloseCurly  (67)
+
+	CloseCurly  shift 226
+	.  error
+
+
+state 202
+	OptInherit : KeywordInherit Equal . IdentifierOrKeyword  (31)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	IdentifierOrKeyword  goto 227
+	Identifier  goto 31
+	Keyword  goto 32
+
+
+state 203
+	Primary : KeywordGrammar OpenCurly Grammar CloseCurly .  (79)
+
+	.  reduce 79
+
+
+state 204
+	OptIncludeBody : OpenCurly . IncludeBody CloseCurly  (33)
+	IncludeBody : .  (34)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	KeywordDiv  reduce 145
+	KeywordStart  reduce 145
+	CloseCurly  reduce 34
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	AnnotationElementNotKeyword  goto 228
+	Annotations  goto 229
+	IncludeBody  goto 230
+	IncludeMember  goto 231
+	AnnotatedIncludeComponent  goto 232
+	Documentations  goto 55
+
+
+state 205
+	Include : KeywordInclude AnyURILiteral OptInherit OptIncludeBody .  (28)
+
+	.  reduce 28
+
+
+state 206
+	Primary : KeywordList OpenCurly Pattern CloseCurly .  (70)
+
+	.  reduce 70
+
+
+state 207
+	Primary : KeywordMixed OpenCurly Pattern CloseCurly .  (69)
+
+	.  reduce 69
+
+
+state 208
+	Param : Annotations IdentifierOrKeyword . Equal Literal  (91)
+
+	Equal  shift 233
+	.  error
+
+
+state 209
+	OptParams : OpenCurly Params CloseCurly .  (88)
+
+	.  reduce 88
+
+
+state 210
+	Params : Param Params .  (90)
+
+	.  reduce 90
+
+
+state 211
+	DataExcept : DatatypeName OptParams Minus LeadAnnotatedPrimary .  (81)
+
+	.  reduce 81
+
+
+state 212
+	Primary : DatatypeName OptParams .  (71)
+
+	.  reduce 71
+
+
+213: reduce/reduce conflict (reduce 127, reduce 132) on CloseBracket
+state 213
+	NestedAnnotationContents : Literal .  (132)
+	NestedAnnotationContents : Literal . NestedAnnotationContents  (133)
+	NestedAnnotationContents : .  (127)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 127
+
+	Literal  goto 213
+	IdentifierOrKeyword  goto 214
+	Identifier  goto 31
+	PrefixedName  goto 215
+	NestedAnnotationContents  goto 234
+	Keyword  goto 32
+
+
+state 214
+	NestedAnnotationContents : IdentifierOrKeyword . Equal Literal NestedAnnotationContents  (129)
+	NestedAnnotationContents : IdentifierOrKeyword . AnnotationAttributesContent NestedAnnotationContents  (131)
+
+	Equal  shift 235
+	OpenBracket  shift 187
+	.  error
+
+	AnnotationAttributesContent  goto 236
+
+
+state 215
+	NestedAnnotationContents : PrefixedName . Equal Literal NestedAnnotationContents  (128)
+	NestedAnnotationContents : PrefixedName . AnnotationAttributesContent NestedAnnotationContents  (130)
+
+	Equal  shift 237
+	OpenBracket  shift 187
+	.  error
+
+	AnnotationAttributesContent  goto 238
+
+
+state 216
+	AnnotationAttributesContent : OpenBracket NestedAnnotationContents . CloseBracket  (126)
+
+	CloseBracket  shift 239
+	.  error
+
+
+state 217
+	AnnotationContentInAnnotations : IdentifierOrKeyword AnnotationAttributesContent AnnotationContentInAnnotations .  (116)
+
+	.  reduce 116
+
+
+state 218
+	AnnotationContentInAnnotations : PrefixedName Equal Literal . AnnotationContentInAnnotations  (114)
+	AnnotationContentInAnnotations : .  (113)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 113
+
+	IdentifierOrKeyword  goto 154
+	Identifier  goto 31
+	AnnotationContentInAnnotations  goto 240
+	PrefixedName  goto 156
+	Keyword  goto 32
+
+
+state 219
+	AnnotationContentInAnnotations : PrefixedName AnnotationAttributesContent AnnotationContentInAnnotations .  (115)
+
+	.  reduce 115
+
+
+state 220
+	LeadAnnotatedSimpleNameClass : Annotations OpenParen InnerNameClass CloseParen .  (102)
+
+	.  reduce 102
+
+
+state 221
+	ExceptNameClass : Asterisk Minus LeadAnnotatedSimpleNameClass .  (104)
+
+	.  reduce 104
+
+
+state 222
+	ExceptNameClass : NsName Minus LeadAnnotatedSimpleNameClass .  (103)
+
+	.  reduce 103
+
+
+state 223
+	Primary : KeywordAttribute NameClass OpenCurly Pattern CloseCurly .  (68)
+
+	.  reduce 68
+
+
+state 224
+	SimpleNameClass : Asterisk .  (108)
+
+	.  reduce 108
+
+
+state 225
+	SimpleNameClass : NsName .  (107)
+
+	.  reduce 107
+
+
+state 226
+	Primary : KeywordElement NameClass OpenCurly Pattern CloseCurly .  (67)
+
+	.  reduce 67
+
+
+state 227
+	OptInherit : KeywordInherit Equal IdentifierOrKeyword .  (31)
+
+	.  reduce 31
+
+
+state 228
+	IncludeMember : AnnotationElementNotKeyword .  (37)
+
+	.  reduce 37
+
+
+state 229
+	AnnotatedIncludeComponent : Annotations . IncludeComponent  (38)
+
+	KeywordDiv  shift 241
+	KeywordStart  shift 75
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	.  error
+
+	Start  goto 242
+	Define  goto 243
+	Identifier  goto 111
+	IncludeComponent  goto 244
+	IncludeDiv  goto 245
+
+
+state 230
+	OptIncludeBody : OpenCurly IncludeBody . CloseCurly  (33)
+
+	CloseCurly  shift 246
+	.  error
+
+
+state 231
+	IncludeBody : IncludeMember . IncludeBody  (35)
+	IncludeBody : .  (34)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	KeywordDiv  reduce 145
+	KeywordStart  reduce 145
+	CloseCurly  reduce 34
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	AnnotationElementNotKeyword  goto 228
+	Annotations  goto 229
+	IncludeBody  goto 247
+	IncludeMember  goto 231
+	AnnotatedIncludeComponent  goto 232
+	Documentations  goto 55
+
+
+state 232
+	IncludeMember : AnnotatedIncludeComponent .  (36)
+
+	.  reduce 36
+
+
+state 233
+	Param : Annotations IdentifierOrKeyword Equal . Literal  (91)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 248
+
+
+state 234
+	NestedAnnotationContents : Literal NestedAnnotationContents .  (133)
+
+	.  reduce 133
+
+
+state 235
+	NestedAnnotationContents : IdentifierOrKeyword Equal . Literal NestedAnnotationContents  (129)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 249
+
+
+state 236
+	NestedAnnotationContents : IdentifierOrKeyword AnnotationAttributesContent . NestedAnnotationContents  (131)
+	NestedAnnotationContents : .  (127)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 127
+
+	Literal  goto 213
+	IdentifierOrKeyword  goto 214
+	Identifier  goto 31
+	PrefixedName  goto 215
+	NestedAnnotationContents  goto 250
+	Keyword  goto 32
+
+
+state 237
+	NestedAnnotationContents : PrefixedName Equal . Literal NestedAnnotationContents  (128)
+
+	LiteralSegment  shift 80
+	.  error
+
+	Literal  goto 251
+
+
+state 238
+	NestedAnnotationContents : PrefixedName AnnotationAttributesContent . NestedAnnotationContents  (130)
+	NestedAnnotationContents : .  (127)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 127
+
+	Literal  goto 213
+	IdentifierOrKeyword  goto 214
+	Identifier  goto 31
+	PrefixedName  goto 215
+	NestedAnnotationContents  goto 252
+	Keyword  goto 32
+
+
+state 239
+	AnnotationAttributesContent : OpenBracket NestedAnnotationContents CloseBracket .  (126)
+
+	.  reduce 126
+
+
+state 240
+	AnnotationContentInAnnotations : PrefixedName Equal Literal AnnotationContentInAnnotations .  (114)
+
+	.  reduce 114
+
+
+state 241
+	IncludeDiv : KeywordDiv . OpenCurly IncludeBody CloseCurly  (43)
+
+	OpenCurly  shift 253
+	.  error
+
+
+state 242
+	IncludeComponent : Start .  (39)
+
+	.  reduce 39
+
+
+state 243
+	IncludeComponent : Define .  (40)
+
+	.  reduce 40
+
+
+state 244
+	AnnotatedIncludeComponent : Annotations IncludeComponent .  (38)
+
+	.  reduce 38
+
+
+state 245
+	IncludeComponent : IncludeDiv .  (41)
+
+	.  reduce 41
+
+
+state 246
+	OptIncludeBody : OpenCurly IncludeBody CloseCurly .  (33)
+
+	.  reduce 33
+
+
+state 247
+	IncludeBody : IncludeMember IncludeBody .  (35)
+
+	.  reduce 35
+
+
+state 248
+	Param : Annotations IdentifierOrKeyword Equal Literal .  (91)
+
+	.  reduce 91
+
+
+state 249
+	NestedAnnotationContents : IdentifierOrKeyword Equal Literal . NestedAnnotationContents  (129)
+	NestedAnnotationContents : .  (127)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 127
+
+	Literal  goto 213
+	IdentifierOrKeyword  goto 214
+	Identifier  goto 31
+	PrefixedName  goto 215
+	NestedAnnotationContents  goto 254
+	Keyword  goto 32
+
+
+state 250
+	NestedAnnotationContents : IdentifierOrKeyword AnnotationAttributesContent NestedAnnotationContents .  (131)
+
+	.  reduce 131
+
+
+state 251
+	NestedAnnotationContents : PrefixedName Equal Literal . NestedAnnotationContents  (128)
+	NestedAnnotationContents : .  (127)
+
+	KeywordAttribute  shift 8
+	KeywordDefault  shift 9
+	KeywordDatatypes  shift 10
+	KeywordDiv  shift 11
+	KeywordElement  shift 12
+	KeywordEmpty  shift 13
+	KeywordExternal  shift 14
+	KeywordGrammar  shift 15
+	KeywordInclude  shift 16
+	KeywordInherit  shift 17
+	KeywordList  shift 18
+	KeywordMixed  shift 19
+	KeywordNamespace  shift 20
+	KeywordNotAllowed  shift 21
+	KeywordParent  shift 22
+	KeywordStart  shift 23
+	KeywordString  shift 24
+	KeywordText  shift 25
+	KeywordToken  shift 26
+	LiteralSegment  shift 80
+	NCName  shift 27
+	QuotedIdentifier  shift 28
+	CName  shift 149
+	CloseBracket  reduce 127
+
+	Literal  goto 213
+	IdentifierOrKeyword  goto 214
+	Identifier  goto 31
+	PrefixedName  goto 215
+	NestedAnnotationContents  goto 255
+	Keyword  goto 32
+
+
+state 252
+	NestedAnnotationContents : PrefixedName AnnotationAttributesContent NestedAnnotationContents .  (130)
+
+	.  reduce 130
+
+
+state 253
+	IncludeDiv : KeywordDiv OpenCurly . IncludeBody CloseCurly  (43)
+	IncludeBody : .  (34)
+	Documentations : .  (145)
+
+	ERROR  shift 35
+	Documentation  shift 36
+	KeywordDiv  reduce 145
+	KeywordStart  reduce 145
+	CloseCurly  reduce 34
+	OpenBracket  reduce 145
+	NCName  reduce 145
+	QuotedIdentifier  reduce 145
+
+	AnnotationElementNotKeyword  goto 228
+	Annotations  goto 229
+	IncludeBody  goto 256
+	IncludeMember  goto 231
+	AnnotatedIncludeComponent  goto 232
+	Documentations  goto 55
+
+
+state 254
+	NestedAnnotationContents : IdentifierOrKeyword Equal Literal NestedAnnotationContents .  (129)
+
+	.  reduce 129
+
+
+state 255
+	NestedAnnotationContents : PrefixedName Equal Literal NestedAnnotationContents .  (128)
+
+	.  reduce 128
+
+
+state 256
+	IncludeDiv : KeywordDiv OpenCurly IncludeBody . CloseCurly  (43)
+
+	CloseCurly  shift 257
+	.  error
+
+
+state 257
+	IncludeDiv : KeywordDiv OpenCurly IncludeBody CloseCurly .  (43)
+
+	.  reduce 43
+
+
+Rules never reduced:
+	AttributableAnnotations :  (117)
+	AttributableAnnotations : AttributableAnnotations PrefixedName Equal Literal NonAttributableAnnotations  (118)
+	NonAttributableAnnotations :  (119)
+	NonAttributableAnnotations : PrefixedName AnnotationAttributesContent  (120)
+	NonAttributableAnnotations : NonAttributableAnnotations IdentifierOrKeyword AnnotationAttributesContent  (121)
+	NestedAnnotationContents : Literal  (132)
+	NestedAnnotationAttributes :  (134)
+	NestedAnnotationAttributes : AnyAttributeName Equal Literal NestedAnnotationAttributes  (135)
+	AnyAttributeName : IdentifierOrKeyword  (136)
+	AnyAttributeName : PrefixedName  (137)
+	AnnotationContent :  (138)
+	AnnotationContent : NestedAnnotationElement AnnotationContent  (139)
+	AnnotationContent : Literal AnnotationContent  (140)
+	NestedAnnotationElement : AnyElementName AnnotationAttributesContent  (141)
+	AnyElementName : IdentifierOrKeyword  (142)
+	AnyElementName : PrefixedName  (143)
+
+
+State 213 contains 1 reduce/reduce conflict.
+
+
+81 terminals, 75 nonterminals
+172 grammar rules, 258 states

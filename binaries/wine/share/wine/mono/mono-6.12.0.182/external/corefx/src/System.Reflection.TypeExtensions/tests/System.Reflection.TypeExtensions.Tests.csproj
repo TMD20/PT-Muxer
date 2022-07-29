@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.props))\dir.props" />
+  <PropertyGroup>
+    <ProjectGuid>{EC8FFAA7-CA1E-4631-A375-D54B1FC764F6}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netcoreapp-Release|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Debug|AnyCPU'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'netstandard-Release|AnyCPU'" />
+  <ItemGroup Condition="'$(TargetGroup)' == 'netcoreapp'">
+    <Compile Include="MemberInfoTests.cs" />
+    <Compile Include="ModuleTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AssemblyExtensionTests.cs" />
+    <Compile Include="ConstructorInfo\ConstructorInfoInvokeArrayTests.cs" />
+    <Compile Include="ConstructorInfo\ConstructorInfoTests.cs" />
+    <Compile Include="MethodInfoTests.cs" />
+    <Compile Include="TypeTests.cs" />
+    <Compile Include="PropertyInfoTests.cs" />
+    <Compile Include="Helpers.cs" />
+    <Compile Include="EventInfoTests.cs" />
+    <Compile Include="FieldInfoTests.cs" />
+    <Compile Include="MethodBaseTests.cs" />
+  </ItemGroup>
+  <Import Project="$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), dir.targets))\dir.targets" />
+</Project>

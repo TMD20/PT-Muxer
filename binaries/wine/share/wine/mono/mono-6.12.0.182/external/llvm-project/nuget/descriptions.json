@@ -1,0 +1,22 @@
+[
+    {
+        "Name": "RuntimePackage",
+        "Description": "Internal implementation package not meant for direct consumption.  Please do not reference directly.",
+        "CommonTypes": [ ]
+    },
+    {
+        "Name": "NuGet3MinVersion",
+        "Description": "When using NuGet 3.x this package requires at least version {0}.",
+        "CommonTypes": [ ]
+    },
+    {
+        "Name": "Microsoft.NETCore.Runtime.Mono.LLVM.Sdk",
+        "Description": "The .NET Core fork of the LLVM project, used to compile the Mono .NET Core runtime in LLVM JIT mode. Internal implementation package not meant for direct consumption.  Please do not reference directly.",
+        "CommonTypes": [ ]
+    },
+    {
+        "Name": "Microsoft.NETCore.Runtime.Mono.LLVM.Tools",
+        "Description": "The llc and opt tools, used by the Mono .NET Core runtime in LLVM AOT mode.",
+        "CommonTypes": [ ]
+    }
+]

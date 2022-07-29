@@ -1,0 +1,409 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>mono-api-security.html</title>
+    <style type="text/css">
+    .mapi-docs {
+	line-height: 1.5;
+	padding-left: 2em;
+	padding-right: 2em;
+    }
+    .mapi-docs p {
+	max-width: 60em;
+    }
+    .mapi-docs .mapi-body {
+	max-width: 60em;
+    }
+    .mapi-docs code {
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.5em;
+    }
+    .mapi-description code {
+        font-family: "Consolas", "Courier", monospace;
+        border: 1px solid rgba(214,214,214,1);
+	background-color: rgba(249,249,249,1);
+	padding: 0.1em 0.2em;
+    }
+
+    .mapi-header {
+        padding: 0 0 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code {
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+	background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-code:first-line {
+        line-height: 0px;
+    }
+
+    .mapi-codeblock {
+        display: block;
+        padding: 5pt 5pt;
+        margin: 10pt;
+        white-space: pre;
+        font-family: monospace;
+        border: 1px solid rgba(233,233,233,1);
+        background-color: rgba(249,249,249,1);
+    }
+
+    .mapi-entry code {
+        border: none;
+        background-color: transparent;
+    }
+    
+    .mapi-parameters {
+        border-collapse: collapse;
+        border-spacing: 0;
+        empty-cells: hide;
+        border: 0;
+        margin: 5px 0 26px;	    
+    }
+
+    .mapi-parameters td {
+        border: 1px solid rgba(214,214,214,1);
+	  border-left-style: none;
+	padding: 5px 25px 5px 10px;
+    }
+
+    .mapi-parameters tr>td:last-child  {
+        border-right: 0;
+    }
+	
+    .mapi-parameters td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+    .mapi-parameters tr:last-child>td {
+        border-bottom: 0;
+    }
+
+    .mapi-parameters tr:first-child>td {
+        border-top: 0;
+    }
+
+    .mapi-parameters tr td:first-of-type {
+        text-align: right;
+        padding: 7px;
+        vertical-align: top;
+        word-break: normal;
+        width: 40px;
+    }
+
+   .mapi {
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;
+    } 
+
+    .mapi-description {
+        background: rgba(249,249,249,1);
+        border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        margin: 0;
+        padding: 13px 25px 0;
+        position: relative;
+        width: 100%;	 
+    }
+
+     .mapi-entry {
+         background: transparent;
+     }
+
+     .mapi-docs {
+     }
+	
+     .mapi-prototype {
+         border-left: 5px solid rgba(205,233,244,1);
+         padding: .5em;
+         margin-top: 5pt;
+         margin-bottom: 5pt;
+         font-family: "Consolas", "Courier", monospace;
+         display: block;
+         overflow: auto;
+         background-color: #f9f9f9;
+    } 
+
+    .mapi-declaration {
+	margin-top: 21px;
+    }
+
+    .mapi-section {
+        font-size: smaller;
+	font-weight: bold;
+	margin-top: 21px;
+	line-height: 1.5;
+    }
+	
+    .mapi-strike {
+        text-decoration: line-through;
+    }
+
+    .mapi-deprecated {
+        color: red;
+    }
+
+    .mapi-ptr-container {
+        background: white;
+	border-bottom: 1px solid rgba(233,233,233,1);
+        left: -25px;
+        padding-left: 25px;
+        padding-right: 25px;
+        padding-bottom: 13px;
+        position: relative;
+        width: 100%;
+    }
+
+    .mapi-ptr {
+        background: rgba(249,249,249,1);
+	border-left: 1px solid rgba(233,233,233,1);
+	border-top: 1px solid rgba(233,233,233,1);
+        height: 12px;
+        left: 37px;
+        top: -7px;
+        -webkit-transform: rotate(45deg);
+        -moz-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+        transform: rotate(45deg);
+        position: absolute;
+        width: 12px;
+    }
+
+    .mapi-height-container {
+        left: -25px;
+        padding: 0 25px;
+        position: relative;
+        width: 100%;
+    }
+	
+</style>
+</head>
+<body>
+<div class="mapi-docs">
+<h3>Security Manager</h3>
+
+<h3>Declarative Security</h3>
+
+<a name="api:mono_declsec_flags_from_assembly"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_flags_from_assembly</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">guint32
+mono_declsec_flags_from_assembly (MonoAssembly *assembly)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>assembly</i></td><td> The assembly for which we want the declarative security flags.</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the declarative security flags for the assembly.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ Get the security actions (in the form of flags) associated with the specified assembly.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_flags_from_class"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_flags_from_class</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">guint32
+mono_declsec_flags_from_class (MonoClass *klass)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>klass</i></td><td> The class for which we want the declarative security flags.</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the declarative security flags for the class.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ Get the security actions (in the form of flags) associated with the specified class.
+ We cache the flags inside the <code>MonoClass</code> structure as this will get 
+ called very often (at least for each method).</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_flags_from_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_flags_from_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">guint32
+mono_declsec_flags_from_method (MonoMethod *method)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>method</i></td><td> The method for which we want the declarative security flags.</td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 the declarative security flags for the method (only).
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ Get the security actions (in the form of flags) associated with the specified method.
+ To keep <code>MonoMethod</code> size down we do not cache the declarative security flags
+ (except for the stack modifiers which are kept in the MonoJitInfo structure)</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_get_assembly_action"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_get_assembly_action</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoBoolean
+mono_declsec_get_assembly_action (MonoAssembly *assembly, guint32 action, MonoDeclSecurityEntry *entry)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_get_class_action"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_get_class_action</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoBoolean
+mono_declsec_get_class_action (MonoClass *klass, guint32 action, MonoDeclSecurityEntry *entry)
+
+</div>
+            <p />
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_get_demands"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_get_demands</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoBoolean
+mono_declsec_get_demands (MonoMethod *method, MonoDeclSecurityActions* demands)
+
+</div>
+            <p />
+             <div class="mapi-section">Description</div>
+             <div>
+ Collect all actions (that requires to generate code in mini) assigned for
+ the specified method.
+ Don't use the content of actions if the function return <code>FALSE</code>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_get_inheritdemands_class"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_get_inheritdemands_class</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoBoolean
+mono_declsec_get_inheritdemands_class (MonoClass *klass, MonoDeclSecurityActions* demands)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>klass</i></td><td>	The inherited class - this is the class that provides the security check (attributes)</td></tr><tr><td><i>demands</i></td><td></td></tr></tbody></table>             <div class="mapi-section">Return value</div>
+             <div>	 <code>TRUE</code> if inheritance demands (any kind) are present, <code>FALSE</code> otherwise.
+</div>
+             <div class="mapi-section">Description</div>
+             <div>
+ Collect all Inherit actions - <code>InheritanceDemand</code>, <code>NonCasInheritanceDemand</code> and <code>InheritanceDemandChoice</code> (2.0).
+ Don't use the content of actions if the function return <code>FALSE</code>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_get_inheritdemands_method"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_get_inheritdemands_method</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoBoolean
+mono_declsec_get_inheritdemands_method (MonoMethod *method, MonoDeclSecurityActions* demands)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>actions</i></td><td> <code>InheritanceDemand</code>, <code>NonCasInheritanceDemand</code> and <code>InheritanceDemandChoice</code> (2.0).</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Don't use the content of actions if the function return <code>FALSE</code>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->
+</div> <!-- class=mapi  -->
+
+<a name="api:mono_declsec_get_linkdemands"></a>
+<div class="mapi">
+    <div class="mapi-entry "><code>mono_declsec_get_linkdemands</code></div>
+    <div class="mapi-height-container">
+        <div class="mapi-ptr-container"></div>
+        <div class="mapi-description">
+            <div class="mapi-ptr"></div>
+
+            <div class="mapi-declaration mapi-section">Syntax</div>
+            <div class="mapi-prototype">MonoBoolean
+mono_declsec_get_linkdemands (MonoMethod *method, MonoDeclSecurityActions* klass, MonoDeclSecurityActions *cmethod)
+
+</div>
+            <p />
+            <div class="mapi-section">Parameters</div>
+            <table class="mapi-parameters"><tbody><tr><td><i>actions</i></td><td> <code>LinkDemand</code>, <code>NonCasLinkDemand</code> and <code>LinkDemandChoice</code> (2.0).</td></tr></tbody></table>             <div class="mapi-section">Description</div>
+             <div>
+ Don't use the content of actions if the function return <code>FALSE</code>.</div>
+        </div><!--mapi-description -->
+    </div><!--height container -->

@@ -1,0 +1,6 @@
+./../../class/lib/net_4_x-linux/PEAPI.dll: ../../build/common/Consts.cs
+./../../class/lib/net_4_x-linux/PEAPI.dll: ../../build/common/Locale.cs
+./../../class/lib/net_4_x-linux/PEAPI.dll: Assembly/AssemblyInfo.cs
+./../../class/lib/net_4_x-linux/PEAPI.dll: Code.cs
+./../../class/lib/net_4_x-linux/PEAPI.dll: Metadata.cs
+./../../class/lib/net_4_x-linux/PEAPI.dll: PEAPI.cs

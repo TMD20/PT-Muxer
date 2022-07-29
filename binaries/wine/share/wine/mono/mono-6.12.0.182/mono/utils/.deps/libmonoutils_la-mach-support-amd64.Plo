@@ -1,0 +1,6 @@
+libmonoutils_la-mach-support-amd64.lo: mach-support-amd64.c \
+ /usr/include/stdc-predef.h ../../config.h
+
+/usr/include/stdc-predef.h:
+
+../../config.h:
