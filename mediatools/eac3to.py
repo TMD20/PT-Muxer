@@ -31,8 +31,9 @@ def extract_files(playlistLocation, outputs_list, eac3toPath):
 
     #get list of files
     eac3toWChapters = ["1:chapters.txt"]
-    eac3toWChapters.extend([f"{ele[0]}:{ele[1]}"for ele in outputs_list])
-    eac3toWoChapters = [f"{ele[0]-1}:{ele[1]}"for ele in outputs_list]
+    eac3toWChapters.extend([f"{ele[0]}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"])
+    eac3toWoChapters = [
+        f"{ele[0]-1}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"]
 
     
     command1 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)],  eac3toWChapters,[
