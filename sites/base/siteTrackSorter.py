@@ -224,10 +224,9 @@ class siteTrackSorter():
         # Get all compat tracks
         tracks = list(
             filter(lambda x: x["compat"] == True, audioTracks))
-        # Filter out things like DTS Core which will have no title
-
+        # Filter out things like DTS Core which will have not match
         tracks = list(
-            filter(lambda x: x["site_title"] != None, tracks))
+            filter(lambda x: re.search("true", x["site_title"],re.IGNORECASE) != None, tracks))
         # Add Every Compat Track with Matching Parent
 
         for track in tracks:

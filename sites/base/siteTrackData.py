@@ -122,7 +122,7 @@ class siteTrackData(TracksData):
         site_title = None
         if re.search("DTS Core", bdinfo):
             match = re.search(".*?:.*?([0-9].*(bit|kbps))", bdinfo).group(1)
-            site_title = f"Compatibility Track / {match}"
+            site_title = f"Compatibility Track / DTS Core/ {match}"
         elif not re.search("True", parent, re.IGNORECASE):
             return
         elif re.search("Dolby Digital", bdinfo):

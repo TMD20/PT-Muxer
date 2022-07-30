@@ -5,6 +5,7 @@ import glob
 from pathlib import PureWindowsPath, PurePosixPath
 import textwrap
 
+import pynumparser
 from InquirerPy import inquirer
 
 
@@ -84,6 +85,13 @@ def textEnter(message,default=None):
         return inquirer.text(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
     return inquirer.text(mandatory=True,message=textwrap.dedent(f"\n{message}\n")).execute()
     
+def getRangeOfNumbers(message,default=None):
+    text=textEnter(message,default)
+    parser = pynumparser.NumberSequence(numtype=int)
+    try:
+        return list(parser.parse(text))
+    except:
+        return
 
 
 
