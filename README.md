@@ -79,7 +79,7 @@ Modifications to the code are required to get it to work on that platform
 * python3 -m venv env
 * source env/bin/activate
 * which python -> should be the virtualenv
-* pip3 install-r requirements.txt
+* pip3 install -r requirements.txt
 * deactivate -> Do this after installing the requirements
 
 ### Windows
