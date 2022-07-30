@@ -151,23 +151,24 @@ class TracksData():
         elif match == "Subtitle":
             tempdict = self._subParser(currline)
     # Try to Get Unique Key Values
+        tempdict["index"] = index
         value = tempdict["bdinfo_title"] + \
             utils.getShowName(source) + str(tempdict["index"])
         key = xxhash.xxh32_hexdigest(value)
         post = tempdict["langcode"] or "vid"
         tempdict["key"] = f"{key}_{post}"
-        tempdict["index"] = index
         tempdict["parent"] = None
         tempdict["child"] = None
         tracks.append(tempdict)
         if tempdict2 != None:
+            tempdict2["index"] = index
+
             # Try to Get Unique Key Values
             value = tempdict2["bdinfo_title"] + \
                 utils.getShowName(source) + str(tempdict2["index"])
             key = xxhash.xxh32_hexdigest(value)
             post = tempdict2["langcode"] or "vid"
             tempdict2["key"] = f"{key}_{post}"
-            tempdict2["index"] = index
             tempdict2["child"] = None
             tempdict2["parent"] = tempdict["bdinfo_title"]
             tempdict["child"] = tempdict2["bdinfo_title"]
