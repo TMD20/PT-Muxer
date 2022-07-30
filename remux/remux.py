@@ -18,10 +18,14 @@ def Remux(args):
 
     if utils.singleSelectMenu(["Movie", "TV"], "What Type of Media do you want to Remux?") == "Movie":
         folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
+        if len(folders)==0:
+            print("You need to demux a folder with Movie Mode first")
         remuxConfigPaths.append(os.path.join(utils.singleSelectMenu(folders, "Pick a folder to demux"),"output.json"))
         
     else:
         folders = utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
+        if len(folders) == 0:
+            print("You need to demux a folder with TV Mode first")
         folder = utils.singleSelectMenu(folders, "Pick a folder to demux")
         remuxConfigPaths.extend(
             list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
