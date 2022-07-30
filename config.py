@@ -5,7 +5,7 @@ eac3toLinuxPath = "/usr/local/bin/eac3to/eac3to.exe"
 eac3toProjectPath = os.path.join(root_dir, "binaries/eac3to/eac3to.exe")
 
 wineLinuxPath = "/usr/bin/wine"
-wineProjectPath = os.path.join(root_dir, "binaries/wine/bin/wine")
+wineProjectPath = os.path.join(root_dir, "binaries/wine/bin/wine64")
 
 mkvmergeLinuxPath = "/usr/bin/mkvmerge"
 mkvMergeProjectPath=os.path.join(root_dir, "binaries/mkvmerge")
