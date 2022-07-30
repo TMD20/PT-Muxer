@@ -574,6 +574,10 @@ If you can't install tesseract and still want to ocr
         None
     return None
 ```
+* go to requirements.txt
+* ctrl
+* tesserocr
+* Comment out that line entire line
 now only easyocr will be used.
 
 
