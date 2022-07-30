@@ -4,6 +4,7 @@ import copy
 import random
 
 from sites.base.siteTrackData import siteTrackData
+import xxhash
 
 
 
@@ -34,8 +35,11 @@ class Blu(siteTrackData):
                 newTrack["file"] = os.path.join(
                     output, newTrack["eac3to"].split(":")[1])
                 newTrack["child"] = None
-                key = random.randint(100000, 999999)
-                newTrack["key"] = key
+                value = newTrack["bdinfo_title"] + \
+                    newTrack["sourceKey"] + str(newTrack["index"])
+                key = xxhash.xxh32_hexdigest(value)
+                post = newTrack["langcode"] or "vid"
+                newTrack["key"] = f"{key}_forced_{post}"
                 insertDict.append((i+1, newTrack))
         for tup in insertDict:
             current_tracks.insert(tup[0], tup[1])

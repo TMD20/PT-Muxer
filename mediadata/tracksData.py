@@ -152,7 +152,7 @@ class TracksData():
             tempdict = self._subParser(currline)
     # Try to Get Unique Key Values
         value = tempdict["bdinfo_title"] + \
-            tempdict["sourceKey"] + str(tempdict["index"])
+            utils.getShowName(source) + str(tempdict["index"])
         key = xxhash.xxh32_hexdigest(value)
         post = tempdict["langcode"] or "vid"
         tempdict["key"] = f"{key}_{post}"
@@ -163,7 +163,7 @@ class TracksData():
         if tempdict2 != None:
             # Try to Get Unique Key Values
             value = tempdict2["bdinfo_title"] + \
-            tempdict2["sourceKey"] + str(tempdict2["index"])
+                utils.getShowName(source) + str(tempdict2["index"])
             key = xxhash.xxh32_hexdigest(value)
             post = tempdict2["langcode"] or "vid"
             tempdict2["key"] = f"{key}_{post}"

@@ -51,7 +51,8 @@ def addSource(paths,sortpref):
         msg = \
         """
         Click on the Source(s) You Want for this Demux 
-        For TV Mode will run multiple times 
+        
+        TV Mode will run multiple times 
         for more advanced source selection
 
         Press Space to add/remove selection
