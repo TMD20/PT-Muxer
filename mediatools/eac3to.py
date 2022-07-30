@@ -20,7 +20,6 @@ def process(source, output, outputs_list,playlistLocation):
     os.chdir(start)
 
 def extract_files(playlistLocation, outputs_list, eac3toPath):
-    success = False
     eactoBin = config.eac3toLinuxPath
     if not os.path.isfile(eactoBin):
         eactoBin = config.eac3toProjectPath
