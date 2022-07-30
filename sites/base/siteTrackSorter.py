@@ -73,8 +73,11 @@ class siteTrackSorter():
                 newTrack = copy.deepcopy(oldTrack)
                 newTrack["file"] = newFile
                 newTrack["eac3to"] = newEac3to
-                newTrack["key"] = xxhash.xxh32_hexdigest(
-                    newTrack["bdinfo_title"]+newTrack["sourceKey"] + str(newTrack["index"])+"forced")+"_"+"forced"+"_"(newTrack["langcode"] or "vid")
+                value = newTrack["bdinfo_title"] + \
+                    newTrack["sourceKey"] + str(newTrack["index"])+"forced"
+                key = xxhash.xxh32_hexdigest(value)
+                post = newTrack["langcode"] or "vid"
+                newTrack["key"] = f"{key}_forced_{post}"
 
                 # Force Track For Primary Langauge Comes First
                 if oldTrack["lang"].lower() == audioLangs[0]:

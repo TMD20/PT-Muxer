@@ -150,18 +150,23 @@ class TracksData():
             tempdict2 = self._audioCompatParser(currline)
         elif match == "Subtitle":
             tempdict = self._subParser(currline)
-        # Try to Get Unique Key Values
-        tempdict["key"] = xxhash.xxh32_hexdigest(
-            tempdict["bdinfo_title"]+utils.getShowName(source)+str(index))+"_"+(tempdict
-                                                                                ["langcode"] or "vid")
+    # Try to Get Unique Key Values
+        value = tempdict["bdinfo_title"] + \
+            tempdict["sourceKey"] + str(tempdict["index"])
+        key = xxhash.xxh32_hexdigest(value)
+        post = tempdict["langcode"] or "vid"
+        tempdict["key"] = f"{key}_{post}"
         tempdict["index"] = index
         tempdict["parent"] = None
         tempdict["child"] = None
         tracks.append(tempdict)
         if tempdict2 != None:
-            key = xxhash.xxh32_hexdigest(
-                tempdict2["bdinfo_title"]+utils.getShowName(source) + str(index))+"_"+(tempdict2["langcode"] or "vid")
-            tempdict2["key"] = key
+            # Try to Get Unique Key Values
+            value = tempdict2["bdinfo_title"] + \
+            tempdict2["sourceKey"] + str(tempdict2["index"])
+            key = xxhash.xxh32_hexdigest(value)
+            post = tempdict2["langcode"] or "vid"
+            tempdict2["key"] = f"{key}_{post}"
             tempdict2["index"] = index
             tempdict2["child"] = None
             tempdict2["parent"] = tempdict["bdinfo_title"]
