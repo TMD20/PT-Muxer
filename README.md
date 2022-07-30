@@ -696,4 +696,6 @@ It will also provide use of their validator, which provides details on if your r
 It is not 100 percent, but it provides a general idea.
 
 
+# Acknowledgement
+https://github.com/werrpy/vdator: For blutopia validation code
 
