@@ -1,0 +1,11 @@
+[Desktop Entry]
+X-AppImage-Arch=x86_64
+X-AppImage-Version=staging
+X-AppImage-Name=wine
+Name=wine
+Exec=bin/bash
+Icon=wine
+Type=Application
+Terminal=false
+Categories=Utility;
+Comment=

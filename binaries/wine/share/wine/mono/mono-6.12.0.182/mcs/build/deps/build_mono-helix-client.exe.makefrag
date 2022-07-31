@@ -1,5 +1,0 @@
-./../../class/lib/build-linux/mono-helix-client.exe: HelixBase.cs
-./../../class/lib/build-linux/mono-helix-client.exe: HelixTestBase.cs
-./../../class/lib/build-linux/mono-helix-client.exe: MainlineTests.cs
-./../../class/lib/build-linux/mono-helix-client.exe: mono-helix-client.cs
-./../../class/lib/build-linux/mono-helix-client.exe: ../../class/Mono.Options/Mono.Options/Options.cs

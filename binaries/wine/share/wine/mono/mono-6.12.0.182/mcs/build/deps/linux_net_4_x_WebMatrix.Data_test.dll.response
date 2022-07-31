@@ -1,6 +1,0 @@
-../test-helpers/NunitHelpers.cs
-../test-helpers/TestResourceHelper.cs
-Test/WebMatrix.Data/ConnectionEventArgsTests.cs
-Test/WebMatrix.Data/DatabaseTests.cs
-Test/WebMatrix.Data/DynamicRecordTests.cs
-WebMatrix.Data/DynamicRecord.cs

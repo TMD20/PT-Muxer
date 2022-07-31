@@ -1,9 +1,0 @@
-./../../class/lib/build-linux/gacutil.exe: driver.cs
-./../../class/lib/build-linux/gacutil.exe: ../security/StrongNameManager.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/*.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/Metadata/*.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/Emit/*.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/Reader/*.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/Writer/*.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/Impl/ITypeOwner.cs
-./../../class/lib/build-linux/gacutil.exe: ../../../external/ikvm/reflect/Impl/SymbolSupport.cs

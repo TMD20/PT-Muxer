@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /usr/local/bin/mine/remux/binaries/wine/mono/bin/mono $MONO_OPTIONS /usr/local/bin/mine/remux/binaries/wine/mono/lib/mono/4.5/sgen.exe "$@"

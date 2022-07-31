@@ -1,4 +1,0 @@
-./../../class/lib/net_4_x-linux/illinkanalyzer.exe: ../../class/Mono.Options/Mono.Options/Options.cs
-./../../class/lib/net_4_x-linux/illinkanalyzer.exe: 
-./../../class/lib/net_4_x-linux/illinkanalyzer.exe: ../../../external/linker/src/analyzer/*.cs
-./../../class/lib/net_4_x-linux/illinkanalyzer.exe: ../../../external/linker/src/analyzer/LinkerAnalyzerCore/*.cs

@@ -1,9 +1,0 @@
-prefix=${pcfiledir}/../..
-exec_prefix=${pcfiledir}/../..
-libdir=${prefix}/lib
-includedir=${prefix}/include
-
-Name: Mono.Cairo
-Description: Cairo bindings for Mono
-Version: 6.12.0.182
-Libs: -r:Mono.Cairo

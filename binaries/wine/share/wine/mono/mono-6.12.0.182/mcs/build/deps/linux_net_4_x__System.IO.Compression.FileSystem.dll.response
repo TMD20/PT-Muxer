@@ -1,6 +1,0 @@
-../../../external/corefx/src/Common/src/System/IO/PathInternal.CaseSensitivity.cs
-../../../external/corefx/src/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFile.cs
-../../../external/corefx/src/System.IO.Compression.ZipFile/src/System/IO/Compression/ZipFileExtensions.cs
-../../build/common/Consts.cs
-AssemblyInfo.cs
-corefx/SR.cs

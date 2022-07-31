@@ -1,5 +1,0 @@
-./../../class/lib/build-linux/System.Net.Http.WebRequest.dll: ../../build/common/Consts.cs
-./../../class/lib/build-linux/System.Net.Http.WebRequest.dll: ../../build/common/MonoTODOAttribute.cs
-./../../class/lib/build-linux/System.Net.Http.WebRequest.dll: ../System.Net.Http/MonoWebRequestHandler.cs
-./../../class/lib/build-linux/System.Net.Http.WebRequest.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/build-linux/System.Net.Http.WebRequest.dll: System.Net.Http.WebRequest/WebRequestHandler.cs

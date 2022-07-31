@@ -1,6 +1,0 @@
-* text=auto encoding=UTF-8
-
-*.cs text diff=csharp
-*.csproj text
-*.props text
-*.targets text

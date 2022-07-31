@@ -1,9 +1,0 @@
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/ProjectInfo.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/AssemblyInfo.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbReader.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.Cecil.Mdb/MdbWriter.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/MonoSymbolWriter.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/SourceMethodBuilder.cs
-./../../class/lib/net_4_x-linux/Mono.Cecil.Mdb.dll: ../../../external/cecil/symbols/mdb/Mono.CompilerServices.SymbolWriter/SymbolWriterImpl.cs

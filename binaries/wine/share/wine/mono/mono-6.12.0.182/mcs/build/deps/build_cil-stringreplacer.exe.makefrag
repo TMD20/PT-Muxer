@@ -1,2 +1,0 @@
-./../../class/lib/build-linux/tmp/cil-stringreplacer.exe: cil-stringreplacer.cs
-./../../class/lib/build-linux/tmp/cil-stringreplacer.exe: ../../class/Mono.Options/Mono.Options/Options.cs

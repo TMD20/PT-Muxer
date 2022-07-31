@@ -1,6 +1,0 @@
-libmonoutils_la-mono-mmap-wasm.lo: mono-mmap-wasm.c \
- /usr/include/stdc-predef.h ../../config.h
-
-/usr/include/stdc-predef.h:
-
-../../config.h:

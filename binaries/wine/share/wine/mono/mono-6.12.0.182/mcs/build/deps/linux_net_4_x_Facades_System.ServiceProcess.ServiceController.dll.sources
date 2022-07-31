@@ -1,8 +1,0 @@
-../../../build/common/MonoTODOAttribute.cs
-AssemblyInfo.cs
-ServiceControllerStatus_mobile.cs
-ServiceController_mobile.cs
-ServiceStartMode_mobile.cs
-ServiceType_mobile.cs
-TimeoutException_mobile.cs
-TypeForwarders.cs

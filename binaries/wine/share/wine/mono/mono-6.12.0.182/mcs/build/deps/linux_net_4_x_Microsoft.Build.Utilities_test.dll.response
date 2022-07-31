@@ -1,8 +1,0 @@
-../Microsoft.Build.Engine/Test/Microsoft.Build.BuildEngine/Consts.cs
-../Microsoft.Build.Tasks/Test/Microsoft.Build.Tasks/TestMessageLogger.cs
-Test/Microsoft.Build.Utilities/CommandLineBuilderTest.cs
-Test/Microsoft.Build.Utilities/LoggerTest.cs
-Test/Microsoft.Build.Utilities/TaskItemTest.cs
-Test/Microsoft.Build.Utilities/TaskLoggingHelperTest.cs
-Test/Microsoft.Build.Utilities/ToolLocationHelperTest.cs
-Test/Microsoft.Build.Utilities/ToolTaskTest.cs

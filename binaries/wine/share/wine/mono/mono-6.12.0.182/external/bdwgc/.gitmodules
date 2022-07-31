@@ -1,4 +1,0 @@
-[submodule "libatomic_ops"]
-	path = libatomic_ops
-	url = https://github.com/Unity-Technologies/libatomic_ops.git
-	branch = unity-release-7_4

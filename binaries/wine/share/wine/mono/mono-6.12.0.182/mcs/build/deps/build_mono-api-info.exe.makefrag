@@ -1,5 +1,0 @@
-./../../class/lib/build-linux/mono-api-info.exe: AssemblyResolver.cs
-./../../class/lib/build-linux/mono-api-info.exe: Util.cs
-./../../class/lib/build-linux/mono-api-info.exe: WellFormedXmlWriter.cs
-./../../class/lib/build-linux/mono-api-info.exe: mono-api-info.cs
-./../../class/lib/build-linux/mono-api-info.exe: ../../class/Mono.Options/Mono.Options/Options.cs

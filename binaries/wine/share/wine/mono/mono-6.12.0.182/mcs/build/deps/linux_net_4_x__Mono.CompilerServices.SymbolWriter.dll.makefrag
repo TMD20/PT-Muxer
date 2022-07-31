@@ -1,8 +1,0 @@
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: ../../build/common/Locale.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: MonoSymbolFile.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: MonoSymbolTable.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: MonoSymbolWriter.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: SourceMethodBuilder.cs
-./../../class/lib/net_4_x-linux/Mono.CompilerServices.SymbolWriter.dll: SymbolWriterImpl.cs

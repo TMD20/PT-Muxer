@@ -1,8 +1,0 @@
-Test/Common/AppDomainTools.cs
-Test/Common/PokerChangeMonitor.cs
-Test/Common/PokerMemoryCache.cs
-Test/Common/PokerObjectCache.cs
-Test/Common/TestNotificationSystem.cs
-Test/System.Runtime.Caching/HostFileChangeMonitorTest.cs
-Test/System.Runtime.Caching/MemoryCacheTest.cs
-Test/System.Runtime.Caching/ObjectCacheTest.cs

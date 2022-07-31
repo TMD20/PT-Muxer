@@ -1,8 +1,0 @@
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: ../../build/common/Locale.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: ../../build/common/MonoTODOAttribute.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: System.Runtime.InteropServices.CustomMarshalers/EnumerableToDispatchMarshaler.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: System.Runtime.InteropServices.CustomMarshalers/EnumeratorToEnumVariantMarshaler.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: System.Runtime.InteropServices.CustomMarshalers/ExpandoToDispatchExMarshaler.cs
-./../../class/lib/net_4_x-linux/CustomMarshalers.dll: System.Runtime.InteropServices.CustomMarshalers/TypeToTypeInfoMarshaler.cs

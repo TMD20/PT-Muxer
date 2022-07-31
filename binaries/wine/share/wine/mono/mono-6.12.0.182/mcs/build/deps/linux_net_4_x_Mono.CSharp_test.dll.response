@@ -1,8 +1,0 @@
-Test/AssertReportPrinter.cs
-Test/Evaluator/BuildinCommands.cs
-Test/Evaluator/CompletionTest.cs
-Test/Evaluator/EvaluatorFixture.cs
-Test/Evaluator/EvaluatorTest.cs
-Test/Evaluator/ExpressionsTest.cs
-Test/Evaluator/TypesTest.cs
-Test/Visit/ASTVisitorTest.cs

@@ -1,8 +1,0 @@
-../../build/common/Consts.cs
-../../build/common/Locale.cs
-Assembly/AssemblyInfo.cs
-MonoSymbolFile.cs
-MonoSymbolTable.cs
-MonoSymbolWriter.cs
-SourceMethodBuilder.cs
-SymbolWriterImpl.cs

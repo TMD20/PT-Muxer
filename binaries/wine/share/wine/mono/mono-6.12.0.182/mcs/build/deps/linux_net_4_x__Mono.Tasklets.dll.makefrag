@@ -1,4 +1,0 @@
-./../../class/lib/net_4_x-linux/Mono.Tasklets.dll: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/Mono.Tasklets.dll: ../../build/common/Locale.cs
-./../../class/lib/net_4_x-linux/Mono.Tasklets.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/net_4_x-linux/Mono.Tasklets.dll: Mono.Tasklets/Continuation.cs

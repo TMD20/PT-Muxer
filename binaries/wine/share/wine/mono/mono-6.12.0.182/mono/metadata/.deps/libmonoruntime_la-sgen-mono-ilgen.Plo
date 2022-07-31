@@ -1,6 +1,0 @@
-libmonoruntime_la-sgen-mono-ilgen.lo: sgen-mono-ilgen.c \
- /usr/include/stdc-predef.h ../../config.h
-
-/usr/include/stdc-predef.h:
-
-../../config.h:

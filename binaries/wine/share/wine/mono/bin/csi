@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /usr/local/bin/mine/remux/binaries/wine/mono/bin/mono --gc-params=nursery-size=64m $MONO_OPTIONS /usr/local/bin/mine/remux/binaries/wine/mono/lib/mono/4.5/csi.exe "$@"

@@ -1,5 +1,0 @@
-./../../class/lib/net_4_x-linux/System.Reflection.Context.dll: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/System.Reflection.Context.dll: ../../build/common/Locale.cs
-./../../class/lib/net_4_x-linux/System.Reflection.Context.dll: ../../build/common/MonoTODOAttribute.cs
-./../../class/lib/net_4_x-linux/System.Reflection.Context.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/net_4_x-linux/System.Reflection.Context.dll: System.Reflection.Context/CustomReflectionContext.cs

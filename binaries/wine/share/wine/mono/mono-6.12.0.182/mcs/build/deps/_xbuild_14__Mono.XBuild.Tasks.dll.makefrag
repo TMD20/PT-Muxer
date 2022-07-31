@@ -1,7 +1,0 @@
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: ../../build/common/Consts.cs
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: ../../build/common/MonoTODOAttribute.cs
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: ../../tools/xbuild/XBuildConsts.cs
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: ../Microsoft.Build.Utilities/Mono.XBuild.Utilities/MSBuildUtils.cs
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: Mono.XBuild.Tasks/LibraryPcFileCache.cs
-./../../class/lib/xbuild_14/Mono.XBuild.Tasks.dll: Mono.XBuild.Tasks/PcFileCache.cs

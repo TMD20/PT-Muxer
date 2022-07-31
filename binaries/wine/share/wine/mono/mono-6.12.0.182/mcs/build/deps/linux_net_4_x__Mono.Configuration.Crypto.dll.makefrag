@@ -1,6 +1,0 @@
-./../../../class/lib/net_4_x-linux/Mono.Configuration.Crypto.dll: ../../../build/common/Consts.cs
-./../../../class/lib/net_4_x-linux/Mono.Configuration.Crypto.dll: Assembly/AssemblyInfo.cs
-./../../../class/lib/net_4_x-linux/Mono.Configuration.Crypto.dll: Mono.Configuration.Crypto/ConfigSection.cs
-./../../../class/lib/net_4_x-linux/Mono.Configuration.Crypto.dll: Mono.Configuration.Crypto/Key.cs
-./../../../class/lib/net_4_x-linux/Mono.Configuration.Crypto.dll: Mono.Configuration.Crypto/KeyContainer.cs
-./../../../class/lib/net_4_x-linux/Mono.Configuration.Crypto.dll: Mono.Configuration.Crypto/KeyContainerCollection.cs

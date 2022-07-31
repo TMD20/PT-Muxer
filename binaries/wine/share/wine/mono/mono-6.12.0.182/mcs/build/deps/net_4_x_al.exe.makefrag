@@ -1,9 +1,0 @@
-./../../class/lib/net_4_x-linux/al.exe: Al.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/*.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/Emit/*.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/Metadata/*.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/Reader/*.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/Writer/*.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/Impl/*.cs
-./../../class/lib/net_4_x-linux/al.exe: ../../../external/ikvm/reflect/Properties/*.cs

@@ -1,3 +1,0 @@
-.globl fn
-fn:
-  nop

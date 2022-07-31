@@ -1,6 +1,0 @@
-./../../class/lib/build-linux/tmp/PEAPI.dll: ../../build/common/Consts.cs
-./../../class/lib/build-linux/tmp/PEAPI.dll: ../../build/common/Locale.cs
-./../../class/lib/build-linux/tmp/PEAPI.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/build-linux/tmp/PEAPI.dll: Code.cs
-./../../class/lib/build-linux/tmp/PEAPI.dll: Metadata.cs
-./../../class/lib/build-linux/tmp/PEAPI.dll: PEAPI.cs

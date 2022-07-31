@@ -1,3 +1,0 @@
-# RUN: modularize -block-check-header-list-only
-
-Inputs/IncludeInNamespace.h

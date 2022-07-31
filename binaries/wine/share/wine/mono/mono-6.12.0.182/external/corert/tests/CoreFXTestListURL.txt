@@ -1,1 +1,0 @@
-https://cloudcijobs.blob.core.windows.net/corertci/CoreFXArchives/TestList.json

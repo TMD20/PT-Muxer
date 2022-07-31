@@ -1,4 +1,0 @@
-./../../class/lib/net_4_x-linux/Accessibility.dll: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/Accessibility.dll: Accessibility/IAccessible.cs
-./../../class/lib/net_4_x-linux/Accessibility.dll: Accessibility/IAccessibleHandler.cs
-./../../class/lib/net_4_x-linux/Accessibility.dll: Assembly/AssemblyInfo.cs

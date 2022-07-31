@@ -1,9 +1,0 @@
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: ../../build/common/Consts.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: ../../build/common/Locale.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: ../../build/common/MonoTODOAttribute.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: Assembly/AssemblyInfo.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: Microsoft.Web.Infrastructure.DynamicModuleHelper/DynamicModuleUtility.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: Microsoft.Web.Infrastructure.DynamicValidationHelper/LazyWebROCollection.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: Microsoft.Web.Infrastructure.DynamicValidationHelper/ValidationUtility.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: Microsoft.Web.Infrastructure/HttpContextHelper.cs
-./../../class/lib/net_4_x-linux/Microsoft.Web.Infrastructure.dll: Microsoft.Web.Infrastructure/InfrastructureHelper.cs
