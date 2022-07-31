@@ -15,6 +15,7 @@ class Blu(siteTrackData):
     def addTracks(self, quicksum, playlistNum, source, output):
         current_tracks = super().addTracks(quicksum, playlistNum, source, output)
         self._checkPadding(current_tracks ,output)
+        return current_tracks
 
     def _checkPadding(self, current_tracks, output):
         start = os.getcwd()

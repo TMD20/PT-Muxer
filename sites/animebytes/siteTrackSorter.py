@@ -10,6 +10,8 @@ class AnimeBytes(siteTrackSorter):
     def addForcedSubs(self, movieLang, audioPref):
         super().addForcedSubs(movieLang, audioPref)
         # Check if a force english track has been found
+        if len(keyTracks) == 0:
+                return
         for track in self._enabledSub:
             if track["forced"] == True and track["lang"].lower() == "english":
                 return
