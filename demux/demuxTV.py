@@ -81,8 +81,10 @@ def batchDemux(bdObjs, sources, args, demuxFolder,movie,season, offset=1):
 
             # parse data
             
-            demuxData.addTracks(quickSums, playlistNum,
+            currentTracks=demuxData.addTracks(quickSums, playlistNum,
                                 playlistFile, source, output)
+            if not args.dontconvert:
+                demuxData.convertFlac(currentTracks, output)
             os.chdir(newFolder)
 
         extractTracks(demuxData)

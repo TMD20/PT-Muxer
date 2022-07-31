@@ -34,7 +34,7 @@ def demux(args):
     print(os.path.abspath("."))
 
     bdObjs=getBdinfoData(sources)
-    processBdinfo(sources,bdObjs,demuxData)
+    processBdinfo(sources,bdObjs,demuxData,args.donconvert)
     extractTracks(demuxData)
     sortTracks(muxSorter, demuxData, movie, args)
     machineReader(muxSorter, args, movie)
@@ -68,7 +68,7 @@ def getBdinfoData(sources):
     return bdObjs
     
         
-def processBdinfo(sources,bdObjs,demuxData):
+def processBdinfo(sources, bdObjs, demuxData,dontConvert):
     for i in range(len(sources)):
         source=sources[i]
         bdObj=bdObjs[i]
@@ -80,9 +80,13 @@ def processBdinfo(sources,bdObjs,demuxData):
         print(f"Extracting BDINFO from {source}")
         bdObj.writeBdinfo(path)
         quickSums = bdObj.getQuickSum()
-        demuxData.addTracks(
-             quickSums,bdObj.playlistNum, bdObj.playlistFile, source, output)
+        currentTracks=demuxData.addTracks(
+            quickSums, bdObj.playlistNum, bdObj.playlistFile, source, output)
+        if not dontConvert:
+            demuxData.convertFlac(currentTracks, output)
+
         os.chdir("..")
+
 
 
 def extractTracks(demuxData):
