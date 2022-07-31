@@ -19,7 +19,7 @@ def demux(args):
     options = demuxHelper.getBDMVs(args.inpath)
 
     #make the output directory if needed
-    utils.mkdirSafe(args.output)
+    utils.mkdirSafe(args.outpath)
     os.chdir(args.outpath)
     
     sources = getSources(options, args.inpath, args.sortpref)
