@@ -390,7 +390,8 @@ TV mode can be selected when using the --demux argument.
 During Demux mode you will be asked  "What Type of Media are you Demuxing? 
 Select TV
 
-This mode will allow the program to execute once and then run multiple times using the same IMDB and season information for each run. However, the episode number will increment each time you go through a run.
+This mode will allow the program to execute once and then run multiple times using the same IMDB and season information for each run.
+ However, the episode number will increment each time you go through a run.
 
 Note: I would recommend using the arguments --keepocr --ocr enabled at a minimum. 
 
@@ -407,7 +408,34 @@ This will also help in identifying tracks within each episode.
 #### Sources
 You can utilize one or more sources per episode
 
-After an episode finishes extracting, you can utilize the same or different sources for the next episode i.e for example a Season can be split across many disks
+After an episode finishes extracting, you can utilize the same or different sources per batch.
+
+#### Picking Playlist/Batches
+In TV mode you can pick multiple playlist at a time.
+However each source must have the same number of playlist for each iteration of the program.
+
+For example if I have two source I can pick  
+1-3,10
+5-8,12
+
+Not
+
+1-5,10
+5-8,12
+
+TV mode will go through the playlist selection multiple times.
+Which will allow you to be more dynamic about your selection
+
+You could do something like
+1-3
+5-8
+
+For the first iteration, and when it goes again
+4-5 the next run 
+
+Lastly 
+10
+12
 
 #### Folder Struture
 ##### Home Folder
