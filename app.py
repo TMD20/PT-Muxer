@@ -37,7 +37,6 @@ def main():
 
    
     if args.demux:
-        os.chdir(args.outpath)
         demuxAction.demux(args)
             
 

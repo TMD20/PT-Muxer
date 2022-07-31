@@ -20,6 +20,7 @@ def demux(args):
 
     #make the output directory if needed
     utils.mkdirSafe(args.output)
+    os.chdir(args.outpath)
     
     sources = getSources(options, args.inpath, args.sortpref)
     demuxFolder = getDemuxFolder(sources, args.inpath, args.outpath)

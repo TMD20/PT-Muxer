@@ -21,6 +21,7 @@ def demux(args):
 
     #make the output directory if needed
     utils.mkdirSafe(args.output)
+    os.chdir(args.outpath)
 
     options = demuxHelper.getBDMVs(args.inpath)
     demuxData = siteDataPicker.pickSite(args.site)
