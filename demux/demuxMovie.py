@@ -20,7 +20,7 @@ def demux(args):
     args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
     #make the output directory if needed
-    utils.mkdirSafe(args.output)
+    utils.mkdirSafe(args.outpath)
     os.chdir(args.outpath)
 
     options = demuxHelper.getBDMVs(args.inpath)
