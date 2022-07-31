@@ -17,6 +17,10 @@ import config
 
 def demux(args):
     options = demuxHelper.getBDMVs(args.inpath)
+
+    #make the output directory if needed
+    utils.mkdirSafe(args.output)
+    
     sources = getSources(options, args.inpath, args.sortpref)
     demuxFolder = getDemuxFolder(sources, args.inpath, args.outpath)
     offset = max(len(os.listdir(demuxFolder)),1)

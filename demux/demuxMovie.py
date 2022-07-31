@@ -19,6 +19,9 @@ def demux(args):
     args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
     args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
+    #make the output directory if needed
+    utils.mkdirSafe(args.output)
+
     options = demuxHelper.getBDMVs(args.inpath)
     demuxData = siteDataPicker.pickSite(args.site)
     muxSorter = siteSortPicker.pickSite(args.site)
