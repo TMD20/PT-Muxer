@@ -31,15 +31,10 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
             maxLines = min(maxLines, len(files))-1
 
             lines = subocr.subocr(files[0:maxLines], track["langcode"])
+            lastlines = subocr.subocr(files[-1*(min(10,len(files))):], track["langcode"])
 
-            lastline = subocr.subocr([files[-1]], track["langcode"])
-            if len(lastline) > 0:
-                lastline = lastline[0]
-
-            lines.append(
-                f"SUBPARSER_LAST_LINE = {lastline}")
-            # Add Special Message about last line since that can contain the track dialetic
-            track["machine_parse"] = lines
+            track["machine_parse_start"] = lines
+            track["machine_parse_final"] = lastlines
             track["length"] = len(files)
             if keep:
                 file = track["eac3to"].split(":")[1]

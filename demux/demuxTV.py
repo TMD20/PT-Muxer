@@ -3,6 +3,8 @@ import json
 import re
 
 
+from num2words import num2words
+
 import mediatools.bdinfo as bdinfo
 import mediatools.eac3to as eac3to
 import sites.pickers.siteDataPicker as siteDataPicker
@@ -24,7 +26,7 @@ def demux(args):
     
     sources = getSources(options, args.inpath, args.sortpref)
     demuxFolder = getDemuxFolder(sources, args.inpath, args.outpath)
-    offset = max(len(os.listdir(demuxFolder)),1)
+    offset = len(os.listdir(demuxFolder))
     movie = movieData.matchMovie(sources)
     season = int(utils.getIntInput("Enter Season Number: "))
     while True:
@@ -46,26 +48,30 @@ def demux(args):
         """
         print(message)
         #-1 because counter needs to start at 1
-        offset = offset+playlistCount-1
+        offset = offset+playlistCount
+       
+       
 
 
 def batchDemux(bdObjs, sources, args, demuxFolder,movie,season, offset=1):
     print("What TV Show?")
     # outter loop is for each episdoe
-    for i in range(offset, offset+len(bdObjs[0].playlistNumList)):
-        print(f"Processing the {i} PlayList")
-        newFolder = os.path.join(demuxFolder, str(i))
+    for i in range(len(bdObjs[0].playlistNumList)):  
+        ep=i+offset+1
+        print(f"Processing playlist number {num2words(ep)}")
+        newFolder = os.path.join(demuxFolder, str(ep))
         print(f"Creating a new episode folder at {newFolder}")
         demuxData = siteDataPicker.pickSite(args.site)
         muxSorter = siteSortPicker.pickSite(args.site)
-        os.mkdir(newFolder)
+        utils.mkdirSafe(newFolder)
         os.chdir(newFolder)
         # inner loop is for each source
         for j in range(len(sources)):
-            source = sources[j]
+            source = sources[j]   
             bdObj = bdObjs[j]
-            playlistNum = bdObj.playlistNumList[j]
-            playlistFile = bdObj.playlistFileList[j]
+            playlistNum = bdObj.playlistNumList[i]
+            playlistFile = bdObj.playlistFileList[i]
+            
 
             # get the current playlist/Write bdinfo
            
@@ -90,7 +96,7 @@ def batchDemux(bdObjs, sources, args, demuxFolder,movie,season, offset=1):
         extractTracks(demuxData)
         sortTracks(muxSorter, demuxData, movie, args)
         machineReader(muxSorter, args, movie)
-        finalizeOutput(muxSorter, demuxData, movie, season, i)
+        finalizeOutput(muxSorter, demuxData, movie, season, ep)
         # change pack to parent
         os.chdir(demuxFolder)
 
