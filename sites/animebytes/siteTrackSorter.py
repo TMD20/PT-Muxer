@@ -18,7 +18,7 @@ class AnimeBytes(siteTrackSorter):
                 filter(lambda x: x["sourceKey"] == key, self._unSortedSub))
             keyTracks = list(
                 filter(lambda x: x["lang"].lower() == "english", keyTracks))
-            if len(keyTracks) > 2:
+            if len(keyTracks) < 2:
                 return
             forcedTrack = keyTracks[0]
             if os.path.getsize(keyTracks[1]["file"]) < os.path.getsize(keyTracks[0]["file"]):
