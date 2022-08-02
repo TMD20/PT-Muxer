@@ -51,7 +51,11 @@ def matchMovie(sources):
             Unable to find movie ID
             Enter imdb id
             """
-            id = utils.textEnter(message)
+            id=None
+            try:   
+                id = utils.textEnter(message)
+            except:
+                print("id is invalid\n")
 
             result = ia.get_movie(re.sub("tt", "", id))
         else:

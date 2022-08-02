@@ -12,17 +12,18 @@ import config
 
 def Remux(args):
     # Variables
-    remuxConfigPaths=[]
-    remuxConfigs=[]
+    remuxConfigPaths = []
+    remuxConfigs = []
     movie = None
 
     if utils.singleSelectMenu(["Movie", "TV"], "What Type of Media do you want to Remux?") == "Movie":
         folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
-        if len(folders)==0:
+        if len(folders) == 0:
             print("You need to demux a folder with Movie Mode first")
             quit()
-        remuxConfigPaths.append(os.path.join(utils.singleSelectMenu(folders, "Pick a folder to demux"),"output.json"))
-        
+        remuxConfigPaths.append(os.path.join(utils.singleSelectMenu(
+            folders, "Pick a folder to demux"), "output.json"))
+
     else:
         folders = utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
         if len(folders) == 0:
@@ -32,14 +33,9 @@ def Remux(args):
         remuxConfigPaths.extend(
             list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
     #double check to make sure every path is current
-    remuxConfigPaths = list(filter(lambda x:os.path.isfile(x),remuxConfigPaths))
+    remuxConfigPaths = list(
+        filter(lambda x: os.path.isfile(x), remuxConfigPaths))
 
-  
-
-
-
-
-  
     if not remuxConfigPaths or len(remuxConfigPaths) == 0:
         print("You Must Pick at list one Config")
         quit()
@@ -55,7 +51,7 @@ def Remux(args):
 
         with open(remuxConfigPath, "r") as p:
             remuxConfig = json.loads(p.read())
-    
+
         if remuxHelper.checkMissing(remuxConfig) == False:
             continue
         remuxConfigs.append(remuxConfig)
@@ -73,7 +69,8 @@ def Remux(args):
         movieTitle = movieTitleList[i]
         muxGenerator = muxPicker.pickSite(args.site)
         remuxConfig = remuxConfigs[i]
-        ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator)
+        ProcessBatch(fileName, movieTitle, kind,
+                     remuxConfig, muxGenerator, args.outargs)
     message = """If the Program made it this far all MKV(s)...
     Should be in the output directory picked \
     Before Closing We will now print off file locations and mediainfo"""
@@ -85,7 +82,7 @@ def Remux(args):
     print(f"As a Reminder the output Directory is: {args.outpath}")
 
 
-def ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator):
+def ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator, outargs):
     # Variables
     chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
 
@@ -100,13 +97,13 @@ def ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator):
             # imdb,tmdb,season,episode
             remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], season, episode)
 
-    muxGenerator.generateMuxData(remuxConfig)
+    muxGenerator.generateMuxData(remuxConfig, outargs)
     if chaptersTemp:
         muxGenerator.createMKV(fileName, movieTitle,
-                           chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
+                               chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
 
         os.close(chaptersTemp[0])
     else:
         muxGenerator.createMKV(fileName, movieTitle,
-        None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
+                               None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
     os.close(xmlTemp[0])
