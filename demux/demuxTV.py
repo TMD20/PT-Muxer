@@ -104,10 +104,10 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
             extractTracks(demuxData, stream=True)
             sortTracks(muxSorter, demuxData, movie, args)
             machineReader(muxSorter, args, movie)
+            # change pack to parent
+            os.chdir(demuxFolder)
             finalizeOutput(muxSorter, demuxData, movie, season, ep)
-    # change pack to parent
-    os.chdir(demuxFolder)
-
+ 
 
 
 
