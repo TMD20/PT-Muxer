@@ -21,9 +21,9 @@ class siteTrackData(TracksData):
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
-    def addTracks(self, quicksum, playlistNum, playlistFile, source, output):
+    def addTracks(self, quicksum, playlistNum, playlistFile,streams, source, output):
         self.updateRawTracksDict(
-            quicksum, playlistNum, playlistFile, source, output)
+            quicksum, playlistNum, playlistFile,streams, source, output)
         current_tracks = self.filterBySource(source)["tracks"]
         self._updateTrackDictNames(current_tracks)
         self._updateTrackDictEac3to(current_tracks)

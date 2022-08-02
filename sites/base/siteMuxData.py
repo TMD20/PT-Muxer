@@ -17,13 +17,15 @@ class MuxOBj():
         self._video = []
         self._sub = []
         self._out = None
+        self._outputargs = []
 
-    def generateMuxData(self, remuxConfig):
+    def generateMuxData(self, remuxConfig, outargs):
         self._addAudioTracks(remuxConfig)
         self._addVideoTracks(remuxConfig)
         self._addSubTracks(remuxConfig)
+        self._addOutPutArgs(outargs)
         self._out = list(itertools.chain.from_iterable(
-            [self._video, self._audio, self._sub]))
+            [self._video, self._audio, self._sub, self._outputargs]))
 
     @property
     def out(self):
@@ -69,7 +71,7 @@ class MuxOBj():
             auditorydesc = ["--visual-impaired-flag", "0:0"]
             commentary = ["--commentary-flag", "0:0"]
             # reset flag values as needed
-            
+
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
             if trackjson.get("forced") == True:
@@ -114,7 +116,7 @@ class MuxOBj():
                     or re.search("commentary", name or "", re.IGNORECASE):
                 commentary = ["--commentary-flag", "0:1"]
             if trackjson.get("sdh") == True \
-            or re.search("sdh", name or "", re.IGNORECASE):
+                    or re.search("sdh", name or "", re.IGNORECASE):
                 sdh = ["--hearing-impaired-flag", "0:1"]
             if trackjson.get("textdesc") == True \
                     or re.search("sdh", name or "", re.IGNORECASE):
@@ -146,7 +148,6 @@ class MuxOBj():
 
         season = remuxConfig.get("Season")
         episode = remuxConfig.get("Episode")
-        
 
         if kind == "movie":
             fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
@@ -168,6 +169,9 @@ class MuxOBj():
                 inputs, "Is the File Correct Now\n")
         return os.path.abspath(os.path.join(".", fileName))
 
+    def _addOutPutArgs(self, outargs):
+        self._outputargs = outargs.split()
+
     def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
         mkvmergeBin = config.mkvmergeLinuxPath
         if not os.path.isfile(mkvmergeBin):
@@ -175,7 +179,7 @@ class MuxOBj():
 
         command = list(itertools.chain.from_iterable(
             [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
-        if chapters==None:
+        if chapters == None:
             command = list(itertools.chain.from_iterable(
                 [[mkvmergeBin, "--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
         commandStr = " ".join(command)

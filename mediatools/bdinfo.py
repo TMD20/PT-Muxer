@@ -12,13 +12,9 @@ class Bdinfo():
         self._playlistNum = 0
         self._playlistNumList = []
         self._playlistFileList=[]
+        self._streams=[]
         self._mediaDir = None
-        # self._playlist = None
-        # self._index = None
-        # self._bdinfoPath = None
-       
-        # self._dict = {}
-        # self._playList=[]
+    
     '''
     Public Functions
     '''
@@ -28,8 +24,6 @@ class Bdinfo():
         self._generate_playlists()
         print(self._playlist)
 
-    def setBDinfoPath(self, subfolder, parent):
-        show = utils.getShowName(subfolder)
 
     def runbdinfo(self,playlistNum=None):
         bdinfoBin = config.bdinfoLinuxPath
@@ -60,6 +54,19 @@ class Bdinfo():
                 break
         return lines
 
+    def getStreams(self):
+        lines = self._bdinfo.splitlines()
+        lines = lines[lines.index("FILES:"):len(lines)-1]
+        start=0
+        end = lines.index("CHAPTERS:")-1
+        for i in range(len(lines)):
+            if re.search("Name", lines[i]) != None:
+                start=i+2
+                break
+        for line in lines[start:end]:
+            data=line.split()
+            self._streams.append({"name":data[0],"start":data[1],"end":data[2]})
+        return self._streams
     def writeBdinfo(self, path):
         utils.mkdirSafe(path)
         file = open(path, "w")
