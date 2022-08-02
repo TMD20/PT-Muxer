@@ -57,7 +57,7 @@ def batchDemux(bdObjs, sources, args, demuxFolder,movie,season, offset=1):
     # outter loop is for each episdoe
     for i in range(len(bdObjs[0].playlistNumList)):  
         ep=i+offset+1
-         print(f"Processing playlist number {num2words(ep)}")
+        print(f"Processing playlist number {num2words(ep)}")
         newFolder = os.path.join(demuxFolder, str(ep))
         print(f"Creating a new episode folder at {newFolder}")
         demuxData = siteDataPicker.pickSite(args.site)
