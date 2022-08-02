@@ -38,17 +38,16 @@ def demux(args):
         if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
             sources = getSources(options, args.inpath, args.sortpref)
         playlistCount = len(bdObjs[0].playlistNumList)
+        offset = offset+playlistCount
         message =\
             f"""
-        You have extracted  {playlistCount} playlist Thus Far
-        The bext set of playlist will start from {playlistCount+1}
+        You have extracted  {nums2words(offset)} playlist(s) Thus Far
+        The bext set of playlist will start from {offset+1}
 
         The playlist for every source will be reset
         You may pick a new set of playlist
         """
         print(message)
-        #-1 because counter needs to start at 1
-        offset = offset+playlistCount
        
        
 
@@ -58,7 +57,7 @@ def batchDemux(bdObjs, sources, args, demuxFolder,movie,season, offset=1):
     # outter loop is for each episdoe
     for i in range(len(bdObjs[0].playlistNumList)):  
         ep=i+offset+1
-        print(f"Processing playlist number {num2words(ep)}")
+         print(f"Processing playlist number {num2words(ep)}")
         newFolder = os.path.join(demuxFolder, str(ep))
         print(f"Creating a new episode folder at {newFolder}")
         demuxData = siteDataPicker.pickSite(args.site)
