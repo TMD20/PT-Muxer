@@ -321,6 +321,11 @@ def finalizeOutput(muxSorter, demuxData, movie, season=None, episode=None):
         outdict["Sources"][key]["outputDir"] = trackObj["outputDir"]
         outdict["Sources"][key]["sourceDir"] = trackObj["sourceDir"]
         outdict["Sources"][key]["playlistNum"] = trackObj["playlistNum"]
+        outdict["Sources"][key]["playlistFile"] = trackObj["playlistFile"]
+        outdict["Sources"][key]["streamFiles"] = trackObj["streamFiles"]
+
+
+      
     # Chapters
     outdict["ChapterData"] = demuxHelper.CreateChapterList(
         *[demuxData.filterBySource(key)["outputDir"] for key in demuxData.sources])
