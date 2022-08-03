@@ -210,6 +210,7 @@ As Changing values could cause --remux mode to crash if they don't match
 * playlistNum: What Number was entered as a response to the question "What playlist" during the demux process
 * playlistFile: The playlist file the playlist number corresponds with
 * streamFiles: All the mt2s streams the JSON matches with. Will either match with BDINFO, or be one stream if --splitplaylist is on
+* length: The Length of all the streamFiles combined
 
 ### 3. ChapterData
 
