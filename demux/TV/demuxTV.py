@@ -102,9 +102,6 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
                 filter(lambda x: x["start"] >= stream["start"], chapters))
             chapters = list(
                 filter(lambda x: x["start"] <= stream["end"], chapters))
-
-            # change pack to parent
-            os.chdir(demuxFolder)
             outdict = {}
             tools.addMovieData(outdict,movie,season,ep,)
             outdict["Sources"] = tools.addSourceData(demuxData)
@@ -112,7 +109,8 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
             tools.addEnabledData(outdict,muxSorter)
             tools.addTrackData(outdict,muxSorter)
             tools.writeFinalJSON(outdict)
-           
+            # change pack to parent
+            os.chdir(demuxFolder)
 
 
             
