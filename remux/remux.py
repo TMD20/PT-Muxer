@@ -32,7 +32,7 @@ def Remux(args):
         folder = utils.singleSelectMenu(folders, "Pick a folder to demux")
         remuxConfigPaths.extend(
             list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
-    #double check to make sure every path is current
+    # double check to make sure every path is current
     remuxConfigPaths = list(
         filter(lambda x: os.path.isfile(x), remuxConfigPaths))
 
@@ -87,7 +87,7 @@ def ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator, outargs)
     chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
 
     xmlTemp = None
-    if kind == "movie":
+    if kind == "Movie":
         xmlTemp = remuxHelper.writeXMLMovie(
             remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
     else:

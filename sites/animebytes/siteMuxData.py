@@ -30,16 +30,15 @@ class AnimeBytes(MuxOBj):
 
         season = remuxConfig.get("Season")
         episode = remuxConfig.get("Episode")
-        
 
-        if kind == "movie":
+        if kind == "Movie":
             fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         else:
-            #add episode name
+            # add episode name
             episodes = movieData.getEpisodes(
                 movieData.getByID(movie["imdbID"]), season)
             episodeData = movieData.getEpisodeData(episodes, episode)
-            episodeTitle=episodeData["title"]
+            episodeTitle = episodeData["title"]
             fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         # Normalize FileName
         fileName = re.sub(" +", " ", fileName)
