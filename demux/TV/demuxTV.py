@@ -152,6 +152,7 @@ def batchSources(bdObjs, sources, args, demuxFolder, movie, season, offset=1):
             bdObj.writeBdinfo(path)
             quickSums = bdObj.getQuickSum()
             streams = bdObj.getStreams()
+            bdObj.getChapters()
             streams = list(map(lambda x: x["name"], streams))
 
             currentTracks = demuxData.addTracks(quickSums, playlistNum,
