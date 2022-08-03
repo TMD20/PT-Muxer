@@ -198,8 +198,8 @@ langs data is present only for convenience
 
 ### 2. Sources
 
-Just Basic Data data about the sources the user has utilized during the demuxing process. Most Likely shouldn’t be changed
-Each source has its own key here with some data inside of it
+Basic data about the sources the user has utilized during the demuxing process.
+Each source has its own key with data inside of it
 
 Most of these values should not be changed 
 As Changing values could cause --remux mode to crash if they don't match
@@ -208,7 +208,8 @@ As Changing values could cause --remux mode to crash if they don't match
 * outputDir: the location of the output files for the source i.e the mux folder location
 * sourceDir: The location of where the source is found
 * playlistNum: What Number was entered as a response to the question "What playlist" during the demux process
-
+* playlistFile: The playlist file the playlist number corresponds with
+* streamFiles: All the mt2s streams the JSON matches with. Will either match with BDINFO, or be one stream if --splitplaylist is on
 
 ### 3. ChapterData
 
@@ -383,6 +384,28 @@ order: sort tracks by which comes first, give the highest priority to first trac
 
 ```
 
+ --splitplaylist
+ 
+ ```
+    Example: python3 /path/to/app.py -demux sourcepath outputpath --splitplaylist
+
+   This Mode only has an effect in TV mode, during demuxing. 
+   Instead of sending a playlist to eac3to. This will split a playlist into its individual streams, and send those to eac3to.
+   So each stream will be it's on episode or folder in the final Mux Folder.
+   
+   For example BDINFO might show a playlist 0001.mpls with these Files 0002.mt2s 0004.mt2s 0008.mt2s
+   Normally this would be one folder represented by the playlist, with splitplaylist now each of those streams would be represented by one 
+   folder
+```
+
+ --dontconvert
+ 
+ ```
+    Example: python3 /path/to/app.py -demux sourcepath outputpath --donconvert
+
+   Skips all lossless conversions
+```
+
 
 ### TV Mode
 
@@ -536,6 +559,24 @@ See Sites Section for more detail
 Example:python3 /path/to/app.py --remux --group superduperremuxing
 
 This will change the group tag of the final MKV
+```
+
+--forcemovie
+```
+Example:python3 /path/to/app.py --forcemovie
+
+overwrites TV Movies by treating them as a movie, instead of a TV show
+```
+
+
+
+
+--outargs
+```
+Example:python3 /path/to/app.py --remux --outargs "--split chapters:13,22,33,45,54"
+
+Passes mkvtoolnix global options to the final mkvtoolnix command
+Read the global option section here: https://mkvtoolnix.download/doc/mkvmerge.html#mkvmerge.description
 ```
 
 ### Movie Mode
