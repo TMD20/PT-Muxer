@@ -149,10 +149,10 @@ class MuxOBj():
         season = remuxConfig.get("Season")
         episode = remuxConfig.get("Episode")
 
-        if kind == "movie":
+        if kind == "Movie":
             fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         else:
-            fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}E{episode//10}{episode%10}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = f"{movieName}.{movieYear}.S{season: 02d}E{episode: 02d}{episode%10}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         # Normalize
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)

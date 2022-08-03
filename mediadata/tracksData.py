@@ -21,7 +21,7 @@ class TracksData():
     #It also adds data about the source of the information, and where to output it                                 #
     ################################################################################################################
 
-    def updateRawTracksDict(self, trackStrs, playlistNum, playlistFile,streams, source, output):
+    def updateRawTracksDict(self, trackStrs, playlistNum, playlistFile, streams, source, output):
         tracks = []
         for index, currline in enumerate(trackStrs):
             index = index+2
@@ -30,7 +30,7 @@ class TracksData():
             track["sourceDir"] = source
             track["sourceKey"] = utils.getShowName(source)
         self._expandRawTracksData(
-            tracks, playlistNum, playlistFile,streams, source, output)
+            tracks, playlistNum, playlistFile, streams, source, output)
         self.addSource(source)
 
     def addSource(self, source):
@@ -178,7 +178,7 @@ class TracksData():
     # Primary Key are Basename Source
     # Tracks are Objects
     # Output is a a string
-    def _expandRawTracksData(self, tracks, playlistNum, playlistFile, streams,source, output):
+    def _expandRawTracksData(self, tracks, playlistNum, playlistFile, streams, source, output):
         self._rawMediaTracksData[utils.getShowName(source)] = {}
         self._rawMediaTracksData[utils.getShowName(source)]["tracks"] = tracks
         self._rawMediaTracksData[utils.getShowName(

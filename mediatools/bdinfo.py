@@ -2,6 +2,7 @@ import subprocess
 import re
 import os
 import tempfile
+import datetime as dt
 
 import tools.general as utils
 import config
@@ -13,6 +14,7 @@ class Bdinfo():
         self._playlistNumList = []
         self._playlistFileList=[]
         self._streams=[]
+        self._chapters=[]
         self._mediaDir = None
     
     '''
@@ -63,10 +65,48 @@ class Bdinfo():
             if re.search("Name", lines[i]) != None:
                 start=i+2
                 break
+        time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
+
+        
         for line in lines[start:end]:
             data=line.split()
-            self._streams.append({"name":data[0],"start":data[1],"end":data[2]})
+
+            startTime = data[1]
+            length = data[2]
+            name = data[0]
+
+
+            t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
+            t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
+            endTime = str((t1 - time_zero + t2).time())[:-3]
+            self._streams.append({"name":name,"start":startTime,"end":endTime})
         return self._streams
+    
+    def getChapters(self):
+        lines = self._bdinfo.splitlines()
+        lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
+        startTime = 0
+        end = lines.index("STREAM DIAGNOSTICS:")-1
+        for i in range(len(lines)):
+            if re.search("Number ", lines[i]) != None:
+                start = i+2
+                break
+        time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
+        for line in lines[start:end]:
+            data = line.split()
+
+            startTime= data[1]
+            length=data[2]
+            number=data[0]
+
+            t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
+            t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
+            endTime=str((t1 - time_zero + t2).time())[:-3]
+
+            self._chapters.append(
+                {"number": number, "start":startTime, "length": endTime})
+        return self._chapters
+    
     def writeBdinfo(self, path):
         utils.mkdirSafe(path)
         file = open(path, "w")
@@ -130,6 +170,14 @@ class Bdinfo():
     def playlistFileList(self):
         return self._playlistFileList
 
+    """
+    Chapters
+    """
+    @property
+    def chapters(self):
+
+        return self._chapters
+
     '''
     Setter Functions
     '''
@@ -163,8 +211,12 @@ class Bdinfo():
         self._playlistNumList = utils.getRangeOfNumbers(message) or []
 
     def _getplaylistFile(self, num):
-        self._playlistFile = re.findall(
-            "[0-9]+\.MPLS", self._playlist)[int(num)-1]
+        playlistFiles = re.findall(
+            "[0-9]+\.MPLS", self._playlist)
+        if int(num)-1 > len(playlistFiles):
+            print("Number is out of Range")
+            quit()
+        self._playlistFile = playlistFiles[int(num)-1]
 
     @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):

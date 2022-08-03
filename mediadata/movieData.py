@@ -35,7 +35,7 @@ def matchMovie(sources):
     results = ia.search_movie(title)
     if len(results) == 0:
         message =\
-         """
+            """
         Unable to find movie
         Enter imdb id:
         """
@@ -47,12 +47,12 @@ def matchMovie(sources):
         match = utils.singleSelectMenu(titles, 'What Movie/TV Show')
         if match == "None of these Titles Match":
             message = \
-            """
+                """
             Unable to find movie ID
             Enter imdb id
             """
-            id=None
-            try:   
+            id = None
+            try:
                 id = utils.textEnter(message)
             except:
                 print("id is invalid\n")
@@ -67,8 +67,8 @@ def matchMovie(sources):
 
 def getKind(movie):
     kind = movie["kind"]
-    if kind == "movie" or kind == "tv movie" or kind == "video movie":
-        return "movie"
+    if kind == "Movie" or kind == "tv movie" or kind == "video movie":
+        return "Movie"
     else:
         return "tv"
 
@@ -83,7 +83,7 @@ def convertIMDBtoTMDB(id):
 
 def getSeason(sources):
     details = guessit(sources[0])
-    season = details.get("season")
+    season = details.get("Season")
     return season
 
 
@@ -101,11 +101,11 @@ def getEpisodes(movie, season):
     ia.update(movie, 'episodes')
     return movie["episodes"][season]
 
-def getEpisodeData(episodes,num):
-     episode=episodes[num]
-     ia.update(episode, info=['main'])
-     return episode
-   
+
+def getEpisodeData(episodes, num):
+    episode = episodes[num]
+    ia.update(episode, info=['main'])
+    return episode
 
 
 def getEpisodeTitle(movie, season, episode):
@@ -113,6 +113,7 @@ def getEpisodeTitle(movie, season, episode):
     episode = movie["episodes"][season][episode]
     ia.update(episode, info=['main'])
     return episode
+
 
 def getMovieTitle(movie):
     movieName = getMovieName(movie)

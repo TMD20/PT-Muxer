@@ -11,15 +11,14 @@ import config
 
 def getRemuxConfigs(path):
     demuxList = []
-    folders=utils.findMatches(path,"Mux.*")
-
+    folders = utils.findMatches(path, "Mux.*")
 
     if len(demuxList) == 0:
         print("Deep Search of Directory Could Not Find any output.json Files")
         quit()
     demuxList = sorted(demuxList)
-    message= \
-    """
+    message = \
+        """
     Select One or more Files to Remux
     
     These should be either one Movie or one Show
@@ -33,7 +32,7 @@ def getRemuxConfigs(path):
 
 
 def chapterListParser(chapterList):
-    if chapterList==None:
+    if chapterList == None:
         return
     tempData = tempfile.mkstemp()
     file = tempData[1]
@@ -69,17 +68,16 @@ def writeXMLTV(imdb, tmdb, season, episode):
 
     episodes = movieData.getEpisodes(
         movieData.getByID(imdb), season)
-    episodeData = movieData.getEpisodeData(episodes,episode)
-    
+    episodeData = movieData.getEpisodeData(episodes, episode)
+
     imdbEP = episodeData["imdbID"]
-    
-    
+
     totalEP = movieData.getTotalEpisodes(episodes)
 
     with open(infile, 'r') as f:
         src = Template(f.read())
         result = src.substitute(
-            {"imdb": imdb, "tmdb": tmdb, "imdbEP": imdbEP, "totalEP": totalEP,"season":season,"episode":episode})
+            {"imdb": imdb, "tmdb": tmdb, "imdbEP": imdbEP, "totalEP": totalEP, "Season": season, "Episode": episode})
     with open(outfile, "w") as p:
         p.writelines(result)
     return tempData
