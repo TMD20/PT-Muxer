@@ -1,5 +1,6 @@
 import json
 import os
+import functools
 
 from pymediainfo import MediaInfo
 
@@ -42,6 +43,7 @@ def Remux(args):
 
     fileNameList = []
     movieTitleList = []
+    fileNameFuncts=[]
     utils.mkdirSafe(os.path.join(args.outpath, ""))
     for remuxConfigPath in remuxConfigPaths:
         print(f"\nPreparing Data for {remuxConfigPath}\n")
@@ -59,10 +61,14 @@ def Remux(args):
             movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
         kind = args.forcemovie or movieData.getKind(movie)
         os.chdir(args.outpath)
-        fileName = muxGenerator.getFileName(
-            kind, remuxConfig, movie, args.group)
-        fileNameList.append(fileName)
+
+        fileNameFuncts.append(functools.partial( muxGenerator.getFileName,kind, remuxConfig, movie, args.group,args.skipnamecheck))
         movieTitleList.append(movieData.getMovieTitle(movie))
+    for i in range(len(fileNameFuncts)):
+        funct=fileNameFuncts[i]
+        fileName=fileName[i]
+        print(f"Getting FileName For:{fileName}")
+        fileNameList.append(funct())
     print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
     for i in range(len(fileNameList)):
         fileName = fileNameList[i]

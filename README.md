@@ -289,24 +289,21 @@ python3 /path/to/app.py -demux sourcepath outputpath [optional args]
 
 ### Required
 
-```
- sourcepath 
- 
+sourcepath 
+``` 
  where you keep all your bdmv and or iso files.
  You can pick multiple sources if you desire, just make sure they are all for the same movie/TV Episode
 ```
 
-
+ outputpath [default=current dir]
 ```
-  outputpath
- 
   Where you want the mux folder to be output to. A Folder with the following structure will be created
   Mux.randomstring.showName
 ```
 
 
 ### Optional
---site blutopia/blu/bhd/beyondhd [default=blu]
+--site [default=blu]
 ```
 Example: python3 /path/to/app.py -demux sourcepath outputpath --site blu
 
@@ -534,16 +531,14 @@ However, the numbered subfolders are not present
 
 ### Required
 ```
-  sourcepath 
- 
+
+sourcepath 
  The mux folder created during the demux process
  This holds all your configurations and is what will be used to generate the mkv file
 ```
 
-
-```
-  output path
-  
+outputpath [default=current dir]
+``` 
   The folder you want the final MKV to be outputted to
 ```
 ### Optional

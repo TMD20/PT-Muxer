@@ -12,7 +12,7 @@ class AnimeBytes(MuxOBj):
     def __init__(self):
         super().__init__()
 
-    def getFileName(self, kind, remuxConfig, movie, group):
+    def getFileName(self, kind, remuxConfig, movie, group,skipNameCheck):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -45,13 +45,13 @@ class AnimeBytes(MuxOBj):
         fileName = re.sub(" ", ".", fileName)
         fileName = re.sub("\.+", ".", fileName)
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
-
-        inputs = ["YES", "NO"]
-        choice = utils.singleSelectMenu(
-            inputs, f"Is this FileName Correct: {fileName}\n")
-        while choice != "YES":
-            message = "Enter New FileName: "
-            utils.textEnter(message, fileName)
+        if not skipNameCheck:
+            inputs = ["YES", "NO"]
             choice = utils.singleSelectMenu(
-                inputs, "Is the File Correct Now\n")
+                inputs, f"Is this FileName Correct: {fileName}\n")
+            while choice != "YES":
+                message = "Enter New FileName: "
+                fileName=utils.textEnter(message, fileName)
+                choice = utils.singleSelectMenu(
+                    inputs, "Is the File Correct Now\n")
         return os.path.abspath(os.path.join(".", fileName))

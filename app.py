@@ -53,8 +53,6 @@ def main():
 
     args = parser.parse_args()
 
-    args = parser.parse_args()
-
     if args.demux:
         demuxAction.demux(args)
 
