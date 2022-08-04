@@ -1,22 +1,18 @@
-import os
 import re
+import os
 
-from InquirerPy import inquirer
 
+import tools.general as utils
 from sites.base.siteMuxData import MuxOBj
 import mediatools.mkvtoolnix as mkvTool
 import mediadata.movieData as movieData
-import tools.general as utils
 
 
-class BeyondHD(MuxOBj):
+class AnimeBytes(MuxOBj):
     def __init__(self):
         super().__init__()
-    # Overwrite Filename
 
-    def getFileName(self, kind, remuxConfig, movie, group):
-        hdr = mkvTool.getHDR(
-            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+    def getFileName(self, kind, remuxConfig, movie, group,skipNameCheck):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -36,23 +32,26 @@ class BeyondHD(MuxOBj):
         episode = remuxConfig.get("Episode")
 
         if kind == "Movie":
-            fileName = f"{movieName}.{movieYear}.{mediaType}.{videoRes}.{audioCodec}.{audioChannel}.{videoCodec}.{hdr}.REMUX-{group}.mkv"
+            fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         else:
-            fileName = f"{movieName}.{movieYear}.S{season: 02d}E{episode: 02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-
-        # normalize
+            # add episode name
+            episodes = movieData.getEpisodes(
+                movieData.getByID(movie["imdbID"]), season)
+            episodeData = movieData.getEpisodeData(episodes, episode)
+            episodeTitle = episodeData["title"]
+            fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+        # Normalize FileName
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
         fileName = re.sub("\.+", ".", fileName)
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
-
-        inputs = ["YES", "NO"]
-        choice = utils.singleSelectMenu(
-            inputs, f"Is this FileName Correct: {fileName}\n")
-
-        while choice != "YES":
-            message = "Enter New FileName: "
-            utils.textEnter(message, fileName)
+        if not skipNameCheck:
+            inputs = ["YES", "NO"]
             choice = utils.singleSelectMenu(
-                inputs, "Is the File Correct Now\n")
+                inputs, f"Is this FileName Correct: {fileName}\n")
+            while choice != "YES":
+                message = "Enter New FileName: "
+                fileName=utils.textEnter(message, fileName)
+                choice = utils.singleSelectMenu(
+                    inputs, "Is the File Correct Now\n")
         return os.path.abspath(os.path.join(".", fileName))
