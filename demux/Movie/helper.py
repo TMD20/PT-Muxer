@@ -4,6 +4,7 @@ import mediatools.bdinfo as bdinfo
 import demux.paths as paths
 import tools.general as utils
 
+
 def getBdinfoData(sources):
     # Generate Bdinfo/TrackInfo for Each Source
     bdObjs = []
@@ -32,10 +33,9 @@ def processBdinfo(sources, bdObjs, demuxData, dontConvert):
         bdObj.writeBdinfo(path)
         quickSums = bdObj.getQuickSum()
         streams = bdObj.getStreams()
-        streams = list(map(lambda x: x["name"], streams))
         bdObj.getChapters()
         currentTracks = demuxData.addTracks(
-            quickSums, bdObj.playlistNum, bdObj.playlistFile,streams, source, output)
+            quickSums, bdObj.playlistNum, bdObj.playlistFile, streams, source, output)
         if not dontConvert:
             demuxData.convertFlac(currentTracks, output)
         os.chdir("..")

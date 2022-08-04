@@ -57,7 +57,7 @@ def Remux(args):
         remuxConfigs.append(remuxConfig)
         if movie == None:
             movie = movieData.getByID(remuxConfig["Movie"]["imdb"])
-        kind = args.kind or movieData.getKind(movie)
+        kind = args.forcemovie or movieData.getKind(movie)
         os.chdir(args.outpath)
         fileName = muxGenerator.getFileName(
             kind, remuxConfig, movie, args.group)
@@ -66,6 +66,7 @@ def Remux(args):
     print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
     for i in range(len(fileNameList)):
         fileName = fileNameList[i]
+        print(f"Creating this File\n{fileName}")
         movieTitle = movieTitleList[i]
         muxGenerator = muxPicker.pickSite(args.site)
         remuxConfig = remuxConfigs[i]

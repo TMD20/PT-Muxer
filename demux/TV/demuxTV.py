@@ -12,7 +12,6 @@ import demux.tools as tools
 import demux.TV.helper as demuxHelper
 
 
-
 def demux(args):
     options = paths.getBDMVs(args.inpath)
 
@@ -44,11 +43,10 @@ def demux(args):
         offset = len(os.listdir(demuxFolder))
         message =\
             f"""
-        You have extracted  {nums2words(offset)} playlist(s) Thus Far
-        The bext set of playlist will start from {offset+1}
+        Total Iterations:{num2words(offset)}
+        Next Iteration: {offset+1}
 
-        The playlist for every source will be reset
-        You may pick a new set of playlist
+        The previous playlist selection for every source will be reset
         """
         print(message)
 
@@ -91,33 +89,28 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
             bdObj.writeBdinfo(path)
 
             currentTracks = demuxData.addTracks(quickSums, playlistNum, playlistFile,
-                                                [stream["name"]], source, output)
+                                                [stream], source, output)
             if not args.dontconvert:
                 demuxData.convertFlac(currentTracks, output)
 
             tools.extractTracks(demuxData, stream=True)
             tools.sortTracks(muxSorter, demuxData, movie, args)
             tools.machineReader(muxSorter, args, movie)
-            chapters = list(
+            chaptersFiltered = list(
                 filter(lambda x: x["start"] >= stream["start"], chapters))
-            chapters = list(
-                filter(lambda x: x["start"] <= stream["end"], chapters))
+            chaptersFiltered = list(
+                filter(lambda x: x["start"] < stream["end"], chaptersFiltered))
             outdict = {}
-            tools.addMovieData(outdict,movie,season,ep,)
+            tools.addMovieData(outdict, movie, season, ep,)
             outdict["Sources"] = tools.addSourceData(demuxData)
-            outdict["ChapterData"] = tools.ConvertChapterList(chapters)
-            tools.addEnabledData(outdict,muxSorter)
-            tools.addTrackData(outdict,muxSorter)
+            outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
+            tools.addEnabledData(outdict, muxSorter)
+            tools.addTrackData(outdict, muxSorter)
+
+            os.chdir(newFolder)
             tools.writeFinalJSON(outdict)
             # change pack to parent
             os.chdir(demuxFolder)
-
-
-            
-
-
-           
-
 
 
 def batchSources(bdObjs, sources, args, demuxFolder, movie, season, offset=1):
@@ -152,14 +145,13 @@ def batchSources(bdObjs, sources, args, demuxFolder, movie, season, offset=1):
             bdObj.writeBdinfo(path)
             quickSums = bdObj.getQuickSum()
             streams = bdObj.getStreams()
+
             bdObj.getChapters()
-            streams = list(map(lambda x: x["name"], streams))
 
             currentTracks = demuxData.addTracks(quickSums, playlistNum,
                                                 playlistFile, streams, source, output)
             if not args.dontconvert:
                 demuxData.convertFlac(currentTracks, output)
-            os.chdir(newFolder)
             # parse data
         match = bdObjs[0].mediaDir
         if len(bdObjs) > 1:
@@ -172,14 +164,12 @@ def batchSources(bdObjs, sources, args, demuxFolder, movie, season, offset=1):
         tools.sortTracks(muxSorter, demuxData, movie, args)
         tools.machineReader(muxSorter, args, movie)
         outdict = {}
-        tools.addMovieData(outdict,movie,season,ep)
+        tools.addMovieData(outdict, movie, season, ep)
         outdict["Sources"] = tools.addSourceData(demuxData)
         outdict["ChapterData"] = tools.ConvertChapterList(chapters)
-        tools.addEnabledData(outdict,muxSorter)
-        tools.addTrackData(outdict,muxSorter)
+        tools.addEnabledData(outdict, muxSorter)
+        tools.addTrackData(outdict, muxSorter)
+        os.chdir(newFolder)
         tools.writeFinalJSON(outdict)
     # change pack to parent
     os.chdir(demuxFolder)
-
-
-

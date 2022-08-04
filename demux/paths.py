@@ -10,7 +10,6 @@ import tools.general as utils
 import config
 
 
-
 def getBDMVs(path):
     currpath = os.getcwd()
     os.chdir(path)
@@ -106,7 +105,7 @@ def Extract(source, inpath):
 def getDemuxFolder(sources, inpath, outpath):
     if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
         print("Searching for Prior TV Mode Folders")
-        folders = utils.getTVMuxFolders(inpath, config.demuxPrefix)
+        folders = utils.getTVMuxFolders(outpath, config.demuxPrefix)
         if len(folders) == 0:
             print("No TV Mode Folders Found To Restore")
             print("Creating a new Mux Folder")
@@ -119,21 +118,3 @@ def getDemuxFolder(sources, inpath, outpath):
             return folder
     else:
         return createParentDemuxFolder(sources, outpath)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
