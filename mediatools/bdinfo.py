@@ -12,24 +12,23 @@ class Bdinfo():
     def __init__(self):
         self._playlistNum = 0
         self._playlistNumList = []
-        self._playlistFileList=[]
-        self._streams=[]
-        self._chapters=[]
+        self._playlistFileList = []
+        self._streams = []
+        self._chapters = []
         self._mediaDir = None
-    
+
     '''
     Public Functions
     '''
 
     def setup(self, subfolder):
-        self._mediaDir = re.sub("/BDMV/STREAM", "",subfolder)
+        self._mediaDir = re.sub("/BDMV/STREAM", "", subfolder)
         self._generate_playlists()
         print(self._playlist)
 
-
-    def runbdinfo(self,playlistNum=None):
+    def runbdinfo(self, playlistNum=None):
         bdinfoBin = config.bdinfoLinuxPath
-        playlistNum=playlistNum or self._playlistNum
+        playlistNum = playlistNum or self._playlistNum
         if not os.path.isfile(bdinfoBin):
             bdinfoBin = config.bdinfoProjectPath
 
@@ -59,33 +58,36 @@ class Bdinfo():
     def getStreams(self):
         lines = self._bdinfo.splitlines()
         lines = lines[lines.index("FILES:"):len(lines)-1]
-        start=0
+        start = 0
         end = lines.index("CHAPTERS:")-1
         for i in range(len(lines)):
             if re.search("Name", lines[i]) != None:
-                start=i+2
+                start = i+2
                 break
         time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
 
-        
         for line in lines[start:end]:
-            data=line.split()
+            data = line.split()
 
             startTime = data[1]
             length = data[2]
             name = data[0]
 
-
             t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
             t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
             endTime = str((t1 - time_zero + t2).time())[:-3]
-            self._streams.append({"name":name,"start":startTime,"end":endTime})
+
+            startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
+                *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
+
+            self._streams.append(
+                {"name": name, "start": startTime, "end": endTime})
         return self._streams
-    
+
     def getChapters(self):
         lines = self._bdinfo.splitlines()
         lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
-        startTime = 0
+        start = 0
         end = lines.index("STREAM DIAGNOSTICS:")-1
         for i in range(len(lines)):
             if re.search("Number ", lines[i]) != None:
@@ -95,18 +97,21 @@ class Bdinfo():
         for line in lines[start:end]:
             data = line.split()
 
-            startTime= data[1]
-            length=data[2]
-            number=data[0]
+            startTime = data[1]
+            length = data[2]
+            number = data[0]
 
             t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
             t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
-            endTime=str((t1 - time_zero + t2).time())[:-3]
+            endTime = str((t1 - time_zero + t2).time())[:-3]
+
+            startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
+                *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
 
             self._chapters.append(
-                {"number": number, "start":startTime, "length": endTime})
+                {"number": number, "start": startTime, "end": endTime})
         return self._chapters
-    
+
     def writeBdinfo(self, path):
         utils.mkdirSafe(path)
         file = open(path, "w")

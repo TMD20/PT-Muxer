@@ -1,5 +1,8 @@
 
+from pickle import GET
 import re
+import time
+import datetime as dt
 
 import xxhash
 import langcodes
@@ -190,4 +193,23 @@ class TracksData():
         self._rawMediaTracksData[utils.getShowName(
             source)]["playlistFile"] = playlistFile
         self._rawMediaTracksData[utils.getShowName(
-            source)]["streamFiles"] = streams
+            source)]["streamFiles"] = self._getStreamNames(streams)
+        self._rawMediaTracksData[utils.getShowName(
+            source)]["length"] = self._getStreamLength(streams)
+
+      ################################################################################################################
+      ###### get data from streams
+      ################################################################################################################
+    def _getStreamNames(self, streams):
+       return list(map(lambda x: x["name"], streams))
+
+    def _getStreamLength(self, streams):
+       stream1 = streams[0]
+       stream2 = streams[-1]
+       t1 = dt.datetime.strptime(stream1["start"], '%H:%M:%S.%f')
+       t2 = dt.datetime.strptime(stream2["end"], '%H:%M:%S.%f')
+
+       dif = (t2-t1).total_seconds()
+       timeVal = time.strftime(
+           '%H Hours %M Minutes %S Seconds', time.gmtime(dif))
+       return re.sub("0+", "0", timeVal)

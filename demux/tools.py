@@ -1,5 +1,7 @@
 import os
 import json
+import time
+import re
 
 
 import mediatools.eac3to as eac3to
@@ -16,9 +18,9 @@ def ConvertChapterList(chapters):
         number = int(chapter["number"])
 
         timeVar = timeVar.strip()
-     
+
         nameString = f"CHAPTER{number:02d}NAME=Chapter {number:02d}"
-        timeString = f"CHAPTER{number:02d}=0{timeVar}"
+        timeString = f"CHAPTER{number:02d}={timeVar}"
 
         output.append({"time": timeString, "name": nameString})
         i = i+2
@@ -32,7 +34,6 @@ def getMovieOutput(movie):
     outdict["tmdb"] = movieData.convertIMDBtoTMDB(movie["imdbID"])
     outdict["langs"] = movie["languages"]
     return outdict
-
 
 
 def getAllAudioData(tracks, dict):
@@ -55,7 +56,6 @@ def validateBdinfo(bdObjs):
            """
             print(message)
             quit()
-
 
 
 def extractTracks(demuxData, stream=False):
@@ -88,14 +88,14 @@ def extractTracks(demuxData, stream=False):
                            eac3to_list, streamLocation)
 
 
-def addMovieData(outdict, movie,season=None, episode=None):
+def addMovieData(outdict, movie, season=None, episode=None):
     outdict["Movie"] = getMovieOutput(movie)
     if season:
         outdict["Season"] = season
         outdict["Episode"] = episode
 
 
-def addEnabledData(outdict,muxSorter):
+def addEnabledData(outdict, muxSorter):
     # Enabled Track Section
     outdict["Enabled_Tracks"] = {}
     outdict["Enabled_Tracks"]["Video"] = list(
@@ -107,19 +107,23 @@ def addEnabledData(outdict,muxSorter):
 
 
 def addSourceData(demuxData):
-    outdict={}
+    outdict = {}
     for key in demuxData.sources:
        trackObj = demuxData.filterBySource(key)
+       #get length
+
        outdict[key] = {}
        outdict[key]["outputDir"] = trackObj["outputDir"]
        outdict[key]["sourceDir"] = trackObj["sourceDir"]
        outdict[key]["playlistNum"] = trackObj["playlistNum"]
        outdict[key]["playlistFile"] = trackObj["playlistFile"]
        outdict[key]["streamFiles"] = trackObj["streamFiles"]
+       outdict[key]["length"] = trackObj["length"]
+
     return outdict
 
 
-def addTrackData(outdict,muxSorter):
+def addTrackData(outdict, muxSorter):
     outdict["Tracks_Details"] = {}
     outdict["Tracks_Details"]["Audio"] = {}
     outdict["Tracks_Details"]["Sub"] = {}
@@ -138,6 +142,7 @@ def addTrackData(outdict,muxSorter):
         key = track["key"]
         track.pop("key")
         outdict["Tracks_Details"]["Video"][key] = track
+
 
 def writeFinalJSON(outdict):
     outputPath = os.path.abspath(os.path.join(".", "output.json"))

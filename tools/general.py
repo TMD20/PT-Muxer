@@ -13,7 +13,6 @@ def mkdirSafe(target):
     if len(os.path.splitext(target)[1]) > 0:
         target = os.path.dirname(target)
     directories = [target]
-    
 
     while target != "/":
         target = os.path.dirname(target)
@@ -24,9 +23,6 @@ def mkdirSafe(target):
             os.mkdir(ele)
 
 
-
-
-
 def getShowName(path):
     show = re.sub("/BDMV/STREAM", "", path)
     show = os.path.basename(show)
@@ -35,9 +31,8 @@ def getShowName(path):
     return show
 
 
-def  findMatches(path, string):
+def findMatches(path, string):
     return glob.glob(os.path.join(path, "**", string), recursive=True)
-
 
 
 def requiredClassAttribute(*required):
@@ -72,27 +67,26 @@ def getIntInput(string):
 
 
 def singleSelectMenu(items, message):
-    return inquirer.select(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
-
+    return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
 def multiSelectMenu(items, message):
-    return inquirer.checkbox(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    return inquirer.checkbox(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
-def textEnter(message,default=None):
-    if default!=None:
-        return inquirer.text(mandatory=True,message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
-    return inquirer.text(mandatory=True,message=textwrap.dedent(f"\n{message}\n")).execute()
-    
-def getRangeOfNumbers(message,default=None):
-    text=textEnter(message,default)
+def textEnter(message, default=None):
+    if default != None:
+        return inquirer.text(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
+    return inquirer.text(mandatory=True, message=textwrap.dedent(f"\n{message}\n")).execute()
+
+
+def getRangeOfNumbers(message, default=None):
+    text = textEnter(message, default)
     parser = pynumparser.NumberSequence(numtype=int)
     try:
         return list(parser.parse(text))
     except:
         return
-
 
 
 def validateFiles(fileList):
@@ -121,26 +115,25 @@ def getwinepath(folder):
 
 def getTVMuxFolders(inpath, demuxPrefix):
     folders = findMatches(inpath, f"{demuxPrefix}*")
-        # only get root directories
-    
+    # only get root directories
 
     folders = list(filter(lambda x: os.path.realpath(
-            os.path.dirname(x)) == os.path.realpath(inpath), folders))
+        os.path.dirname(x)) == os.path.realpath(inpath), folders))
 
-    folders = list(filter(lambda x:len(os.listdir(x))!=0, folders))
+    folders = list(filter(lambda x: len(os.listdir(x)) != 0, folders))
 
-    folders = list(filter(lambda x:re.search("^[0-9]+$",os.listdir(x)[0])!=None, folders))
+    folders = list(filter(lambda x: re.search(
+        "^[0-9]+$", os.listdir(x)[0]) != None, folders))
+
     return folders
 
-def getMovieMuxFolders(inpath,demuxPrefix):
+
+def getMovieMuxFolders(inpath, demuxPrefix):
     folders = findMatches(inpath, f"{demuxPrefix}*")
-        # only get root directories
+    # only get root directories
 
     folders = list(filter(lambda x: os.path.realpath(
-            os.path.dirname(x)) == os.path.realpath(inpath), folders))
-    folders = list(filter(lambda x:re.search("^[0-9]+$",os.listdir(x)[0])==None, folders))
+        os.path.dirname(x)) == os.path.realpath(inpath), folders))
+    folders = list(filter(lambda x: re.search(
+        "^[0-9]+$", os.listdir(x)[0]) == None, folders))
     return folders
-
-
-
-

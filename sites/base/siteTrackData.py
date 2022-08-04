@@ -21,9 +21,10 @@ class siteTrackData(TracksData):
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
-    def addTracks(self, quicksum, playlistNum, playlistFile,streams, source, output):
+    def addTracks(self, quicksum, playlistNum, playlistFile, streams, source, output):
+
         self.updateRawTracksDict(
-            quicksum, playlistNum, playlistFile,streams, source, output)
+            quicksum, playlistNum, playlistFile, streams, source, output)
         current_tracks = self.filterBySource(source)["tracks"]
         self._updateTrackDictNames(current_tracks)
         self._updateTrackDictEac3to(current_tracks)
@@ -58,7 +59,6 @@ class siteTrackData(TracksData):
                 track["site_title"] = title
                 track["file"] = file
                 track["eac3to"] = eac3to
-
 
     ################################################################################################################
     #   Getter Functions
@@ -175,5 +175,3 @@ class siteTrackData(TracksData):
             site_title = f"{codec} / {other}"
         site_title = re.sub("/ DN.*dB", "", site_title)
         return re.sub(" +", " ", site_title).strip()
-
-   

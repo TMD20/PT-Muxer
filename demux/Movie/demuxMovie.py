@@ -10,8 +10,6 @@ import demux.tools as tools
 import demux.Movie.helper as demuxHelper
 
 
-
-
 def demux(args):
     args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
     args.sublang = list(map(lambda x: x.lower(),  args.sublang))
@@ -35,42 +33,21 @@ def demux(args):
     bdObjs = demuxHelper.getBdinfoData(sources)
     tools.validateBdinfo(bdObjs)
     demuxHelper.processBdinfo(sources, bdObjs, demuxData, args.dontconvert)
-    
-    
+
     tools.extractTracks(demuxData)
     tools.sortTracks(muxSorter, demuxData, movie, args)
     tools.machineReader(muxSorter, args, movie)
 
     match = bdObjs[0].mediaDir
     if len(bdObjs) > 1:
-            match = utils.singleSelectMenu(
-                list(map(lambda x: x.mediaDir, bdObjs)), "Which Source Has The proper Chapter File")
+        match = utils.singleSelectMenu(
+            list(map(lambda x: x.mediaDir, bdObjs)), "Which Source Has The proper Chapter File")
     chapters = list(filter(lambda x: x.mediaDir == match, bdObjs))[0].chapters
 
     outdict = {}
-    tools.addMovieData(outdict,movie)
+    tools.addMovieData(outdict, movie)
     outdict["Sources"] = tools.addSourceData(demuxData)
     outdict["ChapterData"] = tools.ConvertChapterList(chapters)
-    tools.addEnabledData(outdict,muxSorter)
-    tools.addTrackData(outdict,muxSorter)
+    tools.addEnabledData(outdict, muxSorter)
+    tools.addTrackData(outdict, muxSorter)
     tools.writeFinalJSON(outdict)
-           
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
