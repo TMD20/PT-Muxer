@@ -1,4 +1,4 @@
-\import json
+import json
 import os
 import functools
 
@@ -62,7 +62,7 @@ def Remux(args):
         kind = args.forcemovie or movieData.getKind(movie)
         os.chdir(args.outpath)
 
-        fileNameFuncts.append(functools.partial( muxGenerator.getFileName,kind, remuxConfig, movie, args.group))
+        fileNameFuncts.append(functools.partial( muxGenerator.getFileName,kind, remuxConfig, movie, args.group,args.skipnamecheck))
         movieTitleList.append(movieData.getMovieTitle(movie))
     for funct in fileNameFuncts:
         fileNameList.append(funct())
