@@ -33,6 +33,8 @@ def main():
     parser.add_argument('-dc', '--dontconvert',  action='store_true')
     parser.add_argument('-oa', '--outargs', default="")
     parser.add_argument('-sp', '--splitplaylist', action='store_true')
+    parser.add_argument('-sn', '--skipnamecheck', action='store_true')
+
 
     parser.add_argument(
         '--log-level', default='INFO',
