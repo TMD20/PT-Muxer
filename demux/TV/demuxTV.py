@@ -39,12 +39,12 @@ def demux(args):
         if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
             break
         if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
-            sources = select.getSources(options, args.inpath, args.sortpref)
+            sources = select.getSources(options, args.inpath, args.sortpref,args.splitplaylist == False)
         offset = len(os.listdir(demuxFolder))
         message =\
             f"""
         Total Iterations:{num2words(offset)}
-        Next Iteration: {offset+1}
+        Next Iteration: {num2words(offset+1)}
 
         The previous playlist selection for every source will be reset
         """
