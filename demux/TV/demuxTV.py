@@ -29,6 +29,10 @@ def demux(args):
         bdObjs = demuxHelper.getBdinfoData(sources)
         tools.validateBdinfo(bdObjs)
         offset = len(os.listdir(demuxFolder))
+        message=\
+        f"""
+        Current Iterations:{num2words(offset)}
+        """
         if not args.splitplaylist:
             batchSources(bdObjs, sources, args, demuxFolder,
                          movie, season, offset=offset)
