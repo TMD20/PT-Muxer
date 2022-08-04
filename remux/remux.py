@@ -64,7 +64,10 @@ def Remux(args):
 
         fileNameFuncts.append(functools.partial( muxGenerator.getFileName,kind, remuxConfig, movie, args.group,args.skipnamecheck))
         movieTitleList.append(movieData.getMovieTitle(movie))
-    for funct in fileNameFuncts:
+    for i in range(len(fileNameFuncts)):
+        funct=fileNameFuncts[i]
+        fileName=fileName[i]
+        print(f"Getting FileName For:{fileName}")
         fileNameList.append(funct())
     print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
     for i in range(len(fileNameList)):
