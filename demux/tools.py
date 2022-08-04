@@ -12,10 +12,16 @@ import transcription.voiceRecord as voiceRec
 
 def ConvertChapterList(chapters):
     output = []
+    if len(chapters)==0:
+        return output
+    offset=int(chapters[0]["number"])-1
     for i in range(len(chapters)):
         chapter = chapters[i]
         timeVar = chapter["start"]
-        number = int(chapter["number"])
+        number = int(chapter["number"])-offset
+
+        #convert number into 1
+
 
         timeVar = timeVar.strip()
 
