@@ -6,6 +6,7 @@ import datetime as dt
 
 import xxhash
 import langcodes
+import arrow
 
 import tools.general as utils
 
@@ -204,12 +205,5 @@ class TracksData():
        return list(map(lambda x: x["name"], streams))
 
     def _getStreamLength(self, streams):
-       stream1 = streams[0]
-       stream2 = streams[-1]
-       t1 = dt.datetime.strptime(stream1["start"], '%H:%M:%S.%f')
-       t2 = dt.datetime.strptime(stream2["end"], '%H:%M:%S.%f')
-
-       dif = (t2-t1).total_seconds()
-       timeVal = time.strftime(
-           '%H Hours %M Minutes %S Seconds', time.gmtime(dif))
-       return re.sub("0+", "0", timeVal)
+        return utils.subArrowTime(utils.convertArrow(streams[-1]["end"], "HH:mm:ss.SSS"),
+                                  utils.convertArrow(streams[0]["start"], "HH:mm:ss.SSS")).format("HH [hour] mm [Minutes] ss [Seconds] SSS [MicroSeconds]")

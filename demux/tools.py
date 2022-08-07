@@ -1,35 +1,29 @@
 import os
 import json
-import time
-import re
-
 
 import mediatools.eac3to as eac3to
 import mediadata.movieData as movieData
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
+import tools.general as utils
 
 
 def ConvertChapterList(chapters):
     output = []
-    if len(chapters)==0:
+    if len(chapters) == 0:
         return output
-    offset=int(chapters[0]["number"])-1
+    numoffset = int(chapters[0]["number"])-1
+    timeoffset = utils.convertArrow(chapters[0]["start"], "HH:mm:ss.SSS")
     for i in range(len(chapters)):
         chapter = chapters[i]
         timeVar = chapter["start"]
-        number = int(chapter["number"])-offset
-
-        #convert number into 1
-
-
-        timeVar = timeVar.strip()
-
-        nameString = f"CHAPTER{number:02d}NAME=Chapter {number:02d}"
-        timeString = f"CHAPTER{number:02d}={timeVar}"
-
+        timeVar = utils.convertArrow(timeVar, "HH:mm:ss.SSS")
+        timeVar = utils.subArrowTime(timeVar, timeoffset)
+        timeVar = timeVar.format("HH:mm:ss.SSS")
+        numVar = int(chapter["number"])-numoffset
+        nameString = f"CHAPTER{numVar:02d}NAME=Chapter {numVar:02d}"
+        timeString = f"CHAPTER{numVar:02d}={timeVar}"
         output.append({"time": timeString, "name": nameString})
-        i = i+2
     return output
 
 
@@ -40,13 +34,6 @@ def getMovieOutput(movie):
     outdict["tmdb"] = movieData.convertIMDBtoTMDB(movie["imdbID"])
     outdict["langs"] = movie["languages"]
     return outdict
-
-
-def getAllAudioData(tracks, dict):
-    for track in tracks:
-        key = track["key"]
-        track.pop("key")
-        dict[key] = track
 
 
 def validateBdinfo(bdObjs):
