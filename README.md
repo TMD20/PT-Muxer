@@ -385,7 +385,7 @@ order: sort tracks by which comes first, give the highest priority to first trac
  --splitplaylist
  
  ```
-    Example: python3 /path/to/app.py -demux sourcepath outputpath --splitplaylist
+    Example: python3 /path/to/app.py -demux sourcepath outputpath --splitplaylist inf
 
    This Mode only has an effect in TV mode, during demuxing. 
    Instead of sending a playlist to eac3to. This will split a playlist into its individual streams, and send those to eac3to.
@@ -394,6 +394,8 @@ order: sort tracks by which comes first, give the highest priority to first trac
    For example BDINFO might show a playlist 0001.mpls with these Files 0002.mt2s 0004.mt2s 0008.mt2s
    Normally this would be one folder represented by the playlist, with splitplaylist now each of those streams would be represented by one 
    folder
+   Note you must provide a minumimum length for playlist
+   If you set the value to zero or inf, then all streams will be accepted regardless of length
 ```
 
  --dontconvert
