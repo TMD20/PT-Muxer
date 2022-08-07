@@ -38,7 +38,7 @@ def main():
     can be changed with --ocr")
     parser_d.add_argument('-dc', '--dontconvert',  action='store_true',
                           help="Don't convert any lossless track to FLAC")
-    parser_d.add_argument('-sp', '--splitplaylist', action='store_true',
+    parser_d.add_argument('-sp', '--splitplaylist', type=float,
                           help="During TV Mode extract each mt2s as seperate episode")
 
     parser_d.set_defaults(func=demux)

@@ -168,7 +168,7 @@ The final .mkv filename is determined by the status of the --site argument
 # JSON
 ## Overview
 
-The JSON is output when you use the --demux argument. This Provides lots of details on all the tracks and sources used during the run of the program. Some of the information is auto-filled, and the user can change the values if desired. Depending on what you change the settings to that will affect the final mkv produce
+The JSON is output when you use the "demux" argument. This Provides lots of details on all the tracks and sources used during the run of the program. Some of the information is auto-filled, and the user can change the values if desired. Depending on what you change the settings to that will affect the final mkv produce
 
 
 ## Examples
@@ -186,7 +186,7 @@ https://0.xwem.com/?be82537624a327c6#8aW8WEmFUYbxxjR4Pknf7s52GqpzAe6xcyMPdsw3LaT
 Data about the movie or TV show
 For TV shows use OCR/ subimages to confirm episode number
 
-Changing any of these settings, other than langs will have an effect on --remux mode
+Changing any of these settings, other than langs will have an effect on "remux" mode
 langs data is present only for convenience
 
 * IMDB: ID for Movie/TV show
@@ -202,7 +202,7 @@ Basic data about the sources the user has utilized during the demuxing process.
 Each source has its own key with data inside of it
 
 Most of these values should not be changed 
-As Changing values could cause --remux mode to crash if they don't match
+As Changing values could cause "remux" mode to crash if they don't match
 
  ##### Source Dictionary Keys
 * outputDir: the location of the output files for the source i.e the mux folder location
@@ -215,7 +215,7 @@ As Changing values could cause --remux mode to crash if they don't match
 ### 3. ChapterData
 
 This section has information about when the chapters
-Changing Value here will affect the chapters in the final mkv in --remux mode
+Changing Value here will affect the chapters in the final mkv in "remux" mode
 
 * time: when the chapter occurs
 * name: What name to give the Chapter
@@ -246,12 +246,12 @@ This section holds some Details about Each Track
 
 The track has a hashed key. The hash is made using the source information and track title, and just in case the track index. It should be unique to each track and will stay the same. If you use the same source again.
 
-Changing some values will have "no effect" on the final mkv produced in --remux mode.
+Changing some values will have "no effect" on the final mkv produced in "remux" mode.
 
 #### Keys
-* langcode: [string:2 char] used by mkvmerge to set track language. This is used to set the track language in --remux mode
-* lang:  [string] Translation of langcode to the actual language. This is for convenience, and has no effect on --remux mode
-* site_title: [string] used to set title for mediainfo, set to None for no title. This will affect --remux mode
+* langcode: [string:2 char] used by mkvmerge to set track language. This is used to set the track language in "remux" mode
+* lang:  [string] Translation of langcode to the actual language. This is for convenience, and has no effect on "remux" mode
+* site_title: [string] used to set title for mediainfo, set to None for no title. This will affect "remux" mode
 * bdinfo_title: [string] just the title from bdinfo, changing this value has no effect
 * index: [number] the track number. Video is usually 1. Next audio tracks, lastly subs. Changing this value has no effect
 * eac30: [special syntax string] u just some info about the file extract by eac3to. Changing this value has no effect
@@ -264,9 +264,9 @@ These are extracted automatically. Changing this value has no effect
 * length: [number] will display how long, and how many subs a track has. Changing this value has no effect
 * default: [bool] whether to set the default flag in mkv.
 * forced: [bool] whether to set the forced flag. Also can be set by changing the site_title to include "forced" 
-* sourceDir: [filepath] The original location of the bdmv used to extract track, This should not be changed as it is used during the --remux process
-* sourceKey: [string] the key of the source in the JSON that the track is tied to, This should not be changed as it is used during the --remux process
-* type: [string] whether this is an audio, video, sub-track. This value should not be changed as it is used during the --remux process
+* sourceDir: [filepath] The original location of the bdmv used to extract track, This should not be changed as it is used during the "remux" process
+* sourceKey: [string] the key of the source in the JSON that the track is tied to, This should not be changed as it is used during the "remux" process
+* type: [string] whether this is an audio, video, sub-track. This value should not be changed as it is used during the "remux" process
 *  commentary: [bool]  Sets the Commentary flag to yes. Should be used for all audio and subtitle tracks that are commentary
 *  
 
@@ -407,7 +407,7 @@ order: sort tracks by which comes first, give the highest priority to first trac
 
 ### TV Mode
 
-TV mode can be selected when using the --demux argument.
+TV mode can be selected when using the "demux" argument.
 During Demux mode you will be asked  "What Type of Media are you Demuxing? 
 Select TV
 
@@ -490,7 +490,7 @@ If no valid folders are found, the program will create a new one.
 
 ### Movie Mode
 
-Movie mode can be selected when using the --demux argument.
+Movie mode can be selected when using the "demux" argument.
 During Demux mode you will be asked  "What Type of Media are you Demuxing? 
 Select Movie
 
@@ -525,7 +525,7 @@ However, the numbered subfolders are not present
 
 ## Remux Mode
 
-* python3 /path/to/app.py -demux sourcepath output [optional args]
+* python3 /path/to/app.py demux sourcepath output [optional args]
 
 
 
@@ -544,7 +544,7 @@ outputpath [default=current dir]
 ### Optional
 --site blutopia/blu/bhd/beyondhd [default=blu]
 ```
-Example:python3 /path/to/app.py --remux --site blutopia
+Example:python3 /path/to/app.py "remux" --site blutopia
 
 This will Effect mainly affect the final track name
 See Sites Section for more detail
@@ -552,7 +552,7 @@ See Sites Section for more detail
 
 --group [default=Unknown]
 ```
-Example:python3 /path/to/app.py --remux --group superduperremuxing
+Example:python3 /path/to/app.py remux --group superduperremuxing
 
 This will change the group tag of the final MKV
 ```
@@ -569,7 +569,7 @@ overwrites TV Movies by treating them as a movie, instead of a TV show
 
 --outargs
 ```
-Example:python3 /path/to/app.py --remux --outargs "--split chapters:13,22,33,45,54"
+Example:python3 /path/to/app.py "remux" --outargs "--split chapters:13,22,33,45,54"
 
 Passes mkvtoolnix global options to the final mkvtoolnix command
 Read the global option section here: https://mkvtoolnix.download/doc/mkvmerge.html#mkvmerge.description
@@ -577,7 +577,7 @@ Read the global option section here: https://mkvtoolnix.download/doc/mkvmerge.ht
 
 ### Movie Mode
 
-Movie mode can be selected when using --remux argument.
+Movie mode can be selected when using "remux" argument.
 During remux mode, you will be asked  "What Type of Media are you remuxing? 
 Select Movie
 
@@ -587,7 +587,7 @@ This mode will find all valid Mux folders and allow you to select one for muxing
 
 ### TV Mode
 
-TV mode can be selected when using --remux argument.
+TV mode can be selected when using "remux" argument.
 During remux mode, you will be asked  "What Type of Media are you remuxing? 
 Select TV
 

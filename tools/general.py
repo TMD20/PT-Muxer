@@ -7,6 +7,23 @@ import textwrap
 
 import pynumparser
 from InquirerPy import inquirer
+import arrow
+
+
+def convertArrow(input,parse):
+    return arrow.get(input,parse)
+def subArrowTime(large,small):
+    large=large.shift(hours=-small.hour)
+    large=large.shift(minutes=-small.minute)
+    large=large.shift(seconds=-small.second)
+    large=large.shift(microseconds=-small.microsecond)
+    return large
+def addArrowTime(large,small):
+    large=large.shift(hours=+small.hour)
+    large=large.shift(minutes=+small.minute)
+    large=large.shift(seconds=+small.second)
+    large=large.shift(microseconds=+small.microsecond)
+    return large
 
 
 def mkdirSafe(target):

@@ -1,4 +1,5 @@
 import os
+import shutil
 
 from num2words import num2words
 
@@ -29,21 +30,22 @@ def demux(args):
         bdObjs = demuxHelper.getBdinfoData(sources)
         tools.validateBdinfo(bdObjs)
         offset = len(os.listdir(demuxFolder))
-        message=\
-        f"""
+        message =\
+            f"""
         Current Iterations:{num2words(offset)}
         """
         if not args.splitplaylist:
             batchSources(bdObjs, sources, args, demuxFolder,
-                         movie, season, offset=offset)
+                         movie, season)
         else:
             batchStreams(bdObjs[0], sources[0], args, demuxFolder,
-                         movie, season, offset=offset)
+                         movie, season)
 
         if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
             break
         if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
-            sources = select.getSources(options, args.inpath, args.sortpref,args.splitplaylist == False)
+            sources = select.getSources(
+                options, args.inpath, args.sortpref, args.splitplaylist == False)
         offset = len(os.listdir(demuxFolder))
         message =\
             f"""
@@ -55,7 +57,7 @@ def demux(args):
         print(message)
 
 
-def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
+def batchStreams(bdObj, source, args, demuxFolder, movie, season):
     # outter loop through every playlist
     for i in range(len(bdObj.playlistNumList)):
         playlistNum = bdObj.playlistNumList[i]
@@ -69,13 +71,27 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
         quickSums = bdObj.getQuickSum()
         streams = bdObj.getStreams()
         chapters = bdObj.getChapters()
-
+        #what should we offset the time by based on previous streams lengths
+        # create a episode folder
+        offset = len(os.listdir(demuxFolder))
+        ep = offset+1
         for j in range(len(streams)):
             demuxData = siteDataPicker.pickSite(args.site)
             muxSorter = siteSortPicker.pickSite(args.site)
             stream = streams[j]
-            # create a episode folder
-            ep = i+j+offset+1
+            #remove the folder if the source folder
+            if args.splitplaylist < float("inf"):
+                if demuxHelper.getStreamsLength([stream]) < args.splitplaylist:
+                    message = \
+                        """
+                    The Cumalative length of the stream(s)  
+                    is less then the Min that you picked
+                    
+                    """
+                    print(message)
+                    os.chdir(demuxFolder)
+                    continue
+
             newFolder = os.path.join(demuxFolder, str(ep))
             utils.mkdirSafe(newFolder)
             os.chdir(newFolder)
@@ -108,6 +124,7 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
             tools.addMovieData(outdict, movie, season, ep,)
             outdict["Sources"] = tools.addSourceData(demuxData)
             outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
+
             tools.addEnabledData(outdict, muxSorter)
             tools.addTrackData(outdict, muxSorter)
 
@@ -115,13 +132,15 @@ def batchStreams(bdObj, source, args, demuxFolder, movie, season, offset=0):
             tools.writeFinalJSON(outdict)
             # change pack to parent
             os.chdir(demuxFolder)
+            ep = ep+1
 
 
-def batchSources(bdObjs, sources, args, demuxFolder, movie, season, offset=1):
+def batchSources(bdObjs, sources, args, demuxFolder, movie, season):
     print("What TV Show?")
     # outter loop is for each episdoe
     for i in range(len(bdObjs[0].playlistNumList)):
-        ep = i+offset+1
+        offset = len(os.listdir(demuxFolder))
+        ep = offset+1
         print(f"Processing Episode Number {num2words(ep)}\n")
         newFolder = os.path.join(demuxFolder, str(ep))
         print(f"Creating a new episode folder at {newFolder}")
