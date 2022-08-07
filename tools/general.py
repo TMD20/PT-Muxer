@@ -134,10 +134,8 @@ def getTVMuxFolders(inpath, demuxPrefix):
     folders = findMatches(inpath, f"{demuxPrefix}*")
     # only get root directories
 
-    folders = list(filter(lambda x: os.path.realpath(
-        os.path.dirname(x)) == os.path.realpath(inpath), folders))
-
     folders = list(filter(lambda x: len(os.listdir(x)) != 0, folders))
+
 
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) != None, folders))
