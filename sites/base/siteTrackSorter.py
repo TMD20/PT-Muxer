@@ -83,6 +83,7 @@ class siteTrackSorter():
                 if oldTrack["lang"].lower() == audioLangs[0]:
                     newTrack["default"] = True
                     newTrack["forced"] = True
+                    newTrack["site_title"] = "For Non English Parts"
                     primary.append(newTrack)
                     all.append(newTrack)
 
@@ -90,6 +91,8 @@ class siteTrackSorter():
                 else:
                     newTrack["default"] = True
                     newTrack["forced"] = True
+                    newTrack["site_title"] = "For Non English Parts"
+
                     self._enabledSub.append(newTrack)
                     all.append(newTrack)
         primary.extend(self._enabledSub)

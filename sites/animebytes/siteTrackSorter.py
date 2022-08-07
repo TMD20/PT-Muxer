@@ -25,6 +25,7 @@ class AnimeBytes(siteTrackSorter):
                 forcedTrack = keyTracks[1]
             forcedTrack["default"] = True
             forcedTrack["forced"] = True
+            forcedTrack["site_title"] = "For Non English Parts"
 
 
 
