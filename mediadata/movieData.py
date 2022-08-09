@@ -1,20 +1,27 @@
+from lzma import MODE_FAST
 import re
 import os
+import json
 
 from dotenv import load_dotenv
 from guessit import guessit
 from imdb import Cinemagoer as imdb
-from tmdbv3api import TMDb, Find
-from InquirerPy import inquirer
+from tmdbv3api import TMDb, Find, TV, Movie
+from mal import AnimeSearch
 
 import tools.general as utils
+import config
 
 
 load_dotenv()
 tmdb = TMDb()
 tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
 find = Find()
+movie = Movie()
+tv = TV()
 ia = imdb()
+animeJson = os.path.join(
+    config.root_dir, "anime-lists", "anime-list-full.json")
 
 
 def getMovieName(movie):
@@ -30,6 +37,73 @@ def getMovieYear(movie):
 
 
 def matchMovie(sources):
+    if utils.singleSelectMenu(["Yes", "No"], "Is this an anime?") == "Yes":
+        matchMovieAnime(sources)
+    else:
+        matchMovieNormal(sources)
+
+
+def matchMovieAnime(sources):
+    details = guessit(sources[0])
+    title = details.get("title")
+    search = AnimeSearch(title)
+    data = search.results
+    results = [ele.title for ele in data]
+    match = utils.singleSelectMenu(results, "Which Anime")
+    malObj = list(filter(lambda x: x.title == match, data))[0]
+    # create a new object
+    movieObj = {}
+    movieObj["mal"] = malObj.mal_id
+    movieObj["anidb"] = None
+    movieObj["tvdb"] = None
+    movieObj = animeMatchData(movieObj, malObj, sources)
+
+
+def animeMatchData(movieObj, malObj, sources):
+    match = None
+    with open(animeJson, "r") as p:
+        data = json.loads(p.read())
+        match = list(filter(lambda x: x.get("mal_id") == malObj.mal_id, data))
+        if len(match) == 0:
+            print(
+                "Sorry we could not find a match in our list\nDoing a manual search for IMDB data")
+            newMovie = matchMovieNormal(sources)
+            movie["imdbID"] = newMovie["imdbID"]
+            return movie
+        match = match[0]
+        movieObj["anidb"] = match["anidb_id"]
+        # external tmdb only works with TV shows
+        if match.get("thetvdb_id") and match.get("type") == "TV":
+            movieObj["tvdb"] = match.get("thetvdb_id")
+        if match.get("themoviedb_id"):
+            movieObj["moviedb"] = match.get("themoviedb_id")
+# We can gather imdb and tmdb via tvdb
+    # check if we need to get tmdb
+    if movieObj.get("tvdb") and not movieObj.get("tmdb"):
+        data = find.find_by_tvdb_id(str(movieObj.get("tvdb")))
+        results = []
+        results.extend(data["movie_results"])
+        results.extend(data["tv_results"])
+        if len(results) > 0:
+            movieObj["tmdb"] = results[0]["id"]
+
+    # if we still don't have the ID
+    # Search by title
+    if not movieObj.get("tmdb"):
+        if match.get("type") == "TV":
+            movieObj["tmdb"] = tv.search(malObj.title)[0]["id"]
+        elif match.get("type") == "MOVIE":
+            movieObj["tmdb"] = movie.search(malObj.title)[0]["id"]
+    if match.get("type") == "TV":
+        movieObj["imdbID"] = re.sub("tt","",tv.external_ids(movieObj["tmdb"])["imdb_id"])
+    else:
+        movieObj["imdbID"] = re.sub(
+            "tt", "", movie.external_ids(movieObj["tmdb"])["imdb_id"])
+    return movieObj
+
+
+
+def matchMovieNormal(sources):
     details = guessit(sources[0])
     title = details.get("title")
     results = ia.search_movie(title)
@@ -76,7 +150,11 @@ def getKind(movie):
 def convertIMDBtoTMDB(id):
     if re.search("tt", id) == None:
         id = f"tt{id}"
-    results = find.find_by_imdb_id(id)["movie_results"]
+    data = find.find_by_imdb_id(id)
+    results = []
+    results.extend(data["movie_results"])
+    results.extend(data["tv_results"])
+
     if len(results) > 0:
         return results[0]["id"]
 

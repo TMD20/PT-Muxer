@@ -29,9 +29,15 @@ def ConvertChapterList(chapters):
 
 def getMovieOutput(movie):
     outdict = {}
+    if movie.get("anidb")!=None:
+        outdict["anidb"]=movie["anidb"]
+        outdict["mal"]=movie["mal"]
     outdict["year"] = movie["year"]
     outdict["imdb"] = movie["imdbID"]
-    outdict["tmdb"] = movieData.convertIMDBtoTMDB(movie["imdbID"])
+    outdict["tmdb"] = movie.get("tmdb") or movieData.convertIMDBtoTMDB(movie["imdbID"])
+    if movie.get("mal"):
+        outdict["mal"] = movie.get("mal")
+        outdict["anidb"] = movie.get("anidb")
     outdict["langs"] = movie["languages"]
     return outdict
 

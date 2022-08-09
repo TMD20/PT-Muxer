@@ -19,8 +19,9 @@ Not every thing in the list will be possible to accomplish in a automated way
 
 Change bdinfo to select for each track, then extract after
 Add Mkvmerge commands to JSON
-1. Add c
-hinese OCR support Tradition vs Simplied 
+
+Add better support for anime i.e change json to dictionary rather then list
+1. Add chinese OCR support Tradition vs Simplied 
 2. Find way to filter similar tracks bluray.com/or track properties
 3. Speech reconition
 3. Add Ability To Add mkvmerge extra commands
@@ -30,6 +31,8 @@ hinese OCR support Tradition vs Simplied
 6. Documentation on Track Naming Etc
 7. Video Original Source ID, not sure how common this is
 8. Video Original Source medium
+
+A
 
 Not sure if this can be done via commandline
 7.DGDemux for UHD Disk Seamless Branching; how to detect 8. Makemkv for demux dolby vision disk 9. Title Forced Subtitles Forced for foreign parts 10. 3rd priority: an object-based layer (DTS:X, Atmos) is better than none. Should this be consider above a regular loseless track? 11. Support upmixes and downmixes
