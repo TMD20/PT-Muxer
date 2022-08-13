@@ -29,19 +29,26 @@ def ConvertChapterList(chapters):
 
 def getMovieOutput(movie):
     outdict = {}
-    if movie.get("anidb")!=None:
-        outdict["anidb"]=movie["anidb"]
-        outdict["mal"]=movie["mal"]
-    outdict["year"] = movie["year"]
-    outdict["imdb"] = movie["imdbID"]
+    outdict["year"] = movie["year"] 
+    outdict["imdb"] = movie["imdb"]
     outdict["tmdb"] = movie.get("tmdb") or movieData.convertIMDBtoTMDB(movie["imdbID"])
-    if movie.get("mal"):
-        outdict["mal"] = movie.get("mal")
-        outdict["anidb"] = movie.get("anidb")
-    outdict["langs"] = movie["languages"]
+    outdict["langs"] = movie.get("langs")
     return outdict
 
+def getAnimeMovieOutput(movie,movieObj):
+    outdict = {}
+    outdict["year"] = movieObj["year"] 
+    outdict["imdb"] = movie["imdb"]
+    outdict["mal"] = movieObj.get("mal")
+    outdict["anidb"] = movieObj.get("anidb")
+    outdict["anilist"] = movieObj.get("anilist")
+    outdict["kitsu"]=movieObj.get("kitsu")
+    outdict["tmdb"] =  movieData.convertIMDBtoTMDB(movie["imdbID"])
+    outdict["langs"] = movie.get("langs")
+    if movieObj.get("offset"):
+        outdict["offset"] = movieObj.get("offset")
 
+    return outdict
 def validateBdinfo(bdObjs):
     num = len(bdObjs[0].playlistNumList)
     if num == 0:
@@ -87,8 +94,11 @@ def extractTracks(demuxData, stream=False):
                            eac3to_list, streamLocation)
 
 
-def addMovieData(outdict, movie, season=None, episode=None):
-    outdict["Movie"] = getMovieOutput(movie)
+def addMovieData(outdict, movie, movieObj,anime,season=None, episode=None):
+    if not anime:
+        outdict["Movie"] = getMovieOutput(movie)
+    else:
+        outdict["Movie"] = getAnimeMovieOutput(movie)
     if season:
         outdict["Season"] = season
         outdict["Episode"] = episode
@@ -154,9 +164,10 @@ def writeFinalJSON(outdict):
 def sortTracks(muxSorter, demuxData, movie, args):
     # Sort/enable Tracks Based on Site
     muxSorter.tracksDataObj = demuxData
-    muxSorter.sortTracks(movie["languages"],
+    languages=movie.get("languages", [])
+    muxSorter.sortTracks(languages,
                          args.audiolang, args.sublang, args.sortpref)
-    muxSorter.addForcedSubs(movie["languages"], args.audiolang)
+    muxSorter.addForcedSubs(languages, args.audiolang)
 
 
 def machineReader(muxSorter, args, movie):
@@ -166,7 +177,7 @@ def machineReader(muxSorter, args, movie):
         subreader.subreader(muxSorter.enabledSub, keep=args.keepocr)
     elif args.ocr == "default":
         subreader.subreader(muxSorter.unSortedSub,
-                            langs=movie["languages"], keep=args.keepocr)
+                            langs=movie.get("languages",[]), keep=args.keepocr)
     elif args.ocr == "sublang":
         subreader.subreader(muxSorter.unSortedSub,
                             langs=args.sublang, keep=args.keepocr)
