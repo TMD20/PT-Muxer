@@ -66,9 +66,6 @@ def writeXMLTV(imdb, tmdb, season, episode):
     outfile = tempData[1]
     result = None
 
-    
-
-
     episodes = movieData.getEpisodes(
         movieData.getByID(imdb), season)
     episodeData = movieData.getEpisodeData(episodes, episode)

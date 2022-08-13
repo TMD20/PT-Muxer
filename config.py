@@ -1,5 +1,4 @@
 import os
-import requests_cache
 root_dir = os.path.dirname(os.path.realpath(__file__))
 
 eac3toLinuxPath = "/usr/local/bin/eac3to/eac3to.exe"
@@ -24,5 +23,3 @@ bdinfoProjectPath = os.path.join(
     root_dir, "binaries/bdinfo/BDInfo.exe")
 
 demuxPrefix="Mux"
-
-session = requests_cache.CachedSession(os.path.join(root_dir,"cache"))
