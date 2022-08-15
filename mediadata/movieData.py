@@ -1,5 +1,4 @@
 import string
-import requests_cache
 import requests
 import re
 import json
@@ -9,84 +8,76 @@ import tools.general as utils
 from bs4 import BeautifulSoup
 import jellyfish
 from imdb import Cinemagoer as imdb
+from tmdbv3api import Find, TMDb
 
 import config
 # Globals
 ia = imdb()
-requests_cache.install_cache('cache')
-# epNum=10
-# season=2
-# url = getURL(show)
-# # get all seasons
-# t = getWikepediaSections(url)
-# # get episodes for one season
-# r = getEpisodesHTML(t[season], url)
-# # get total episodes for one season
-# x = getTotalEpisodesSeason(r)
-# p = getJapaneseName(r[epNum])
-# p = getEnglishName(r[epNum])
-# print(getSeasonStartAirDate(r))
-# l = getOriginalAirDate(r[epNum])
-# print(l)
-# o = getOverallPlace(t, season, epNum, url)
-
-# print(getIMdb(l, epNum,season))
-# print(getIsAnime(url))
+tmdb = TMDb()
+tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
+find = Find()
 
 
 class MovieData():
-    def __init__(self, title, type):
-        self._type = type
-        self._title = title
+    def __init__(self):
+        self._type = None
         self._episodesURL = ""
         self._showURL = ""
         self._movieObj = {}
         self._seasonsHTML = []
+        self._imdbObjDict = {}
 
     ##########################################################################
     # Public Function
     ########################################################################################
 
-    def setData(self):
-        self._getShowURL()
+    def setData(self, type, title):
+        self._type = type
+        self._getShowURLWiki(title)
         if self._showURL != "" and self._getIsAnime() == True:
-            self._getAnimeInfo()
+            return self._getAnimeInfo()
         else:
-            self._getIMDBInfo()
+            return self._getIMDBInfo()
 
-    def retriveTitle(self, season=None, episode=None):
-        if self._type == "Movie":
-            return self._title
-        else:
-            try:
-                return self.getEpisodeName(season, episode)
-            except:
-                None
-            # add another function from tmdb
+    def retriveEpisodeTitle(self, season, episode, title, year, lang="English"):
+        season = int(season)
+        episode = int(episode)
+        return self._getEpisodeName(season, episode, title,year, lang)
 
-    def retriveIMDB(self, imdb, season=None, episode=None):
-        if self._type == "Movie":
-            return imdb
-        else:
-            try:
-                return self.getEpisodeIMDB(imdb, season, episode)
-            except:
-                None
-            # add another function from tmdb
+    def retriveEpisodeIMDB(self,imdb, season, episode,title,year):
+        season = int(season)
+        episode = int(episode)
+        return self._getEpisodeIMDB(imdb, season, episode,title,year)
 
-    def getEpisodeName(self, season, episode):
-        self._getEpisodesURLWiki()
-        self._getWikepediaSeasons()
-        seasonData = self._getEpisodesHTMLWiki()
-        return self._getEnglishNameWiki(seasonData[episode])
+    def retriveNumberofEpisodes(self, season, episode, title, year):
+        return self._getNumberofEpisodes(season, episode, title, year)
 
-    def getEpisodeIMDB(self, imdb, season, episode):
-        self._getEpisodesURLWiki()
-        self._getWikepediaSeasons()
-        seasonData = self._getEpisodesHTMLWiki(season)
 
+    def _getEpisodeName(self,  season, episode, title, year,lang):
+        season = int(season)
+        episode=int(episode)
+        self._getEpisodesURLWiki(title,year)
+        self._getWikiFullEpData()
+        seasonData = self._getSeasonHTMLWiki(season)
+        name=None
+        if lang == "English":
+            name= self._getEnglishNameWiki(seasonData[episode-1])
+        return re.sub('"','',name)
+       
+    def _getEpisodeIMDB(self, imdb, season, episode,title,year):
+        season=int(season)
+        episode=int(episode)
+        self._getEpisodesURLWiki(title,year)
+        self._getWikiFullEpData()
         return self._getIMDBWiki(imdb, season, episode)
-        # imdb=getIMDB()
+
+    def _getNumberofEpisodes(self, season, episode, title, year):
+        season = int(season)
+        episode=int(episode)
+        self._getEpisodesURLWiki(title,year)
+        self._getWikiFullEpData()
+        seasonData = self._getSeasonHTMLWiki(season)
+        return len(seasonData)
 
     """
     Getters/Setters
@@ -103,7 +94,7 @@ class MovieData():
 
     # Wikepedia functions
 
-    def _getShowURL(self):
+    def _getShowURLWiki(self,title):
         url = "https://en.wikipedia.org/w/api.php"
         pageList = [string.Template("$title")]
 
@@ -111,7 +102,7 @@ class MovieData():
             PARAMS = {
                 "prop": "sections",
                 "format": "json",
-                "page": ele.substitute(title=self._title),
+                "page": ele.substitute(title=title),
                 "action": "parse",
                 "redirects": "1"
             }
@@ -122,7 +113,7 @@ class MovieData():
             self._showURL = f"{url}?page={req.json()['parse']['title']}"
             break
 
-    def _getEpisodesURLWiki(self):
+    def _getEpisodesURLWiki(self,title,year):
         url = "https://en.wikipedia.org/w/api.php"
         pageList = [string.Template(
             "List of $title episodes"), string.Template("$title")]
@@ -132,7 +123,7 @@ class MovieData():
             PARAMS = {
                 "prop": "sections",
                 "format": "json",
-                "page": ele.substitute(title=self._title),
+                "page": ele.substitute(title=title),
                 "action": "parse",
                 "redirects": "1"
             }
@@ -140,13 +131,19 @@ class MovieData():
             sections = req.json()["parse"]["sections"]
             if req.json().get("error"):
                 continue
-            if len(list(filter(lambda x: re.search(
-                    "Episode", x["line"], re.IGNORECASE), sections))) == 0:
+            section = len(list(filter(lambda x: re.search(
+                "Episode", x["line"], re.IGNORECASE), sections)))
+            self._filterWord = "Episode"
+            if section == 0:
+                section = len(list(filter(lambda x: re.search(
+                    title, x["line"], re.IGNORECASE), sections)))
+                self._filterWord = title
+            if section == 0:
                 continue
             self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
             break
 
-    def _getWikepediaSeasons(self):
+    def _getWikiFullEpData(self):
         url = self._episodesURL
         PARAMS = {
             "prop": "sections",
@@ -156,33 +153,33 @@ class MovieData():
         req = requests.get(url, params=PARAMS)
         sections = req.json()["parse"]["sections"]
         epLvl = list(filter(lambda x: re.search(
-            "Episode", x["line"], re.IGNORECASE), sections))[0]["level"]
+            self._filterWord, x["line"], re.IGNORECASE), sections))[0]["level"]
         # Get the season subsections
         allSeasons = list(
             filter(lambda x: x["level"] == str(int(epLvl)+1), sections))
         # if no season subsections
         if len(allSeasons) == 0:
-            return [list(
+            allSeasons = [list(
                 filter(lambda x: x["level"] == str(int(epLvl)), sections))[0]]
-        seasons = allSeasons = list(
+        seasons = list(
             filter(lambda x: re.search("Season", x["line"], re.IGNORECASE), allSeasons))
         if len(seasons) == 0:
             seasons = allSeasons
         self._seasonsHTML = seasons
+        return seasons
 
     def _getTotalEpisodesWiki(self, episodes):
         return len(episodes)
 
     def _getOverallEpNumWiki(self, sea, ep):
         total = 0
-        for i in range(sea-1):
-            total = total+len(self._getEpisodesHTMLWiki(sea))
+        for i in range(sea-2):
+            total = total+len(self._getSeasonHTMLWiki(sea))
         total = total+ep
         return total
 
-    def _getEpisodesHTMLWiki(self, season):
-        section = self._seasonsHTML(season)
-
+    def _getSeasonHTMLWiki(self, season):
+        section = self._seasonsHTML[season-1]
         index = section["index"]
         PARAMS = {
             "prop": "text",
@@ -199,11 +196,11 @@ class MovieData():
         return output
 
     def _getIMDBWiki(self, imdb, season, epNum):
-        airdate = self._getOriginalAirDateWiki(epNum)
+        airdate = self._getOriginalAirDateWiki()
         overallEP = self._getOverallEpNumWiki(season, epNum)
         compare = utils.convertArrow(airdate, "MMMM D, YYYY")
-
-        series = ia.get_movie(imdb)
+        series = self._imdbObjDict.get(imdb) or ia.get_movie(imdb)
+        self._imdbObjDict[imdb] = series
         ia.update(series, "episodes")
         matchSeason = None
         for i in range(series["seasons"]):
@@ -217,9 +214,9 @@ class MovieData():
                 break
 
         totalEP = len(series["episodes"][matchSeason])
-        startEP = (max(0, epNum-2))
+        startEP = (max(1, epNum-2))
         if overallEP < totalEP:
-            startEP = (max(0, o-2))
+            startEP = (max(1, overallEP - 2))
         matchObj = None
         for i in range(startEP, totalEP+1):
             curr = series["episodes"][matchSeason][i]
@@ -231,7 +228,9 @@ class MovieData():
         ia.update(matchObj, info=["main"])
         return matchObj["imdbID"]
 
-    def _getOriginalAirDateWiki(episode):
+    def _getOriginalAirDateWiki(self):
+        seasonData = self._getSeasonHTMLWiki(1)
+        episode=seasonData[0]
         sections = episode.find_all("td")
         date = None
         dateObj = None
@@ -252,12 +251,12 @@ class MovieData():
 
         return date
 
-    def _getEnglishNameWiki(episode):
+    def _getEnglishNameWiki(self,episode):
         fulltitle = episode.find("td", attrs={"class": "summary"}).get_text()
         name = re.sub("Transcription.*", "", fulltitle)
         return name
 
-    def _getJapaneseNameWiki(episode):
+    def _getJapaneseNameWiki(self,episode):
         fulltitle = episode.find("td", attrs={"class": "summary"}).get_text()
         section = re.search("Transcription.*:(.*)\(Jap",
                             fulltitle) or re.search("Transcription.*:(.*)", fulltitle)
@@ -275,15 +274,15 @@ class MovieData():
                 "[0-9]{1} [a-z]* [0-9]{4}", ele, re.IGNORECASE)
             if date != None:
                 out.append(date.group(0))
-        return list(sorted(out, key=lambda x: utils.get(x, "D MMMM YYYY")))
-
+        return list(sorted(out, key=lambda x: utils.convertArrow(x, "D MMMM YYYY")))
 
     def _getTotalEPWiki(self):
         total = 0
         for ele in self._seasonsHTML:
-            total = total+len(self._getEpisodesHTMLWiki(ele))
+            total = total+len(self._getSeasonHTMLWiki(ele))
         return total
-    def getShowStartWiki(self,episodes):
+
+    def getShowStartWiki(self, episodes):
         sections = episodes[0].find_all("td")
         date = None
         dateObj = None
@@ -337,10 +336,9 @@ class MovieData():
             self._movieObj["mal"] = self._getmalIds(data)[index]
 
         malData = self._getAnimeData(self._movieObj["mal"])
-        self._movieObj["engTitle"] = malData["title_english"]
-        self._movieObj["japTitle"] = malData["title_japanese"]
-        self._movieObj["type"] = malData["type"]
-        self._movieObj["languages"] = ["English", "Japanese"]
+        self._movieObj["imdb"] = self._maltoIMDB(malData)
+        self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
+            f"tt{self._maltoIMDB(malData)}")
 
         with open(animeJSON, "r") as p:
             data = json.loads(p.read())["data"]
@@ -355,12 +353,16 @@ class MovieData():
                     0]["index"]
                 matchObj = data[dataIndex]
                 self._addAnimeSourcesHelper(matchObj["sources"])
-
+        self._movieObj["engTitle"] = malData["title_english"]
+        self._movieObj["japTitle"] = malData["title_japanese"]
+        self._movieObj["type"] = malData["type"]
+        self._movieObj["languages"] = ["English", "Japanese"]
         self._movieObj['year'] = malData['aired']['prop']['from']['year']
-        self._movieObj["imdb"] = self._maltoIMDB(malData)
 
-    def _getAnimeSearchData(self):
-        url = f"https://api.jikan.moe/v4/anime?q={self._title}"
+        return self._movieObj
+
+    def _getAnimeSearchData(self,title):
+        url = f"https://api.jikan.moe/v4/anime?q={title}"
         req = config.session.get(url)
         data = req.json()["data"]
         return data
@@ -455,7 +457,7 @@ class MovieData():
         data = req.json()["data"]
         return data
 
-# imdb functions
+# imdb/tmdb functions
 
     def _getMovieList(self, title):
         return ia.search_movie(title)
@@ -464,42 +466,7 @@ class MovieData():
         ia.update(obj, info=[set])
         return obj
 
-
-# import re
-# import os
-
-# from dotenv import load_dotenv
-# from guessit import guessit
-
-# from tmdbv3api import TMDb, Find, TV, Movie,Season
-# from jikanpy import Jikan
-
-# import tools.general as utils
-# import config
-# import mediadata.animeMovieData as animeData
-
-# load_dotenv()
-# tmdb = TMDb()
-# tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
-# find = Find()
-# movie = Movie()
-# season=Season()
-# tv = TV()
-
-
-# def getMovieName(movie):
-#     return guessit(movie["title"])["title"]
-
-
-# def getByID(id):
-#     return ia.get_movie(id)
-
-
-# def getMovieYear(movie):
-#     return movie["year"]
-
-    def _getIMDBInfo(self):
-        title = self._title
+    def _getIMDBInfo(self,title):
         results = ia.search_movie(title)
         result = None
         msg = None
@@ -535,12 +502,17 @@ class MovieData():
                 result = ia.get_movie(re.sub("tt", "", id))
             else:
                 result = results[titles.index(match)-1]
+
         self._updateIMDB(result, "main")
-        self._movieObj["imdbID"] = result["imdbID"]
+        self._movieObj["imdb"] = result["imdbID"]
+        self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
+            f"tt{result['imdbID']}")
+
         self._movieObj["title"] = result["title"]
         self._movieObj["type"] = self._getKind(result)
         self._movieObj["languages"] = result["languages"]
         self._movieObj["year"] = result["year"]
+        return self._movieObj
 
     def _getKind(self, movie):
         kind = movie["kind"]
@@ -549,22 +521,14 @@ class MovieData():
         else:
             return "TV"
 
+    def _convertIMDBtoTMDB(self, id):
+        data = find.find_by_imdb_id(id)
+        results = []
+        results.extend(data["movie_results"])
+        results.extend(data["tv_results"])
 
-# def update(obj,set):
-#     ia.update(obj, info=[set])
-#     return obj
-
-
-# def convertIMDBtoTMDB(id):
-#     if re.search("tt", id) == None:
-#         id = f"tt{id}"
-#     data = find.find_by_imdb_id(id)
-#     results = []
-#     results.extend(data["movie_results"])
-#     results.extend(data["tv_results"])
-
-#     if len(results) > 0:
-#         return results[0]["id"]
+        if len(results) > 0:
+            return results[0]["id"]
 
 
 # def getSeason(sources):
@@ -593,9 +557,3 @@ class MovieData():
 #     episode = movie["episodes"][season][episode]
 #     ia.update(episode, info=['main'])
 #     return episode["title"]
-
-
-# def getMovieTitle(movie):
-#     movieName = getMovieName(movie)
-#     movieYear = getMovieYear(movie)
-#     return f"{movieName} ({movieYear})"

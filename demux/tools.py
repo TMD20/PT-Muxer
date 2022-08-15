@@ -27,26 +27,6 @@ def ConvertChapterList(chapters):
     return output
 
 
-def getMovieOutput(movie):
-    outdict = {}
-    outdict["year"] = movie["year"] 
-    outdict["imdb"] = movie["imdb"]
-    outdict["tmdb"] = movie.get("tmdb") or movieData.convertIMDBtoTMDB(movie["imdbID"])
-    outdict["langs"] = movie.get("langs")
-    return outdict
-
-def getAnimeMovieOutput(movie,movieObj):
-    outdict = {}
-    outdict["year"] = movieObj["year"] 
-    outdict["imdb"] = movie["imdb"]
-    outdict["mal"] = movieObj.get("mal")
-    outdict["anidb"] = movieObj.get("anidb")
-    outdict["anilist"] = movieObj.get("anilist")
-    outdict["kitsu"]=movieObj.get("kitsu")
-    outdict["tmdb"] =  movieData.convertIMDBtoTMDB(movie["imdbID"])
-    outdict["langs"] = movie.get("langs")
-    if movieObj.get("offset"):
-        outdict["offset"] = movieObj.get("offset")
 
     return outdict
 def validateBdinfo(bdObjs):
@@ -92,16 +72,6 @@ def extractTracks(demuxData, stream=False):
                 f"\nExtracting Files From stream:{stream} from {key}")
             eac3to.process(trackoutdict["sourceDir"], trackoutdict["outputDir"],
                            eac3to_list, streamLocation)
-
-
-def addMovieData(outdict, movie, movieObj,anime,season=None, episode=None):
-    if not anime:
-        outdict["Movie"] = getMovieOutput(movie)
-    else:
-        outdict["Movie"] = getAnimeMovieOutput(movie)
-    if season:
-        outdict["Season"] = season
-        outdict["Episode"] = episode
 
 
 def addEnabledData(outdict, muxSorter):
@@ -156,7 +126,6 @@ def addTrackData(outdict, muxSorter):
 def writeFinalJSON(outdict):
     outputPath = os.path.abspath(os.path.join(".", "output.json"))
     print(f"Writing to {outputPath}")
-    print("If this is a TV show double check episode in json")
     with open(outputPath, "w") as p:
         p.write(json.dumps(outdict, indent=4, ensure_ascii=False))
 

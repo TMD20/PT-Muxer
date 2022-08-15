@@ -12,7 +12,8 @@ class AnimeBytes(MuxOBj):
     def __init__(self):
         super().__init__()
 
-    def getFileName(self, kind, remuxConfig, movie, group,skipNameCheck):
+    def getFileName(self,
+                      remuxConfig,group,title,year,skipNameCheck,season=None,episode=None,episodeTitle=None):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -24,22 +25,12 @@ class AnimeBytes(MuxOBj):
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        movieName = f"{title} {year}"
 
-        movieName = movieData.getMovieName(movie)
-        movieYear = movieData.getMovieYear(movie)
-
-        season = remuxConfig.get("Season")
-        episode = remuxConfig.get("Episode")
-
-        if kind == "Movie":
-            fileName = f"{movieName}.{movieYear}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+        if not season and not episode and not episodeTitle:
+            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         else:
-            # add episode name
-            episodes = movieData.getEpisodes(
-                movieData.getByID(movie["imdbID"]), season)
-            episodeData = movieData.getEpisodeData(episodes, episode)
-            episodeTitle = episodeData["title"]
-            fileName = f"{movieName}.{movieYear}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         # Normalize FileName
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
