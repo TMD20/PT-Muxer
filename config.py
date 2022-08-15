@@ -26,4 +26,4 @@ bdinfoProjectPath = os.path.join(
 
 demuxPrefix="Mux"
 
-ssession = requests_cache.CachedSession(os.path.join(root_dir,"cache"))
+session = requests_cache.CachedSession(os.path.join(root_dir,"cache"))
