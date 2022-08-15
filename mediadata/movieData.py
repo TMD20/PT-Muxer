@@ -24,7 +24,7 @@ class MovieData():
         self._episodesURL = ""
         self._showURL = ""
         self._movieObj = {}
-        self._seasonsHTML = []
+        self._seasonsHTMLDict = {}
         self._imdbObjDict = {}
 
     ##########################################################################
@@ -39,45 +39,18 @@ class MovieData():
         else:
             return self._getIMDBInfo()
 
-    def retriveEpisodeTitle(self, season, episode, title, year, lang="English"):
-        season = int(season)
-        episode = int(episode)
-        return self._getEpisodeName(season, episode, title,year, lang)
+    def retriveEpisodeTitle(self, seasonNum, epNum, title, year, lang="English"):
+        seasonNum = int(seasonNum)
+        epNum = int(epNum)
+        return self._getEpisodeName(seasonNum, epNum, title, year, lang)
 
-    def retriveEpisodeIMDB(self,imdb, season, episode,title,year):
-        season = int(season)
-        episode = int(episode)
-        return self._getEpisodeIMDB(imdb, season, episode,title,year)
+    def retriveEpisodeIMDB(self, imdb, seasonNum, epNum, title, year):
+        seasonNum = int(seasonNum)
+        epNum = int(epNum)
+        return self._getEpisodeIMDB(imdb, seasonNum, epNum, title, year)
 
-    def retriveNumberofEpisodes(self, season, episode, title, year):
-        return self._getNumberofEpisodes(season, episode, title, year)
-
-
-    def _getEpisodeName(self,  season, episode, title, year,lang):
-        season = int(season)
-        episode=int(episode)
-        self._getEpisodesURLWiki(title,year)
-        self._getWikiFullEpData()
-        seasonData = self._getSeasonHTMLWiki(season)
-        name=None
-        if lang == "English":
-            name= self._getEnglishNameWiki(seasonData[episode-1])
-        return re.sub('"','',name)
-       
-    def _getEpisodeIMDB(self, imdb, season, episode,title,year):
-        season=int(season)
-        episode=int(episode)
-        self._getEpisodesURLWiki(title,year)
-        self._getWikiFullEpData()
-        return self._getIMDBWiki(imdb, season, episode)
-
-    def _getNumberofEpisodes(self, season, episode, title, year):
-        season = int(season)
-        episode=int(episode)
-        self._getEpisodesURLWiki(title,year)
-        self._getWikiFullEpData()
-        seasonData = self._getSeasonHTMLWiki(season)
-        return len(seasonData)
+    def retriveNumberofEpisodes(self, seasonNum, epNum, title, year):
+        return self._getNumberofEpisodes(seasonNum, epNum, title, year)
 
     """
     Getters/Setters
@@ -94,110 +67,37 @@ class MovieData():
 
     # Wikepedia functions
 
-    def _getShowURLWiki(self,title):
-        url = "https://en.wikipedia.org/w/api.php"
-        pageList = [string.Template("$title")]
+    #helpers
 
-        for ele in pageList:
-            PARAMS = {
-                "prop": "sections",
-                "format": "json",
-                "page": ele.substitute(title=title),
-                "action": "parse",
-                "redirects": "1"
-            }
-            req = config.session.get(url, params=PARAMS)
-            if req.json().get("error"):
-                continue
+    def _getEpisodeName(self,  seasonNum, epNum, title, year, lang):
+        seasonNum = int(seasonNum)
+        epNum = int(epNum)
+        self._getEpisodesURLWiki(title, year)
+        self._getSeasonSectionsWiki()
+        self._getSeasonHTMLDictWiki(seasonNum)
+        name = None
+        if lang == "English":
+            name = self._getEnglishNameWiki(
+                self._seasonsHTMLDict[seasonNum][epNum])
+        return re.sub('"', '', name)
 
-            self._showURL = f"{url}?page={req.json()['parse']['title']}"
-            break
+    def _getEpisodeIMDB(self, imdb, seasonNum, epNum, title, year):
+        seasonNum = int(seasonNum)
+        epNum = int(epNum)
+        self._getEpisodesURLWiki(title, year)
+        self._getSeasonSectionsWiki()
+        return self._getIMDBWiki(imdb, seasonNum, epNum)
 
-    def _getEpisodesURLWiki(self,title,year):
-        url = "https://en.wikipedia.org/w/api.php"
-        pageList = [string.Template(
-            "List of $title episodes"), string.Template("$title")]
+    def _getNumberofEpisodes(self, seasonNum, epNum, title, year):
+        seasonNum = int(seasonNum)
+        epNum = int(epNum)
+        self._getEpisodesURLWiki(title, year)
+        self._getSeasonSectionsWiki()
+        return self._getTotalEPWiki()
 
-        for ele in pageList:
-
-            PARAMS = {
-                "prop": "sections",
-                "format": "json",
-                "page": ele.substitute(title=title),
-                "action": "parse",
-                "redirects": "1"
-            }
-            req = config.session.get(url, params=PARAMS)
-            sections = req.json()["parse"]["sections"]
-            if req.json().get("error"):
-                continue
-            section = len(list(filter(lambda x: re.search(
-                "Episode", x["line"], re.IGNORECASE), sections)))
-            self._filterWord = "Episode"
-            if section == 0:
-                section = len(list(filter(lambda x: re.search(
-                    title, x["line"], re.IGNORECASE), sections)))
-                self._filterWord = title
-            if section == 0:
-                continue
-            self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
-            break
-
-    def _getWikiFullEpData(self):
-        url = self._episodesURL
-        PARAMS = {
-            "prop": "sections",
-            "format": "json",
-            "action": "parse"
-        }
-        req = requests.get(url, params=PARAMS)
-        sections = req.json()["parse"]["sections"]
-        epLvl = list(filter(lambda x: re.search(
-            self._filterWord, x["line"], re.IGNORECASE), sections))[0]["level"]
-        # Get the season subsections
-        allSeasons = list(
-            filter(lambda x: x["level"] == str(int(epLvl)+1), sections))
-        # if no season subsections
-        if len(allSeasons) == 0:
-            allSeasons = [list(
-                filter(lambda x: x["level"] == str(int(epLvl)), sections))[0]]
-        seasons = list(
-            filter(lambda x: re.search("Season", x["line"], re.IGNORECASE), allSeasons))
-        if len(seasons) == 0:
-            seasons = allSeasons
-        self._seasonsHTML = seasons
-        return seasons
-
-    def _getTotalEpisodesWiki(self, episodes):
-        return len(episodes)
-
-    def _getOverallEpNumWiki(self, sea, ep):
-        total = 0
-        for i in range(sea-2):
-            total = total+len(self._getSeasonHTMLWiki(sea))
-        total = total+ep
-        return total
-
-    def _getSeasonHTMLWiki(self, season):
-        section = self._seasonsHTML[season-1]
-        index = section["index"]
-        PARAMS = {
-            "prop": "text",
-            "section": index,
-            "format": "json",
-            "action": "parse"
-        }
-        req = requests.get(self._episodesURL, params=PARAMS)
-        episodesHTML = req.json()["parse"]["text"]["*"]
-        soup = BeautifulSoup(episodesHTML, "html.parser")
-        output = soup.find_all("tr", attrs={"class": "summary"})
-        if len(output) == 0:
-            output = soup.find_all("tr", attrs={"class": "vevent"})
-        return output
-
-    def _getIMDBWiki(self, imdb, season, epNum):
+    def _getIMDBWiki(self, imdb, seasonNum, epNum):
         airdate = self._getOriginalAirDateWiki()
-        overallEP = self._getOverallEpNumWiki(season, epNum)
+        overallEP = self._getOverallEpNumWiki(seasonNum, epNum)
         compare = utils.convertArrow(airdate, "MMMM D, YYYY")
         series = self._imdbObjDict.get(imdb) or ia.get_movie(imdb)
         self._imdbObjDict[imdb] = series
@@ -227,11 +127,119 @@ class MovieData():
                 break
         ia.update(matchObj, info=["main"])
         return matchObj["imdbID"]
+    #url grabbers
+
+    def _getShowURLWiki(self, title):
+        url = "https://en.wikipedia.org/w/api.php"
+        pageList = [string.Template("$title")]
+
+        for ele in pageList:
+            PARAMS = {
+                "prop": "sections",
+                "format": "json",
+                "page": ele.substitute(title=title),
+                "action": "parse",
+                "redirects": "1"
+            }
+            req = config.session.get(url, params=PARAMS)
+            if req.json().get("error"):
+                continue
+
+            self._showURL = f"{url}?page={req.json()['parse']['title']}"
+            break
+
+    def _getEpisodesURLWiki(self, title, year):
+        url = "https://en.wikipedia.org/w/api.php"
+        pageList = [string.Template(
+            "List of $title episodes"), string.Template("$title")]
+
+        for ele in pageList:
+
+            PARAMS = {
+                "prop": "sections",
+                "format": "json",
+                "page": ele.substitute(title=title),
+                "action": "parse",
+                "redirects": "1"
+            }
+            req = config.session.get(url, params=PARAMS)
+            sections = req.json()["parse"]["sections"]
+            if req.json().get("error"):
+                continue
+            section = len(list(filter(lambda x: re.search(
+                "epNum", x["line"], re.IGNORECASE), sections)))
+            self._filterWord = "epNum"
+            if section == 0:
+                section = len(list(filter(lambda x: re.search(
+                    title, x["line"], re.IGNORECASE), sections)))
+                self._filterWord = title
+            if section == 0:
+                continue
+            self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
+            break
+    #data
+
+    def _getSeasonSectionsWiki(self):
+        url = self._episodesURL
+        PARAMS = {
+            "prop": "sections",
+            "format": "json",
+            "action": "parse"
+        }
+        req = requests.get(url, params=PARAMS)
+        sections = req.json()["parse"]["sections"]
+        epLvl = list(filter(lambda x: re.search(
+            self._filterWord, x["line"], re.IGNORECASE), sections))[0]["level"]
+        # Get the seasonNum subsections
+        allSeasons = list(
+            filter(lambda x: x["level"] == str(int(epLvl)+1), sections))
+        # if no seasonNum subsections
+        if len(allSeasons) == 0:
+            allSeasons = [list(
+                filter(lambda x: x["level"] == str(int(epLvl)), sections))[0]]
+        seasons = list(
+            filter(lambda x: re.search("seasonNum", x["line"], re.IGNORECASE), allSeasons))
+        if len(seasons) == 0:
+            seasons = allSeasons
+        self._seasonSectionDicts = seasons
+        return seasons
+
+    def _getSeasonHTMLDictWiki(self, seasonNum):
+        #data has already been set
+        if self._seasonsHTMLDict.get(seasonNum) != None:
+            return self._seasonsHTMLDict.get(seasonNum)
+        outdict = {}
+        section = self._seasonSectionDicts[seasonNum-1]
+        index = section["index"]
+        PARAMS = {
+            "prop": "text",
+            "section": index,
+            "format": "json",
+            "action": "parse"
+        }
+        req = requests.get(self._episodesURL, params=PARAMS)
+        episodesHTML = req.json()["parse"]["text"]["*"]
+        soup = BeautifulSoup(episodesHTML, "html.parser")
+        output = soup.find_all("tr", attrs={"class": "summary"})
+        if len(output) == 0:
+            output = soup.find_all("tr", attrs={"class": "vevent"})
+        for ele in output:
+            numColumn = ele.find(["th", "td"], attrs={
+                                 "id": re.compile("ep[0-9]+")})
+            if numColumn == None:
+                continue
+            nums = re.findall("[0-9]+", numColumn.get_text())
+            for num in nums:
+                outdict[int(num.lstrip("0"))] = ele
+        self._seasonsHTMLDict[seasonNum] = outdict
+        return outdict
+
+    #dates
 
     def _getOriginalAirDateWiki(self):
-        seasonData = self._getSeasonHTMLWiki(1)
-        episode=seasonData[0]
-        sections = episode.find_all("td")
+        seasonData = self._getSeasonHTMLDictWiki(1)
+        epData = seasonData[1]
+        sections = epData.find_all("td")
         date = None
         dateObj = None
         for sect in sections:
@@ -251,23 +259,9 @@ class MovieData():
 
         return date
 
-    def _getEnglishNameWiki(self,episode):
-        fulltitle = episode.find("td", attrs={"class": "summary"}).get_text()
-        name = re.sub("Transcription.*", "", fulltitle)
-        return name
-
-    def _getJapaneseNameWiki(self,episode):
-        fulltitle = episode.find("td", attrs={"class": "summary"}).get_text()
-        section = re.search("Transcription.*:(.*)\(Jap",
-                            fulltitle) or re.search("Transcription.*:(.*)", fulltitle)
-        if section == None:
-            return ""
-        name = section.group(1)
-        return name
-
-    def _getReleaseDatesWiki(self, episode):
-        ia.update(episode, info=['release dates'])
-        data = episode["release dates"]
+    def _getReleaseDatesWiki(self, epNum):
+        ia.update(epNum, info=['release dates'])
+        data = epNum["release dates"]
         out = []
         for ele in data:
             date = re.search("[0-9]{2} [a-z]* [0-9]{4}", ele, re.IGNORECASE) or re.search(
@@ -276,32 +270,37 @@ class MovieData():
                 out.append(date.group(0))
         return list(sorted(out, key=lambda x: utils.convertArrow(x, "D MMMM YYYY")))
 
+    #names
+    def _getEnglishNameWiki(self, epNum):
+        fulltitle = epNum.find("td", attrs={"class": "summary"}).get_text()
+        name = re.sub("Transcription.*", "", fulltitle)
+        return name
+
+    def _getJapaneseNameWiki(self, epNum):
+        fulltitle = epNum.find("td", attrs={"class": "summary"}).get_text()
+        section = re.search("Transcription.*:(.*)\(Jap",
+                            fulltitle) or re.search("Transcription.*:(.*)", fulltitle)
+        if section == None:
+            return ""
+        name = section.group(1)
+        return name
+
+    #episode count
     def _getTotalEPWiki(self):
         total = 0
-        for ele in self._seasonsHTML:
-            total = total+len(self._getSeasonHTMLWiki(ele))
+        for i in range(len(self._seasonSectionDicts)):
+            seasonData = self._getSeasonHTMLDictWiki(i+1)
+            total = total+len(seasonData.keys())
+
+    def _getOverallEpNumWiki(self, sea, ep):
+        total = 0
+        for i in range(sea-2):
+            seasonData = self._getSeasonHTMLDictWiki(i+1)
+            total = total+len(seasonData.keys())
+        total = total+ep
         return total
 
-    def getShowStartWiki(self, episodes):
-        sections = episodes[0].find_all("td")
-        date = None
-        dateObj = None
-        for sect in sections:
-            try:
-                newDate = utils.cleanString(sect.find(text=True))
-                newObj = utils.convertArrow(newDate, "MMMM D, YYYY")
-                if dateObj == None:
-                    dateObj = newObj
-                    date = newDate
-                elif newObj < dateObj:
-                    dateObj = newObj
-                    date = newDate
-                break
-            except:
-                continue
-        return date
-
-        """
+    """
     Anime Functions
     """
 
@@ -361,7 +360,7 @@ class MovieData():
 
         return self._movieObj
 
-    def _getAnimeSearchData(self,title):
+    def _getAnimeSearchData(self, title):
         url = f"https://api.jikan.moe/v4/anime?q={title}"
         req = config.session.get(url)
         data = req.json()["data"]
@@ -466,7 +465,7 @@ class MovieData():
         ia.update(obj, info=[set])
         return obj
 
-    def _getIMDBInfo(self,title):
+    def _getIMDBInfo(self, title):
         results = ia.search_movie(title)
         result = None
         msg = None
@@ -530,30 +529,3 @@ class MovieData():
         if len(results) > 0:
             return results[0]["id"]
 
-
-# def getSeason(sources):
-#     details = guessit(sources[0])
-#     season = details.get("Season")
-#     return season
-
-
-# def getTotalEpisodes(episodes):
-#     return len(episodes.keys())
-
-
-# def getEpisodes(movie, season):
-#     ia.update(movie, 'episodes')
-#     return movie["episodes"][season]
-
-
-# def getEpisodeData(episodes, num):
-#     episode = episodes[num]
-#     ia.update(episode, info=['main'])
-#     return episode
-
-
-# def getEpisodeTitle(movie, season, episode):
-#     ia.update(movie, 'episodes')
-#     episode = movie["episodes"][season][episode]
-#     ia.update(episode, info=['main'])
-#     return episode["title"]
