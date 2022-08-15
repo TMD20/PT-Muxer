@@ -1,4 +1,5 @@
 import os
+from pickle import TRUE
 import tempfile
 from string import Template
 
@@ -60,24 +61,22 @@ def writeXMLMovie(imdb, tmdb):
     return tempData
 
 
-def writeXMLTV(imdb, tmdb, season, episode):
+def writeXMLTV(imdb, tmdb, title, year,movieObj, season, episode):
     infile = os.path.join(config.root_dir, f"xml/movie")
     tempData = tempfile.mkstemp()
     outfile = tempData[1]
     result = None
+    epIMDB=movieObj.retriveEpisodeIMDB(imdb, season, episode, title, year)
+    epCount = movieObj.retriveNumberofEpisodes(season, episode, title, year)
 
-    episodes = movieData.getEpisodes(
-        movieData.getByID(imdb), season)
-    episodeData = movieData.getEpisodeData(episodes, episode)
+    
 
-    imdbEP = episodeData["imdbID"]
 
-    totalEP = movieData.getTotalEpisodes(episodes)
 
     with open(infile, 'r') as f:
         src = Template(f.read())
         result = src.substitute(
-            {"imdb": imdb, "tmdb": tmdb, "imdbEP": imdbEP, "totalEP": totalEP, "Season": season, "Episode": episode})
+            {"imdb": imdb, "tmdb": tmdb, "imdbEP": epIMDB, "totalEP": epCount, "Season": season, "Episode": episode})
     with open(outfile, "w") as p:
         p.writelines(result)
     return tempData
@@ -86,14 +85,14 @@ def writeXMLTV(imdb, tmdb, season, episode):
 def checkMissing(remuxConfig):
     if utils.validateFiles([remuxConfig["Tracks_Details"]["Sub"][x]["file"] for x in remuxConfig["Enabled_Tracks"]["Sub"]]) != None:
         print("At Least one subtitle file is missing\nCheck file key for all enabled subs tracks\nSkipping to Next Item")
-        return False
+        return True
     if utils.validateFiles([remuxConfig["Tracks_Details"]["Audio"][x]["file"] for x in remuxConfig["Enabled_Tracks"]["Audio"]]) != None:
         print("At Least one audio file is missing\nCheck file key for all enabled audio tracks\nSkipping to Next Item")
-        return False
+        return True
     if utils.validateFiles([remuxConfig["Tracks_Details"]["Video"][x]["file"] for x in remuxConfig["Enabled_Tracks"]["Video"]]) != None:
         print("At Least one video file is missing\nCheck file key for all enabled video tracks\nSkipping to Next Item")
-        return False
+        return True
     if len([key for key in remuxConfig["Sources"]]) == 0:
         print("No Sources Found For this item\nSkipping to Next Item")
-        return False
-    return True
+        return True
+    return False

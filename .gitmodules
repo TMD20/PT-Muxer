@@ -1,0 +1,3 @@
+[submodule "anime-offline-database"]
+	path = anime-offline-database
+	url = https://github.com/manami-project/anime-offline-database
