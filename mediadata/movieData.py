@@ -96,8 +96,12 @@ class MovieData():
         return self._getTotalEPWiki()
 
     def _getIMDBWiki(self, imdb, seasonNum, epNum):
-        airdate = self._getOriginalAirDateWiki()
+        airdate = self._getEpisodeAirDateWiki(seasonNum, epNum)
         overallEP = self._getOverallEpNumWiki(seasonNum, epNum)
+        enTitle = self._getEnglishNameWiki(
+            self._seasonsHTMLDict[seasonNum][epNum])
+        japTitle = self._getJapaneseNameWiki(
+            self._seasonsHTMLDict[seasonNum][epNum])
         compare = utils.convertArrow(airdate, "MMMM D, YYYY")
         series = self._imdbObjDict.get(imdb) or ia.get_movie(imdb)
         self._imdbObjDict[imdb] = series
@@ -114,9 +118,10 @@ class MovieData():
                 break
 
         totalEP = len(series["episodes"][matchSeason])
-        startEP = (max(1, epNum-2))
+        offset = 5
+        startEP = (max(1, epNum-offset))
         if overallEP < totalEP:
-            startEP = (max(1, overallEP - 2))
+            startEP = (max(1, overallEP - offset))
         matchObj = None
         for i in range(startEP, totalEP+1):
             curr = series["episodes"][matchSeason][i]
@@ -125,6 +130,14 @@ class MovieData():
             if abs((date-compare).total_seconds()) < 90000:
                 matchObj = curr
                 break
+            elif jellyfish.jaro_distance(curr["title"], enTitle) > .9:
+                matchObj = curr
+                break
+            elif jellyfish.jaro_distance(curr["title"], japTitle) > .9:
+                matchObj = curr
+                break
+        if matchObj == None:
+            return
         ia.update(matchObj, info=["main"])
         return matchObj["imdbID"]
     #url grabbers
@@ -162,22 +175,23 @@ class MovieData():
                 "action": "parse",
                 "redirects": "1"
             }
-            req = config.session.get(url, params=PARAMS)
-            sections = req.json()["parse"]["sections"]
-            if req.json().get("error"):
-                continue
-            section = len(list(filter(lambda x: re.search(
-                "epNum", x["line"], re.IGNORECASE), sections)))
-            self._filterWord = "epNum"
-            if section == 0:
+            searches = [f"^Season", f"{title}.*{year}", f"{title}"]
+            self._episodesURL = None
+            for search in searches:
+                req = config.session.get(url, params=PARAMS)
+                sections = req.json()["parse"]["sections"]
+                if req.json().get("error"):
+                    continue
                 section = len(list(filter(lambda x: re.search(
-                    title, x["line"], re.IGNORECASE), sections)))
-                self._filterWord = title
-            if section == 0:
-                continue
-            self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
-            break
-    #data
+                    search, x["line"], re.IGNORECASE), sections)))
+                if section == 0:
+                    continue
+                self._filterWord = search
+                self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
+                break
+            if self._episodesURL:
+                break
+        #data
 
     def _getSeasonSectionsWiki(self):
         url = self._episodesURL
@@ -188,19 +202,8 @@ class MovieData():
         }
         req = requests.get(url, params=PARAMS)
         sections = req.json()["parse"]["sections"]
-        epLvl = list(filter(lambda x: re.search(
-            self._filterWord, x["line"], re.IGNORECASE), sections))[0]["level"]
-        # Get the seasonNum subsections
-        allSeasons = list(
-            filter(lambda x: x["level"] == str(int(epLvl)+1), sections))
-        # if no seasonNum subsections
-        if len(allSeasons) == 0:
-            allSeasons = [list(
-                filter(lambda x: x["level"] == str(int(epLvl)), sections))[0]]
-        seasons = list(
-            filter(lambda x: re.search("seasonNum", x["line"], re.IGNORECASE), allSeasons))
-        if len(seasons) == 0:
-            seasons = allSeasons
+        seasons = list(filter(lambda x: re.search(
+            self._filterWord, x["line"], re.IGNORECASE), sections))
         self._seasonSectionDicts = seasons
         return seasons
 
@@ -223,6 +226,7 @@ class MovieData():
         output = soup.find_all("tr", attrs={"class": "summary"})
         if len(output) == 0:
             output = soup.find_all("tr", attrs={"class": "vevent"})
+        count = 1
         for ele in output:
             numColumn = ele.find(["th", "td"], attrs={
                                  "id": re.compile("ep[0-9]+")})
@@ -230,7 +234,8 @@ class MovieData():
                 continue
             nums = re.findall("[0-9]+", numColumn.get_text())
             for num in nums:
-                outdict[int(num.lstrip("0"))] = ele
+                outdict[count] = ele
+                count = count+1
         self._seasonsHTMLDict[seasonNum] = outdict
         return outdict
 
@@ -239,6 +244,29 @@ class MovieData():
     def _getOriginalAirDateWiki(self):
         seasonData = self._getSeasonHTMLDictWiki(1)
         epData = seasonData[1]
+        sections = epData.find_all("td")
+        date = None
+        dateObj = None
+        for sect in sections:
+            try:
+                newDate = utils.cleanString(sect.find(text=True))
+                newObj = utils.convertArrow(newDate, "MMMM D, YYYY")
+
+                if dateObj == None:
+                    dateObj = newObj
+                    date = newDate
+                elif newObj < dateObj:
+                    dateObj = newObj
+                    date = newDate
+                break
+            except:
+                continue
+
+        return date
+
+    def _getEpisodeAirDateWiki(self, seasonNum, epNum):
+        seasonData = self._getSeasonHTMLDictWiki(seasonNum)
+        epData = seasonData[epNum]
         sections = epData.find_all("td")
         date = None
         dateObj = None
@@ -291,10 +319,11 @@ class MovieData():
         for i in range(len(self._seasonSectionDicts)):
             seasonData = self._getSeasonHTMLDictWiki(i+1)
             total = total+len(seasonData.keys())
+        return total
 
     def _getOverallEpNumWiki(self, sea, ep):
         total = 0
-        for i in range(sea-2):
+        for i in range(sea-1):
             seasonData = self._getSeasonHTMLDictWiki(i+1)
             total = total+len(seasonData.keys())
         total = total+ep
@@ -528,4 +557,3 @@ class MovieData():
 
         if len(results) > 0:
             return results[0]["id"]
-
