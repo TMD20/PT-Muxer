@@ -1,4 +1,3 @@
-
 import json
 import os
 import functools
@@ -10,73 +9,74 @@ import mediadata.movieData as movieData
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
 import config
-import remux.Movie.anime as animeHelper
 
 
 def Remux(args):
     # Variables
     remuxConfigPaths = []
     remuxConfigs = []
-    movie = None
+    fileNameList = []
+    fileNameFuncts = []
+    movieTitleList=[]
+    muxGenerator = muxPicker.pickSite(args.site)
+    movieObj=movieData.MovieData()
 
-    folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
+    folders = utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
     if len(folders) == 0:
-        print("You need to demux a folder with Movie Mode first")
+        print("You need to demux a folder with TV Mode first")
         quit()
-    remuxConfigPaths.append(os.path.join(utils.singleSelectMenu(
-        folders, "Pick a folder to demux"), "output.json"))
-    # double check to make sure every path is current
+    folder = utils.singleSelectMenu(folders, "Pick a folder to demux")
+    remuxConfigPaths.extend(
+        list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
+#     # double check to make sure every path is current
     remuxConfigPaths = list(
         filter(lambda x: os.path.isfile(x), remuxConfigPaths))
+
     if not remuxConfigPaths or len(remuxConfigPaths) == 0:
-        print("You Must Pick at list one Config")
+        print("Their must be at least one output.json in the path")
         quit()
 
-    fileNameList = []
-    movieTitleList = []
-    fileNameFuncts = []
     utils.mkdirSafe(os.path.join(args.outpath, ""))
     for remuxConfigPath in remuxConfigPaths:
         print(f"\nPreparing Data for {remuxConfigPath}\n")
-        imdb = remuxConfig["Movie"].get("imdb")
-        anisearch = remuxConfig["Movie"].get("anisearch")
-        anidb = remuxConfig["Movie"].get("anidb")
-        mal = remuxConfig["Movie"].get("mal")
-        kitsu = remuxConfig["Movie"].get("kitsu")
-        offset = remuxConfig["Movie"].get("offset")
 
         remuxConfig = None
-        muxGenerator = muxPicker.pickSite(args.site)
 
         with open(remuxConfigPath, "r") as p:
             remuxConfig = json.loads(p.read())
 
-        if remuxHelper.checkMissing(remuxConfig) == False:
+        if remuxHelper.checkMissing(remuxConfig) == True:
             continue
         remuxConfigs.append(remuxConfig)
-        if not imdb:
-            animeHelper.getMovie(anisearch, anidb, mal, kitsu, offset)
 
-        if movie == None:
-            movie = movieData.getByID()
-        kind = args.forcemovie or movieData.getKind(movie)
-        os.chdir(args.outpath)
+        title = remuxConfig['Movie'].get(
+            'title') or remuxConfig['Movie'].get('engTitle')
+        year = remuxConfig['Movie']['year']
+        season=remuxConfig["Movie"]["season"]
+        episode = remuxConfig["Movie"]["episode"]
+        episodeTitle=movieObj.retriveEpisodeTitle(season,episode,title,year)
 
-        fileNameFuncts.append(functools.partial(
-            muxGenerator.getFileName, kind, remuxConfig, movie, args.group, args.skipnamecheck))
-        movieTitleList.append(movieData.getMovieTitle(movie))
+
+
+        if args.forcemovie:
+            fileNameFuncts.append(functools.partial(
+                muxGenerator.getFileName, remuxConfig, args.group, title, year, args.skipnamecheck))
+        else:
+            fileNameFuncts.append(functools.partial(
+                muxGenerator.getFileName, remuxConfig, args.group, title, year, args.skipnamecheck,int(season),int(episode),episodeTitle))
+        
+
     for i in range(len(fileNameFuncts)):
-        funct = fileNameFuncts[i]
+        funct=fileNameFuncts[i]
         fileNameList.append(funct())
     print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
     for i in range(len(fileNameList)):
         fileName = fileNameList[i]
         print(f"Creating this File\n{fileName}")
-        movieTitle = movieTitleList[i]
         muxGenerator = muxPicker.pickSite(args.site)
         remuxConfig = remuxConfigs[i]
-        ProcessBatch(fileName, movieTitle, kind,
-                     remuxConfig, muxGenerator, args.outargs)
+        ProcessBatch(fileName, 
+                     remuxConfig, muxGenerator, movieObj,args.outargs)
     message = """If the Program made it this far all MKV(s)...
     Should be in the output directory picked \
     Before Closing We will now print off file locations and mediainfo"""
@@ -88,22 +88,27 @@ def Remux(args):
     print(f"As a Reminder the output Directory is: {args.outpath}")
 
 
-def ProcessBatch(fileName, movieTitle, kind, remuxConfig, muxGenerator, outargs):
+def ProcessBatch(fileName, remuxConfig, muxGenerator,movieObj, outargs):
     # Variables
     chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
 
     xmlTemp = None
-    if kind == "Movie":
-        xmlTemp = remuxHelper.writeXMLMovie(
-            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
-    else:
-        season = remuxConfig["Season"]
-        episode = remuxConfig["Episode"]
-        xmlTemp = remuxHelper.writeXMLTV(
-            # imdb,tmdb,season,episode
-            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], season, episode)
+  
+    season = remuxConfig["Movie"]["season"]
+    episode = remuxConfig["Movie"]["episode"]
+    title = remuxConfig['Movie'].get(
+        'title') or remuxConfig['Movie'].get('engTitle')
+    year = remuxConfig['Movie']['year']
+    movieTitle=f"{title} ({year})"
+
+
+
+    xmlTemp = remuxHelper.writeXMLTV(
+        # imdb,tmdb,season,episode
+        remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], title, year, movieObj, season, episode)
 
     muxGenerator.generateMuxData(remuxConfig, outargs)
+
     if chaptersTemp:
         muxGenerator.createMKV(fileName, movieTitle,
                                chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))

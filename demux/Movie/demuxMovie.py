@@ -24,8 +24,10 @@ def demux(args):
     print("Getting Source(s) For Movie Demux\n")
 
     sources = select.getSources(options, args.inpath, args.sortpref)
-    print("What Movie?\n\n")
-    movie = movieData.matchMovie(sources)
+
+    movieObj = movieData.MovieData()
+
+    movieObj.setData("Movie",utils.getTitle(sources[0]))
     print("Creating Demux Folder at\n")
     os.chdir(paths.createParentDemuxFolder(sources, args.outpath))
     print(os.path.abspath("."))
@@ -35,8 +37,8 @@ def demux(args):
     demuxHelper.processBdinfo(sources, bdObjs, demuxData, args.dontconvert)
 
     tools.extractTracks(demuxData)
-    tools.sortTracks(muxSorter, demuxData, movie, args)
-    tools.machineReader(muxSorter, args, movie)
+    tools.sortTracks(muxSorter, demuxData, movieObj.movieObj, args)
+    tools.machineReader(muxSorter, args, movieObj.movieObj)
 
     match = bdObjs[0].mediaDir
     if len(bdObjs) > 1:
@@ -45,9 +47,9 @@ def demux(args):
     chapters = list(filter(lambda x: x.mediaDir == match, bdObjs))[0].chapters
 
     outdict = {}
-    tools.addMovieData(outdict, movie)
     outdict["Sources"] = tools.addSourceData(demuxData)
     outdict["ChapterData"] = tools.ConvertChapterList(chapters)
+    outdict["Movie"] = movieObj.movieObj
     tools.addEnabledData(outdict, muxSorter)
     tools.addTrackData(outdict, muxSorter)
     tools.writeFinalJSON(outdict)

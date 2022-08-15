@@ -24,8 +24,8 @@ def demux(args):
     sources = select.getSources(options, args.inpath,
                                 args.sortpref, args.splitplaylist == False)
     demuxFolder = paths.getDemuxFolder(sources, args.inpath, args.outpath)
-    movieObj = movieData.MovieData(utils.getTitle(sources[0]), "TV")
-    movieObj.setData()
+    movieObj = movieData.MovieData()
+    movieObj.setData("TV",utils.getTitle(sources[0]))
     season = utils.textEnter("What Season are you demuxing")
 
     while True:
@@ -44,6 +44,8 @@ def demux(args):
                          movieObj, season)
 
         if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
+            print("Thank You, make sure to double check episode numbers")
+
             break
         if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
             sources = select.getSources(
@@ -126,8 +128,8 @@ def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
             outdict["Sources"] = tools.addSourceData(demuxData)
             outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
             movieDict = movieObj.movieObj
-            movieDict["Episode"] = ep
-            movieDict["Season"] = season
+            movieDict["episode"] = ep
+            movieDict["season"] = season
             outdict["Movie"] = movieDict
 
             tools.addEnabledData(outdict, muxSorter)
@@ -199,8 +201,8 @@ def batchSources(bdObjs, sources, args, demuxFolder, movieObj, season):
         outdict["Sources"] = tools.addSourceData(demuxData)
         outdict["ChapterData"] = tools.ConvertChapterList(chapters)
         movieDict = movieObj.movieObj
-        movieDict["Episode"] = ep
-        movieDict["Season"] = season
+        movieDict["episode"] = ep
+        movieDict["season"] = season
         outdict["Movie"] = movieDict
 
         tools.addEnabledData(outdict, muxSorter)
