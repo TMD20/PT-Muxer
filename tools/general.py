@@ -8,22 +8,32 @@ import textwrap
 import pynumparser
 from InquirerPy import inquirer
 import arrow
+from guessit import guessit
 
 
-def convertArrow(input,parse):
-    return arrow.get(input,parse)
-def subArrowTime(large,small):
-    large=large.shift(hours=-small.hour)
-    large=large.shift(minutes=-small.minute)
-    large=large.shift(seconds=-small.second)
-    large=large.shift(microseconds=-small.microsecond)
+def convertArrow(input, parse):
+    return arrow.get(input, parse)
+
+
+def subArrowTime(large, small):
+    large = large.shift(hours=-small.hour)
+    large = large.shift(minutes=-small.minute)
+    large = large.shift(seconds=-small.second)
+    large = large.shift(microseconds=-small.microsecond)
     return large
-def addArrowTime(large,small):
-    large=large.shift(hours=+small.hour)
-    large=large.shift(minutes=+small.minute)
-    large=large.shift(seconds=+small.second)
-    large=large.shift(microseconds=+small.microsecond)
+
+
+def addArrowTime(large, small):
+    large = large.shift(hours=+small.hour)
+    large = large.shift(minutes=+small.minute)
+    large = large.shift(seconds=+small.second)
+    large = large.shift(microseconds=+small.microsecond)
     return large
+
+
+def dehumanizeArrow(input):
+    now = arrow.utcnow()
+    return now.dehumanize(input)
 
 
 def mkdirSafe(target):
@@ -87,6 +97,10 @@ def singleSelectMenu(items, message):
     return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
+def rawSelectMenu(items, message):
+    return inquirer.rawlist(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+
+
 def multiSelectMenu(items, message):
     return inquirer.checkbox(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
@@ -135,7 +149,7 @@ def getTVMuxFolders(inpath, demuxPrefix):
     # only get root directories
 
     folders = list(filter(lambda x: len(os.listdir(x)) != 0, folders))
-
+    folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
 
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) != None, folders))
@@ -149,6 +163,19 @@ def getMovieMuxFolders(inpath, demuxPrefix):
 
     folders = list(filter(lambda x: os.path.realpath(
         os.path.dirname(x)) == os.path.realpath(inpath), folders))
+    folders = list(filter(lambda x: len(os.listdir(x)) > 0,folders))
+
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) == None, folders))
     return folders
+
+
+
+def getTitle(source):
+    return guessit(source)["title"]
+
+
+def cleanString(val):
+    import unicodedata
+    clean_text = unicodedata.normalize("NFKD", val)
+    return clean_text
