@@ -35,14 +35,14 @@ class MovieData():
         self._type = type
         self._getShowURLWiki(title)
         if self._showURL != "" and self._getIsAnime() == True:
-            return self._getAnimeInfo()
+            return self._getAnimeInfo(title)
         else:
-            return self._getIMDBInfo()
+            return self._getIMDBInfo(title)
 
     def retriveEpisodeTitle(self, seasonNum, epNum, title, year, lang="English"):
         seasonNum = int(seasonNum)
         epNum = int(epNum)
-        return self._getEpisodeName(seasonNum, epNum, title, year, lang)
+        return utils.smart_truncate(self._getEpisodeName(seasonNum, epNum, title, year, lang),95)
 
     def retriveEpisodeIMDB(self, imdb, seasonNum, epNum, title, year):
         seasonNum = int(seasonNum)
@@ -79,6 +79,9 @@ class MovieData():
         if lang == "English":
             name = self._getEnglishNameWiki(
                 self._seasonsHTMLDict[seasonNum][epNum])
+        maxWordLength = 85
+        if len(name) > maxWordLength:
+            name = f"{name[:75]}......"
         return re.sub('"', '', name)
 
     def _getEpisodeIMDB(self, imdb, seasonNum, epNum, title, year):
@@ -347,7 +350,7 @@ class MovieData():
             return False
         return True
 
-    def _getAnimeInfo(self):
+    def _getAnimeInfo(self, title):
         animeJSON = os.path.join(
             config.root_dir, "anime-offline-database", "anime-offline-database.json")
 
