@@ -179,3 +179,8 @@ def cleanString(val):
     import unicodedata
     clean_text = unicodedata.normalize("NFKD", val)
     return clean_text
+def smart_truncate(content, length=100, suffix='...'):
+    if len(content) <= length:
+        return content
+    else:
+        return content[:length].rsplit(' ', 1)[0]+suffix

@@ -189,11 +189,18 @@ For TV shows use OCR/ subimages to confirm episode number
 Changing any of these settings, other than langs will have an effect on "remux" mode
 langs data is present only for convenience
 
-* IMDB: ID for Movie/TV show
-* tmdb: ID for Movie/TV show
+* IMDB: imdb ID for Movie/TV show
+* tmdb: themoviedb ID for Movie/TV show
 * langs: Offical Languages for movie or TV show
-* Season: if TV show the season
-* Episode: If TV show the episode number
+* season: if TV show the season
+* episode: If TV show the episode number
+* title: The title of the show
+* mal_id: myanimelist id for the show, only applies to anime
+* enTitle: only applies to anime, the english title of show
+* japTitle: only applies to anime, the japanese title of the show
+* anisearch: only applies to anime, animesesarch for the show
+* anidb: only applies to anime, animedb id for the show
+* kitsu: only applies to anime, kitsu id for the show
 
 
 ### 2. Sources
@@ -561,7 +568,7 @@ This will change the group tag of the final MKV
 
 --forcemovie
 ```
-Example:python3 /path/to/app.py --forcemovie
+Example:python3 /path/to/app.py remux --forcemovie
 
 overwrites TV Movies by treating them as a movie, instead of a TV show
 ```
@@ -571,11 +578,18 @@ overwrites TV Movies by treating them as a movie, instead of a TV show
 
 --outargs
 ```
-Example:python3 /path/to/app.py "remux" --outargs "--split chapters:13,22,33,45,54"
+Example:python3 /path/to/app.py remux --outargs "--split chapters:13,22,33,45,54"
 
 Passes mkvtoolnix global options to the final mkvtoolnix command
 Read the global option section here: https://mkvtoolnix.download/doc/mkvmerge.html#mkvmerge.description
 ```
+--skipnamecheck
+```
+Example:python3 /path/to/app.py remux --skipnamecheck
+
+Skip confirmation of filenames
+```
+
 
 ### Movie Mode
 
