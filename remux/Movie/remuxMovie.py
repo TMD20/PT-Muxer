@@ -20,7 +20,7 @@ def Remux(args):
         print("You need to demux a folder with Movie Mode first")
         quit()
     remuxConfigPath = os.path.join(utils.singleSelectMenu(
-        folders, "Pick a folder to demux"), "output.json")
+        folders, "Pick the folder with the files you want to remux"), "output.json")
 #     # double check to make sure every path is current
     if not remuxConfigPath:
         print("You Must Pick at list one Config")
