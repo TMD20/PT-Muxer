@@ -25,7 +25,8 @@ def Remux(args):
     if len(folders) == 0:
         print("You need to demux a folder with TV Mode first")
         quit()
-    folder = utils.singleSelectMenu(folders, "Pick a folder to demux")
+    folder = utils.singleSelectMenu(
+        folders, "Pick the folder with the files you want to remux")
     remuxConfigPaths.extend(
         list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
     remuxConfigPaths = natsort.natsorted(remuxConfigPaths)

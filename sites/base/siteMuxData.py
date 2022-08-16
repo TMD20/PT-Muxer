@@ -149,10 +149,7 @@ class MuxOBj():
         else:
             fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         # Normalize
-        fileName = re.sub(" +", " ", fileName)
-        fileName = re.sub(" ", ".", fileName)
-        fileName = re.sub("\.+", ".", fileName)
-        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
+        fileName=self._fileNameCleaner(fileName)
         if not skipNameCheck:
             inputs = ["YES", "NO"]
             choice = utils.singleSelectMenu(
@@ -163,7 +160,14 @@ class MuxOBj():
                 choice = utils.singleSelectMenu(
                     inputs, "Is the File Correct Now\n")
         return os.path.abspath(os.path.join(".", fileName))
-
+    def _fileNameCleaner(self,fileName):
+        fileName = re.sub(" +", " ", fileName)
+        fileName = re.sub(" ", ".", fileName)
+        fileName = re.sub("\.+", ".", fileName)
+        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
+        fileName = re.sub("([^a-zA-Z\d])\.", ".", fileName)
+        fileName = re.sub("\.([^a-zA-Z\d])", ".", fileName)
+        return fileName
     def _addOutPutArgs(self, outargs):
         self._outputargs = outargs.split()
 

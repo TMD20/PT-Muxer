@@ -32,10 +32,8 @@ class AnimeBytes(MuxOBj):
         else:
             fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
         # Normalize FileName
-        fileName = re.sub(" +", " ", fileName)
-        fileName = re.sub(" ", ".", fileName)
-        fileName = re.sub("\.+", ".", fileName)
-        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
+        fileName = self._fileNameCleaner(fileName)
+
         if not skipNameCheck:
             inputs = ["YES", "NO"]
             choice = utils.singleSelectMenu(
