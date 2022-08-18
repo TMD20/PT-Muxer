@@ -1,12 +1,10 @@
 
 import json
 import os
-import functools
 
 from pymediainfo import MediaInfo
 
 import remux.helper as remuxHelper
-import mediadata.movieData as movieData
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
 import config
@@ -37,14 +35,9 @@ def Remux(args):
     title = remuxConfig['Movie'].get(
         'title') or remuxConfig['Movie'].get('engTitle')
     year = remuxConfig['Movie']['year']
-  
-
-
-#   remuxConfig,group,movieName,skipNameCheck,season=None,episode=None
 
     fileName = muxGenerator.getFileName(
-         remuxConfig, args.group,title,year, args.skipnamecheck)
-
+        remuxConfig, args.group, title, year, args.skipnamecheck)
 
     ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
     message = """If the Program made it this far the Movie MKV...
@@ -66,13 +59,13 @@ def ProcessBatch(fileName, remuxConfig, muxGenerator, outargs):
     title = remuxConfig['Movie'].get(
         'title') or remuxConfig['Movie'].get('engTitle')
     year = remuxConfig['Movie']['year']
-    movieTitle=f"{title} ({year})"
+    movieTitle = f"{title} ({year})"
     if chaptersTemp:
         muxGenerator.createMKV(fileName, movieTitle,
                                chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
 
         os.close(chaptersTemp[0])
     else:
-        muxGenerator.createMKV(fileName, title,year,
+        muxGenerator.createMKV(fileName, title, year,
                                None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
     os.close(xmlTemp[0])

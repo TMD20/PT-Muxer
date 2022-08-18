@@ -163,12 +163,11 @@ def getMovieMuxFolders(inpath, demuxPrefix):
 
     folders = list(filter(lambda x: os.path.realpath(
         os.path.dirname(x)) == os.path.realpath(inpath), folders))
-    folders = list(filter(lambda x: len(os.listdir(x)) > 0,folders))
+    folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
 
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) == None, folders))
     return folders
-
 
 
 def getTitle(source):
@@ -179,6 +178,8 @@ def cleanString(val):
     import unicodedata
     clean_text = unicodedata.normalize("NFKD", val)
     return clean_text
+
+
 def smart_truncate(content, length=100, suffix='...'):
     if len(content) <= length:
         return content
