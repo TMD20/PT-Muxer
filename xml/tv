@@ -7,7 +7,7 @@
         </Targets>
         <Simple>
             <Name>IMDB</Name>
-            <String>$imdb</String>               <!-- Replace # with IMDB id for that tv series e.g. tt0944947 -->
+            <String>tt$imdb</String>               <!-- Replace # with IMDB id for that tv series e.g. tt0944947 -->
         </Simple>
         <Simple>
             <Name>TMDB</Name>
@@ -37,7 +37,7 @@
         </Simple>
         <Simple>
             <Name>IMDB</Name>
-            <String>$imdbEP</String>               <!-- Replace # with IMDB id for that episode e.g. tt1829963 -->
+            <String>tt$imdbEP</String>               <!-- Replace # with IMDB id for that episode e.g. tt1829963 -->
         </Simple>
     </Tag>
 </Tags>

@@ -3,12 +3,13 @@ import requests
 import re
 import json
 import os
+import functools
 
 import tools.general as utils
 from bs4 import BeautifulSoup
 import jellyfish
 from imdb import Cinemagoer as imdb
-from tmdbv3api import Find, TMDb
+from tmdbv3api import Find, TMDb, TV, Episode, Season
 
 import config
 # Globals
@@ -16,6 +17,9 @@ ia = imdb()
 tmdb = TMDb()
 tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
 find = Find()
+tv = TV()
+seasonTMDB = Season()
+episodeTMDB = Episode()
 
 
 class MovieData():
@@ -24,14 +28,29 @@ class MovieData():
         self._episodesURL = ""
         self._showURL = ""
         self._movieObj = {}
-        self._seasonsHTMLDict = {}
-        self._imdbObjDict = {}
+        self._seasonsHTMLDictWiki = {}
+        self._showObjDictIMDB = {}
+        self._epiDictTMDB = {}
 
-    ##########################################################################
-    # Public Function
-    ########################################################################################
+########################################################################################
+# Public Function
+########################################################################################
 
     def setData(self, type, title):
+        """
+        Sets MovieData Dict with data, movie is picked by user
+        Parameters
+        ----------
+        type : str
+            Whether we are looking for a Movie or TV show
+        title : str
+            The title to search for
+
+        Returns
+        -------
+        dict
+            returns MovieData Dict with data about matches show
+        """
         self._type = type
         self._getShowURLWiki(title)
         if self._showURL != "" and self._getIsAnime() == True:
@@ -39,98 +58,283 @@ class MovieData():
         else:
             return self._getIMDBInfo(title)
 
-    def retriveEpisodeTitle(self, seasonNum, epNum, title, year, lang="English"):
+    def retriveEpisodeTitle(self, seasonNum, epNum, title, year, tmdbID, lang="English"):
+        """
+        get Episode Title Via Wikepedia or TMDB
+
+        Parameters
+        ----------
+        seasonNum : int or str
+            The Number of the Season
+        epNum : int or str
+            The Number of the episode in Current Season
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+        tmdbID: str
+            TMDBID of the Series
+        lang: str [option]
+            Language of the Title to return
+
+        Returns
+        -------
+        str
+            title of the episode
+        """
         seasonNum = int(seasonNum)
         epNum = int(epNum)
-        return utils.smart_truncate(self._getEpisodeName(seasonNum, epNum, title, year, lang),95)
 
-    def retriveEpisodeIMDB(self, imdb, seasonNum, epNum, title, year):
+        ogTitle = self._getEpisodeName(
+            seasonNum, epNum, title, year, tmdbID, lang)
+        return utils.smart_truncate(ogTitle, 95)
+
+    def retriveEpisodeIMDB(self, imdbID, tmdbID, seasonNum, epNum, title, year):
+        """
+        get Episode IMDB Via Wikepedia by TMDB matches data to IMDB
+
+        Parameters
+        ----------
+
+        tmdbID: str
+            TMDBID of the Series
+
+        imdbbID: str
+            imdbID of the Series
+        seasonNum : int or str
+            The Number of the Season
+        epNum : int or str
+            The Number of the episode in Current Season
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+
+        Returns
+        -------
+
+        str
+            imdb string for the episode
+        """
         seasonNum = int(seasonNum)
         epNum = int(epNum)
-        return self._getEpisodeIMDB(imdb, seasonNum, epNum, title, year)
+        return self._getEpisodeIMDB(imdbID, tmdbID, seasonNum, epNum, title, year)
 
-    def retriveNumberofEpisodes(self, seasonNum, epNum, title, year):
-        return self._getNumberofEpisodes(seasonNum, epNum, title, year)
+    def retriveNumberofEpisodes(self, seasonNum, title, year, tmdbID):
+        """
+        Gets the total Number of Episodes in the current Season
 
-    """
-    Getters/Setters
-    """
+        Parameters
+        ----------
+
+        seasonNum : int or str
+            The Number of the Season
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+
+        Returns
+        -------
+
+        int
+            the number of episodes in the correct season
+        """
+        return self._getNumberofEpisodes(seasonNum, title, year, tmdbID)
+
+    ########################################################################################
+    # Getters/Setters
+    ########################################################################################
 
     @property
     def movieObj(self):
         return self._movieObj
 
-##########################################################################
+########################################################################################
 # Private Functions
-#
 ########################################################################################
 
-    # Wikepedia functions
+    ########################################################################################
+    # helpers
+    ########################################################################################
 
-    #helpers
+    def _getEpisodeName(self,  seasonNum, epNum, title, year, tmdbID, lang):
+        """
+        Helper Function to get Episode Title Via Wikepedia or TMDB
 
-    def _getEpisodeName(self,  seasonNum, epNum, title, year, lang):
-        seasonNum = int(seasonNum)
-        epNum = int(epNum)
-        self._getEpisodesURLWiki(title, year)
-        self._getSeasonSectionsWiki()
-        self._getSeasonHTMLDictWiki(seasonNum)
-        name = None
+        Parameters
+        ----------
+        seasonNum : int or str
+            The Number of the Season
+        epNum : int or str
+            The Number of the episode in Current Season
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+        tmdbID: str
+            TMDBID of the Series
+        lang: str [option]
+            Language of the Title to return
+
+
+        Returns
+        -------
+        str
+            title of the episode
+        """
+        name = "PlaceHolder Title"
         if lang == "English":
-            name = self._getEnglishNameWiki(
-                self._seasonsHTMLDict[seasonNum][epNum])
-        maxWordLength = 85
-        if len(name) > maxWordLength:
-            name = f"{name[:75]}......"
-        return re.sub('"', '', name)
+            try:
+                data = self._seasonSelectionTMDB(seasonNum, title, tmdbID)
+                name = self._getEnglishNameTMDB(data, epNum)
 
-    def _getEpisodeIMDB(self, imdb, seasonNum, epNum, title, year):
-        seasonNum = int(seasonNum)
-        epNum = int(epNum)
-        self._getEpisodesURLWiki(title, year)
-        self._getSeasonSectionsWiki()
-        return self._getIMDBWiki(imdb, seasonNum, epNum)
+            except:
+                print("TMDB Episode Name Finder Failed")
+            try:
+                self._getEpisodesURLWiki(title, year)
+                self._getSeasonSectionsWiki()
+                self._getSeasonHTMLDictWiki(seasonNum)
+                if lang == "English":
+                    name = self._getEnglishNameWiki(
+                        self._seasonsHTMLDictWiki[seasonNum][epNum])
+                return re.sub('"', '', name)
+            except:
+                print("Wiki Episode Name Finder Failed")
+            return name
 
-    def _getNumberofEpisodes(self, seasonNum, epNum, title, year):
-        seasonNum = int(seasonNum)
-        epNum = int(epNum)
-        self._getEpisodesURLWiki(title, year)
-        self._getSeasonSectionsWiki()
-        return self._getTotalEPWiki()
+    def _getEpisodeIMDB(self, imdbID, tmdbID, seasonNum, epNum, title, year):
+        """Helper Function to get Episode IMDB Via Wikepedia by TMDB matches data to IMDB
+        Parameters
+        ----------
 
-    def _getIMDBWiki(self, imdb, seasonNum, epNum):
+        tmdbID: str
+            TMDBID of the Series
+
+        imdbbID: str
+            imdbID of the Series
+        seasonNum : int or str
+            The Number of the Season
+        epNum : int or str
+            The Number of the episode in Current Season
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+        Returns
+        -------
+        str
+            imdb string for the episode
+        """
+
+        try:
+            seasonIDList = self._seasonSearchTMDB(title, tmdbID)
+            return self._episodeIMDBMatcherTMDB(seasonIDList, tmdbID, imdbID, seasonNum, epNum)
+
+        except:
+            print("TMDB Episode IMDB Matcher Failed")
+        try:
+            self._getEpisodesURLWiki(title, year)
+            self._getSeasonSectionsWiki()
+            return self._episodeIMDBMatcherWiki(imdbID, seasonNum, epNum)
+        except:
+            print("Wiki Episode IMDB Matcher Failed")
+
+    def _getNumberofEpisodes(self, seasonNum, title, year, tmdbID):
+        """
+        Helper Function to get the total Number of Episodes in the current Season
+
+        Parameters
+        ----------
+
+        seasonNum : int or str
+            The Number of the Season
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+
+        Returns
+        -------
+
+        int
+            the number of episodes in the correct season
+        # """
+        try:
+            return self._getTotalEPSeasonTMDB(seasonNum, title, tmdbID)
+        except:
+            print("TMDB Episode Counter Failed")
+        try:
+            self._getEpisodesURLWiki(title, year)
+            self._getSeasonSectionsWiki()
+            return self. getSeasonEPCountWiki(seasonNum)
+        except:
+            print("Wiki Episode Counter Failed")
+
+    ########################################################################################
+    # Wikipedia Functions
+    ########################################################################################
+
+    def _episodeIMDBMatcherWiki(self, imdbID, seasonNum, epNum):
+        """
+        Retrives Episode Data from Wiki, Matches With IMDB Data
+        to Retrive IMDB for Episode
+
+        Parameters
+        ----------
+
+        imdbID : str
+            ID of the show
+        seasonNum : int or str
+            The Number of the Season
+        epNum : int or str
+            The Number of the episode in Current Season
+        title:  str
+            Title of the show
+
+        Returns
+        -------
+
+        imdbID
+            The ID of the specific episode
+        """
         airdate = self._getEpisodeAirDateWiki(seasonNum, epNum)
-        overallEP = self._getOverallEpNumWiki(seasonNum, epNum)
+        overallEP = self._getOverallepNumWiki(seasonNum, epNum)
         enTitle = self._getEnglishNameWiki(
-            self._seasonsHTMLDict[seasonNum][epNum])
+            self._seasonsHTMLDictWiki[seasonNum][epNum])
         japTitle = self._getJapaneseNameWiki(
-            self._seasonsHTMLDict[seasonNum][epNum])
+            self._seasonsHTMLDictWiki[seasonNum][epNum])
         compare = utils.convertArrow(airdate, "MMMM D, YYYY")
-        series = self._imdbObjDict.get(imdb) or ia.get_movie(imdb)
-        self._imdbObjDict[imdb] = series
-        ia.update(series, "episodes")
+        series = self._getByIDWithSetsIMDB(imdbID, "episodes")
         matchSeason = None
         for i in range(series["seasons"]):
             k = i+1
             matchSeason = k
-            totalEP = len(series["episodes"][k])
-            curr = series["episodes"][k][totalEP]
-            releaseDate = self._getReleaseDatesWiki(curr)[0]
+            totalEPIMDBSeason = len(series["episodes"][k])
+            curr = series["episodes"][k][totalEPIMDBSeason]
+            releaseDate = self._getEpisodeReleaseDateIMDB(curr.movieID)[0]
             date = utils.convertArrow(releaseDate, "D MMMM YYYY")
             if (date-compare).total_seconds() > 90000:
                 break
 
-        totalEP = len(series["episodes"][matchSeason])
+        totalEPIMDBSeason = len(series["episodes"][matchSeason])
         offset = 5
         startEP = (max(1, epNum-offset))
-        if overallEP < totalEP:
+        if overallEP < totalEPIMDBSeason:
             startEP = (max(1, overallEP - offset))
         matchObj = None
-        for i in range(startEP, totalEP+1):
+        print("Searching for Matching Episode\nThis may take a while...")
+        for i in range(startEP, totalEPIMDBSeason+1):
             curr = series["episodes"][matchSeason][i]
-            releaseDate = self._getReleaseDatesWiki(curr)[0]
+            releaseDate = self._getEpisodeReleaseDateIMDB(curr.movieID)[0]
             date = utils.convertArrow(releaseDate, "D MMMM YYYY")
             if abs((date-compare).total_seconds()) < 90000:
+                matchObj = curr
+                break
+            elif re.sub(" +", "", curr["title"]) == re.sub(" +", "", enTitle):
+                matchObj = curr
+                break
+            elif re.sub(" +", "", curr["title"]) == re.sub(" +", "", japTitle):
                 matchObj = curr
                 break
             elif jellyfish.jaro_distance(curr["title"], enTitle) > .9:
@@ -143,9 +347,27 @@ class MovieData():
             return
         ia.update(matchObj, info=["main"])
         return matchObj["imdbID"]
-    #url grabbers
+    ##################################################################################
+    #URL Grabbers
+    ##################################################################################
 
     def _getShowURLWiki(self, title):
+        """
+        Gets the URL from wikepedia that corresponds to the title
+
+        Parameters
+        ----------
+
+        title : str
+            The title to search for
+            Handles redirects
+
+        Returns
+        -------
+
+        str
+                the main url for the show
+        """
         url = "https://en.wikipedia.org/w/api.php"
         pageList = [string.Template("$title")]
 
@@ -165,38 +387,149 @@ class MovieData():
             break
 
     def _getEpisodesURLWiki(self, title, year):
+        """
+        Gets the URL from wikepedia that corresponds to the list of episodes for a show
+
+        Parameters
+        ----------
+
+        title : str
+            The title to search for
+            Handles redirects
+        year : str
+            The year the show came out
+        Returns
+        -------
+
+        str
+            The main url for all episodes of the show
+        """
+        if self._episodesURL and self._filterWord:
+            return
+        pageList = [f"List of {title} episodes", f"{title}"]
+        self._getEpisodeURLSectionSearchHelper(title, year, pageList)
+        if len(self._episodesURL) == 0:
+            pageList = self._getEpisodeURL_LinkHelper(title)
+            self._getEpisodeURLSectionSearchHelper(title, year, pageList)
+
+    def _getEpisodeURLSectionSearchHelper(self, title, year, pageList):
+        """
+        function To search through a list of pages
+        Sets values to be used by other functions
+
+        Parameters
+        ----------
+
+        title : str
+            The title to search for
+            Handles redirects
+        year : str
+            The year the show came out
+        pageList: list
+            titles of pages to search for in list format
+        Returns
+        -------
+
+        str
+            The main url for all episodes of the show
+        """
         url = "https://en.wikipedia.org/w/api.php"
-        pageList = [string.Template(
-            "List of $title episodes"), string.Template("$title")]
-
+        searches1 = [f"(<[a-z]+>)+{title}(</[a-z]+>)+.*{year}",
+                     f"{title} ", f"{title}.*{year}", f"^{title}$"]
+        searches2 = [f"^Season", f"(<[a-z]+>)+{title}(</[a-z]+>)+.*{year}",
+                     f"{title} ", f"{title}.*{year}", f"^{title}$"]
         for ele in pageList:
-
             PARAMS = {
                 "prop": "sections",
                 "format": "json",
-                "page": ele.substitute(title=title),
+                "page": ele,
                 "action": "parse",
                 "redirects": "1"
             }
-            searches = [f"^Season", f"{title}.*{year}", f"{title}"]
-            self._episodesURL = None
+            req = config.session.get(url, params=PARAMS)
+            if req.json().get("error"):
+                continue
+            sections = req.json()["parse"]["sections"]
+            searches = searches1
+            if re.search(f"{title}", req.json()["parse"]["title"]):
+                searches = searches2
             for search in searches:
-                req = config.session.get(url, params=PARAMS)
-                sections = req.json()["parse"]["sections"]
-                if req.json().get("error"):
-                    continue
                 section = len(list(filter(lambda x: re.search(
                     search, x["line"], re.IGNORECASE), sections)))
                 if section == 0:
                     continue
                 self._filterWord = search
                 self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
-                break
-            if self._episodesURL:
-                break
-        #data
+                return
+            #Additional matches based on section names being close to title
+            section1 = list(filter(lambda x: re.sub(
+                " +", "", x["line"]) == re.sub(" +", "", title), sections))
+            section2 = list(filter(lambda x: jellyfish.jaro_distance(
+                title, x["line"]) > .92, sections))
+            if len(section1) != 0:
+                self._filterWord = section1[0]["line"]
+                self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
+                return
+
+            elif len(section2) != 0:
+                self._filterWord = section2[0]["line"]
+                self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
+                return
+            #reset sections
+            sections = []
+
+    def _getEpisodeURL_LinkHelper(self, title):
+        """
+        Searches wikepedia page for internal link to episode page
+
+        Parameters
+        ----------
+
+        title : str
+            The title to search for
+            Handles redirects
+
+        Returns
+        -------
+
+        list
+            List of interal pages that may be the list of episodes page
+        """
+        url = "https://en.wikipedia.org/w/api.php"
+         pageList = [string.Template("$title")]
+          data = []
+           for ele in pageList:
+                PARAMS = {
+                    "prop": "links",
+                    "format": "json",
+                    "page": ele.substitute(title=title),
+                    "action": "parse",
+                    "redirects": "1"
+                }
+                req = config.session.get(url, params=PARAMS)
+                if req.json().get("error"):
+                    continue
+                data.extend(list(filter(lambda x: re.search(
+                    "List of {title} episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
+                data.extend(list(filter(lambda x: re.search(
+                    "List of .* episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
+                data = list(map(lambda x: x["*"], data))
+
+            return data
 
     def _getSeasonSectionsWiki(self):
+        """ 
+        Parses List of Episode Page
+        Creates a List with each element being a season
+
+        Parameters
+        ----------
+        Returns
+        -------
+
+        list
+            A List with each elemement being the session Name, as returned by the Wikepedia API
+        """
         url = self._episodesURL
         PARAMS = {
             "prop": "sections",
@@ -211,9 +544,24 @@ class MovieData():
         return seasons
 
     def _getSeasonHTMLDictWiki(self, seasonNum):
+        """ 
+        Creates a dictionary of Episode Data for selected Season
+
+        Parameter
+        ----------
+
+        seasonNum : int or str
+            The Number of the Season 
+        
+        Returns
+        -------
+
+        dict
+            returns dictionary with Keys set as episode Number, Data episode HTML elements
+        """
         #data has already been set
-        if self._seasonsHTMLDict.get(seasonNum) != None:
-            return self._seasonsHTMLDict.get(seasonNum)
+        if self._seasonsHTMLDictWiki.get(seasonNum) != None:
+            return self._seasonsHTMLDictWiki.get(seasonNum)
         outdict = {}
         section = self._seasonSectionDicts[seasonNum-1]
         index = section["index"]
@@ -239,12 +587,22 @@ class MovieData():
             for num in nums:
                 outdict[count] = ele
                 count = count+1
-        self._seasonsHTMLDict[seasonNum] = outdict
+        self._seasonsHTMLDictWiki[seasonNum] = outdict
         return outdict
 
-    #dates
-
     def _getOriginalAirDateWiki(self):
+        """ 
+        Gets the original Airdate From the first episode of first season HTML 
+        or the earliest airdate if multiple present
+
+        Parameter
+        ----------
+        Returns
+        -------
+
+        str
+            The Original Airdate for first episode 
+        """
         seasonData = self._getSeasonHTMLDictWiki(1)
         epData = seasonData[1]
         sections = epData.find_all("td")
@@ -268,6 +626,18 @@ class MovieData():
         return date
 
     def _getEpisodeAirDateWiki(self, seasonNum, epNum):
+        """ 
+        Gets the original Airdate for a particular Episode 
+        or the earliest airdate if multiple present
+
+        Parameter
+        ----------
+        Returns
+        -------
+
+        str
+            The Original Airdate for episode 
+        """
         seasonData = self._getSeasonHTMLDictWiki(seasonNum)
         epData = seasonData[epNum]
         sections = epData.find_all("td")
@@ -290,24 +660,42 @@ class MovieData():
 
         return date
 
-    def _getReleaseDatesWiki(self, epNum):
-        ia.update(epNum, info=['release dates'])
-        data = epNum["release dates"]
-        out = []
-        for ele in data:
-            date = re.search("[0-9]{2} [a-z]* [0-9]{4}", ele, re.IGNORECASE) or re.search(
-                "[0-9]{1} [a-z]* [0-9]{4}", ele, re.IGNORECASE)
-            if date != None:
-                out.append(date.group(0))
-        return list(sorted(out, key=lambda x: utils.convertArrow(x, "D MMMM YYYY")))
-
-    #names
     def _getEnglishNameWiki(self, epNum):
+        """ 
+        Gets English Name from wikepedia HTML Episode Section
+
+        Parameter
+        ----------
+
+        epNum : int or str
+        The Number of the episode in Current Season           
+        Returns
+        -------
+
+        str
+            English Title of Episode
+        """
         fulltitle = epNum.find("td", attrs={"class": "summary"}).get_text()
         name = re.sub("Transcription.*", "", fulltitle)
         return name
 
     def _getJapaneseNameWiki(self, epNum):
+        """ 
+        Gets Japenese Name from wikepedia HTML Episode Section
+        If preent
+
+        Parameter
+        ----------
+
+        epNum : int or str
+        The Number of the episode in Current Season           
+        Returns
+        -------
+
+        str
+        Japenese Title of Episode
+        """
+
         fulltitle = epNum.find("td", attrs={"class": "summary"}).get_text()
         section = re.search("Transcription.*:(.*)\(Jap",
                             fulltitle) or re.search("Transcription.*:(.*)", fulltitle)
@@ -317,26 +705,83 @@ class MovieData():
         return name
 
     #episode count
-    def _getTotalEPWiki(self):
+    def _gettotalEPIMDBSeasonWiki(self):
+        """ 
+        Gets the total Episode Count For all Season Using Wikepedia
+
+        Parameter
+        ----------
+        Returns
+        -------
+
+        int
+            total number of episode present on the List of Episode Page
+        """
         total = 0
         for i in range(len(self._seasonSectionDicts)):
             seasonData = self._getSeasonHTMLDictWiki(i+1)
             total = total+len(seasonData.keys())
         return total
 
-    def _getOverallEpNumWiki(self, sea, ep):
+    def getSeasonEPCountWiki(self, seasonNum):
+        """ 
+        Gets the total Count of Episode According to WIkepedia
+        For a particular Season
+
+        Parameter
+        ----------
+
+        seasonNum : int or str
+            The Number of the Season 
+        
+        Returns
+        -------
+
+        int
+             total number of episode for that particular season
+        """
+        seasonData = self._getSeasonHTMLDictWiki(seasonNum)
+        return len(seasonData.keys())
+
+    def _getOverallepNumWiki(self, seasonNum, epNum):
+        """ 
+        Gets the overall Episode Number for a episode according to Wikepedia
+        I.e All previous Season Episodes adding together + the EP number for current Season
+
+        Parameter
+        ----------
+
+        seasonNum : int or str
+            The Number of the Season 
+        epNum : int or str
+            The Number of the episode in Current Season        
+        Returns
+        -------
+
+        int
+             the oveall episode Number
+        """
         total = 0
-        for i in range(sea-1):
+        for i in range(seasonNum-1):
             seasonData = self._getSeasonHTMLDictWiki(i+1)
             total = total+len(seasonData.keys())
-        total = total+ep
+        total = total+epNum
         return total
 
-    """
-    Anime Functions
-    """
+    #########################################################################
+    # Anime Functions
+    #########################################################################
 
     def _getIsAnime(self):
+        """Checks with the Wikepedia Article indicates this is an anme
+        Parameters
+        ----------
+        Returns
+        -------
+        bool
+            Whether or not this is an anime
+        """
+
         PARAMS = {
             "prop": "text",
             "format": "json",
@@ -351,6 +796,20 @@ class MovieData():
         return True
 
     def _getAnimeInfo(self, title):
+        """Sets MovieData Dict with data, movie is picked by user
+         Specifically for Anime Movie/TV Shows
+        Parameters
+        ----------
+        type : str
+            Whether we are looking for a Movie or TV show
+        title : str
+            The title to search for
+
+        Returns
+        -------
+        dict
+            returns MovieData Dict with data about matches show
+        """
         animeJSON = os.path.join(
             config.root_dir, "anime-offline-database", "anime-offline-database.json")
 
@@ -368,8 +827,15 @@ class MovieData():
 
         malData = self._getAnimeData(self._movieObj["mal"])
         self._movieObj["imdb"] = self._maltoIMDB(malData)
-        self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
-            f"tt{self._maltoIMDB(malData)}")
+        tmdbID = self._convertIMDBtoTMDB(
+            f"tt{self._maltoIMDB(malData)}", self._type)
+        if tmdbID == None:
+            data = list(filter(lambda x: re.search(
+                malData['aired']['prop']['from']['year'], x["first_aired_date"]), tv.search(title)))
+            if len(data) > 0:
+                tmdbID = data[0]
+
+        self._movieObj["tmdb"] = tmdbID
 
         with open(animeJSON, "r") as p:
             data = json.loads(p.read())["data"]
@@ -393,32 +859,121 @@ class MovieData():
         return self._movieObj
 
     def _getAnimeSearchData(self, title):
+        """
+        Searces myanimelist unofficial API for title
+        Returns Results as dictionary
+
+        Parameters
+        ----------
+
+        title : str
+            The title to search for
+
+        Returns
+        -------
+        dict
+            Dictionary of Result matches search
+        """
         url = f"https://api.jikan.moe/v4/anime?q={title}"
         req = config.session.get(url)
         data = req.json()["data"]
         return data
 
     def _getEngTitle(self, data):
+        """
+        Filters myanimelist results for english titles
+
+        Parameters
+        ----------
+
+        data : dict
+            data retrive from unoffical myanimelist API
+
+        Returns
+        -------
+
+        list
+            list of english Titles
+        """
         titles = list(map(lambda x: x["title_english"], data))
         titles = list(filter(lambda x: x != None, titles))
         return titles
 
     def _getJapTitle(self, data):
+        """
+        Filters myanimelist results for japenese titles
+
+        Parameters
+        ----------
+
+        data : dict
+            data retrive from unoffical myanimelist API
+
+        Returns
+        -------
+
+        list
+            list of japanese Titles
+        """
         titles = list(map(lambda x: x["title_japanese"], data))
         titles = list(filter(lambda x: x != None, titles))
         return titles
 
     def _getmalIds(self, data):
+        """
+        Filters myanimelist results for mal IDs
+
+        Parameters
+        ----------
+
+        data : dict
+            data retrive from unoffical myanimelist API
+
+        Returns
+        -------
+        
+        list
+            list of mal IDs
+        """
         id = list(map(lambda x: x["mal_id"], data))
         id = list(filter(lambda x: x != None, id))
         return id
 
     def _getTypes(self, data):
+        """
+        Filters myanimelist results for media type
+
+        Parameters
+        ----------
+
+        data : dict
+            data retrive from unoffical myanimelist API
+
+        Returns
+        -------
+        
+        list
+            list of mediatypes
+        """
         type = list(map(lambda x: x["type"], data))
         type = list(filter(lambda x: x != None, type))
         return type
 
     def _addAnimeSourcesHelper(self, sources):
+        """
+        Takes a dictionary of sources and Creates keys via the URLS
+        Updates class MovieOBj
+
+        Parameters
+        ----------
+
+        sources : dict
+            This is data retrived from a XML file that corrisponds to a certain Anime
+
+        Returns
+        -------
+        
+        """
         for source in sources:
             if re.search("https://anisearch.com/anime/", source):
                 self._movieObj["anisearch"] = re.sub(
@@ -438,6 +993,23 @@ class MovieData():
         return self._movieObj
 
     def _maltoIMDB(self, data):
+        """
+        Reads Mal Data from ID search via unoffical API
+        Matches Information to IMDB
+
+        Parameters
+        ----------
+
+        data : dict
+            dict return for a picked selection from MAL API
+
+        Returns
+        -------
+
+        str
+            imdbID for the Movie/Show
+        
+        """
         minutes = 0
         hours = 0
 
@@ -457,6 +1029,26 @@ class MovieData():
         return self._matchIMDB(engTitle, year, runtime)
 
     def _matchIMDB(self, title, year, runtime):
+        """
+        Tries to Find Show or Movie Based on Different criteria
+
+        Parameters
+        ----------
+
+        title:  str
+            Title of the show
+        year:   str
+            Year the title came out
+        runtime: str
+            str to be parsed by arrow 
+
+        Returns
+        -------
+        
+        str
+            imdbID for the Movie/Show
+        
+        """
         imdbObjs = self._getMovieList(title)
         for obj in imdbObjs:
             obj = self._updateIMDB(obj, "main")
@@ -483,21 +1075,118 @@ class MovieData():
             return obj["imdbID"]
 
     def _getAnimeData(self, id):
+        """
+        Retrives Anime from unoffical myanimelist API 
+        Using mal id
+
+        Parameters
+        ----------
+
+        id: str
+           The ID of the show
+
+        Returns
+        -------
+        
+        dict
+            dictionary returned from API
+        
+        """
         url = f"https://api.jikan.moe/v4/anime/{id}"
         req = config.session.get(url)
         data = req.json()["data"]
         return data
 
-# imdb/tmdb functions
+    ########################################################################################
+    #IMDB Functions
+    ########################################################################################
 
+    @functools.lru_cache
     def _getMovieList(self, title):
+        """
+        Retrives a list of Possible Matches via wikepedia title search
+
+        Parameters
+        ----------
+        title:  str
+            Title of the show
+
+        Returns
+        -------
+        
+        list
+            List of imdbPY Search Object 
+        
+        """
         return ia.search_movie(title)
 
-    def _updateIMDB(self, obj, set):
-        ia.update(obj, info=[set])
-        return obj
+    @functools.lru_cache
+    def _getByIDWithSetsIMDB(self, imdbID, *args):
+        """
+        Retrives a a movie that matches with ID
+
+        Parameters
+        ----------
+        imdbID: str
+            imdbID of the Series
+
+        *args : str
+            Zero or More parameters Indicating what information sets to retrive
+
+
+        Returns
+        -------
+        
+        imdbPY Object
+            imdb object matching with ID
+        
+        """
+        series = ia.get_movie(imdbID)
+        for arg in args:
+            try:
+                ia.update(series, info=[arg])
+            except:
+                continue
+        return series
+
+    @functools.lru_cache
+    def _getByIDIMDB(self, imdbID):
+        """
+        Retrives a a movie that matches with ID
+
+        Parameters
+        ----------
+
+        imdbID: str
+            imdbID of the Series
+
+        Returns
+        -------
+        
+        imdbPY Object
+            imdb object matching with ID
+        """
+
+        series = ia.get_movie(imdbID)
+        self._showObjDictIMDB[imdbID] = series
+        return series
 
     def _getIMDBInfo(self, title):
+        """
+        Allows user to pick title that best matches the input title sent
+
+        Parameters
+        ----------
+
+        title:  str
+            Title of the show
+
+        Returns
+        -------
+        
+        imdbPY Object
+            imdb object for user picked
+        """
         results = ia.search_movie(title)
         result = None
         msg = None
@@ -533,11 +1222,10 @@ class MovieData():
                 result = ia.get_movie(re.sub("tt", "", id))
             else:
                 result = results[titles.index(match)-1]
-
-        self._updateIMDB(result, "main")
+        result = self._getByIDIMDB(result.movieID)
         self._movieObj["imdb"] = result["imdbID"]
         self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
-            f"tt{result['imdbID']}")
+            f"tt{result['imdbID']}", self._type)
 
         self._movieObj["title"] = result["title"]
         self._movieObj["type"] = self._getKind(result)
@@ -552,11 +1240,255 @@ class MovieData():
         else:
             return "TV"
 
-    def _convertIMDBtoTMDB(self, id):
+    @functools.lru_cache
+    def _getEpisodeReleaseDateIMDB(self, episodeID):
+        """
+        Returns Sorted list of episode Release Dates
+
+        Parameters
+        ----------
+
+        episodeID:  str
+            imdb episode ID
+
+        Returns
+        -------
+        
+        list
+            The sorted list of release dates with the earliest
+        """
+        episode = self._getByIDWithSetsIMDB(episodeID, "release dates")
+        data = episode["release dates"]
+        out = []
+        for ele in data:
+            date = re.search("[0-9]{2} [a-z]* [0-9]{4}", ele, re.IGNORECASE) or re.search(
+                "[0-9]{1} [a-z]* [0-9]{4}", ele, re.IGNORECASE)
+            if date != None:
+                out.append(date.group(0))
+        return list(sorted(out, key=lambda x: utils.convertArrow(x, "D MMMM YYYY")))
+    ########################################################################################
+    #TMDB Functions
+    ########################################################################################
+
+    def _convertIMDBtoTMDB(self, id, kind):
+        """
+        converts imdb to tmdb
+    
+
+        Parameters
+        ----------
+
+        id: str
+            imdb ID for Movie/Show
+        kind: str
+            whether this is a movie or tv
+
+        Returns
+        -------
+        
+        str
+            tmdb id 
+        """
         data = find.find_by_imdb_id(id)
         results = []
-        results.extend(data["movie_results"])
-        results.extend(data["tv_results"])
+        if kind == "TV":
+            results.extend(data["tv_results"])
 
+        if kind == "Movie":
+            results.extend(data["movie_results"])
         if len(results) > 0:
             return results[0]["id"]
+
+    def _seasonSelectionTMDB(self, seasonNum, title, tmdbID):
+        """
+        Return season object
+        Based on input 
+
+        Parameters
+        ----------
+
+        seasonNum : int or str
+            The Number of the Season 
+        title:  str
+            Title of the show
+        tmdbID: str
+            TMDBID of the Series
+
+        Returns
+        -------
+        
+        tmdbv3Api Season Obj
+            object filled with season Data from API
+        """
+        data = self._seasonSearchTMDB(title, tmdbID)
+        select = data[seasonNum-1]
+        return seasonTMDB.details(tmdbID, select["season_number"])
+
+    def _seasonSearchTMDB(self, title, tmdbID):
+        """
+        Return a list of season, based on the title and tmdbID
+        Note: Multiple "Shows" may be combined on one entry
+
+        This will filter out those combined entries
+    
+
+        Parameters
+        ----------
+
+        title:  str
+            Title of the show
+        tmdbID: str
+            TMDBID of the Series
+
+        Returns
+        -------
+        
+        List 
+            Season Numbers that correspond to the found seasons from the tmdbID
+        """
+        series = tv.details(tmdbID)
+        data = None
+        data1 = list(filter(lambda x: x["name"] == title, series["seasons"]))
+        data2 = list(filter(lambda x: re.sub(" +", "", x["name"]) == re.sub(" +","",title),series["seasons"]))
+        data3 = list(filter(lambda x: re.search("season", x["name"], re.IGNORECASE), series["seasons"]))   
+        if len(data1) > 0:
+            data = data1
+        elif len(data2) > 0:
+            data = data2
+        elif len(data3) > 0:
+            data = data3
+        return data
+
+    def _getEnglishNameTMDB(self, seasonData, epNum):
+        """
+        Returns list of Season Matching with input
+        Note: Multiple "Shows" may be combined on one entry
+    
+
+        Parameters
+        ----------
+
+        seasonData : tmdbv3Api Season Obj
+            data object for season
+        epNum : int or str
+            The Number of the episode in Current Season
+
+        Returns
+        -------
+        
+        str
+            English Name for Episode
+        """
+        return seasonData["episodes"][epNum-1]["name"]
+
+    def _getOverallEPNumTMDB(self, tmdbID, seasonIDList, seasonNum, epNum):
+        """ 
+        Gets the overall Episode Number for a episode according to TMDB
+        I.e All previous Season Episodes adding together + the EP number for current Season
+
+        Parameter
+        ----------
+
+        tmdbID: str
+            TMDBID of the Series
+        seasonIDList : list
+            list of season IDs
+        seasonNum : int or str
+            The Number of the Seaso            
+        epNum : int or str
+            The Number of the episode in Current Season        
+        
+        Returns
+        -------
+
+        int
+             the oveall episode Number
+        """
+        total = 0
+        for i in range(seasonNum-1):
+            select = seasonIDList[i]
+            total = total+len(select["episode_count"])
+        return total+epNum
+
+    def _getTotalEPSeasonTMDB(self, seasonNum, title, tmdbID):
+        data = self._seasonSelectionTMDB(seasonNum, title, tmdbID)
+        return len(data["episodes"])
+
+
+    def _episodeIMDBMatcherTMDB(self, seasonIDList, tmdbID, imdbID, seasonNum, epNum):
+        """
+        Returns IMDB that matches with Episode From TMDB
+    
+
+        Parameters
+        ----------
+
+        seasonIDList : list
+            list of season IDs
+        tmdbID: str
+            TMDBID of the Series
+
+        imdbID: str
+            imdbID of the Series 
+ 
+        seasonNum : int or str
+            The Number of the Season                              
+        epNum : int or str
+            The Number of the episode in Current Season
+        
+
+        Returns
+        -------
+        
+        str
+            imdbID for episode
+        """
+        seasonData = seasonTMDB.details(
+            tmdbID, seasonIDList[seasonNum-1]["season_number"])
+        epimdbID = episodeTMDB.external_ids(
+            tmdbID, seasonData["season_number"], epNum).get("imdb_id")
+        if epimdbID:
+            return re.sub("tt", "", epimdbID)
+        # Do things the hard way
+        series = self._getByIDWithSetsIMDB(imdbID, "episodes")
+        compare = utils.convertArrow(
+            seasonData["episodes"][epNum]["air_date"], "YYYY-MM-DD")
+        matchSeason = None
+
+        for i in range(series["seasons"]):
+            k = i+1
+            matchSeason = k
+            totalEPIMDBSeason = len(series["episodes"][k])
+            curr = series["episodes"][k][totalEPIMDBSeason]
+            releaseDate = self._getEpisodeReleaseDateIMDB(curr.movieID)[0]
+            date = utils.convertArrow(releaseDate, "D MMMM YYYY")
+            if (date-compare).total_seconds() > 90000:
+                break
+
+        title = seasonData["episodes"][epNum]["name"]
+        overallEP = self._getOverallEPNumTMDB(
+            tmdbID, seasonIDList, seasonNum, epNum)
+
+        totalEPIMDBSeason = len(series["episodes"][matchSeason])
+        offset = 5
+        startEP = (max(1, epNum-offset))
+
+        if overallEP < totalEPIMDBSeason:
+            startEP = (max(1, overallEP - offset))
+        matchObj = None
+        print("Searching for Matching Episode\nThis may take a while...")
+        for i in range(startEP, totalEPIMDBSeason+1):
+            curr = series["episodes"][matchSeason][i]
+            releaseDate = self._getEpisodeReleaseDateIMDB(curr.movieID)[0]
+            date = utils.convertArrow(releaseDate, "D MMMM YYYY")
+            if abs((date-compare).total_seconds()) < 90000:
+                matchObj = curr
+                break
+            elif re.sub(" +", "", curr["title"]) == re.sub(" +", "",title):
+                matchObj = curr
+            elif jellyfish.jaro_distance(curr["title"], title) > .9:
+                matchObj = curr
+                break
+        if matchObj == None:
+            return
+        return self._getByIDIMDB(matchObj.movieID)["imdbID"]

@@ -62,21 +62,31 @@ def Remux(args):
             continue
         remuxConfigs.append(remuxConfig)
 
-        title = remuxConfig['Movie'].get(
+        enTitle = remuxConfig['Movie'].get(
             'title') or remuxConfig['Movie'].get('engTitle')
+        japTitle = remuxConfig['Movie'].get('japTitle')
+
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"]["season"]
         episode = remuxConfig["Movie"]["episode"]
+        tmdb = remuxConfig["Movie"]["tmdb"]
+
         episodeTitle = movieObj.retriveEpisodeTitle(
-            season, episode, title, year)
+            season, episode, enTitle, year, tmdb)
+        if episodeTitle == "PlaceHolder Title" and japTitle:
+            episodeTitle = movieObj.retriveEpisodeTitle(
+                season, episode, japTitle, year, tmdb)
 
         if args.forcemovie:
             fileNameFuncts.append(functools.partial(
-                muxGenerator.getFileName, remuxConfig, args.group, title, year, args.skipnamecheck))
+                muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck))
         else:
             fileNameFuncts.append(functools.partial(
-                muxGenerator.getFileName, remuxConfig, args.group, title, year, args.skipnamecheck, int(season), int(episode), episodeTitle))
+                muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck, int(season), int(episode), episodeTitle))
 
+    if(len(fileNameFuncts) == 0):
+        print("No Files to Process")
+        quit()
     for i in range(len(fileNameFuncts)):
         funct = fileNameFuncts[i]
         fileNameList.append(funct())
@@ -93,7 +103,7 @@ def Remux(args):
     Before Closing We will now print off file locations and mediainfo"""
     print(message)
     for ele in fileNameList:
-        print(f"New Files at {ele}\n")
+        print(f"New File at {ele}\n")
         mediainfo = MediaInfo.parse(ele, output="", full=False)
         print(f"\n\n{mediainfo}\n\n")
     print(f"As a Reminder the output Directory is: {args.outpath}")
