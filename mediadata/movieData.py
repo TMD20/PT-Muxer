@@ -496,9 +496,9 @@ class MovieData():
             List of interal pages that may be the list of episodes page
         """
         url = "https://en.wikipedia.org/w/api.php"
-         pageList = [string.Template("$title")]
-          data = []
-           for ele in pageList:
+        pageList = [string.Template("$title")]
+        data = []
+        for ele in pageList:
                 PARAMS = {
                     "prop": "links",
                     "format": "json",
@@ -515,7 +515,7 @@ class MovieData():
                     "List of .* episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
                 data = list(map(lambda x: x["*"], data))
 
-            return data
+        return data
 
     def _getSeasonSectionsWiki(self):
         """ 
