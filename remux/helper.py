@@ -66,7 +66,7 @@ def writeXMLTV(imdb, tmdb, title, year,movieObj, season, episode):
     tempData = tempfile.mkstemp()
     outfile = tempData[1]
     result = None
-    epIMDB=movieObj.retriveEpisodeIMDB(imdb, season, episode, title, year)
+    epIMDB=movieObj.retriveEpisodeIMDB(imdb,tmdb, season, episode, title, year)
     epCount = movieObj.retriveNumberofEpisodes(season, episode, title, year)
 
     
