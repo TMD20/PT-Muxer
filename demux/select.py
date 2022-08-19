@@ -4,10 +4,11 @@ import mediatools.extract as Extract
 
 
 
-def addMultiSource(paths,sortpref):
+def addMultiSource(paths,sortpref,type):
     if len(paths) == 0:
         print("No Valid Source Directories Found")
         quit()
+    msg=None
     if sortpref=="size":
         msg = \
         """
@@ -23,14 +24,14 @@ def addMultiSource(paths,sortpref):
     else:
         msg = \
         """
-        Since you selected --sortpref order
-        You will be prompted multiple times to make a selection
-        Pay attention to the order of the list printed out, as this will effect enabled tracks
+Since you selected --sortpref order
+You will be prompted multiple times to make a selection
+Pay attention to the order of the list printed out, as this will effect enabled tracks
 
-        Click on the Source You Want for this Demux
-        For TV Shows you can change the Source(s) Per Episode
+Click on the Source You Want for this Demux
+For TV Shows you can change the Source(s) Per Episode
 
-        When Finish Click 'I'm Done Selecting Sources'
+When Finish Click 'I'm Done Selecting Sources'
         """
         list=["I'm done selecting sources","I want to reset my list"]
         list.extend(paths)
@@ -69,7 +70,7 @@ def addSingleSource(paths):
 def getSources(options, inpath, sortpref, multi=True):
     sources = None
     if multi:
-        sources = addMultiSource(options, sortpref)
+        sources = addMultiSource(options, sortpref,type)
     else:
         sources = [addSingleSource(options)]
     if sources == None or len(sources) == 0:

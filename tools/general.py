@@ -147,7 +147,12 @@ def getwinepath(folder):
 
 
 def getTitle(source):
+    source=str(pathlib.Path(source).parents[1])
+    if re.search("D[0-9]", source, re.IGNORECASE) or re.search("Disk [0-9]",source,re.IGNORECASE):
+        source = str(pathlib.Path(source).parents[0])
     return guessit(source)["title"]
+   
+            
 
 
 def cleanString(val):

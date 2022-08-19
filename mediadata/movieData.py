@@ -270,6 +270,11 @@ class MovieData():
             return self. getSeasonEPCountWiki(seasonNum)
         except:
             print("Wiki Episode Counter Failed")
+    def _userInputMovie(self):
+        if utils.singleSelectMenu(["Yes","No"],"Is this a Anime?")=="Yes":
+            None
+        else:
+            None
 
     ########################################################################################
     # Wikipedia Functions
@@ -813,7 +818,7 @@ class MovieData():
         animeJSON = os.path.join(
             config.root_dir, "anime-offline-database", "anime-offline-database.json")
 
-        data = self._getAnimeSearchData()
+        data = self.ge_getAnimeSearchDataMAL(title)
         titles = ["None of These"]
         titles.extend(self._getEngTitle(data))
         title = utils.singleSelectMenu(titles, "Which Anime are you Demuxing")
@@ -825,13 +830,13 @@ class MovieData():
             index = titles.index(title)
             self._movieObj["mal"] = self._getmalIds(data)[index]
 
-        malData = self._getAnimeData(self._movieObj["mal"])
+        malData = self._getAnimeDataByIDMAL(self._movieObj["mal"])
         self._movieObj["imdb"] = self._maltoIMDB(malData)
         tmdbID = self._convertIMDBtoTMDB(
             f"tt{self._maltoIMDB(malData)}", self._type)
         if tmdbID == None:
             data = list(filter(lambda x: re.search(
-                malData['aired']['prop']['from']['year'], x["first_aired_date"]), tv.search(title)))
+                str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), tv.search(title)))
             if len(data) > 0:
                 tmdbID = data[0]
 
@@ -858,7 +863,7 @@ class MovieData():
 
         return self._movieObj
 
-    def _getAnimeSearchData(self, title):
+    def ge_getAnimeSearchDataMAL(self, title):
         """
         Searces myanimelist unofficial API for title
         Returns Results as dictionary
@@ -1051,30 +1056,33 @@ class MovieData():
         """
         imdbObjs = self._getMovieList(title)
         for obj in imdbObjs:
-            obj = self._updateIMDB(obj, "main")
-            if int(obj["year"]) != int(year):
+            obj = self._getByIDIMDB(obj.movieID)
+
+
+            if obj.get("year") and int(obj["year"]) != int(year):
                 continue
             match1 = jellyfish.jaro_similarity(obj.get("title", ""), title)
             match2 = jellyfish.jaro_similarity(
                 obj.get("localized title", ""), title)
             match3 = jellyfish.jaro_similarity(
                 obj.get("original title", ""), title)
+            #compare titles
             if max(match1, match2, match3) < .9:
                 continue
             # compare time
-
-            time1 = utils.dehumanizeArrow(f"in {obj['runtimes'][0]} minutes")
-            time2 = utils.dehumanizeArrow(runtime)
-            maxTime = max(time1, time2)
-            minTime = min(time1, time2)
-            dif = utils.subArrowTime(maxTime, minTime)
-            if dif.hour > 0:
-                continue
-            if dif.minute > 5:
-                continue
+            if obj.get("runtimes"):
+                time1 = utils.dehumanizeArrow(f"in {obj['runtimes'][0]} minutes")
+                time2 = utils.dehumanizeArrow(runtime)
+                maxTime = max(time1, time2)
+                minTime = min(time1, time2)
+                dif = utils.subArrowTime(maxTime, minTime)
+                if dif.hour > 0:
+                    continue
+                if dif.minute > 5:
+                    continue
             return obj["imdbID"]
 
-    def _getAnimeData(self, id):
+    def _getAnimeDataByIDMAL(self, id):
         """
         Retrives Anime from unoffical myanimelist API 
         Using mal id
@@ -1208,6 +1216,7 @@ class MovieData():
             titles.insert(0, "None of these Titles Match")
             match = utils.singleSelectMenu(titles, msg)
             if match == "None of these Titles Match":
+                return self._userInputMovie(self._movieObj)
                 message = \
                     """
                 Unable to find movie ID
