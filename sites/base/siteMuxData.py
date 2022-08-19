@@ -164,7 +164,7 @@ class MuxOBj():
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
         fileName = re.sub("\.+", ".", fileName)
-        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:-]", "", fileName)
+        fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
         fileName = re.sub("([^a-zA-Z\d])\.", ".", fileName)
         fileName = re.sub("\.([^a-zA-Z\d])", ".", fileName)
         return fileName
