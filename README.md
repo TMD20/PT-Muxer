@@ -262,7 +262,7 @@ Changing some values will have "no effect" on the final mkv produced in "remux" 
 * bdinfo_title: [string] just the title from bdinfo, changing this value has no effect
 * index: [number] the track number. Video is usually 1. Next audio tracks, lastly subs. Changing this value has no effect
 * eac30: [special syntax string] u just some info about the file extract by eac3to. Changing this value has no effect
-* file: [filepath] location of the file on the system. Should only be changed if you move the output.json to a new folder
+* file: [filepath] location of the file on the system. This is the relative path, from the MuxFolder. This way you can change the folders location
 * compat: [bool] u Used for embedded tracks i.e dolby digital inside true hd
 These are extracted automatically. Changing this value has no effect
 * parent: [string] what track an embedded track was extracted from. changing this value has no effect

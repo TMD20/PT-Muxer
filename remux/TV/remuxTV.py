@@ -21,7 +21,7 @@ def Remux(args):
     muxGenerator = muxPicker.pickSite(args.site)
     movieObj = movieData.MovieData()
 
-    folders = utils.getTVMuxFolders(args.inpath, config.demuxPrefix)
+    folders = remuxHelper.getTVMuxFolders(args.inpath, config.demuxPrefix)
     if len(folders) == 0:
         print("You need to demux a folder with TV Mode first")
         quit()

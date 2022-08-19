@@ -13,7 +13,7 @@ import config
 def Remux(args):
     # Variables
     muxGenerator = muxPicker.pickSite(args.site)
-    folders = utils.getMovieMuxFolders(args.inpath, config.demuxPrefix)
+    folders = remuxHelper.getMovieMuxFolders(args.inpath, config.demuxPrefix)
     if len(folders) == 0:
         print("You need to demux a folder with Movie Mode first")
         quit()
@@ -24,11 +24,13 @@ def Remux(args):
         print("You Must Pick at list one Config")
         quit()
     utils.mkdirSafe(os.path.join(args.outpath, ""))
+    os.chdir(args.outpath)
     print(f"\nPreparing Data for {remuxConfigPath}\n")
     remuxConfig = None
 
     with open(remuxConfigPath, "r") as p:
         remuxConfig = json.loads(p.read())
+    remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
 
     if remuxHelper.checkMissing(remuxConfig) == True:
         return
@@ -38,6 +40,7 @@ def Remux(args):
 
     fileName = muxGenerator.getFileName(
         remuxConfig, args.group, title, year, args.skipnamecheck)
+    
 
     ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
     message = """If the Program made it this far the Movie MKV...
