@@ -19,11 +19,9 @@ def demux(args):
     # make the output directory if needed
     utils.mkdirSafe(args.outpath)
     os.chdir(args.outpath)
-    print("Getting Source(s) For TV Demux\n")
-
-    sources = select.getSources(options, args.inpath,
-                                args.sortpref, args.splitplaylist == False)
+    sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None)
     demuxFolder = paths.getDemuxFolder(sources, args.inpath, args.outpath)
+
     movieObj = movieData.MovieData()
     movieObj.setData("TV",utils.getTitle(sources[0]))
     season = utils.textEnter("What Season are you demuxing")

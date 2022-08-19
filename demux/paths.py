@@ -3,8 +3,6 @@ import re
 import subprocess
 import shutil
 
-from guessit import guessit
-
 import mediatools.extract as extract
 import tools.general as utils
 import config
@@ -21,16 +19,17 @@ def getBDMVs(path):
 
 
 def createParentDemuxFolder(sources, outpath):
-    title = guessit(sources[0])["title"]
-    if len(sources) > 0:
-        folder = f"{config.demuxPrefix}.{os.urandom(7).hex()}.{title}"
-        parentDemux = os.path.join(outpath, folder)
-        parentDemux = re.sub(" +", " ", parentDemux)
-        parentDemux = re.sub(" ", ".", parentDemux)
-        os.mkdir(parentDemux)
-        return parentDemux
-    else:
+    if len(sources)==0:
         print("You need to set Sources First")
+        quit()
+    title = utils.getTitle(sources[0])
+    folder = f"{config.demuxPrefix}.{os.urandom(7).hex()}.{title}"
+    parentDemux = os.path.join(outpath, folder)
+    parentDemux = re.sub(" +", " ", parentDemux)
+    parentDemux = re.sub(" ", ".", parentDemux)
+    os.mkdir(parentDemux)
+    return parentDemux
+
 
 
 def createChildDemuxFolder(parentDir, show):

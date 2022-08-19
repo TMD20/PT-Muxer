@@ -23,7 +23,7 @@ def demux(args):
     muxSorter = siteSortPicker.pickSite(args.site)
     print("Getting Source(s) For Movie Demux\n")
 
-    sources = select.getSources(options, args.inpath, args.sortpref)
+    sources = demuxHelper.getSources(options, args.inpath, args.sortpref)
 
     movieObj = movieData.MovieData()
 
