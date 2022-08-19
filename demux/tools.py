@@ -109,15 +109,18 @@ def addTrackData(outdict, muxSorter):
     outdict["Tracks_Details"]["Video"] = {}
 
     for track in muxSorter.unSortedAudio:
+        track["file"] = utils.getRelativeTo(track["file"], 2)
         key = track["key"]
         track.pop("key")
         outdict["Tracks_Details"]["Audio"][key] = track
     for track in muxSorter.unSortedSub:
+        track["file"] = utils.getRelativeTo(track["file"], 2)
         key = track["key"]
         track.pop("key")
         outdict["Tracks_Details"]["Sub"][key] = track
 
     for track in muxSorter.unSortedVideo:
+        track["file"] = utils.getRelativeTo(track["file"], 2)
         key = track["key"]
         track.pop("key")
         outdict["Tracks_Details"]["Video"][key] = track

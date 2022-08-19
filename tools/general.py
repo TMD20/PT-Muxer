@@ -2,7 +2,7 @@ import os
 import re
 import functools
 import glob
-from pathlib import PureWindowsPath, PurePosixPath
+import pathlib 
 import textwrap
 
 import pynumparser
@@ -141,33 +141,9 @@ def getEac3to(remuxConfig):
 
 
 def getwinepath(folder):
-    return str(PureWindowsPath(PurePosixPath(folder)))
+    return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
 
 
-def getTVMuxFolders(inpath, demuxPrefix):
-    folders = findMatches(inpath, f"{demuxPrefix}*")
-    # only get root directories
-
-    folders = list(filter(lambda x: len(os.listdir(x)) != 0, folders))
-    folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
-
-    folders = list(filter(lambda x: re.search(
-        "^[0-9]+$", os.listdir(x)[0]) != None, folders))
-
-    return folders
-
-
-def getMovieMuxFolders(inpath, demuxPrefix):
-    folders = findMatches(inpath, f"{demuxPrefix}*")
-    # only get root directories
-
-    folders = list(filter(lambda x: os.path.realpath(
-        os.path.dirname(x)) == os.path.realpath(inpath), folders))
-    folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
-
-    folders = list(filter(lambda x: re.search(
-        "^[0-9]+$", os.listdir(x)[0]) == None, folders))
-    return folders
 
 
 def getTitle(source):
@@ -185,3 +161,34 @@ def smart_truncate(content, length=100, suffix='...'):
         return content
     else:
         return content[:length].rsplit(' ', 1)[0]+suffix
+
+
+def getRelativeTo(track, levelUp):        
+    
+    """
+    Returns the relative Path of a file/folder from one of it's parents
+
+
+    Parameters
+    ----------
+
+    track : str
+        Track whose relative path you want
+    levelup: int
+        How many levels up the parent tree
+    
+
+    Returns
+    -------
+    
+    str
+        Relative path to file from one of the parents
+    """
+
+
+    return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
+
+
+
+
+

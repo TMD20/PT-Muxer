@@ -1,7 +1,7 @@
 import os
-from pickle import TRUE
 import tempfile
 from string import Template
+import re
 
 from InquirerPy import inquirer
 
@@ -96,3 +96,39 @@ def checkMissing(remuxConfig):
         print("No Sources Found For this item\nSkipping to Next Item")
         return True
     return False
+
+
+def getFullPaths(remuxConfig, parentDir):
+    audioTrackKeys=remuxConfig["Enabled_Tracks"]["Audio"]
+    videoTrackKeys=remuxConfig["Enabled_Tracks"]["Video"]
+    subTrackKeys=remuxConfig["Enabled_Tracks"]["Sub"]
+    for key in audioTrackKeys:
+        remuxConfig["Tracks_Details"]["Audio"][key]["file"] = os.path.join(parentDir, remuxConfig["Tracks_Details"]["Audio"][key]["file"])
+    for key in videoTrackKeys:
+        remuxConfig["Tracks_Details"]["Video"][key]["file"] = os.path.join(
+            parentDir, remuxConfig["Tracks_Details"]["Video"][key]["file"])
+    for key in subTrackKeys:
+        remuxConfig["Tracsk_Details"]["Sub"][key]["file"] = os.path.join(
+            parentDir, remuxConfig["Tracks_Details"]["Sub"][key]["file"])
+
+
+def getTVMuxFolders(inpath, demuxPrefix):
+    folders = utils.findMatches(inpath, f"{demuxPrefix}*")
+    # only get root directories
+
+    folders = list(filter(lambda x: len(os.listdir(x)) != 0, folders))
+    folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
+
+    folders = list(filter(lambda x: re.search(
+        "^[0-9]+$", os.listdir(x)[0]) != None, folders))
+
+    return folders
+
+
+def getMovieMuxFolders(inpath, demuxPrefix):
+    folders = utils.findMatches(inpath, f"{demuxPrefix}*")
+    folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
+
+    folders = list(filter(lambda x: re.search(
+        "^[0-9]+$", os.listdir(x)[0]) == None, folders))
+    return folders
