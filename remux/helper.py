@@ -108,7 +108,7 @@ def getFullPaths(remuxConfig, parentDir):
         remuxConfig["Tracks_Details"]["Video"][key]["file"] = os.path.join(
             parentDir, remuxConfig["Tracks_Details"]["Video"][key]["file"])
     for key in subTrackKeys:
-        remuxConfig["Tracsk_Details"]["Sub"][key]["file"] = os.path.join(
+        remuxConfig["Tracks_Details"]["Sub"][key]["file"] = os.path.join(
             parentDir, remuxConfig["Tracks_Details"]["Sub"][key]["file"])
 
 
