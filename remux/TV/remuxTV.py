@@ -57,6 +57,7 @@ def Remux(args):
 
         with open(remuxConfigPath, "r") as p:
             remuxConfig = json.loads(p.read())
+        remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
 
         if remuxHelper.checkMissing(remuxConfig) == True:
             continue
