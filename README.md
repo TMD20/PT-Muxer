@@ -770,15 +770,28 @@ if a forced track is found for the second language
 * Only 1 video track is ever added and the one that is picked depends on --sortpref argument
 * Either the largest or first video track will be added, default is adding the largest video file
 
+# FileNames
+During the remux process if you don't pass a site the filename will be
+For TV shows
+TV.Show.year.S0#.E0#.episode.title.resolution.BluRay.REMUX.AVC.TrueHD.audiochannels-group.mkv
+For Movies
+movie.year.resolution.BluRay.REMUX.AVC.TrueHD.audiochannels-group.mkv
 
-# Sites 
-Generally speaking other than track sorting sites will be similar. One difference is typically in the final name of the mkv
+## Animebytes
+This will just follow the default naming for it's files
+
+## BeyondHD
+The output filename is based on beyondHD naming rules
 
 ## Blutopia
-During remux if you set the site too --blutopia, that will have an effect on the final file name.
-It will also provide use of their validator, which provides details on if your remux will be approved.
+The output filename is based on Blutopia naming rules
 
-It is not 100 percent, but it provides a general idea.
+# Vdator
+To help with double checking that your torrent mets their requirements
+A developer on blutopia has provided a validtor to check the final mkv. I have embedded this validator into the code, so if you pass the --blutopia site during the remux process the validator will be called.
+It will provide feedback 
+
+
 
 
 # Acknowledgement

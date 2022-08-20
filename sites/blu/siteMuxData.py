@@ -6,6 +6,7 @@ from pymediainfo import MediaInfo
 
 from sites.base.siteMuxData import MuxOBj
 import tools.general as utils
+import mediatools.mkvtoolnix as mkvTool
 
 
 class Blu(MuxOBj):
@@ -29,3 +30,47 @@ class Blu(MuxOBj):
                 print(line, end='')
             for line in p.stderr:
                 print(line, end='')
+
+    def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None):
+        videoCodec = mkvTool.getVideo(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        mediaType = mkvTool.getMediaType(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoRes = mkvTool.getVideoResolution(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+
+        audioCodec = mkvTool.getAudio(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        audioChannel = mkvTool.getAudioChannel(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        movieName = f"{title} {year}"
+
+        if not season and not episode and not episodeTitle:
+            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = self._fileNameCleaner(fileName)
+            fileName = os.path.abspath(os.path.join(".", fileName))
+
+        else:
+            fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            # Normalize
+            fileName = self._fileNameCleaner(fileName)
+            fileName = os.path.abspath(os.path.join(".", self._getTVDir(remuxConfig, group, title, year, season), fileName))
+        return self._confirmName(fileName,skipNameCheck)
+
+ 
+    def _getTVDir(self, remuxConfig, group, title, year, season):
+        videoCodec = mkvTool.getVideo(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        mediaType = mkvTool.getMediaType(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoRes = mkvTool.getVideoResolution(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+
+        audioCodec = mkvTool.getAudio(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        audioChannel = mkvTool.getAudioChannel(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        movieName = f"{title} {year}"
+        dirName = f"{movieName}.S{season:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
+        # Normalize
+        return self._fileNameCleaner(dirName)
