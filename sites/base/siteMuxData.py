@@ -36,12 +36,13 @@ class MuxOBj():
             key = remuxConfig["Enabled_Tracks"]["Video"][i]
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Video"][key]
+            name = trackjson["site_title"]
             file = trackjson["file"]
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
-            name = trackjson["site_title"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
+
             default = ["--default-track-flag", "0:0"]
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
@@ -57,11 +58,10 @@ class MuxOBj():
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
             langcode = trackjson["langcode"]
+            name = trackjson["site_title"]
             file = trackjson["file"]
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
-            name = trackjson.get("site_name")
-            if name:
-                temp.extend(["--track-name", f"0:{name}"])
+
          # additional flags
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]
@@ -96,10 +96,8 @@ class MuxOBj():
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
             file = trackjson["file"]
-            temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             name = trackjson.get("site_title")
-            if name:
-                temp.extend(["--track-name",f"0:{name}"])
+            temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             # additional flags
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]
@@ -128,8 +126,8 @@ class MuxOBj():
             temp.append(file)
             out.append(temp)
         self._sub = (list(itertools.chain.from_iterable(out)))
-
-    def getFileName(self, remuxConfig,group,title,year,skipNameCheck,season=None,episode=None,episodeTitle=None):
+    def getFileName(self,
+                      remuxConfig,group,title,year,skipNameCheck,season=None,episode=None,episodeTitle=None):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -145,20 +143,16 @@ class MuxOBj():
 
         if not season and not episode and not episodeTitle:
             fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName=self._fileNameCleaner(fileName)
+            fileName=os.path.abspath(os.path.join(".",self._getMovieDir(remuxConfig,group,title,year) ,fileName))
         else:
-            fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-        # Normalize
-        fileName=self._fileNameCleaner(fileName)
-        if not skipNameCheck:
-            inputs = ["YES", "NO"]
-            choice = utils.singleSelectMenu(
-                inputs, f"Is this FileName Correct: {fileName}\n")
-            while choice != "YES":
-                message = "Enter New FileName: "
-                fileName=utils.textEnter(message, fileName)
-                choice = utils.singleSelectMenu(
-                    inputs, "Is the File Correct Now\n")
-        return os.path.abspath(os.path.join(".", fileName))
+            fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName=self._fileNameCleaner(fileName)
+            fileName=os.path.abspath(os.path.join(".", self._getTVDir(remuxConfig,group,title,year,season), fileName))
+        return self._confirmName(fileName, skipNameCheck)
+
+
+
     def _fileNameCleaner(self,fileName):
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
@@ -186,3 +180,51 @@ class MuxOBj():
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
+    def _getTVDir(self,remuxConfig,group,title,year,season):
+        videoCodec = mkvTool.getVideo(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        mediaType = mkvTool.getMediaType(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoRes = mkvTool.getVideoResolution(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+
+        audioCodec = mkvTool.getAudio(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        audioChannel = mkvTool.getAudioChannel(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        movieName = f"{title} {year}"
+
+        fileName = f"{movieName}.S{season//10}{season%10}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
+        # Normalize FileName
+        return self._fileNameCleaner(fileName)
+
+    def _getMovieDir(self,remuxConfig,group,title,year):
+        videoCodec = mkvTool.getVideo(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        mediaType = mkvTool.getMediaType(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+        videoRes = mkvTool.getVideoResolution(
+            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+
+        audioCodec = mkvTool.getAudio(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        audioChannel = mkvTool.getAudioChannel(
+            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        movieName = f"{title} {year}"
+
+        fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
+        # Normalize FileName
+        return self._fileNameCleaner(fileName)
+
+    def _confirmName(self, fileName, skipNameCheck):
+        if not skipNameCheck:
+            inputs = ["YES", "NO"]
+            choice = utils.singleSelectMenu(
+                inputs, f"Is this FilePath Correct: {fileName}\n")
+            while choice != "YES":
+                message = "Enter New FilePath: "
+                fileName = utils.textEnter(message, fileName)
+                choice = utils.singleSelectMenu(
+                    inputs, "Is the File Correct Now\n")
+        return fileName
+
