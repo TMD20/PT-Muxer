@@ -198,10 +198,11 @@ class MovieData():
                 if lang == "English":
                     name = self._getEnglishNameWiki(
                         self._seasonsHTMLDictWiki[seasonNum][epNum])
-                return re.sub('"', '', name)
+               
+
             except:
                 print("Wiki Episode Name Finder Failed")
-            return name
+            return re.sub('"', '', name)
 
     def _getEpisodeIMDB(self, imdbID, tmdbID, seasonNum, epNum, title, year):
         """Helper Function to get Episode IMDB Via Wikepedia by TMDB matches data to IMDB
