@@ -85,6 +85,7 @@ class Bdinfo():
         return self._streams
 
     def getChapters(self):
+        out=[]
         lines = self._bdinfo.splitlines()
         lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
         start = 0
@@ -108,8 +109,9 @@ class Bdinfo():
             startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
                 *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
 
-            self._chapters.append(
+            out.append(
                 {"number": number, "start": startTime, "end": endTime})
+        self._chapters=out
         return self._chapters
 
     def writeBdinfo(self, path):
