@@ -24,7 +24,7 @@ def demux(args):
 
     movieObj = movieData.MovieData()
     movieObj.setData("TV",utils.getTitle(sources[0]))
-    season = utils.textEnter("What Season are you demuxing")
+    season = utils.getIntInput("What Season are you demuxing")
 
     while True:
         bdObjs = demuxHelper.getBdinfoData(sources)

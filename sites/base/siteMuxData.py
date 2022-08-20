@@ -3,11 +3,8 @@ import re
 import os
 import subprocess
 
-from InquirerPy import inquirer
-
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
-import mediadata.movieData as movieData
 import config
 
 
@@ -39,13 +36,12 @@ class MuxOBj():
             key = remuxConfig["Enabled_Tracks"]["Video"][i]
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Video"][key]
-            name = trackjson["site_title"]
             file = trackjson["file"]
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            name = trackjson["site_title"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
-
             default = ["--default-track-flag", "0:0"]
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
@@ -61,10 +57,11 @@ class MuxOBj():
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
             langcode = trackjson["langcode"]
-            name = trackjson["site_title"]
             file = trackjson["file"]
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
-
+            name = trackjson.get("site_name")
+            if name:
+                temp.extend(["--track-name", f"0:{name}"])
          # additional flags
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]
@@ -99,8 +96,10 @@ class MuxOBj():
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
             file = trackjson["file"]
-            name = trackjson.get("site_title")
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            name = trackjson.get("site_title")
+            if name:
+                temp.extend(["--track-name",f"0:{name}"])
             # additional flags
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]

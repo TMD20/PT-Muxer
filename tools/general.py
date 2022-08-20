@@ -87,10 +87,10 @@ def removeDupesList(list):
 
 
 def getIntInput(string):
-    return inquirer.number(
+    return int(inquirer.number(
         min_allowed=1,
         message=string,
-    ).execute()
+    ).execute())
 
 
 def singleSelectMenu(items, message):
