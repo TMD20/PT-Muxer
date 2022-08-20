@@ -101,19 +101,4 @@ def Extract(source, inpath):
     return outpath
 
 
-def getDemuxFolder(sources, inpath, outpath):
-    if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
-        print("Searching for Prior TV Mode Folders")
-        folders = utils.getTVMuxFolders(outpath, config.demuxPrefix)
-        if len(folders) == 0:
-            print("No TV Mode Folders Found To Restore")
-            print("Creating a new Mux Folder")
-            return createParentDemuxFolder(
-                sources, outpath)
-        else:
-            folder = utils.singleSelectMenu(
-                folders, "Which Folder Do you want to Restore")
 
-            return folder
-    else:
-        return createParentDemuxFolder(sources, outpath)
