@@ -14,13 +14,17 @@ import demux.TV.helper as demuxHelper
 
 
 def demux(args):
-    options = paths.getBDMVs(args.inpath)
+    args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
+    args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
     # make the output directory if needed
     utils.mkdirSafe(args.outpath)
     os.chdir(args.outpath)
+
+    options = paths.getBDMVs(args.inpath)
     sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None)
-    demuxFolder = paths.getDemuxFolder(sources, args.inpath, args.outpath)
+    
+    demuxFolder = demuxHelper.getDemuxFolder(sources, args.outpath)
 
     movieObj = movieData.MovieData()
     movieObj.setData("TV",utils.getTitle(sources[0]))

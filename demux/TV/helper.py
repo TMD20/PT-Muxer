@@ -4,6 +4,9 @@ import textwrap
 import mediatools.bdinfo as bdinfo
 import tools.general as utils
 import mediatools.extract as Extract
+import config
+import demux.paths as paths
+import remux.helper as remuxHelper
 
 
 
@@ -113,3 +116,21 @@ def addSingleSource(paths):
         Enter: Submit Selection
         """
     return utils.singleSelectMenu(paths, msg)
+
+
+def getDemuxFolder(sources, outpath):
+    if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
+        print("Searching for Prior TV Mode Folders")
+        folders = remuxHelper.getTVMuxFolders(outpath, config.demuxPrefix)
+        if len(folders) == 0:
+            print("No TV Mode Folders Found To Restore")
+            print("Creating a new Mux Folder")
+            return paths.createParentDemuxFolder(
+                sources, outpath)
+        else:
+            folder = utils.singleSelectMenu(
+                folders, "Which Folder Do you want to Restore")
+
+            return folder
+    else:
+        return paths.createParentDemuxFolder(sources, outpath)

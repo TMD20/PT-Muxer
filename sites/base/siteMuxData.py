@@ -61,6 +61,8 @@ class MuxOBj():
             name = trackjson["site_title"]
             file = trackjson["file"]
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            if name:
+                temp.extend(["--track-name", f"0:{name}"])
 
          # additional flags
             default = ["--default-track-flag", "0:0"]
@@ -98,6 +100,8 @@ class MuxOBj():
             file = trackjson["file"]
             name = trackjson.get("site_title")
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
+            if name:
+                temp.extend(["--track-name", f"0:{name}"])
             # additional flags
             default = ["--default-track-flag", "0:0"]
             forced = ["--forced-display-flag", "0:0"]
