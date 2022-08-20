@@ -385,7 +385,8 @@ order: sort tracks by which comes first, give the highest priority to first trac
 ```
     Example: python3 /path/to/app.py -demux sourcepath outputpath --ocr enabled --keepocr
 
-    During ocr images are saved to a temporary drive, this option moves the files to a permanent location in the output Mux folder. You need to pass the --ocr command for this to have any effect. 
+    During ocr process images are saved to a temporary folder. Then the images are processed using one of the ocr engines. This option moves the files to a permanent location in the output Mux folder. You can keep the images and skip the ocr step, by passing --keepocr without the --ocr argument 
+
 
 ```
 
@@ -403,6 +404,7 @@ order: sort tracks by which comes first, give the highest priority to first trac
    folder
    Note you must provide a minumimum length for playlist
    If you set the value to zero or inf, then all streams will be accepted regardless of length
+   Note: This mode only accepts one source currently
 ```
 
  --dontconvert
@@ -622,12 +624,17 @@ Experience does no ocr as well.
 
 You can utilize this to identify what kind of track the sub is tied to. It should work for foreign tracks as well.
 
-The program will generate temp images for every line in checked subs
+The program will generate temp images for every line in filtered subs.
+Which subs are filtered to be processed depends on the --ocr command. By default it is set to None.
+These images are then processed by one of the ocr engines 
+Images are created for the entire subtitle
 
-However, only the first 50 and last line will be ocr
+ 
+However,only the first 50 and last line will be ocr
 
 To save the images retrieved to a permanent location use
 --keepocr command 
+The keepocr command does not require ocr command to work. The keepocr command by itself will skip the ocr step, and just take the images
 
 
 
