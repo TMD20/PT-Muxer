@@ -91,7 +91,7 @@ class MovieData():
 
     def retriveEpisodeIMDB(self, imdbID, tmdbID, seasonNum, epNum, title, year):
         """
-        get Episode IMDB Via Wikepedia by TMDB matches data to IMDB
+        get Episode IMDB Via Wikepedia or TMDB
 
         Parameters
         ----------
