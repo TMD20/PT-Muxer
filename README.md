@@ -671,7 +671,9 @@ now only easyocr will be used.
 
 # Enabled Tracks Sorting/Filtering
 ## Normal Audio Track
-Here I will explain how audio tracks are added to the enabled audio tracks section in the Final JSON
+Here I will explain how audio tracks are added to the enabled audio tracks section in the Final JSON.
+As a reminder every track is extracted, and saved. However only certain tracks will be autoenabled for the final remux.
+Many sites don't require every track. 
 
 ### The first thing you must know is that tracks are enabled based on either
 * The --audiolang argument
