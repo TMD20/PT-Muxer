@@ -53,11 +53,12 @@ Modifications to the code are required to get it to work on that platform
 
 ## Linux: 
 ### Required
-  * python
+  * python 3.8
   * mono
 ### Install
-* python3 -m pip install --user virtualenv
-* python3 -m venv env
+* Install tesseocr:https://github.com/sirfz/tesserocr
+* python3.8 -m pip install --user virtualenv
+* python3.8 -m venv env
 * source env/bin/activate
 * which python -> should be the virtualenv
 * pip3 install -r requirements.txt
@@ -66,10 +67,12 @@ Modifications to the code are required to get it to work on that platform
 ## Windows
 Note: Windows is not yet ready. However, I think the programs maybe 95 percent of the way ready for windows. You could possible make the modifications needed. Alternatively wait until I am able to do it myself
 ### Required
-  * python
+  * python3.8
 ### Install
-* py -m pip install --user virtualenv
-* py -m venv env
+* Install tesseocr:https://github.com/simonflueckiger/tesserocr-windows_build/releases
+  * Make sure to get the python3.8 Version
+* py -3.8 -m pip install --user virtualenv
+* py -3.8 -m venv env
 * .\env\Scripts\activate
 * which python -> should be the virtualenv
 * py -m pip install -r requirements.txt
@@ -119,7 +122,6 @@ Tesseract allows for many more languages to be ocr, but it does require sudo
 and requires packages on the system
 The easiest way would just be to follow the instructions in this repo
 
-https://github.com/sirfz/tesserocr * requires sudo to install
 
 
 
