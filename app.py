@@ -15,9 +15,12 @@ def remux(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(prog='Remuxer', add_help=False)
+    parser = argparse.ArgumentParser(prog='app.py', add_help=False)
 
     subparsers = parser.add_subparsers(help='main positional commands')
+    subparsers.required=True
+    subparsers.dest="Demux or Remux"
+
 
     parser_d = subparsers.add_parser(
         'demux', help='Demux BDMV/ISO to Raw Files')
