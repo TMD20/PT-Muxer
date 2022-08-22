@@ -654,7 +654,9 @@ These are extracted automatically. Changing this value has no effect
 
 # Default Enabled Tracks
 ## Normal Audio Track
-Here I will explain how audio tracks are added to the enabled audio tracks section in the Final JSON
+Here I will explain how audio tracks are added to the enabled audio tracks section in the Final JSON.
+As a reminder every track is extracted, and saved. However only certain tracks will be autoenabled for the final remux.
+Many sites don't require every track. 
 
 ### The first thing you must know is that tracks are enabled based on either
 * The --audiolang argument
@@ -782,9 +784,13 @@ You change the order of the tracks within these three types
 
 # MKV FileName(s)
 During the remux process if you don't pass a site the filename will be
+
 For TV shows
+
 TV.Show.year.S0#.E0#.episode.title.resolution.BluRay.REMUX.AVC.TrueHD.audiochannels-group.mkv
+
 For Movies
+
 movie.year.resolution.BluRay.REMUX.AVC.TrueHD.audiochannels-group.mkv
 
 ## Animebytes
