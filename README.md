@@ -13,11 +13,11 @@
 - [Demuxing Files](#demuxing-files)
   - [Commands](#commands)
   - [TV Option](#tv-option)
-  - [Movies Option](#movies-option)
+  - [Movie Option](#movie-option)
 - [Remuxing MKV](#remuxing-mkv)
   - [commands](#commands)
   - [TV Option](#tv-option-1)
-  - [Movie Option](#movie-option)
+  - [Movie Option](#movie-option-1)
 - [JSON](#json)
   - [Overview](#overview)
   - [Examples](#examples)
@@ -354,7 +354,7 @@ If no valid folders are found, the program will create a new one.
 
 
 
-## Movies Option
+## Movie Option
 
 During the demux process you will be asked "What Type of Media are you Demuxing?". 
 To Demux a Movie select Movie here
