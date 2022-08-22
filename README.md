@@ -2,7 +2,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
-- [**How to Install/Get Started**](#how-to-installget-started)
+- [How to Install/Get Started](#how-to-installget-started)
   - [Linux:](#linux)
     - [Required](#required)
     - [Install](#install)
@@ -108,7 +108,7 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 
-# **How to Install/Get Started** 
+# How to Install/Get Started 
 Instructions are provided for Linux and Windows
 
 Note: Windows is not fully supported at the moment
