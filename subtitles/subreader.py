@@ -7,7 +7,6 @@ import subtitles.images as subimages
 import subtitles.ocr as subocr
 import tools.general as utils
 
-
 def subreader(tracks, maxLines=None, langs=None, keep=False):
     maxLines = maxLines or 51
     if keep:

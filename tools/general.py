@@ -3,6 +3,7 @@ import re
 import functools
 import glob
 import pathlib 
+import sys
 import textwrap
 
 import pynumparser
@@ -37,24 +38,21 @@ def dehumanizeArrow(input):
 
 
 def mkdirSafe(target):
-    if len(os.path.splitext(target)[1]) > 0:
-        target = os.path.dirname(target)
-    directories = [target]
-
-    while target != "/":
-        target = os.path.dirname(target)
+    directories=list(reversed(pathlib.Path(target).parents))
+    if len(os.path.splitext(target)[1]) == 0:
         directories.append(target)
-    directories.reverse()
     for ele in directories:
         if not os.path.exists(ele):
             os.mkdir(ele)
 
 
-def getShowName(path):
-    show = re.sub("/BDMV/STREAM", "", path)
+def sourcetoShowName(path):
+    path=getPathType(path,"Linux")
+    show = str(pathlib.Path(path).parents[1])
     show = os.path.basename(show)
     show = re.sub(" +", " ", show)
     show = re.sub(" ", ".", show)
+    
     return show
 
 
@@ -86,10 +84,12 @@ def removeDupesList(list):
     return res
 
 
-def getIntInput(string):
+def getIntInput(string,maxVal=float("inf")):
     return int(inquirer.number(
         min_allowed=1,
+        max_allowed=maxVal,
         message=string,
+        mandatory=True
     ).execute())
 
 
@@ -102,13 +102,13 @@ def rawSelectMenu(items, message):
 
 
 def multiSelectMenu(items, message):
-    return inquirer.checkbox(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    return inquirer.checkbox(validate=lambda x: len(x)>0,invalid_message="Must Select at Least One item",mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
 def textEnter(message, default=None):
     if default != None:
-        return inquirer.text(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
-    return inquirer.text(mandatory=True, message=textwrap.dedent(f"\n{message}\n")).execute()
+        return inquirer.text(mandatory=True,validate=lambda x: len(x)>0,invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
+    return inquirer.text(mandatory=True,validate=lambda x: len(x)>0,invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n")).execute()
 
 
 def getRangeOfNumbers(message, default=None):
@@ -140,8 +140,11 @@ def getEac3to(remuxConfig):
     return findMatches(output, "Eac3to*")[0]
 
 
-def getwinepath(folder):
+def getPathType(folder,type):
+    if type=="Linux":
+        return str(pathlib.PurePosixPath(folder))
     return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
+    
 
 
 
@@ -193,6 +196,8 @@ def getRelativeTo(track, levelUp):
 
     return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
 
+def getSystem():
+    return sys.platform
 
 
 

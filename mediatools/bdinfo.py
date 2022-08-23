@@ -3,8 +3,10 @@ import re
 import os
 import tempfile
 import datetime as dt
+import itertools
 
 import tools.general as utils
+import tools.commands as commands
 import config
 
 
@@ -27,24 +29,18 @@ class Bdinfo():
         print(self._playlist)
 
     def runbdinfo(self, playlistNum=None):
-        bdinfoBin = config.bdinfoLinuxPath
-        playlistNum = playlistNum or self._playlistNum
-        if not os.path.isfile(bdinfoBin):
-            bdinfoBin = config.bdinfoProjectPath
-
-        wineBin = config.wineLinuxPath
-        if not os.path.isfile(wineBin):
-            wineBin = config.wineProjectPath
-
+        playlistNum=playlistNum or self._playlistNum
         selection = self._playlist.splitlines()[2+int(playlistNum)]
         match = re.search("[0-9]+.MPLS", selection)
         if match != None:
             selection = selection[match.start():match.end()]
             temp = tempfile.TemporaryDirectory()
-            t = subprocess.run(
-                [wineBin, bdinfoBin, "-m", selection, self._mediaDir, temp.name])
-            file = open(os.path.join(temp.name, os.listdir(temp.name)[0]), "r")
+            command=list(itertools.chain.from_iterable([commands.bdinfo(),[ "-m", selection, self._mediaDir, temp.name]]))
+            t = subprocess.run(command)
+            file = open(utils.getPathType(os.path.join(temp.name, os.listdir(temp.name)[0]),"Linux"), "r")
             self._bdinfo = file.read()
+            file.close()
+
 
     def getQuickSum(self):
         lines = self._bdinfo.splitlines()
@@ -201,7 +197,9 @@ class Bdinfo():
     '''
 
     def _getIndex(self):
-        return utils.getIntInput("Enter playlist number: ")
+        maxVal=len(re.findall(
+            "[0-9]+\.MPLS", self._playlist))
+        return utils.getIntInput("Enter playlist number: ",maxVal)
 
     def _getRange(self):
         message = \
@@ -228,13 +226,19 @@ class Bdinfo():
     @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
 
-        bdinfoBin = config.bdinfoLinuxPath
+        bdinfoBin = config.bdinfoSystemPath
         if not os.path.isfile(bdinfoBin):
             bdinfoBin = config.bdinfoProjectPath
 
-        wineBin = config.wineLinuxPath
+        wineBin = config.wineSystemPath
         if not os.path.isfile(wineBin):
             wineBin = config.wineProjectPath
+        command=None
+        if utils.getSystem()=="Linux":
+            command=[wineBin, bdinfoBin, "-l", self._mediaDir, "."]
+        else:
+           command= [bdinfoBin, "-l", self._mediaDir, "."]
 
-        self._playlist = subprocess.run([wineBin, bdinfoBin, "-l", self._mediaDir, "."],
+            
+        self._playlist = subprocess.run(command,
                                         stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')

@@ -3,6 +3,7 @@ import re
 
 from mediadata.tracksData import TracksData
 import mediatools.eac3to as eac3to
+import tools.general as utils
 
 
 class siteTrackData(TracksData):
@@ -25,7 +26,7 @@ class siteTrackData(TracksData):
 
         self.updateRawTracksDict(
             quicksum, playlistNum, playlistFile, streams, source, output)
-        current_tracks = self.filterBySource(source)["tracks"]
+        current_tracks = self.filterBySource(utils.sourcetoShowName(source))["tracks"]
         self._updateTrackDictNames(current_tracks)
         self._updateTrackDictEac3to(current_tracks)
         self._updateTrackDictFileOutput(current_tracks, output)

@@ -1,26 +1,28 @@
 import os
 import requests_cache
 
+
 root_dir = os.path.dirname(os.path.realpath(__file__))
 
-eac3toLinuxPath = "/usr/local/bin/eac3to/eac3to.exe"
+eac3toSystemPath = "/usr/local/bin/eac3to/eac3to.exe"
 eac3toProjectPath = os.path.join(root_dir, "binaries/eac3to/eac3to.exe")
 
-wineLinuxPath = "/usr/bin/wine"
+wineSystemPath = "/usr/bin/wine"
 wineProjectPath = os.path.join(root_dir, "binaries/wine/wine")
 
-mkvmergeLinuxPath = "/usr/bin/mkvmerge"
-mkvMergeProjectPath=os.path.join(root_dir, "binaries/mkvmerge")
+mkvmergeSystemPath = "/usr/bin/mkvmerge"
+mkvMergeLinux=os.path.join(root_dir, "binaries/mkvmerge/Linux/mkvmerge")
+mkvMergeWindows=os.path.join(root_dir, "binaries/mkvmerge/Windows/mkvmerge.exe")
 
-bdSupLinuxPath="/usr/local/bin/bdsup2sub.exe"
+bdSupSystemPath="/usr/local/bin/bdsup2sub.exe"
 bdSupProjectPath=os.path.join(root_dir, "binaries/bdsup2sub.exe")
 
 
-supripLinuxPath = "/usr/local/bin/Subrip.exe"
+supripSystemPath = "/usr/local/bin/Subrip.exe"
 supripProjectPath = os.path.join(
     root_dir, "binaries/suprip/SupRip.exe")
 
-bdinfoLinuxPath = ""
+bdinfoSystemPath = ""
 bdinfoProjectPath = os.path.join(
     root_dir, "binaries/bdinfo/BDInfo.exe")
 

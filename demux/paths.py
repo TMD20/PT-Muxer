@@ -14,19 +14,19 @@ def getBDMVs(path):
     list1 = utils.findMatches(path, "STREAM")
     list2 = utils.findMatches(path, "*.iso$")
     list1.extend(list2)
+    list1=list(map(lambda x:utils.getPathType(x,"Linux"),list1))
     os.chdir(currpath)
     return sorted(list1)
 
 
 def createParentDemuxFolder(sources, outpath):
-    if len(sources)==0:
-        print("You need to set Sources First")
-        quit()
+
     title = utils.getTitle(sources[0])
     folder = f"{config.demuxPrefix}.{os.urandom(7).hex()}.{title}"
     parentDemux = os.path.join(outpath, folder)
     parentDemux = re.sub(" +", " ", parentDemux)
     parentDemux = re.sub(" ", ".", parentDemux)
+    parentDemux=utils.getPathType(parentDemux,"Linux")
     os.mkdir(parentDemux)
     return parentDemux
 
@@ -34,11 +34,9 @@ def createParentDemuxFolder(sources, outpath):
 
 def createChildDemuxFolder(parentDir, show):
     os.chdir(parentDir)
-    show = utils.getShowName(show)
-
-    show = re.sub(" ", ".", show)
+    show = utils.sourcetoShowName(show)
     os.mkdir(show)
-    return os.path.join(parentDir, show)
+    return utils.getPathType( os.path.join(parentDir, show),"Linux")
 
 
 def Extract(source, inpath):

@@ -2,11 +2,12 @@ import copy
 import os
 import re
 import subprocess
+import itertools
 
 import xxhash
 
 import tools.general as utils
-import config
+import tools.commands as commands
 
 
 class siteTrackSorter():
@@ -29,14 +30,6 @@ class siteTrackSorter():
     # Get Forced Subs Based on Audio Preference
 
     def addForcedSubs(self, movieLang, audioPref):
-        bdSubBin = config.bdSupLinuxPath
-        if not os.path.isfile(bdSubBin):
-            bdSubBin = config.bdSupProjectPath
-
-        wineBin = config.wineLinuxPath
-        if not os.path.isfile(wineBin):
-            wineBin = config.wineProjectPath
-
         audioLangs = self._getAudioPrefs(movieLang, audioPref)
         if audioLangs[0].lower() != "english":
             audioLangs = [audioLangs[0],"english"]
@@ -52,9 +45,7 @@ class siteTrackSorter():
             oldFile = oldTrack["file"]
             newFile = re.sub("\.sup", ".forced.sup", oldFile)
             newEac3to = re.sub("\.sup", ".forced.sup", oldTrack["eac3to"])
-
-            command = [wineBin, bdSubBin,  oldFile,
-                       "-o", newFile, "--forced-only"]
+            command=list(itertools.chain.from_iterable([commands.bdSup(),[oldFile,"-o", newFile, "--forced-only"]]))
             output = ""
             with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
                 for line in p.stdout:

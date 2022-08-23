@@ -2,7 +2,6 @@ import os
 import json
 
 import mediatools.eac3to as eac3to
-import mediadata.movieData as movieData
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
 import tools.general as utils
@@ -31,8 +30,8 @@ def ConvertChapterList(chapters):
     return outdict
 def validateBdinfo(bdObjs):
     num = len(bdObjs[0].playlistNumList)
-    if num == 0:
-        print("A list has no playlist entered")
+    bdObj=list(filter(lambda x:x.playlistNum==0,bdObjs
+    ))
     for bdObj in bdObjs:
         if len(bdObj.playlistNumList) != num:
             message = \

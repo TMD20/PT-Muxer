@@ -50,9 +50,6 @@ def getSources(options,inpath, sortpref,multi):
         sources = addMultiSource(options, sortpref)
     else:
         sources = [addSingleSource(options)]
-    if sources == None or len(sources) == 0:
-        print("No sources Selected")
-        quit()
     for i in range(0, len(sources)):
         if re.search(".iso", sources[i]):
             sources[i] = Extract(sources[i], inpath)

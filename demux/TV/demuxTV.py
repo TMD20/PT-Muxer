@@ -1,5 +1,4 @@
 import os
-import shutil
 
 from num2words import num2words
 
@@ -107,11 +106,11 @@ def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
             output = paths.createChildDemuxFolder(os.getcwd(), source)
             print(f"\nCreating a new source folder at {output}")
             os.chdir(output)
-            show = utils.getShowName(source)
+            show = utils.sourcetoShowName(source)
             path = os.path.join(output, "output_logs", f"BDINFO.{show}.txt")
 
             # copy bdinfo to folder
-            print(f"\nParsing BDINFO from {source}")
+            print(f"\nParsing STREAM: {stream}")
             bdObj.writeBdinfo(path)
 
             currentTracks = demuxData.addTracks(quickSums, playlistNum, playlistFile,
@@ -171,9 +170,9 @@ def batchSources(bdObjs, sources, args, demuxFolder, movieObj, season):
             output = paths.createChildDemuxFolder(os.getcwd(), source)
             print(f"\nCreating a new source folder at {output}")
             os.chdir(output)
-            show = utils.getShowName(source)
+            show = utils.sourcetoShowName(source)
             path = os.path.join(output, "output_logs", f"BDINFO.{show}.txt")
-            print(f"\nParsing BDINFO from {source}")
+            print(f"\nParsing BDINFO:{playlistFile}")
             bdObj.writeBdinfo(path)
             quickSums = bdObj.getQuickSum()
             streams = bdObj.getStreams()
