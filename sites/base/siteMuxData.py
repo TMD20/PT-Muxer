@@ -5,7 +5,7 @@ import subprocess
 
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
-import config
+import tools.commands as commands
 
 
 class MuxOBj():
@@ -169,16 +169,14 @@ class MuxOBj():
         self._outputargs = outargs.split()
 
     def createMKV(self, fileName, movieTitle ,chapters, xml,  bdinfo, eac3to):
-        mkvmergeBin = config.mkvmergeLinuxPath
-        if not os.path.isfile(mkvmergeBin):
-            mkvmergeBin = config.mkvMergeProjectPath
+       
      
 
         command = list(itertools.chain.from_iterable(
-            [[mkvmergeBin, "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
+            [commands.mkvmerge(),[ "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
         if chapters == None:
             command = list(itertools.chain.from_iterable(
-                [[mkvmergeBin, "--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
+                [commands.mkvmerge(),[ "--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
         commandStr = " ".join(command)
         print(f"Running This Command\n{commandStr}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:

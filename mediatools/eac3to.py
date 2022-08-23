@@ -3,13 +3,13 @@ import re
 import itertools
 import subprocess
 
-import config
+import tools.commands as commands
 import tools.general as utils
 
 
 def process(source, output, outputs_list,playlistLocation):
     start = os.getcwd()
-    show = utils.getShowName(source)
+    show = utils.sourcetoShowName(source)
     eac3toPath = set_eac3toPath(output, show)
 
     utils.mkdirSafe(eac3toPath)
@@ -20,37 +20,27 @@ def process(source, output, outputs_list,playlistLocation):
     os.chdir(start)
 
 def extract_files(playlistLocation, outputs_list, eac3toPath):
-    eactoBin = config.eac3toLinuxPath
-    if not os.path.isfile(eactoBin):
-        eactoBin = config.eac3toProjectPath
-
-    wineBin = config.wineLinuxPath
-    if not os.path.isfile(wineBin):
-        wineBin = config.wineProjectPath
 
     #get list of files
     eac3toWChapters = ["1:chapters.txt"]
     eac3toWChapters.extend([f"{ele[0]}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"])
     eac3toWoChapters = [
         f"{ele[0]-1}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"]
-
+    eactoCommand=None
+    playlistlocationFinal=utils.getPathType(playlistLocation,"Linux")
+    if utils.getSystem()=="Linux":
+        playlistlocationFinal=utils.getPathType(playlistLocation,"Windows")
+    eactoCommand=commands.eac3to()
     
-    command1 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)],  eac3toWChapters,[
-        "-progressnumbers", f"-log={eac3toPath}"]]
+    command1 = list(itertools.chain.from_iterable([eactoCommand,[playlistlocationFinal],eac3toWChapters,[  "-progressnumbers", f"-log={eac3toPath}"]]))
     
-    command2 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)], eac3toWoChapters,[
-        "-progressnumbers", f"-log={eac3toPath}"]]
-
-    command3 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation)],  eac3toWChapters , [
-        "-progressnumbers", "-demux", f"-log={eac3toPath}"]]
-
-    command4 = [[wineBin, eactoBin, utils.getwinepath(playlistLocation), ], eac3toWoChapters, [
-        "-progressnumbers", "-demux", f"-log={eac3toPath}"]]
+    command2 = list(itertools.chain.from_iterable([eactoCommand,[playlistlocationFinal],eac3toWoChapters,[  "-progressnumbers", f"-log={eac3toPath}"]]))
+    command3=list(itertools.chain.from_iterable([eactoCommand,[playlistlocationFinal],eac3toWChapters,[    "-progressnumbers", "-demux", f"-log={eac3toPath}"]]))
+    command4=list(itertools.chain.from_iterable([eactoCommand,[playlistlocationFinal],eac3toWoChapters,[    "-progressnumbers", "-demux", f"-log={eac3toPath}"]]))
     commandslist=[command1,command2,command3,command4]
     status=1
     for command in commandslist:
-        with subprocess.Popen(list(itertools.chain.from_iterable(
-                command)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
             for line in p.stderr:

@@ -1,0 +1,163 @@
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+      <title>mkvtoolnix-gui -- графичен потребителски интерфейс за mkvmerge1, включващ редактор на епизоди
+         (chapters) и редактор на метаданни
+      </title>
+      <link rel="stylesheet" type="text/css" href="mkvtoolnix-doc.css">
+   </head>
+   <body>
+      <div class="heading">mkvtoolnix-gui -- графичен потребителски интерфейс за <a href="mkvmerge.html"><span class="productname">mkvmerge</span>(1)</a>, включващ редактор на епизоди
+         (chapters) и редактор на метаданни
+      </div>
+      <hr>
+      <div id="toc" class="toc">
+         <h1>Table of contents</h1>
+         <ul>
+            <li><a href="#mkvtoolnix-gui.synopsis">1. Резюме</a></li>
+            <li><a href="#mkvtoolnix-gui.description">2. Описание</a></li>
+            <li><a href="#mkvtoolnix-gui.seealso">3. Виж също</a></li>
+            <li><a href="#mkvtoolnix-gui.www">4. Уебсайт</a></li>
+         </ul>
+      </div>
+      <div class="content">
+         <h1><a name="mkvtoolnix-gui.synopsis">1. Резюме</a></h1>
+         
+         
+         <div class="cmdsynopsis"><span class="commandname">mkvtoolnix-gui</span> [[конфигурационен-файл.mtxcfg] | [файл-източник.ext] | [матрьошка-файл.mkv] | [chapter-файл.ext] | [матрьошка-файл.mkv]]
+         </div>
+         
+         <h1><a name="mkvtoolnix-gui.description">2. Описание</a></h1>
+         
+         
+         <p>
+            <span class="productname">mkvtoolnix-gui</span>(1) e <span class="productname">Qt</span><sup>(tm)</sup>-базиран
+            <span class="abbrev">ГПИ</span> (графичен потребителски интерфейс) за <a href="mkvmerge.html"><span class="productname">mkvmerge</span>(1)</a>. Също
+            реализира и функционалностите на <a href="mkvinfo.html"><span class="productname">mkvinfo</span>(1)</a> и <a href="mkvpropedit.html"><span class="productname">mkvpropedit</span>(1)</a>, а в бъдеще ще
+            покрива и <a href="mkvextract.html"><span class="productname">mkvextract</span>(1)</a>. Всички настройки (например файлове-източници, опции
+            за пътечките и т.н.) могат да бъдат съхранени и възстановени.
+            
+         </p>
+         
+         
+         <p>
+            Конфигурационни файлове с разширението <span class="literal">.mtxcfg</span> карат
+            програмата да ги зареди в съответния инструмент. Всяко друго подадено
+            файлово име бива добавено като файл-източник за мултиплексиране, отворено в
+            инфо инструмента, редактора на метаданни или редактора на епизоди, в
+            зависимост от посочения режим. Режимът може да бъде посочен чрез
+            <span class="option">--merge</span>, <span class="option">--info</span>,
+            <span class="option">--edit-chapters</span> или <span class="option">--edit-headers</span>. По
+            подразбиране файловете биват добавени за мултиплексиране.
+            
+         </p>
+         
+         
+         <p>
+            Трябва да се отбележи, че ако инстанция на приложението вече се изпълнява,
+            то при повторно стартиране всички подадени имена на файлове в командния ред
+            ще бъдат отворени от вече вече изпълняващата се инстанция.
+            
+         </p>
+         
+         
+         <table class="variablelist">
+            <thead>
+               <tr>
+                  <th>Option</th>
+                  <th>Description</th>
+               </tr>
+            </thead>
+            <tbody>
+               <tr>
+                  <td class="varlistoption"><span class="option">--merge</span></td>
+                  <td>
+                     
+                     <p>Всички последвали файлове ще бъдат добавени като файлове-източници към
+                        текущата мултиплекс задача. Това е режимът по подразбиране.
+                     </p>
+                     
+                  </td>
+               </tr>
+               <tr>
+                  <td class="varlistoption"><span class="option">--info</span></td>
+                  <td>
+                     
+                     <p>Всички последвали файлове ще бъдат отворени в инфо инструмента.</p>
+                     
+                     <p>В допълнение, инфо инструментът ще бъде избран още при стартиране, вместо
+                        мултиплексор инструмента.
+                     </p>
+                     
+                  </td>
+               </tr>
+               <tr>
+                  <td class="varlistoption"><span class="option">--edit-chapters</span></td>
+                  <td>
+                     
+                     <p>Всички последвали файлове ще бъдат отворени в редактора на епизоди.</p>
+                     
+                     <p>В допълнение, редакторът на епизоди ще бъде избран още при стартиране,
+                        вместо мултиплексор инструмента.
+                     </p>
+                     
+                  </td>
+               </tr>
+               <tr>
+                  <td class="varlistoption"><span class="option">--edit-headers</span></td>
+                  <td>
+                     
+                     <p>Всички последвали файлове ще бъдат отворени в редактора на метаданни.</p>
+                     
+                     <p>В допълнение, редакторът на метаданни ще бъде избран още при стартиране,
+                        вместо мултиплексор инструмента.
+                     </p>
+                     
+                  </td>
+               </tr>
+               <tr>
+                  <td class="varlistoption"><span class="option">-h</span>, <span class="option">--help</span></td>
+                  <td>
+                     
+                     <p>
+                        Покажи информацията за употребата и излез.
+                        
+                     </p>
+                     
+                  </td>
+               </tr>
+               <tr>
+                  <td class="varlistoption"><span class="option">-V</span>, <span class="option">--version</span></td>
+                  <td>
+                     
+                     <p>
+                        Покажи информация за версията и излез.
+                        
+                     </p>
+                     
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+         
+         <h1><a name="mkvtoolnix-gui.seealso">3. Виж също</a></h1>
+         
+         
+         <p>
+            <a href="mkvmerge.html"><span class="productname">mkvmerge</span>(1)</a>, <a href="mkvextract.html"><span class="productname">mkvextract</span>(1)</a>, <a href="mkvinfo.html"><span class="productname">mkvinfo</span>(1)</a>, <a href="mkvpropedit.html"><span class="productname">mkvpropedit</span>(1)</a>
+            
+         </p>
+         
+         <h1><a name="mkvtoolnix-gui.www">4. Уебсайт</a></h1>
+         
+         
+         <p>
+            Най-новата версия винаги може да бъде намерена на <a href="https://mkvtoolnix.download/">началната страница на MKVToolNix</a>.
+            
+         </p>
+         
+      </div>
+   </body>
+</html>

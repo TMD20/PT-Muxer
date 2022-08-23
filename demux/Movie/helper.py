@@ -30,7 +30,7 @@ def processBdinfo(sources, bdObjs, demuxData, dontConvert):
         bdObj = bdObjs[i]
         output = paths.createChildDemuxFolder(os.getcwd(), source)
         os.chdir(output)
-        show = utils.getShowName(source)
+        show = utils.sourcetoShowName(source)
         path = os.path.join(
             output, "output_logs", f"BDINFO.{show}.txt")
         print(f"Extracting BDINFO from {source}")

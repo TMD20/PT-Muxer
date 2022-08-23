@@ -77,6 +77,12 @@ Note: Windows is not yet ready. However, I think the programs maybe 95 percent o
 * which python -> should be the virtualenv
 * py -m pip install -r requirements.txt
 * deactivate -> Do this after installing the requirements
+* go to the binaries folder with the project folder and run the following binaries
+  * /bdinfo/BDInfo.exe
+  * /eac3to/eacto.ext
+  * /suprip/SupRip.exe
+  /bdsup2sub.exe
+* Install any requirements when prompted
 
 ## General virtualenv Guide
 
@@ -87,7 +93,7 @@ General Guide: https://packaging.python.org/en/latest/guides/installing-using-pi
 
 These binaries are included but you are free to use newer versions/your own if desired
 
-see config.py "*LinuxPath" for file paths. 
+see config.py "*SystemPath" for file paths. 
 
 ### mkvmerge:
 

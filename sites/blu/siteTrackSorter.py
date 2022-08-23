@@ -37,7 +37,7 @@ class Blu(siteTrackSorter):
                 i = i+1
                 continue
 
-            with open(eac3to.set_eac3toPath(output, utils.getShowName(track["sourceDir"])), "r") as p:
+            with open(eac3to.set_eac3toPath(output, utils.sourcetoShowName(track["sourceDir"])), "r") as p:
                 t = p.read()
 
             prevSource = prevTrack["sourceKey"]

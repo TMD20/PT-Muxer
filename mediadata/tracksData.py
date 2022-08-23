@@ -32,13 +32,13 @@ class TracksData():
             self._appendTrack(currline, index, tracks, source)
         for track in tracks:
             track["sourceDir"] = source
-            track["sourceKey"] = utils.getShowName(source)
+            track["sourceKey"] = utils.sourcetoShowName(source)
         self._expandRawTracksData(
             tracks, playlistNum, playlistFile, streams, source, output)
         self.addSource(source)
 
     def addSource(self, source):
-        self._sources.append(utils.getShowName(source))
+        self._sources.append(utils.sourcetoShowName(source))
 
     ################################################################################################################
     #   Getter Functions
@@ -48,8 +48,8 @@ class TracksData():
     def rawMediaTracksData(self):
         return self._rawMediaTracksData
 
-    def filterBySource(self, source):
-        return self._rawMediaTracksData.get(utils.getShowName(source))
+    def filterBySource(self, key):
+        return self._rawMediaTracksData.get(key)
 
     """
    Private
@@ -157,7 +157,7 @@ class TracksData():
     # Try to Get Unique Key Values
         tempdict["index"] = index
         value = tempdict["bdinfo_title"] + \
-            utils.getShowName(source) + str(tempdict["index"])
+            utils.sourcetoShowName(source) + str(tempdict["index"])
         key = xxhash.xxh32_hexdigest(value)
         post = tempdict["langcode"] or "vid"
         tempdict["key"] = f"{key}_{post}"
@@ -169,7 +169,7 @@ class TracksData():
 
             # Try to Get Unique Key Values
             value = tempdict2["bdinfo_title"] + \
-                utils.getShowName(source) + str(tempdict2["index"])
+                utils.sourcetoShowName(source) + str(tempdict2["index"])
             key = xxhash.xxh32_hexdigest(value)
             post = tempdict2["langcode"] or "vid"
             tempdict2["key"] = f"{key}_{post}"
@@ -183,19 +183,19 @@ class TracksData():
     # Tracks are Objects
     # Output is a a string
     def _expandRawTracksData(self, tracks, playlistNum, playlistFile, streams, source, output):
-        self._rawMediaTracksData[utils.getShowName(source)] = {}
-        self._rawMediaTracksData[utils.getShowName(source)]["tracks"] = tracks
-        self._rawMediaTracksData[utils.getShowName(
+        self._rawMediaTracksData[utils.sourcetoShowName(source)] = {}
+        self._rawMediaTracksData[utils.sourcetoShowName(source)]["tracks"] = tracks
+        self._rawMediaTracksData[utils.sourcetoShowName(
             source)]["outputDir"] = output
-        self._rawMediaTracksData[utils.getShowName(
+        self._rawMediaTracksData[utils.sourcetoShowName(
             source)]["sourceDir"] = source
-        self._rawMediaTracksData[utils.getShowName(
+        self._rawMediaTracksData[utils.sourcetoShowName(
             source)]["playlistNum"] = playlistNum
-        self._rawMediaTracksData[utils.getShowName(
+        self._rawMediaTracksData[utils.sourcetoShowName(
             source)]["playlistFile"] = playlistFile
-        self._rawMediaTracksData[utils.getShowName(
+        self._rawMediaTracksData[utils.sourcetoShowName(
             source)]["streamFiles"] = self._getStreamNames(streams)
-        self._rawMediaTracksData[utils.getShowName(
+        self._rawMediaTracksData[utils.sourcetoShowName(
             source)]["length"] = self._getStreamLength(streams)
 
       ################################################################################################################

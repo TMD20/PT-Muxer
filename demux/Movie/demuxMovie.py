@@ -5,7 +5,6 @@ import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
 import tools.general as utils
 import demux.paths as paths
-import demux.select as select
 import demux.tools as tools
 import demux.Movie.helper as demuxHelper
 
@@ -13,6 +12,7 @@ import demux.Movie.helper as demuxHelper
 def demux(args):
     args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
     args.sublang = list(map(lambda x: x.lower(),  args.sublang))
+   
 
     # make the output directory if needed
     utils.mkdirSafe(args.outpath)
