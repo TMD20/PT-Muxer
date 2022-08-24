@@ -61,3 +61,11 @@ def mkvmerge():
         return [mkvmergeBin]
     else:
         return [config.mkvMergeWindows]
+        
+
+
+def poweriso():
+    if utils.getSystem() == "Linux":
+        return [config.powerisoLinux]
+    else:
+        return [config.powerisoWindows]

@@ -11,11 +11,12 @@ wineSystemPath = "/usr/bin/wine"
 wineProjectPath = os.path.join(root_dir, "binaries/wine/wine")
 
 mkvmergeSystemPath = "/usr/bin/mkvmerge"
-mkvMergeLinux=os.path.join(root_dir, "binaries/mkvmerge/Linux/mkvmerge")
-mkvMergeWindows=os.path.join(root_dir, "binaries/mkvmerge/Windows/mkvmerge.exe")
+mkvMergeLinux = os.path.join(root_dir, "binaries/mkvmerge/Linux/mkvmerge")
+mkvMergeWindows = os.path.join(
+    root_dir, "binaries/mkvmerge/Windows/mkvmerge.exe")
 
-bdSupSystemPath="/usr/local/bin/bdsup2sub.exe"
-bdSupProjectPath=os.path.join(root_dir, "binaries/bdsup2sub.exe")
+bdSupSystemPath = "/usr/local/bin/bdsup2sub.exe"
+bdSupProjectPath = os.path.join(root_dir, "binaries/bdsup2sub.exe")
 
 
 supripSystemPath = "/usr/local/bin/Subrip.exe"
@@ -26,6 +27,8 @@ bdinfoSystemPath = ""
 bdinfoProjectPath = os.path.join(
     root_dir, "binaries/bdinfo/BDInfo.exe")
 
-demuxPrefix="Mux"
-
-session = requests_cache.CachedSession(os.path.join(root_dir,"cache"))
+powerisoWindows = os.path.join(root_dir, "binaries/poweriso/Windows/piso.exe")
+powerisoLinux= os.path.join(root_dir, "binaries/poweriso/Linux/poweriso")
+demuxPrefix = "Mux"
+isoTemps=os.path.join(root_dir,"ISOTemps")
+session = requests_cache.CachedSession(os.path.join(root_dir, "cache"))
