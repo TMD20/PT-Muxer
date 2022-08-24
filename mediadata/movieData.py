@@ -54,10 +54,21 @@ class MovieData():
         """
         self._type = type
         self._getShowURLWiki(title)
-        if self._showURL != "" and self._getIsAnime() == True:
-            return self._getAnimeInfo(title)
+        data=None
+        anime=self._getIsAnime()
+        if self._showURL != "" and anime :
+            id= self._getMalID(title)
+            if id:
+                data=self._getAnimeInfo(id)
+
         else:
-            return self._getIMDBInfo(title)
+            id = self._getIMDBID(title)
+            if id:
+                data=self._getMovieInfo(id)
+                 
+        if data==None:
+            data=  self._userInputMovie()
+        return data
 
     def retriveEpisodeTitle(self, seasonNum, epNum, title, year, tmdbID, lang="English"):
         """
@@ -274,9 +285,20 @@ class MovieData():
             print("Wiki Episode Counter Failed")
     def _userInputMovie(self):
         if utils.singleSelectMenu(["Yes","No"],"Is this a Anime?")=="Yes":
-            None
+            return  self._getAnimeInfo(utils.getIntInput("Enter the mal ID"))
         else:
-            None
+                message = \
+                    """
+                Unable to find movie ID
+                Enter imdb id
+                """
+                id = utils.textEnter(message)
+                try:
+                    result = ia.get_movie(re.sub("tt", "", id))
+                    return self._getMovieInfo(result["imdbID"])
+                except:
+                    print("Error with ID")
+                    quit()
 
     ########################################################################################
     # Wikipedia Functions
@@ -802,8 +824,10 @@ class MovieData():
             return False
         return True
 
-    def _getAnimeInfo(self, title):
-        """Sets MovieData Dict with data, movie is picked by user
+    def _getMalID(self, title):
+        """
+        ** This function needs to be updaterd
+        Sets MovieData Dict with data, movie is picked by user
          Specifically for Anime Movie/TV Shows
         Parameters
         ----------
@@ -817,28 +841,27 @@ class MovieData():
         dict
             returns MovieData Dict with data about matches show
         """
-        animeJSON = os.path.join(
-            config.root_dir, "anime-offline-database", "anime-offline-database.json")
+    
 
-        data = self.ge_getAnimeSearchDataMAL(title)
-        titles = ["None of These"]
+        data = self._getAnimeSearchDataMAL(title)
+        titles = ["None of these Titles Match"]
         titles.extend(self._getEngTitle(data))
-        title = utils.singleSelectMenu(titles, "Which Anime are you Demuxing")
-
-        if title == "None of These":
-            self._movieObj["mal"] = utils.getIntInput("Enter the mal ID")
+        select = utils.singleSelectMenu(titles, "Which Anime are you Demuxing")
+        if select == "None of These Titles Match":
+            return 
         else:
-
-            index = titles.index(title)
-            self._movieObj["mal"] = self._getmalIds(data)[index]
-
+            return self._getmalIds(data)[titles.index(title)]
+    
+    def _getAnimeInfo(self,malID):
+        animeJSON = utils.getPathType(os.path.join(config.root_dir, "anime-offline-database", "anime-offline-database.json"),"Linux")
+        self._movieObj["mal"]=malID
         malData = self._getAnimeDataByIDMAL(self._movieObj["mal"])
         self._movieObj["imdb"] = self._maltoIMDB(malData)
         tmdbID = self._convertIMDBtoTMDB(
             f"tt{self._maltoIMDB(malData)}", self._type)
         if tmdbID == None:
             data = list(filter(lambda x: re.search(
-                str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), tv.search(title)))
+                str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), tv.search( malData["title_english"])))
             if len(data) > 0:
                 tmdbID = data[0]
 
@@ -847,7 +870,7 @@ class MovieData():
         with open(animeJSON, "r") as p:
             data = json.loads(p.read())["data"]
             reduce = [{"index": i, "title": data[i]["title"], "match":jellyfish.jaro_distance(
-                title, data[i]["title"])} for i in range(len(data))]
+                malData["title_english"], data[i]["title"])} for i in range(len(data))]
             reduce = list(filter(lambda x: x["match"] > .9, reduce))
             reduce = list(
                 sorted(reduce, key=lambda x: x["match"], reverse=True))
@@ -862,7 +885,6 @@ class MovieData():
         self._movieObj["type"] = malData["type"]
         self._movieObj["languages"] = ["English", "Japanese"]
         self._movieObj['year'] = malData['aired']['prop']['from']['year']
-
         return self._movieObj
 
     def ge_getAnimeSearchDataMAL(self, title):
@@ -1181,7 +1203,7 @@ class MovieData():
         self._showObjDictIMDB[imdbID] = series
         return series
 
-    def _getIMDBInfo(self, title):
+    def _getIMDBID(self, title):
         """
         Allows user to pick title that best matches the input title sent
 
@@ -1206,38 +1228,24 @@ class MovieData():
         else:
             msg = "What Movie"
         if len(results) == 0:
-            message =\
-                """
-            Unable to find movie
-            Enter imdb id:
-            """
-            id = utils.textEnter(message)
-            result = ia.get_movie(re.sub("tt", "", id))
+            return
         else:
             titles = list(map(lambda x: x["long imdb title"], results))
             titles.insert(0, "None of these Titles Match")
             match = utils.singleSelectMenu(titles, msg)
             if match == "None of these Titles Match":
-                return self._userInputMovie(self._movieObj)
-                message = \
-                    """
-                Unable to find movie ID
-                Enter imdb id
-                """
-                id = None
-                try:
-                    id = utils.textEnter(message)
-                except:
-                    print("id is invalid\n")
-
-                result = ia.get_movie(re.sub("tt", "", id))
+                return 
             else:
                 result = results[titles.index(match)-1]
         result = self._getByIDIMDB(result.movieID)
-        self._movieObj["imdb"] = result["imdbID"]
+        return result["imdbID"]
+
+
+
+    def _getMovieInfo(self,imdbID):
+        result = self._getByIDIMDB(imdbID)
         self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
             f"tt{result['imdbID']}", self._type)
-
         self._movieObj["title"] = result["title"]
         self._movieObj["type"] = self._getKind(result)
         self._movieObj["languages"] = result["languages"]
