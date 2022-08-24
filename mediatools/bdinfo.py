@@ -221,6 +221,7 @@ class Bdinfo():
         if int(num)-1 > len(playlistFiles):
             print("Number is out of Range")
             quit()
+
         self._playlistFile = playlistFiles[int(num)-1]
 
     @utils.requiredClassAttribute("_mediaDir")
