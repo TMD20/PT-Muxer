@@ -50,7 +50,7 @@ def Extract(source, inpath):
     if os.path.exists(outpath):
         opts = ["Yes", "No"]
         remove = utils.singleSelectMenu(
-            opts, f"FIles already extraced\nDo you want to delete the folder:\n {outpath} ")
+            opts, f"Files already extraced\nDo you want to delete the folder:\n {outpath} ")
         if remove == "Yes":
             shutil.rmtree(outpath)
         else:
@@ -81,6 +81,8 @@ def powerISOExtractHelper(source,outpath):
             p.wait()
             if len(error)>0:
                raise Exception(error)
+            if re.search("Error occured",msg):
+                raise Exception(msg)
           
 
         

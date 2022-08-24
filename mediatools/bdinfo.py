@@ -7,7 +7,6 @@ import itertools
 
 import tools.general as utils
 import tools.commands as commands
-import config
 
 
 class Bdinfo():
@@ -226,20 +225,12 @@ class Bdinfo():
 
     @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
-
-        bdinfoBin = config.bdinfoSystemPath
-        if not os.path.isfile(bdinfoBin):
-            bdinfoBin = config.bdinfoProjectPath
-
-        wineBin = config.wineSystemPath
-        if not os.path.isfile(wineBin):
-            wineBin = config.wineProjectPath
-        command=None
         if utils.getSystem()=="Linux":
-            command=[wineBin, bdinfoBin, "-l", self._mediaDir, "."]
+            command = list(itertools.chain.from_iterable([commands.bdinfo(), [
+            "-l", self._mediaDir, "."]]))
         else:
-           command= [bdinfoBin, "-l", self._mediaDir, "."]
+           command = list(itertools.chain.from_iterable([commands.bdinfo(), [
+               "-l", utils.getPathType(self._mediaDir, "Linux"), "."]]))
 
-            
-        self._playlist = subprocess.run(command,
-                                        stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
+        
+        self._playlist = subprocess.run(command,stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
