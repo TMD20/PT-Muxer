@@ -54,9 +54,9 @@ def Extract(source, inpath):
         if remove == "Yes":
             shutil.rmtree(outpath)
         else:
-            return
-    commands = [functools.partial(extract.main, source, extract_to=outpath), functools.partial(powerISOExtractHelper, source, outpath), functools.partial(udevilExtractHelper, source, outpath)]
-    for command in commands:
+            return utils.findMatches(outpath, "STREAM")[0]
+    commandlist = [functools.partial(extract.main, source, extract_to=outpath), functools.partial(powerISOExtractHelper, source, outpath), functools.partial(udevilExtractHelper, source, outpath)]
+    for command in commandlist:
         try:
             command()
             break
@@ -66,7 +66,7 @@ def Extract(source, inpath):
     if os.listdir(outpath)==0:
         print("Issue Extracting Files")
         quit()
-    return outpath
+    return utils.findMatches(outpath, "STREAM")[0]
 def powerISOExtractHelper(source,outpath):
     command = list(itertools.chain.from_iterable([commands.poweriso(), ["extract",source, "/", "-od", outpath]]))
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
