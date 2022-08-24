@@ -56,8 +56,11 @@ def sourcetoShowName(path):
     return show
 
 
-def findMatches(path, string):
-    return glob.glob(os.path.join(path, "**", string), recursive=True)
+def findMatches(path, string,ext=None):
+    paths = glob.glob(os.path.join(path, "**", string), recursive=True)
+    if ext!=None:
+        paths=list(filter(lambda x: os.path.splitext(x), paths))
+    return paths
 
 
 def requiredClassAttribute(*required):
@@ -197,7 +200,10 @@ def getRelativeTo(track, levelUp):
     return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
 
 def getSystem():
-    return sys.platform
+    if sys.platform=="linux":
+        return "Linux"
+    else:
+        return "Windows"
 
 
 

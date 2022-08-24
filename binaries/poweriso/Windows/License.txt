@@ -1,0 +1,54 @@
+END-USER LICENSE AGREEMENT FOR PowerISO.
+
+IMPORTANT - READ CAREFULLY: This End-User License Agreement is a legal agreement between 
+you (either an individual or a single entity) and Power Software Ltd for the product 
+identified above, which includes computer software and may include associated media, 
+printed materials, and "online" or electronic documentation ("SOFTWARE PRODUCT"). By 
+installing, copying, or otherwise using the SOFTWARE PRODUCT, you agree to be bound by 
+the terms of this End-User License Agreement, do not install or use the SOFTWARE PRODUCT; 
+you may however, return it to your place of purchase for a full refund.
+
+SOFTWARE PRODUCT LICENSE
+
+The SOFTWARE PRODUCT is protected by copyright laws and international copyright treaties, 
+as well as other intellectual property laws and treaties. The SOFTWARE PRODUCT is licensed,
+not sold. You may not rent, lease, or lend the SOFTWARE PRODUCT. You may permanently 
+transfer all your rights under this End-User License Agreement, provided you retain no 
+copies, you transfer all of the SOFTWARE PRODUCT and this End-User License Agreement, and 
+the recipient agrees to the terms of this End-User License Agreement
+
+GRANT OF LICENSE
+
+This program version may be installed on a maximum of two computers, so long as it is ONLY 
+running on one system at any time: i.e. one installation at home and one installation at 
+the office and used only by the licensee. The simultaneous use of this SOFTWARE PRODUCT by 
+multiple personnel requires additional licenses. Use of this SOFTWARE PRODUCT over an 
+internal network requires separate license for each user. The licensee shall not use, copy, 
+rent, lease, sell, modify, decompile, disassemble, reverse engineer, or transfer the 
+licensed SOFTWARE PRODUCT except as provided in this agreement. Any such unauthorized use 
+shall result in immediate termination of this license.
+
+All licenses will be issued in the name of the institution, company or school. Each additional 
+license also allows a single user to use the SOFTWARE PRODUCT at home.
+
+LIABILITY
+
+We try to keep my SOFTWARE PRODUCT as bug free as possible. However, it is a general rule, 
+Murphy's, that no software is ever error free, and the number of errors increases with the 
+complexity of the program. We cannot guarantee that this SOFTWARE PRODUCT will run in every 
+environment, on any Windows compatible machine, or together with any other application, 
+without producing errors. Any liability for damage of any sort is hereby denied. In no event 
+shall Power Software Ltd or its suppliers be liable for any special, incidental, indirect, 
+or consequential damages whatsoever (including, without limitation, damages for loss of 
+business profits, business interruption, loss of business information, or any other pecuniary 
+loss) arising out of the use of or inability to use the SOFTWARE PRODUCT. In any case, the 
+liability is limited to the registration fee. Please evaluate this SOFTWARE PRODUCT with not 
+critical data. Should you detect errors before registration, the user accepts the SOFTWARE 
+PRODUCT errors after registration. Any description of SOFTWARE PRODUCT errors will be accepted, 
+but we cannot guarantee that the errors can be corrected.
+
+Thank you for your understanding and cooperation.
+
+Power Software Ltd
+
+The PowerISO Team

@@ -5,7 +5,7 @@ import textwrap
 import mediatools.bdinfo as bdinfo
 import demux.paths as paths
 import tools.general as utils
-import mediatools.extract as Extract
+
 
 
 
@@ -55,7 +55,7 @@ def getSources(options, inpath, sortpref):
         quit()
     for i in range(0, len(sources)):
         if re.search(".iso", sources[i]):
-            sources[i] = Extract(sources[i], inpath)
+            sources[i] = paths.Extract(sources[i], inpath)
     return sources
 
 
