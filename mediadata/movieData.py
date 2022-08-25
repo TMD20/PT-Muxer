@@ -566,7 +566,7 @@ class MovieData():
             "format": "json",
             "action": "parse"
         }
-        req = requests.get(url, params=PARAMS)
+        req = config.session.get(url, params=PARAMS)
         sections = req.json()["parse"]["sections"]
         seasons = list(filter(lambda x: re.search(
             self._filterWord, x["line"], re.IGNORECASE), sections))
@@ -601,7 +601,7 @@ class MovieData():
             "format": "json",
             "action": "parse"
         }
-        req = requests.get(self._episodesURL, params=PARAMS)
+        req = config.session.get(self._episodesURL, params=PARAMS)
         episodesHTML = req.json()["parse"]["text"]["*"]
         soup = BeautifulSoup(episodesHTML, "html.parser")
         output = soup.find_all("tr", attrs={"class": "summary"})
@@ -801,9 +801,7 @@ class MovieData():
     #########################################################################
     # Anime Functions
     #########################################################################
-    def _getisAnimeTMBD(self,title):
-        moviesList=self._searchByStringTMDB(title,self._type)
-        
+
 
 
     def _getIsAnimeWiki(self):
@@ -832,7 +830,10 @@ class MovieData():
                 "anime") == -1:
             return False
         return True
-
+    def _getAnimeProjectData(self):
+        url="https://github.com/manami-project/anime-offline-database/raw/master/anime-offline-database-minified.json"
+        req=config.session.get(url)
+        return req.json()
     def _getMalID(self, title):
         """
         ** This function needs to be updaterd
@@ -862,7 +863,6 @@ class MovieData():
             return self._getmalIds(data)[titles.index(title)]
     
     def _getAnimeInfo(self,malID):
-        animeJSON = utils.getPathType(os.path.join(config.root_dir, "anime-offline-database", "anime-offline-database.json"),"Linux")
         self._movieObj["mal"]=malID
         malData = self._getAnimeDataByIDMAL(self._movieObj["mal"])
         self._movieObj["imdb"] = self._maltoIMDB(malData)
@@ -873,22 +873,20 @@ class MovieData():
             data = list(filter(lambda x: re.search(str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), moviesList))
             if len(data) > 0:
                 tmdbID = data[0]
-
         self._movieObj["tmdb"] = tmdbID
 
-        with open(animeJSON, "r") as p:
-            data = json.loads(p.read())["data"]
-            reduce = [{"index": i, "title": data[i]["title"], "match":jellyfish.jaro_distance(
-                malData["title_english"], data[i]["title"])} for i in range(len(data))]
-            reduce = list(filter(lambda x: x["match"] > .9, reduce))
-            reduce = list(
-                sorted(reduce, key=lambda x: x["match"], reverse=True))
-            if len(reduce) > 0:
-                title = list(map(lambda x: x["title"], reduce))[0]
-                dataIndex = list(filter(lambda x: x["title"] == title, reduce))[
-                    0]["index"]
-                matchObj = data[dataIndex]
-                self._addAnimeSourcesHelper(matchObj["sources"])
+        animeJSON = self._getAnimeProjectData()
+        reduce = [{"index": i, "title": animeJSON[i]["title"], "match":jellyfish.jaro_distance(
+            malData["title_english"], data[i]["title"])} for i in range(len(data))]
+        reduce = list(filter(lambda x: x["match"] > .9, reduce))
+        reduce = list(
+            sorted(reduce, key=lambda x: x["match"], reverse=True))
+        if len(reduce) > 0:
+            title = list(map(lambda x: x["title"], reduce))[0]
+            dataIndex = list(filter(lambda x: x["title"] == title, reduce))[
+                0]["index"]
+            matchObj = data[dataIndex]
+            self._addAnimeSourcesHelper(matchObj["sources"])
         self._movieObj["engTitle"] = malData["title_english"]
         self._movieObj["japTitle"] = malData["title_japanese"]
         self._movieObj["type"] = malData["type"]
