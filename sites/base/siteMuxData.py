@@ -3,6 +3,8 @@ import re
 import os
 import subprocess
 
+import langcodes
+
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import tools.commands as commands
@@ -30,8 +32,12 @@ class MuxOBj():
 
     def _addVideoTracks(self, remuxConfig):
         out = []
-        langcodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
-        langcode = remuxConfig["Tracks_Details"]["Audio"][langcodeKey]["langcode"]
+        langcode=None
+        try:
+            langcodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
+            langcode = remuxConfig["Tracks_Details"]["Audio"][langcodeKey]["langcode"]
+        except:
+            langcode=langcodes.standardize_tag(langcodes.find(remuxConfig["Movie"]["languages"][0]))
         for i in range(len(remuxConfig["Enabled_Tracks"]["Video"])):
             key = remuxConfig["Enabled_Tracks"]["Video"][i]
             key = str(key)

@@ -19,6 +19,8 @@ def getVideo(enabledTracks, trackDetails):
 
 
 def getAudio(enabledTracks, trackDetails):
+    if len(enabledTracks)==0:
+        return ""
     key = str(enabledTracks[0])
     trackinfo = trackDetails[key]["site_title"]
     
@@ -36,6 +38,8 @@ def getAudio(enabledTracks, trackDetails):
 
 
 def getAudioChannel(enabledTracks, trackDetails):
+    if len(enabledTracks)==0:
+        return ""
     key = str(enabledTracks[0])
     trackinfo = trackDetails[key]["site_title"]
     return re.search("/ (.*?) /", trackinfo).group(1)
