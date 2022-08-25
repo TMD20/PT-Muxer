@@ -9,7 +9,7 @@ import tools.general as utils
 from bs4 import BeautifulSoup
 import jellyfish
 from imdb import Cinemagoer as imdb
-from tmdbv3api import Find, TMDb, TV, Episode, Season
+from tmdbv3api import Find, TMDb, TV, Episode, Season,Movie
 
 import config
 # Globals
@@ -18,6 +18,7 @@ tmdb = TMDb()
 tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
 find = Find()
 tv = TV()
+movie=Movie()
 seasonTMDB = Season()
 episodeTMDB = Episode()
 
@@ -55,8 +56,8 @@ class MovieData():
         self._type = type
         self._getShowURLWiki(title)
         data=None
-        anime=self._getIsAnime()
-        if self._showURL != "" and anime :
+        anime=self._getIsAnimeWiki() 
+        if anime :
             id= self._getMalID(title)
             if id:
                 data=self._getAnimeInfo(id)
@@ -64,6 +65,7 @@ class MovieData():
         else:
             id = self._getIMDBID(title)
             if id:
+
                 data=self._getMovieInfo(id)
                  
         if data==None:
@@ -289,7 +291,6 @@ class MovieData():
         else:
                 message = \
                     """
-                Unable to find movie ID
                 Enter imdb id
                 """
                 id = utils.textEnter(message)
@@ -800,8 +801,12 @@ class MovieData():
     #########################################################################
     # Anime Functions
     #########################################################################
+    def _getisAnimeTMBD(self,title):
+        moviesList=self._searchByStringTMDB(title,self._type)
+        
 
-    def _getIsAnime(self):
+
+    def _getIsAnimeWiki(self):
         """Checks with the Wikepedia Article indicates this is an anme
         Parameters
         ----------
@@ -810,12 +815,16 @@ class MovieData():
         bool
             Whether or not this is an anime
         """
+        if self._showURL=="":
+            return
+
 
         PARAMS = {
             "prop": "text",
             "format": "json",
             "action": "parse",
         }
+        
         req = config.session.get(self._showURL, params=PARAMS)
         episodesHTML = req.json()["parse"]["text"]["*"]
 
@@ -860,8 +869,8 @@ class MovieData():
         tmdbID = self._convertIMDBtoTMDB(
             f"tt{self._maltoIMDB(malData)}", self._type)
         if tmdbID == None:
-            data = list(filter(lambda x: re.search(
-                str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), tv.search( malData["title_english"])))
+            moviesList=self._searchByStringTMDB(malData["title_english"],self._type)
+            data = list(filter(lambda x: re.search(str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), moviesList))
             if len(data) > 0:
                 tmdbID = data[0]
 
@@ -1244,8 +1253,9 @@ class MovieData():
 
     def _getMovieInfo(self,imdbID):
         result = self._getByIDIMDB(imdbID)
+        self._movieObj["imdb"]=imdbID
         self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
-            f"tt{result['imdbID']}", self._type)
+            f"tt{imdbID}", self._type)
         self._movieObj["title"] = result["title"]
         self._movieObj["type"] = self._getKind(result)
         self._movieObj["languages"] = result["languages"]
@@ -1432,6 +1442,11 @@ class MovieData():
     def _getTotalEPSeasonTMDB(self, seasonNum, title, tmdbID):
         data = self._seasonSelectionTMDB(seasonNum, title, tmdbID)
         return len(data["episodes"])
+    def _searchByStringTMDB(self,title,mediatype):
+        if mediatype=="TV":
+            return tv.search(title)
+        else:
+            return movie.search(title)
 
 
     def _episodeIMDBMatcherTMDB(self, seasonIDList, tmdbID, imdbID, seasonNum, epNum):

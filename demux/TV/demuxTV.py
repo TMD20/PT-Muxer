@@ -50,7 +50,7 @@ def demux(args):
             break
         if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
             sources = select.getSources(
-                options, args.inpath, args.sortpref, args.splitplaylist == False)
+                options, args.inpath, args.sortpref, args.splitplaylist == None)
         offset = len(os.listdir(demuxFolder))
         message =\
             f"""
