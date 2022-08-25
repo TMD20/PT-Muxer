@@ -113,12 +113,9 @@ def getFullPaths(remuxConfig, parentDir):
 
 
 def getTVMuxFolders(inpath, demuxPrefix):
-    folders = utils.findMatches(inpath, f"{demuxPrefix}*")
-    # only get root directories
-
-    folders = list(filter(lambda x: len(os.listdir(x)) != 0, folders))
+    folders = utils.findMatches(inpath, f"{demuxPrefix}[.]*")
+    folders=list(filter(lambda x: os.path.isdir(x),folders))
     folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
-
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) != None, folders))
 
@@ -126,9 +123,9 @@ def getTVMuxFolders(inpath, demuxPrefix):
 
 
 def getMovieMuxFolders(inpath, demuxPrefix):
-    folders = utils.findMatches(inpath, f"{demuxPrefix}*")
+    folders = utils.findMatches(inpath, f"{demuxPrefix}[.]*")
+    folders=list(filter(lambda x: os.path.isdir(x),folders))
     folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
-
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) == None, folders))
     return folders
