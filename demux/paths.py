@@ -68,7 +68,7 @@ def Extract(source, inpath):
         quit()
     return utils.findMatches(outpath, "STREAM")[0]
 def powerISOExtractHelper(source,outpath):
-    command = list(itertools.chain.from_iterable([commands.poweriso(), ["extract",source, "/", "-od", outpath]]))
+    command = list(itertools.chain.from_iterable([commands.poweriso(), ["extract",utils.getPath(source,"Linux"), "/", "-od", outpath]]))
     with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
             error=""
             msg=""
