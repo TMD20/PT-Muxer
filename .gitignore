@@ -9,7 +9,7 @@ __pycache__/
 test/
 .env/
 cache.sqlite
-
+binaries/eac3to/log.txt
 
 
 

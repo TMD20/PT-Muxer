@@ -42,7 +42,10 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
                 for file in os.listdir(tmpdirname):
                     shutil.move(os.path.join(tmpdirname, file), newDir)
 def imagesOnly(tracks):
+    print("Generating Subtitle Images\n\n")
     for track in tracks:
+        title=track["title"]
+        print(f'Working on: {title}\n\n')
         file = track["eac3to"].split(":")[1]
         newDir = os.path.join(os.path.abspath(f"./subImages"),f"{file}/")
         utils.mkdirSafe(newDir)
