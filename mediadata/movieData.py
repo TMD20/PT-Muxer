@@ -870,7 +870,8 @@ class MovieData():
             f"tt{self._maltoIMDB(malData)}", self._type)
         if tmdbID == None:
             moviesList=self._searchByStringTMDB(malData["title_english"],self._type)
-            data = list(filter(lambda x: re.search(str(malData['aired']['prop']['from']['year']), str(x["first_air_date"])), moviesList))
+            malYear=str(malData['aired']['prop']['from']['year'])
+            data = list(filter(lambda x: re.search( malYear,str(x.get("first_air_date") or x.get("release_date"))),moviesList))
             if len(data) > 0:
                 tmdbID = data[0]
         self._movieObj["tmdb"] = tmdbID
