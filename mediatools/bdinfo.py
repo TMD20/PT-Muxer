@@ -28,18 +28,19 @@ class Bdinfo():
         print(self._playlist)
 
     def runbdinfo(self, playlistNum=None):
-        playlistNum=playlistNum or self._playlistNum
+        playlistNum = playlistNum or self._playlistNum
         selection = self._playlist.splitlines()[2+int(playlistNum)]
         match = re.search("[0-9]+.MPLS", selection)
         if match != None:
             selection = selection[match.start():match.end()]
             temp = tempfile.TemporaryDirectory()
-            command=list(itertools.chain.from_iterable([commands.bdinfo(),[ "-m", selection, self._mediaDir, temp.name]]))
+            command = list(itertools.chain.from_iterable(
+                [commands.bdinfo(), ["-m", selection, self._mediaDir, temp.name]]))
             t = subprocess.run(command)
-            file = open(utils.getPathType(os.path.join(temp.name, os.listdir(temp.name)[0]),"Linux"), "r")
+            file = open(utils.convertPathType(os.path.join(
+                temp.name, os.listdir(temp.name)[0]), "Linux"), "r")
             self._bdinfo = file.read()
             file.close()
-
 
     def getQuickSum(self):
         lines = self._bdinfo.splitlines()
@@ -80,7 +81,7 @@ class Bdinfo():
         return self._streams
 
     def getChapters(self):
-        out=[]
+        out = []
         lines = self._bdinfo.splitlines()
         lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
         start = 0
@@ -106,7 +107,7 @@ class Bdinfo():
 
             out.append(
                 {"number": number, "start": startTime, "end": endTime})
-        self._chapters=out
+        self._chapters = out
         return self._chapters
 
     def writeBdinfo(self, path):
@@ -196,9 +197,9 @@ class Bdinfo():
     '''
 
     def _getIndex(self):
-        maxVal=len(re.findall(
+        maxVal = len(re.findall(
             "[0-9]+\.MPLS", self._playlist))
-        return utils.getIntInput("Enter playlist number: ",maxVal)
+        return utils.getIntInput("Enter playlist number: ", maxVal)
 
     def _getRange(self):
         message = \
@@ -225,12 +226,12 @@ class Bdinfo():
 
     @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
-        if utils.getSystem()=="Linux":
+        if utils.getSystem() == "Linux":
             command = list(itertools.chain.from_iterable([commands.bdinfo(), [
-            "-l", self._mediaDir, "."]]))
+                "-l", self._mediaDir, "."]]))
         else:
-           command = list(itertools.chain.from_iterable([commands.bdinfo(), [
-               "-l", utils.getPathType(self._mediaDir, "Linux"), "."]]))
+            command = list(itertools.chain.from_iterable([commands.bdinfo(), [
+                "-l", utils.convertPathType(self._mediaDir, "Linux"), "."]]))
 
-        
-        self._playlist = subprocess.run(command,stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
+        self._playlist = subprocess.run(
+            command, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')

@@ -63,6 +63,7 @@ Modifications to the code are required to get it to work on that platform
 * which python -> should be the virtualenv
 * pip3 install -r requirements.txt
 * deactivate -> Do this after installing the requirements
+* chmod +x -R ./binaries | Alternativly poweriso, mkvmerge both need execution permission
 
 ## Windows
 Note: Windows is not yet ready. However, I think the programs maybe 95 percent of the way ready for windows. You could possible make the modifications needed. Alternatively wait until I am able to do it myself

@@ -895,7 +895,7 @@ class MovieData():
         self._movieObj['year'] = malData['aired']['prop']['from']['year']
         return self._movieObj
 
-    def ge_getAnimeSearchDataMAL(self, title):
+    def _getAnimeSearchDataMAL(self, title):
         """
         Searces myanimelist unofficial API for title
         Returns Results as dictionary
