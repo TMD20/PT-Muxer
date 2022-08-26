@@ -1,6 +1,7 @@
-import json
 import os
 import functools
+
+import orjson
 
 from pymediainfo import MediaInfo
 import natsort
@@ -56,7 +57,7 @@ def Remux(args):
         remuxConfig = None
 
         with open(remuxConfigPath, "r") as p:
-            remuxConfig = json.loads(p.read())
+            remuxConfig = orjson.loads(p.read())
         remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
 
         if remuxHelper.checkMissing(remuxConfig) == True:
