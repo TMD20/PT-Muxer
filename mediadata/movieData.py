@@ -894,7 +894,7 @@ class MovieData():
             title = list(map(lambda x: x["title"], reduce))[0]
             dataIndex = list(filter(lambda x: x["title"] == title, reduce))[
                 0]["index"]
-            matchObj = data[dataIndex]
+            matchObj = animeJSON[dataIndex]
             self._addAnimeSourcesHelper(matchObj["sources"])
         self._movieObj["engTitle"] = malData["title_english"]
         self._movieObj["japTitle"] = malData["title_japanese"]
