@@ -2,7 +2,7 @@ import os
 import re
 import functools
 import glob
-import pathlib 
+import pathlib
 import sys
 import textwrap
 
@@ -38,7 +38,7 @@ def dehumanizeArrow(input):
 
 
 def mkdirSafe(target):
-    directories=list(reversed(pathlib.Path(target).parents))
+    directories = list(reversed(pathlib.Path(target).parents))
     if len(os.path.splitext(target)[1]) == 0:
         directories.append(target)
     for ele in directories:
@@ -47,19 +47,19 @@ def mkdirSafe(target):
 
 
 def sourcetoShowName(path):
-    path=getPathType(path,"Linux")
+    path = convertPathType(path, "Linux")
     show = str(pathlib.Path(path).parents[1])
     show = os.path.basename(show)
     show = re.sub(" +", " ", show)
     show = re.sub(" ", ".", show)
-    
+
     return show
 
 
-def findMatches(path, string,ext=None):
+def findMatches(path, string, ext=None):
     paths = glob.glob(os.path.join(path, "**", string), recursive=True)
-    if ext!=None:
-        paths=list(filter(lambda x: os.path.splitext(x), paths))
+    if ext != None:
+        paths = list(filter(lambda x: os.path.splitext(x), paths))
     return paths
 
 
@@ -87,7 +87,7 @@ def removeDupesList(list):
     return res
 
 
-def getIntInput(string,maxVal=float("inf")):
+def getIntInput(string, maxVal=float("inf")):
     return int(inquirer.number(
         min_allowed=1,
         max_allowed=maxVal,
@@ -105,13 +105,13 @@ def rawSelectMenu(items, message):
 
 
 def multiSelectMenu(items, message):
-    return inquirer.checkbox(validate=lambda x: len(x)>0,invalid_message="Must Select at Least One item",mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
 
 
 def textEnter(message, default=None):
     if default != None:
-        return inquirer.text(mandatory=True,validate=lambda x: len(x)>0,invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
-    return inquirer.text(mandatory=True,validate=lambda x: len(x)>0,invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n")).execute()
+        return inquirer.text(mandatory=True, validate=lambda x: len(x) > 0, invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
+    return inquirer.text(mandatory=True, validate=lambda x: len(x) > 0, invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n")).execute()
 
 
 def getRangeOfNumbers(message, default=None):
@@ -143,25 +143,20 @@ def getEac3to(remuxConfig):
     return findMatches(output, "Eac3to*")[0]
 
 
-def getPathType(folder,type):
-    if type=="Linux":
+def convertPathType(folder, type):
+    if type == "Linux":
         return str(pathlib.PurePosixPath(folder))
     return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
-    
-
-
 
 
 def getTitle(source):
 
-    parent=str(pathlib.Path(source).parents[1])
-    if re.search("(BD25|BD50)",parent,re.IGNORECASE):
+    parent = str(pathlib.Path(source).parents[1])
+    if re.search("(BD25|BD50)", parent, re.IGNORECASE):
         None
-    elif re.search("D[0-9]", source, re.IGNORECASE) or re.search("Disk [0-9]",parent,re.IGNORECASE):
+    elif re.search("D[0-9]", source, re.IGNORECASE) or re.search("Disk [0-9]", parent, re.IGNORECASE):
         source = str(pathlib.Path(source).parents[0])
     return guessit(source)["title"]
-   
-            
 
 
 def cleanString(val):
@@ -177,8 +172,7 @@ def smart_truncate(content, length=100, suffix='...'):
         return content[:length].rsplit(' ', 1)[0]+suffix
 
 
-def getRelativeTo(track, levelUp):        
-    
+def getRelativeTo(track, levelUp):
     """
     Returns the relative Path of a file/folder from one of it's parents
 
@@ -190,24 +184,20 @@ def getRelativeTo(track, levelUp):
         Track whose relative path you want
     levelup: int
         How many levels up the parent tree
-    
+
 
     Returns
     -------
-    
+
     str
         Relative path to file from one of the parents
     """
 
-
     return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
 
+
 def getSystem():
-    if sys.platform=="linux":
+    if sys.platform == "linux":
         return "Linux"
     else:
         return "Windows"
-
-
-
-
