@@ -153,8 +153,11 @@ def getPathType(folder,type):
 
 
 def getTitle(source):
-    source=str(pathlib.Path(source).parents[1])
-    if re.search("D[0-9]", source, re.IGNORECASE) or re.search("Disk [0-9]",source,re.IGNORECASE):
+
+    parent=str(pathlib.Path(source).parents[1])
+    if re.search("(BD25|BD50)",parent,re.IGNORECASE):
+        None
+    elif re.search("D[0-9]", source, re.IGNORECASE) or re.search("Disk [0-9]",parent,re.IGNORECASE):
         source = str(pathlib.Path(source).parents[0])
     return guessit(source)["title"]
    

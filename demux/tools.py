@@ -1,10 +1,12 @@
 import os
-import json
+
+import orjson
 
 import mediatools.eac3to as eac3to
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
 import tools.general as utils
+
 
 
 def ConvertChapterList(chapters):
@@ -129,7 +131,7 @@ def writeFinalJSON(outdict):
     outputPath = os.path.abspath(os.path.join(".", "output.json"))
     print(f"Writing to {outputPath}")
     with open(outputPath, "w") as p:
-        p.write(json.dumps(outdict, indent=4, ensure_ascii=False))
+        p.write(orjson.dumps(outdict, option=orjson.OPT_INDENT_2).decode("utf-8"))
 
 
 def sortTracks(muxSorter, demuxData, movie, args):

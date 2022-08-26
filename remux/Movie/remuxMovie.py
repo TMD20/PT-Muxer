@@ -1,8 +1,8 @@
-
-import json
 import os
 
 from pymediainfo import MediaInfo
+import orjson
+
 
 import remux.helper as remuxHelper
 import sites.pickers.siteMuxPicker as muxPicker
@@ -29,7 +29,7 @@ def Remux(args):
     remuxConfig = None
 
     with open(remuxConfigPath, "r") as p:
-        remuxConfig = json.loads(p.read())
+        remuxConfig = orjson.loads(p.read())
     remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
 
     if remuxHelper.checkMissing(remuxConfig) == True:
