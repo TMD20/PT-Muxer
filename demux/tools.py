@@ -1,4 +1,5 @@
 import os
+import json
 
 import orjson
 
@@ -130,8 +131,12 @@ def addTrackData(outdict, muxSorter):
 def writeFinalJSON(outdict):
     outputPath = os.path.abspath(os.path.join(".", "output.json"))
     print(f"Writing to {outputPath}")
-    with open(outputPath, "w") as p:
-        p.write(orjson.dumps(outdict, option=orjson.OPT_INDENT_2).decode("utf-8"))
+    d=open(outputPath, "w",encoding="utf-8")
+
+    with open(outputPath, "wb") as p:
+        data=orjson.dumps(outdict, option=orjson.OPT_INDENT_2)
+        p.write(data)
+
 
 
 def sortTracks(muxSorter, demuxData, movie, args):
@@ -150,7 +155,7 @@ def machineReader(muxSorter, args, movie):
         subreader.subreader(muxSorter.enabledSub, keep=args.keepocr)
     elif args.ocr == "default":
         subreader.subreader(muxSorter.unSortedSub,
-                            langs=movie.get("languages",[]), keep=args.keepocr)
+                            langs=movie.get("languages",[ ]), keep=args.keepocr)
     elif args.ocr == "sublang":
         subreader.subreader(muxSorter.unSortedSub,
                             langs=args.sublang, keep=args.keepocr)
