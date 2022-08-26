@@ -878,8 +878,9 @@ class MovieData():
         self._movieObj["tmdb"] = tmdbID
 
         animeJSON = self._getAnimeProjectData()
+        #create a dictionary
         reduce = [{"index": i, "title": animeJSON[i]["title"], "match":jellyfish.jaro_distance(
-            malData["title_english"], data[i]["title"])} for i in range(len(data))]
+            malData["title_english"], animeJSON[i]["title"])} for i in range(len(animeJSON))]
         reduce = list(filter(lambda x: x["match"] > .9, reduce))
         reduce = list(
             sorted(reduce, key=lambda x: x["match"], reverse=True))
