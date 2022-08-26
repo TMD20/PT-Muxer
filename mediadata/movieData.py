@@ -854,10 +854,11 @@ class MovieData():
     
 
         data = self._getAnimeSearchDataMAL(title)
-        titles = ["None of these Titles Match"]
+        noMatch = "None of these Titles Match"
+        titles = [noMatch]
         titles.extend(self._getEngTitle(data))
         select = utils.singleSelectMenu(titles, "Which Anime are you Demuxing")
-        if select == "None of These Titles Match":
+        if select == noMatch:
             return 
         else:
             return self._getmalIds(data)[titles.index(title)]
