@@ -47,10 +47,6 @@
 
 # How to Install/Get Started 
 Instructions are provided for Linux and Windows
-
-Note: Windows is not fully supported at the moment
-Modifications to the code are required to get it to work on that platform
-
 ## Linux: 
 ### Required
   * python 3.8
@@ -66,7 +62,6 @@ Modifications to the code are required to get it to work on that platform
 * chmod +x -R ./binaries | Alternativly poweriso, mkvmerge both need execution permission
 
 ## Windows
-Note: Windows is not yet ready. However, I think the programs maybe 95 percent of the way ready for windows. You could possible make the modifications needed. Alternatively wait until I am able to do it myself
 ### Required
   * python3.8
 ### Install

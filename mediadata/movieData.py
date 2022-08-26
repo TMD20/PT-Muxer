@@ -854,7 +854,7 @@ class MovieData():
     
 
         data = self._getAnimeSearchDataMAL(title)
-        noMatch = "None of these Titles Match"
+        noMatch = "None of These Titles Match"
         titles = [noMatch]
         titles.extend(self._getEngTitle(data))
         select = utils.singleSelectMenu(titles, "Which Anime are you Demuxing")
@@ -1113,7 +1113,7 @@ class MovieData():
                     continue
                 if dif.minute > 5:
                     continue
-            return obj["imdbID"]
+            return int(obj["imdbID"])
 
     def _getAnimeDataByIDMAL(self, id):
         """
@@ -1253,7 +1253,7 @@ class MovieData():
 
     def _getMovieInfo(self,imdbID):
         result = self._getByIDIMDB(imdbID)
-        self._movieObj["imdb"]=imdbID
+        self._movieObj["imdb"]=int(imdbID)
         self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
             f"tt{imdbID}", self._type)
         self._movieObj["title"] = result["title"]
