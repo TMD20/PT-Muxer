@@ -833,7 +833,11 @@ class MovieData():
     def _getAnimeProjectData(self):
         url="https://github.com/manami-project/anime-offline-database/raw/master/anime-offline-database-minified.json"
         req=config.session.get(url)
-        return req.json()
+        try:
+            return req.json()["data"]
+        except Exception as e:
+            print(e)
+            return e
     def _getMalID(self, title):
         """
         ** This function needs to be updaterd
@@ -878,6 +882,8 @@ class MovieData():
         self._movieObj["tmdb"] = tmdbID
 
         animeJSON = self._getAnimeProjectData()
+        if not animeJSON:
+            return self._movieObj
         #create a dictionary
         reduce = [{"index": i, "title": animeJSON[i]["title"], "match":jellyfish.jaro_distance(
             malData["title_english"], animeJSON[i]["title"])} for i in range(len(animeJSON))]
