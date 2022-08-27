@@ -25,7 +25,7 @@ class Bdinfo():
     def setup(self, subfolder):
         self._mediaDir = re.sub("/BDMV/STREAM", "", subfolder)
         self._generate_playlists()
-        print(self._playlist)
+
 
     def runbdinfo(self, playlistNum=None):
         playlistNum = playlistNum or self._playlistNum
@@ -197,23 +197,23 @@ class Bdinfo():
     '''
 
     def _getIndex(self):
-        maxVal = len(re.findall(
-            "[0-9]+\.MPLS", self._playlist))
-        return utils.getIntInput("Enter playlist number: ", maxVal)
+        selection = self._playlist.splitlines()[3:]
+        playlistNum = utils.singleSelectMenu(selection, "Select Playlist: ")
+
+        return int(playlistNum.split()[0])
 
     def _getRange(self):
         message = \
-            """
-        Enter playlist(s) you want to extract
-
-        This can be a comma seperated list of single numbers or range of numbers
-
-        i.e:1-5,15 would result in [1,2,3,4,5,15]
-        being the playlist check
+        """
+        Select PlayList
 
         Multiple sources must have the same number of playlist per run
         """
-        self._playlistNumList = utils.getRangeOfNumbers(message) or []
+        selection = self._playlist.splitlines()[3:]
+        playlistNumList = utils.multiSelectMenu(
+            selection, message)
+
+        self._playlistNumList = list(map(lambda x: int(x.split()[0]),playlistNumList))
 
     def _getplaylistFile(self, num):
         playlistFiles = re.findall(
