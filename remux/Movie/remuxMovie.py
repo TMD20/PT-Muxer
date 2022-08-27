@@ -40,7 +40,8 @@ def Remux(args):
 
     fileName = muxGenerator.getFileName(
         remuxConfig, args.group, title, year, args.skipnamecheck)
-    
+    if remuxHelper.overwriteIfExists(fileName) == False:
+        quit()
 
     ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
     message = """If the Program made it this far the Movie MKV...

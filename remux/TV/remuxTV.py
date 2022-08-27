@@ -92,6 +92,8 @@ def Remux(args):
     for i in range(len(fileNameFuncts)):
         funct = fileNameFuncts[i]
         fileNameList.append(funct())
+    if remuxHelper.overwriteIfExists(*fileNameList)==False:
+        quit()
     print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
     for i in range(len(fileNameList)):
         fileName = fileNameList[i]
