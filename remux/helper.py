@@ -129,3 +129,10 @@ def getMovieMuxFolders(inpath, demuxPrefix):
     folders = list(filter(lambda x: re.search(
         "^[0-9]+$", os.listdir(x)[0]) == None, folders))
     return folders
+def overwriteIfExists(*args):
+    for file in args:
+        if os.path.exists(file):
+            if utils.singleSelectMenu(["Yes","No"],"Some files already exist\nDo you want overwrite the file(s), and continue the remux process")=="No":
+                return False
+            else:
+                return True
