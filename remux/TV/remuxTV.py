@@ -108,7 +108,7 @@ def Remux(args):
         print(f"New File at {ele}\n")
         mediainfo = MediaInfo.parse(ele, output="", full=False)
         print(f"\n\n{mediainfo}\n\n")
-    print(f"As a Reminder the output location is: {os.path.dirnanme(fileNameList[0])}")
+    print(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
 
 
 def ProcessBatch(fileName, remuxConfig, muxGenerator, movieObj, outargs):
