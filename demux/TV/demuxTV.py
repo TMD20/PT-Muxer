@@ -88,10 +88,9 @@ def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
             if args.splitplaylist < float("inf"):
                 if demuxHelper.getStreamsLength([stream]) < args.splitplaylist:
                     message = \
-                        """
-                    The Cumalative length of the stream(s)  
-                    is less then the Min that you picked
-                    
+                        f"""
+                    The length of the stream: {stream}
+                    is less then the min that you picked
                     """
                     print(message)
                     os.chdir(demuxFolder)
