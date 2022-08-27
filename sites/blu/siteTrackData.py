@@ -12,8 +12,9 @@ class Blu(siteTrackData):
     def __init__(self):
         super().__init__()
 
-    def addTracks(self, quicksum, playlistNum,streams, source, output):
-        current_tracks = super().addTracks(quicksum, playlistNum, streams,source, output)
+    
+    def addTracks(self, quicksum, playlistNum,playlistFile,streams, source, output):
+        current_tracks = super().addTracks(quicksum, playlistNum, playlistFile,streams,source, output)
         self._checkPadding(current_tracks ,output)
         return current_tracks
 

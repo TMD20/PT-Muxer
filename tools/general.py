@@ -35,6 +35,10 @@ def addArrowTime(large, small):
 def dehumanizeArrow(input):
     now = arrow.utcnow()
     return now.dehumanize(input)
+def getFormated(format,time=None):
+    if time==None:
+        return arrow.get().format(format)
+    return arrow.get(time).format(format)
 
 
 def mkdirSafe(target):

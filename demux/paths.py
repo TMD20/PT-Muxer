@@ -26,7 +26,7 @@ def getBDMVs(path):
 def createParentDemuxFolder(sources, outpath):
 
     title = utils.getTitle(sources[0])
-    folder = f"{config.demuxPrefix}.{os.urandom(7).hex()}.{title}"
+    folder = f"{config.demuxPrefix}.{utils.getFormated('YY.MM.DD_HH:mm.ss')}.{title}"
     parentDemux = os.path.join(outpath, folder)
     parentDemux = re.sub(" +", " ", parentDemux)
     parentDemux = re.sub(" ", ".", parentDemux)
