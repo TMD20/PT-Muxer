@@ -155,8 +155,8 @@ def getTitle(source):
     if re.search("(BD25|BD50)", parent, re.IGNORECASE):
         None
     elif re.search("D[0-9]", source, re.IGNORECASE) or re.search("Disk [0-9]", parent, re.IGNORECASE):
-        source = str(pathlib.Path(source).parents[0])
-    return guessit(source)["title"]
+        parent = str(pathlib.Path(parent).parents[0])
+    return guessit(parent)["title"]
 
 
 def cleanString(val):
