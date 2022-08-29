@@ -5,6 +5,7 @@ import glob
 import pathlib
 import sys
 import textwrap
+import shutil
 
 import pynumparser
 from InquirerPy import inquirer
@@ -205,3 +206,5 @@ def getSystem():
         return "Linux"
     else:
         return "Windows"
+def rmDir(path):
+    shutil.rmtree(path)

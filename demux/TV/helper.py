@@ -6,7 +6,7 @@ import tools.general as utils
 import mediatools.extract as Extract
 import config
 import demux.paths as paths
-import remux.helper as remuxHelper
+import remux.helpers as remuxHelper
 
 
 

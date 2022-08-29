@@ -50,7 +50,7 @@ def Extract(source, inpath):
         remove = utils.singleSelectMenu(
             opts, f"Files already extraced\nDo you want to delete the folder:\n {outpath} ")
         if remove == "Yes":
-            shutil.rmtree(outpath)
+            utils.rmDir(outpath)
         else:
             return utils.findMatches(outpath, "STREAM")[0]
     commandlist = [functools.partial(extract.main, source, extract_to=outpath), functools.partial(

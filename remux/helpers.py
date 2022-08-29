@@ -61,7 +61,8 @@ def writeXMLMovie(imdb, tmdb):
     return tempData
 
 
-def writeXMLTV(imdb, tmdb, title, year,movieObj, season, episode):
+def writeXMLTV(imdb, tmdb, title, year, season, episode):
+    movieObj = movieData.MovieData()
     infile = os.path.join(config.root_dir, f"xml/movie")
     tempData = tempfile.mkstemp()
     outfile = tempData[1]

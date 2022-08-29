@@ -1,90 +1,35 @@
 import os
 import functools
+from webbrowser import get
 
 import orjson
 
 from pymediainfo import MediaInfo
 import natsort
 
-import remux.helper as remuxHelper
+import remux.helpers as remuxHelper
 import mediadata.movieData as movieData
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
 import config
+import remux.TV.helpers as TVHelper
 
 
 def Remux(args):
     # Variables
-    remuxConfigPaths = []
-    remuxConfigs = []
     fileNameList = []
-    fileNameFuncts = []
-    muxGenerator = muxPicker.pickSite(args.site)
-    movieObj = movieData.MovieData()
-
     folders = remuxHelper.getTVMuxFolders(args.inpath, config.demuxPrefix)
     if len(folders) == 0:
         print("You need to demux a folder with TV Mode first")
         quit()
     folder = utils.singleSelectMenu(
         folders, "Pick the folder with the files you want to remux")
-    remuxConfigPaths.extend(
-        list(map(lambda x: os.path.join(folder, x, "output.json"), os.listdir(folder))))
-    remuxConfigPaths = natsort.natsorted(remuxConfigPaths)
-    msg =\
-        """
-    Pick one or more files to create a remux for
-    Controls
-    Space: Select
-    Enter: Submit Selection
-    Ctrl-R or Alt-R: Toggle All
-    
-    """
-    remuxConfigPaths = utils.multiSelectMenu(remuxConfigPaths, msg)
-#     # double check to make sure every path is current
-    remuxConfigPaths = list(
-        filter(lambda x: os.path.isfile(x), remuxConfigPaths))
 
-    if not remuxConfigPaths or len(remuxConfigPaths) == 0:
-        print("Their must be at least one output.json in the path")
-        quit()
-
+    remuxConfigPaths = TVHelper.getRemuxConfigPaths(folder)
+    remuxConfigs = TVHelper.getRemuxConfigs(remuxConfigPaths)
+    fileNameFuncts= TVHelper.getFileNameFuncts(remuxConfigs,args)
     utils.mkdirSafe(os.path.join(args.outpath, ""))
     os.chdir(args.outpath)
-    for remuxConfigPath in remuxConfigPaths:
-        print(f"\nPreparing Data for {remuxConfigPath}\n")
-
-        remuxConfig = None
-
-        with open(remuxConfigPath, "r") as p:
-            remuxConfig = orjson.loads(p.read())
-        remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
-
-        if remuxHelper.checkMissing(remuxConfig) == True:
-            continue
-        remuxConfigs.append(remuxConfig)
-
-        enTitle = remuxConfig['Movie'].get(
-            'title') or remuxConfig['Movie'].get('engTitle')
-        japTitle = remuxConfig['Movie'].get('japTitle')
-
-        year = remuxConfig['Movie']['year']
-        season = remuxConfig["Movie"]["season"]
-        episode = remuxConfig["Movie"]["episode"]
-        tmdb = remuxConfig["Movie"]["tmdb"]
-
-        episodeTitle = movieObj.retriveEpisodeTitle(
-            season, episode, enTitle, year, tmdb)
-        if episodeTitle == "PlaceHolder Title" and japTitle:
-            episodeTitle = movieObj.retriveEpisodeTitle(
-                season, episode, japTitle, year, tmdb)
-
-        if not args.special:
-            fileNameFuncts.append(functools.partial(
-                muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck, int(season), int(episode), episodeTitle))
-        elif args.special:
-            fileNameFuncts.append(functools.partial(
-                muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck,episodeTitle=f"Special.{episode}",directory=f"{enTitle}.Specials"))
     if(len(fileNameFuncts) == 0):
         print("No Files to Process")
         quit()
@@ -99,8 +44,8 @@ def Remux(args):
         print(f"Creating this File\n{fileName}")
         muxGenerator = muxPicker.pickSite(args.site)
         remuxConfig = remuxConfigs[i]
-        ProcessBatch(fileName,
-                     remuxConfig, muxGenerator, movieObj, args.outargs,args.special)
+        TVHelper.ProcessBatch(fileName,
+                        remuxConfig, muxGenerator, args.outargs,args.special)
     message = """If the Program made it this far all MKV(s)...
     Should be in the output directory picked \
     Before Closing We will now print off file locations and mediainfo"""
@@ -112,38 +57,3 @@ def Remux(args):
     print(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
 
 
-def ProcessBatch(fileName, remuxConfig, muxGenerator, movieObj, outargs,special):
-    # Variables
-    chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
-
-    xmlTemp = None
-
-    season = remuxConfig["Movie"]["season"]
-    episode = remuxConfig["Movie"]["episode"]
-    title = remuxConfig['Movie'].get(
-        'title') or remuxConfig['Movie'].get('engTitle')
-    year = remuxConfig['Movie']['year']
-    movieTitle = f"{title} ({year})"
-  
-
-    if not special:
-        xmlTemp=remuxHelper.writeXMLTV(
-            # imdb,tmdb,season,episode
-            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], title, year, movieObj, season, episode)
-    else:
-        xmlTemp=remuxHelper.writeXMLMovie(
-            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
-
-
-    muxGenerator.generateMuxData(remuxConfig, outargs)
- 
-
-    if chaptersTemp:
-        muxGenerator.createMKV(fileName, movieTitle,
-                               chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
-
-        os.close(chaptersTemp[0])
-    else:
-        muxGenerator.createMKV(fileName, movieTitle,
-                               None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
-    os.close(xmlTemp[0])
