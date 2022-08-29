@@ -4,10 +4,11 @@ from pymediainfo import MediaInfo
 import orjson
 
 
-import remux.helper as remuxHelper
+import remux.helpers as remuxHelper
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
 import config
+import remux.Movie.helpers as MovieHelper
 
 
 def Remux(args):
@@ -17,8 +18,7 @@ def Remux(args):
     if len(folders) == 0:
         print("You need to demux a folder with Movie Mode first")
         quit()
-    remuxConfigPath = os.path.join(utils.singleSelectMenu(
-        folders, "Pick the folder with the files you want to remux"), "output.json")
+    remuxConfigPath = os.path.join(utils.singleSelectMenu(folders, "Pick the folder with the files you want to remux"), "output.json")
 #     # double check to make sure every path is current
     if not remuxConfigPath:
         print("You Must Pick at list one Config")
@@ -43,7 +43,7 @@ def Remux(args):
     if remuxHelper.overwriteIfExists(fileName) == False:
         quit()
 
-    ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
+    MovieHelper.ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
     message = """If the Program made it this far the Movie MKV...
     Should be in the output directory picked \
     # Before Closing We will now print off file location and mediainfo"""
@@ -53,23 +53,4 @@ def Remux(args):
     print(f"As a Reminder the output location: {fileName}")
 
 
-def ProcessBatch(fileName, remuxConfig, muxGenerator, outargs):
-    # Variables
-    chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
-    xmlTemp = remuxHelper.writeXMLMovie(
-        remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
 
-    muxGenerator.generateMuxData(remuxConfig, outargs)
-    title = remuxConfig['Movie'].get(
-        'title') or remuxConfig['Movie'].get('engTitle')
-    year = remuxConfig['Movie']['year']
-    movieTitle = f"{title} ({year})"
-    if chaptersTemp:
-        muxGenerator.createMKV(fileName, movieTitle,
-                               chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
-
-        os.close(chaptersTemp[0])
-    else:
-        muxGenerator.createMKV(fileName, title, year,
-                               None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
-    os.close(xmlTemp[0])

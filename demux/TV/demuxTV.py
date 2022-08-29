@@ -13,53 +13,62 @@ import demux.TV.helper as demuxHelper
 
 
 def demux(args):
-    args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
-    args.sublang = list(map(lambda x: x.lower(),  args.sublang))
+    demuxFolder=None
+    #Protection From Deleting Restored Folder
+    currentFolders=os.listdir(args.inpath)
+    try:
+        args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
+        args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
-    # make the output directory if needed
-    utils.mkdirSafe(args.outpath)
-    os.chdir(args.outpath)
+        # make the output directory if needed
+        utils.mkdirSafe(args.outpath)
+        os.chdir(args.outpath)
 
-    options = paths.getBDMVs(args.inpath)
-    sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None)
-    
-    demuxFolder = demuxHelper.getDemuxFolder(sources, args.outpath)
+        options = paths.getBDMVs(args.inpath)
+        sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None)
+        
+        demuxFolder = demuxHelper.getDemuxFolder(sources, args.outpath)
+        os.listdir("dsd")
 
-    movieObj = movieData.MovieData()
-    movieObj.setData("TV",utils.getTitle(sources[0]))
-    season = utils.getIntInput("What Season are you demuxing")
+        movieObj = movieData.MovieData()
+        movieObj.setData("TV",utils.getTitle(sources[0]))
+        season = utils.getIntInput("What Season are you demuxing")
 
-    while True:
-        bdObjs = demuxHelper.getBdinfoData(sources)
-        tools.validateBdinfo(bdObjs)
-        offset = len(os.listdir(demuxFolder))
-        message =\
-            f"""
-        Current Iterations:{num2words(offset)}
-        """
-        if not args.splitplaylist:
-            batchSources(bdObjs, sources, args, demuxFolder,
-                         movieObj, season)
-        else:
-            batchStreams(bdObjs[0], sources[0], args, demuxFolder,
-                         movieObj, season)
+        while True:
+            bdObjs = demuxHelper.getBdinfoData(sources)
+            tools.validateBdinfo(bdObjs)
+            offset = len(os.listdir(demuxFolder))
+            message =\
+                f"""
+            Current Iterations:{num2words(offset)}
+            """
+            if not args.splitplaylist:
+                batchSources(bdObjs, sources, args, demuxFolder,
+                            movieObj, season)
+            else:
+                batchStreams(bdObjs[0], sources[0], args, demuxFolder,
+                            movieObj, season)
 
-        if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
-            print("Thank You, make sure to double check episode numbers")
+            if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
+                print("Thank You, make sure to double check episode numbers")
 
-            break
-        if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
-            sources = select.getSources(
-                options, args.inpath, args.sortpref, args.splitplaylist == None)
-        offset = len(os.listdir(demuxFolder))
-        message =\
-            f"""
-        Total Iterations:{num2words(offset)}
-        Next Iteration: {num2words(offset+1)}
+                break
+            if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
+                sources = select.getSources(
+                    options, args.inpath, args.sortpref, args.splitplaylist == None)
+            offset = len(os.listdir(demuxFolder))
+            message =\
+                f"""
+            Total Iterations:{num2words(offset)}
+            Next Iteration: {num2words(offset+1)}
 
-        The previous playlist selection for every source will be reset
-        """
-        print(message)
+            The previous playlist selection for every source will be reset
+            """
+            print(message)  
+    except Exception as e:
+        print(e)
+        if demuxFolder not in currentFolders:
+            utils.rmDir(demuxFolder)
 
 
 def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
