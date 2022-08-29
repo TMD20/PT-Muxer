@@ -57,6 +57,8 @@ def main():
                           help="Change the Group Tag For Final mkv(s")
     parser_r.add_argument('-fm', '--forcemovie',  action='store_true',
                           help="Force the output mkv to use movie syntax")
+    parser_r.add_argument('-sp', '--special',  action='store_true',
+                          help="TV Folder contains special-features")                          
     parser_r.add_argument('-oa', '--outargs', default="",
                           help="Pass mkvmerge global options")
     parser_r.set_defaults(func=remux)

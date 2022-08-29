@@ -31,7 +31,7 @@ class Blu(MuxOBj):
             for line in p.stderr:
                 print(line, end='')
 
-    def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None):
+    def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None,directory=None):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -45,16 +45,22 @@ class Blu(MuxOBj):
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         movieName = f"{title} {year}"
 
+        if episodeTitle and season and episode:
+            fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            # Normalize
+            fileName = self._fileNameCleaner(fileName)
+            fileName = os.path.abspath(os.path.join(".",directory or self._getTVDir(remuxConfig, group, title, year, season), fileName))
+        elif episodeTitle:
+            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            # Normalize
+            fileName = self._fileNameCleaner(fileName)
+            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(remuxConfig, group, title, year, season), fileName))
+
         if not season and not episode and not episodeTitle:
             fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             fileName = self._fileNameCleaner(fileName)
             fileName = os.path.abspath(os.path.join(".", fileName))
 
-        else:
-            fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            # Normalize
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", self._getTVDir(remuxConfig, group, title, year, season), fileName))
         return self._confirmName(fileName,skipNameCheck)
 
  
