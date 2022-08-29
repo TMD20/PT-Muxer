@@ -188,7 +188,8 @@ class MuxOBj():
         self._outputargs = outargs.split()
 
     def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
-
+        if os.path.exists(fileName):
+            os.remove(fileName)
         command = list(itertools.chain.from_iterable(
             [commands.mkvmerge(), ["--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
         if chapters == None:
