@@ -199,8 +199,9 @@ class Bdinfo():
     def _getIndex(self):
         selection = self._playlist.splitlines()[3:]
         playlistNum = utils.singleSelectMenu(selection, "Select Playlist: ")
+        selection.index(playlistNum)+1
 
-        return int(playlistNum.split()[0])
+        return selection.index(playlistNum)+1
 
     def _getRange(self):
         message = \
@@ -213,7 +214,8 @@ class Bdinfo():
         playlistNumList = utils.multiSelectMenu(
             selection, message)
 
-        self._playlistNumList = list(map(lambda x: int(x.split()[0]),playlistNumList))
+        self._playlistNumList = list(
+            map(lambda x:  selection.index(x)+1, playlistNumList))
 
     def _getplaylistFile(self, num):
         playlistFiles = re.findall(

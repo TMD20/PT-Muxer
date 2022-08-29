@@ -32,12 +32,13 @@ class MuxOBj():
 
     def _addVideoTracks(self, remuxConfig):
         out = []
-        langcode=None
+        langcode = None
         try:
             langcodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
             langcode = remuxConfig["Tracks_Details"]["Audio"][langcodeKey]["langcode"]
         except:
-            langcode=langcodes.standardize_tag(langcodes.find(remuxConfig["Movie"]["languages"][0]))
+            langcode = langcodes.standardize_tag(
+                langcodes.find(remuxConfig["Movie"]["languages"][0]))
         for i in range(len(remuxConfig["Enabled_Tracks"]["Video"])):
             key = remuxConfig["Enabled_Tracks"]["Video"][i]
             key = str(key)
@@ -136,8 +137,9 @@ class MuxOBj():
             temp.append(file)
             out.append(temp)
         self._sub = (list(itertools.chain.from_iterable(out)))
+
     def getFileName(self,
-                      remuxConfig,group,title,year,skipNameCheck,season=None,episode=None,episodeTitle=None):
+                    remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None, directory=None):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -151,44 +153,54 @@ class MuxOBj():
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         movieName = f"{title} {year}"
 
-        if not season and not episode and not episodeTitle:
-            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName=self._fileNameCleaner(fileName)
-            fileName=os.path.abspath(os.path.join(".",self._getMovieDir(remuxConfig,group,title,year) ,fileName))
-        else:
+        if episodeTitle and season and episode:
             fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName=self._fileNameCleaner(fileName)
-            fileName=os.path.abspath(os.path.join(".", self._getTVDir(remuxConfig,group,title,year,season), fileName))
+            fileName = self._fileNameCleaner(fileName)
+
+            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
+                remuxConfig, group, title, year, season), fileName))
+        elif episodeTitle:
+            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = self._fileNameCleaner(fileName)
+            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
+                remuxConfig, group, title, year, season), fileName))
+        else:
+            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = self._fileNameCleaner(fileName)
+            fileName = os.path.abspath(os.path.join(
+                ".", directory or self._getMovieDir(remuxConfig, group, title, year), fileName))
+
         return self._confirmName(fileName, skipNameCheck)
 
-
-
-    def _fileNameCleaner(self,fileName):
+    def _fileNameCleaner(self, fileName):
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
         fileName = re.sub("\.+", ".", fileName)
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
         fileName = re.sub("([^a-zA-Z\d])\.", ".", fileName)
         fileName = re.sub("\.([^a-zA-Z\d])", ".", fileName)
+        Noquotes=re.search('^"(.*)"$',fileName)
+        if Noquotes:
+            fileName=Noquotes.group(0)
         return fileName
+
     def _addOutPutArgs(self, outargs):
         self._outputargs = outargs.split()
 
-    def createMKV(self, fileName, movieTitle ,chapters, xml,  bdinfo, eac3to):
-       
-     
+    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
 
         command = list(itertools.chain.from_iterable(
-            [commands.mkvmerge(),[ "--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
+            [commands.mkvmerge(), ["--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
         if chapters == None:
             command = list(itertools.chain.from_iterable(
-                [commands.mkvmerge(),[ "--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
+                [commands.mkvmerge(), ["--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
         commandStr = " ".join(command)
         print(f"Running This Command\n{commandStr}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
-    def _getTVDir(self,remuxConfig,group,title,year,season):
+
+    def _getTVDir(self, remuxConfig, group, title, year, season):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -206,7 +218,7 @@ class MuxOBj():
         # Normalize FileName
         return self._fileNameCleaner(fileName)
 
-    def _getMovieDir(self,remuxConfig,group,title,year):
+    def _getMovieDir(self, remuxConfig, group, title, year):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -235,4 +247,3 @@ class MuxOBj():
                 choice = utils.singleSelectMenu(
                     inputs, "Is the File Correct Now\n")
         return fileName
-

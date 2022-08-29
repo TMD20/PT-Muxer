@@ -9,7 +9,7 @@ import tools.general as utils
 from bs4 import BeautifulSoup
 import jellyfish
 from imdb import Cinemagoer as imdb
-from tmdbv3api import Find, TMDb, TV, Episode, Season,Movie
+from tmdbv3api import Find, TMDb, TV, Episode, Season, Movie
 
 import config
 # Globals
@@ -18,7 +18,7 @@ tmdb = TMDb()
 tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
 find = Find()
 tv = TV()
-movie=Movie()
+movie = Movie()
 seasonTMDB = Season()
 episodeTMDB = Episode()
 
@@ -55,21 +55,21 @@ class MovieData():
         """
         self._type = type
         self._getShowURLWiki(title)
-        data=None
-        anime=self._getIsAnimeWiki() 
-        if anime :
-            id= self._getMalID(title)
+        data = None
+        anime = self._getIsAnimeWiki()
+        if anime:
+            id = self._getMalID(title)
             if id:
-                data=self._getAnimeInfo(id)
+                data = self._getAnimeInfo(id)
 
         else:
             id = self._getIMDBID(title)
             if id:
 
-                data=self._getMovieInfo(id)
-                 
-        if data==None:
-            data=  self._userInputMovie()
+                data = self._getMovieInfo(id)
+
+        if data == None:
+            data = self._userInputMovie()
         return data
 
     def retriveEpisodeTitle(self, seasonNum, epNum, title, year, tmdbID, lang="English"):
@@ -212,7 +212,6 @@ class MovieData():
                 if lang == "English":
                     name = self._getEnglishNameWiki(
                         self._seasonsHTMLDictWiki[seasonNum][epNum])
-               
 
             except:
                 print("Wiki Episode Name Finder Failed")
@@ -285,21 +284,22 @@ class MovieData():
             return self. getSeasonEPCountWiki(seasonNum)
         except:
             print("Wiki Episode Counter Failed")
+
     def _userInputMovie(self):
-        if utils.singleSelectMenu(["Yes","No"],"Is this a Anime?")=="Yes":
-            return  self._getAnimeInfo(utils.getIntInput("Enter the mal ID"))
+        if utils.singleSelectMenu(["Yes", "No"], "Is this a Anime?") == "Yes":
+            return self._getAnimeInfo(utils.getIntInput("Enter the mal ID"))
         else:
-                message = \
-                    """
+            message = \
+                """
                 Enter imdb id
                 """
-                id = utils.textEnter(message)
-                try:
-                    result = ia.get_movie(re.sub("tt", "", id))
-                    return self._getMovieInfo(result["imdbID"])
-                except:
-                    print("Error with ID")
-                    quit()
+            id = utils.textEnter(message)
+            try:
+                result = ia.get_movie(re.sub("tt", "", id))
+                return self._getMovieInfo(result["imdbID"])
+            except:
+                print("Error with ID")
+                quit()
 
     ########################################################################################
     # Wikipedia Functions
@@ -378,7 +378,7 @@ class MovieData():
         ia.update(matchObj, info=["main"])
         return matchObj["imdbID"]
     ##################################################################################
-    #URL Grabbers
+    # URL Grabbers
     ##################################################################################
 
     def _getShowURLWiki(self, title):
@@ -491,7 +491,7 @@ class MovieData():
                 self._filterWord = search
                 self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
                 return
-            #Additional matches based on section names being close to title
+            # Additional matches based on section names being close to title
             section1 = list(filter(lambda x: re.sub(
                 " +", "", x["line"]) == re.sub(" +", "", title), sections))
             section2 = list(filter(lambda x: jellyfish.jaro_distance(
@@ -505,7 +505,7 @@ class MovieData():
                 self._filterWord = section2[0]["line"]
                 self._episodesURL = f"{url}?page={req.json()['parse']['title']}"
                 return
-            #reset sections
+            # reset sections
             sections = []
 
     def _getEpisodeURL_LinkHelper(self, title):
@@ -529,21 +529,21 @@ class MovieData():
         pageList = [string.Template("$title")]
         data = []
         for ele in pageList:
-                PARAMS = {
-                    "prop": "links",
-                    "format": "json",
-                    "page": ele.substitute(title=title),
-                    "action": "parse",
-                    "redirects": "1"
-                }
-                req = config.session.get(url, params=PARAMS)
-                if req.json().get("error"):
-                    continue
-                data.extend(list(filter(lambda x: re.search(
-                    "List of {title} episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
-                data.extend(list(filter(lambda x: re.search(
-                    "List of .* episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
-                data = list(map(lambda x: x["*"], data))
+            PARAMS = {
+                "prop": "links",
+                "format": "json",
+                "page": ele.substitute(title=title),
+                "action": "parse",
+                "redirects": "1"
+            }
+            req = config.session.get(url, params=PARAMS)
+            if req.json().get("error"):
+                continue
+            data.extend(list(filter(lambda x: re.search(
+                "List of {title} episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
+            data.extend(list(filter(lambda x: re.search(
+                "List of .* episodes", x["*"], re.IGNORECASE), req.json()["parse"]["links"])))
+            data = list(map(lambda x: x["*"], data))
 
         return data
 
@@ -582,14 +582,14 @@ class MovieData():
 
         seasonNum : int or str
             The Number of the Season 
-        
+
         Returns
         -------
 
         dict
             returns dictionary with Keys set as episode Number, Data episode HTML elements
         """
-        #data has already been set
+        # data has already been set
         if self._seasonsHTMLDictWiki.get(seasonNum) != None:
             return self._seasonsHTMLDictWiki.get(seasonNum)
         outdict = {}
@@ -711,7 +711,7 @@ class MovieData():
 
     def _getJapaneseNameWiki(self, epNum):
         """ 
-        Gets Japenese Name from wikepedia HTML Episode Section
+        Gets japanese Name from wikepedia HTML Episode Section
         If preent
 
         Parameter
@@ -723,7 +723,7 @@ class MovieData():
         -------
 
         str
-        Japenese Title of Episode
+        japanese Title of Episode
         """
 
         fulltitle = epNum.find("td", attrs={"class": "summary"}).get_text()
@@ -734,7 +734,7 @@ class MovieData():
         name = section.group(1)
         return name
 
-    #episode count
+    # episode count
     def _gettotalEPIMDBSeasonWiki(self):
         """ 
         Gets the total Episode Count For all Season Using Wikepedia
@@ -763,7 +763,7 @@ class MovieData():
 
         seasonNum : int or str
             The Number of the Season 
-        
+
         Returns
         -------
 
@@ -802,8 +802,6 @@ class MovieData():
     # Anime Functions
     #########################################################################
 
-
-
     def _getIsAnimeWiki(self):
         """Checks with the Wikepedia Article indicates this is an anme
         Parameters
@@ -813,16 +811,15 @@ class MovieData():
         bool
             Whether or not this is an anime
         """
-        if self._showURL=="":
+        if self._showURL == "":
             return
-
 
         PARAMS = {
             "prop": "text",
             "format": "json",
             "action": "parse",
         }
-        
+
         req = config.session.get(self._showURL, params=PARAMS)
         episodesHTML = req.json()["parse"]["text"]["*"]
 
@@ -830,14 +827,16 @@ class MovieData():
                 "anime") == -1:
             return False
         return True
+
     def _getAnimeProjectData(self):
-        url="https://github.com/manami-project/anime-offline-database/raw/master/anime-offline-database-minified.json"
-        req=config.session.get(url)
+        url = "https://github.com/manami-project/anime-offline-database/raw/master/anime-offline-database-minified.json"
+        req = config.session.get(url)
         try:
             return req.json()["data"]
         except Exception as e:
             print(e)
             return e
+
     def _getMalID(self, title):
         """
         ** This function needs to be updaterd
@@ -855,28 +854,31 @@ class MovieData():
         dict
             returns MovieData Dict with data about matches show
         """
-    
 
         data = self._getAnimeSearchDataMAL(title)
         noMatch = "None of These Titles Match"
-        titles = [noMatch]
-        titles.extend(self._getEngTitle(data))
-        select = utils.singleSelectMenu(titles, "Which Anime are you Demuxing")
+        options = [noMatch]
+        options.extend(self._getOptions(data))
+
+        select = utils.singleSelectMenu(
+            options, "Which Anime are you Demuxing")
         if select == noMatch:
-            return 
+            return
         else:
-            return self._getmalIds(data)[titles.index(title)]
-    
-    def _getAnimeInfo(self,malID):
-        self._movieObj["mal"]=malID
+            return self._getmalIds(data)[options.index(select)-1]
+
+    def _getAnimeInfo(self, malID):
+        self._movieObj["mal"] = int(malID)
         malData = self._getAnimeDataByIDMAL(self._movieObj["mal"])
         self._movieObj["imdb"] = self._maltoIMDB(malData)
         tmdbID = self._convertIMDBtoTMDB(
             f"tt{self._maltoIMDB(malData)}", self._type)
         if tmdbID == None:
-            moviesList=self._searchByStringTMDB(malData["title_english"],self._type)
-            malYear=str(malData['aired']['prop']['from']['year'])
-            data = list(filter(lambda x: re.search( malYear,str(x.get("first_air_date") or x.get("release_date"))),moviesList))
+            moviesList = self._searchByStringTMDB(
+                malData["title_english"], self._type)
+            malYear = str(malData['aired']['prop']['from']['year'])
+            data = list(filter(lambda x: re.search(malYear, str(
+                x.get("first_air_date") or x.get("release_date"))), moviesList))
             if len(data) > 0:
                 tmdbID = data[0]
         self._movieObj["tmdb"] = tmdbID
@@ -884,7 +886,7 @@ class MovieData():
         animeJSON = self._getAnimeProjectData()
         if not animeJSON:
             return self._movieObj
-        #create a dictionary
+        # create a dictionary
         reduce = [{"index": i, "title": animeJSON[i]["title"], "match":jellyfish.jaro_distance(
             malData["title_english"], animeJSON[i]["title"])} for i in range(len(animeJSON))]
         reduce = list(filter(lambda x: x["match"] > .9, reduce))
@@ -944,9 +946,12 @@ class MovieData():
         titles = list(filter(lambda x: x != None, titles))
         return titles
 
+    def _getOptions(self, data):
+        return list(map(lambda x: f"{x.get('title_english') or x.get('title_japanese')} {x['aired']['prop']['from']['year']}", data))
+
     def _getJapTitle(self, data):
         """
-        Filters myanimelist results for japenese titles
+        Filters myanimelist results for japanese titles
 
         Parameters
         ----------
@@ -976,7 +981,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         list
             list of mal IDs
         """
@@ -996,7 +1001,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         list
             list of mediatypes
         """
@@ -1017,24 +1022,24 @@ class MovieData():
 
         Returns
         -------
-        
+
         """
         for source in sources:
             if re.search("https://anisearch.com/anime/", source):
-                self._movieObj["anisearch"] = re.sub(
-                    "https://anisearch.com/anime/", "", source)
+                self._movieObj["anisearch"] = int(re.sub(
+                    "https://anisearch.com/anime/", "", source))
 
             elif re.search("https://myanimelist.net/anime/", source):
-                self._movieObj["mal"] = re.sub(
-                    "https://myanimelist.net/anime/", "", source)
+                self._movieObj["mal"] = int(re.sub(
+                    "https://myanimelist.net/anime/", "", source))
 
             elif re.search("https://anidb.net/anime/", source):
-                self._movieObj["anidb"] = re.sub(
-                    "https://anidb.net/anime/", "", source)
+                self._movieObj["anidb"] = int(re.sub(
+                    "https://anidb.net/anime/", "", source))
 
             elif re.search("https://kitsu.io/anime/", source):
-                self._movieObj["kitsu"] = re.sub(
-                    "https://kitsu.io/anime/", "", source)
+                self._movieObj["kitsu"] = int(re.sub(
+                    "https://kitsu.io/anime/", "", source))
         return self._movieObj
 
     def _maltoIMDB(self, data):
@@ -1053,7 +1058,7 @@ class MovieData():
 
         str
             imdbID for the Movie/Show
-        
+
         """
         minutes = 0
         hours = 0
@@ -1071,6 +1076,8 @@ class MovieData():
         runtime = f"in {hours} hours and {minutes} minutes"
         engTitle = data["title_english"]
         year = data["aired"]["prop"]["from"]["year"]
+        if engTitle == None:
+            return None
         return self._matchIMDB(engTitle, year, runtime)
 
     def _matchIMDB(self, title, year, runtime):
@@ -1089,15 +1096,14 @@ class MovieData():
 
         Returns
         -------
-        
+
         str
             imdbID for the Movie/Show
-        
+
         """
         imdbObjs = self._getMovieList(title)
         for obj in imdbObjs:
             obj = self._getByIDIMDB(obj.movieID)
-
 
             if obj.get("year") and int(obj["year"]) != int(year):
                 continue
@@ -1106,12 +1112,13 @@ class MovieData():
                 obj.get("localized title", ""), title)
             match3 = jellyfish.jaro_similarity(
                 obj.get("original title", ""), title)
-            #compare titles
+            # compare titles
             if max(match1, match2, match3) < .9:
                 continue
             # compare time
             if obj.get("runtimes"):
-                time1 = utils.dehumanizeArrow(f"in {obj['runtimes'][0]} minutes")
+                time1 = utils.dehumanizeArrow(
+                    f"in {obj['runtimes'][0]} minutes")
                 time2 = utils.dehumanizeArrow(runtime)
                 maxTime = max(time1, time2)
                 minTime = min(time1, time2)
@@ -1135,10 +1142,10 @@ class MovieData():
 
         Returns
         -------
-        
+
         dict
             dictionary returned from API
-        
+
         """
         url = f"https://api.jikan.moe/v4/anime/{id}"
         req = config.session.get(url)
@@ -1146,7 +1153,7 @@ class MovieData():
         return data
 
     ########################################################################################
-    #IMDB Functions
+    # IMDB Functions
     ########################################################################################
 
     @functools.lru_cache
@@ -1161,10 +1168,10 @@ class MovieData():
 
         Returns
         -------
-        
+
         list
             List of imdbPY Search Object 
-        
+
         """
         return ia.search_movie(title)
 
@@ -1184,10 +1191,10 @@ class MovieData():
 
         Returns
         -------
-        
+
         imdbPY Object
             imdb object matching with ID
-        
+
         """
         series = ia.get_movie(imdbID)
         for arg in args:
@@ -1210,7 +1217,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         imdbPY Object
             imdb object matching with ID
         """
@@ -1231,7 +1238,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         imdbPY Object
             imdb object for user picked
         """
@@ -1250,17 +1257,15 @@ class MovieData():
             titles.insert(0, "None of these Titles Match")
             match = utils.singleSelectMenu(titles, msg)
             if match == "None of these Titles Match":
-                return 
+                return
             else:
                 result = results[titles.index(match)-1]
         result = self._getByIDIMDB(result.movieID)
         return result["imdbID"]
 
-
-
-    def _getMovieInfo(self,imdbID):
+    def _getMovieInfo(self, imdbID):
         result = self._getByIDIMDB(imdbID)
-        self._movieObj["imdb"]=int(imdbID)
+        self._movieObj["imdb"] = int(imdbID)
         self._movieObj["tmdb"] = self._convertIMDBtoTMDB(
             f"tt{imdbID}", self._type)
         self._movieObj["title"] = result["title"]
@@ -1289,7 +1294,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         list
             The sorted list of release dates with the earliest
         """
@@ -1303,13 +1308,13 @@ class MovieData():
                 out.append(date.group(0))
         return list(sorted(out, key=lambda x: utils.convertArrow(x, "D MMMM YYYY")))
     ########################################################################################
-    #TMDB Functions
+    # TMDB Functions
     ########################################################################################
 
     def _convertIMDBtoTMDB(self, id, kind):
         """
         converts imdb to tmdb
-    
+
 
         Parameters
         ----------
@@ -1321,7 +1326,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         str
             tmdb id 
         """
@@ -1352,7 +1357,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         tmdbv3Api Season Obj
             object filled with season Data from API
         """
@@ -1366,7 +1371,7 @@ class MovieData():
         Note: Multiple "Shows" may be combined on one entry
 
         This will filter out those combined entries
-    
+
 
         Parameters
         ----------
@@ -1378,15 +1383,17 @@ class MovieData():
 
         Returns
         -------
-        
+
         List 
             Season Numbers that correspond to the found seasons from the tmdbID
         """
         series = tv.details(tmdbID)
         data = None
         data1 = list(filter(lambda x: x["name"] == title, series["seasons"]))
-        data2 = list(filter(lambda x: re.sub(" +", "", x["name"]) == re.sub(" +","",title),series["seasons"]))
-        data3 = list(filter(lambda x: re.search("season", x["name"], re.IGNORECASE), series["seasons"]))   
+        data2 = list(filter(lambda x: re.sub(
+            " +", "", x["name"]) == re.sub(" +", "", title), series["seasons"]))
+        data3 = list(filter(lambda x: re.search(
+            "season", x["name"], re.IGNORECASE), series["seasons"]))
         if len(data1) > 0:
             data = data1
         elif len(data2) > 0:
@@ -1399,7 +1406,7 @@ class MovieData():
         """
         Returns list of Season Matching with input
         Note: Multiple "Shows" may be combined on one entry
-    
+
 
         Parameters
         ----------
@@ -1411,7 +1418,7 @@ class MovieData():
 
         Returns
         -------
-        
+
         str
             English Name for Episode
         """
@@ -1433,7 +1440,7 @@ class MovieData():
             The Number of the Seaso            
         epNum : int or str
             The Number of the episode in Current Season        
-        
+
         Returns
         -------
 
@@ -1449,17 +1456,17 @@ class MovieData():
     def _getTotalEPSeasonTMDB(self, seasonNum, title, tmdbID):
         data = self._seasonSelectionTMDB(seasonNum, title, tmdbID)
         return len(data["episodes"])
-    def _searchByStringTMDB(self,title,mediatype):
-        if mediatype=="TV":
+
+    def _searchByStringTMDB(self, title, mediatype):
+        if mediatype == "TV":
             return tv.search(title)
         else:
             return movie.search(title)
 
-
     def _episodeIMDBMatcherTMDB(self, seasonIDList, tmdbID, imdbID, seasonNum, epNum):
         """
         Returns IMDB that matches with Episode From TMDB
-    
+
 
         Parameters
         ----------
@@ -1471,16 +1478,16 @@ class MovieData():
 
         imdbID: str
             imdbID of the Series 
- 
+
         seasonNum : int or str
             The Number of the Season                              
         epNum : int or str
             The Number of the episode in Current Season
-        
+
 
         Returns
         -------
-        
+
         str
             imdbID for episode
         """
@@ -1525,7 +1532,7 @@ class MovieData():
             if abs((date-compare).total_seconds()) < 90000:
                 matchObj = curr
                 break
-            elif re.sub(" +", "", curr["title"]) == re.sub(" +", "",title):
+            elif re.sub(" +", "", curr["title"]) == re.sub(" +", "", title):
                 matchObj = curr
             elif jellyfish.jaro_distance(curr["title"], title) > .9:
                 matchObj = curr

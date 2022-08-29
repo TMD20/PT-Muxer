@@ -79,13 +79,12 @@ def Remux(args):
             episodeTitle = movieObj.retriveEpisodeTitle(
                 season, episode, japTitle, year, tmdb)
 
-        if args.forcemovie:
-            fileNameFuncts.append(functools.partial(
-                muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck))
-        else:
+        if not args.special:
             fileNameFuncts.append(functools.partial(
                 muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck, int(season), int(episode), episodeTitle))
-
+        elif args.special:
+            fileNameFuncts.append(functools.partial(
+                muxGenerator.getFileName, remuxConfig, args.group, enTitle, year, args.skipnamecheck,episodeTitle=f"Special.{episode}",directory=f"{enTitle}.Specials"))
     if(len(fileNameFuncts) == 0):
         print("No Files to Process")
         quit()
@@ -101,7 +100,7 @@ def Remux(args):
         muxGenerator = muxPicker.pickSite(args.site)
         remuxConfig = remuxConfigs[i]
         ProcessBatch(fileName,
-                     remuxConfig, muxGenerator, movieObj, args.outargs)
+                     remuxConfig, muxGenerator, movieObj, args.outargs,args.special)
     message = """If the Program made it this far all MKV(s)...
     Should be in the output directory picked \
     Before Closing We will now print off file locations and mediainfo"""
@@ -113,7 +112,7 @@ def Remux(args):
     print(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
 
 
-def ProcessBatch(fileName, remuxConfig, muxGenerator, movieObj, outargs):
+def ProcessBatch(fileName, remuxConfig, muxGenerator, movieObj, outargs,special):
     # Variables
     chaptersTemp = remuxHelper.chapterListParser(remuxConfig["ChapterData"])
 
@@ -125,12 +124,19 @@ def ProcessBatch(fileName, remuxConfig, muxGenerator, movieObj, outargs):
         'title') or remuxConfig['Movie'].get('engTitle')
     year = remuxConfig['Movie']['year']
     movieTitle = f"{title} ({year})"
+  
 
-    xmlTemp = remuxHelper.writeXMLTV(
-        # imdb,tmdb,season,episode
-        remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], title, year, movieObj, season, episode)
+    if not special:
+        xmlTemp=remuxHelper.writeXMLTV(
+            # imdb,tmdb,season,episode
+            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"], title, year, movieObj, season, episode)
+    else:
+        xmlTemp=remuxHelper.writeXMLMovie(
+            remuxConfig["Movie"]["imdb"], remuxConfig["Movie"]["tmdb"])
+
 
     muxGenerator.generateMuxData(remuxConfig, outargs)
+ 
 
     if chaptersTemp:
         muxGenerator.createMKV(fileName, movieTitle,
