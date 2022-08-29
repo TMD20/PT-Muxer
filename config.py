@@ -31,4 +31,5 @@ powerisoWindows = os.path.join(root_dir, "binaries/poweriso/Windows/piso.exe")
 powerisoLinux= os.path.join(root_dir, "binaries/poweriso/Linux/poweriso")
 demuxPrefix = "Mux"
 isoTemps=os.path.join(root_dir,"ISOTemps")
-session = requests_cache.CachedSession(os.path.join(root_dir, "cache"))
+cacheDir = os.path.expanduser("~")
+session = requests_cache.CachedSession(os.path.join(cacheDir, ".cache","remuxer_cache"))

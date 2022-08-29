@@ -68,9 +68,9 @@ def writeXMLTV(imdb, tmdb, title, year, season, episode):
     outfile = tempData[1]
     result = None
     epIMDB=movieObj.retriveEpisodeIMDB(imdb,tmdb, season, episode, title, year)
-    epCount = movieObj.retriveNumberofEpisodes(season, episode, title, year)
 
-    
+    epCount = movieObj.retriveNumberofEpisodes(season,  title, year, tmdb)
+
 
 
 

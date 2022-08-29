@@ -9,18 +9,13 @@ import tools.general as utils
 from bs4 import BeautifulSoup
 import jellyfish
 from imdb import Cinemagoer as imdb
-from tmdbv3api import Find, TMDb, TV, Episode, Season, Movie
-
+# Episode, Season,
+import tmdbsimple as tmdb
 import config
 # Globals
 ia = imdb()
-tmdb = TMDb()
-tmdb.api_key = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
-find = Find()
-tv = TV()
-movie = Movie()
-seasonTMDB = Season()
-episodeTMDB = Episode()
+tmdb.API_KEY = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
+tmdb.REQUESTS_SESSION=config.session
 
 
 class MovieData():
@@ -199,22 +194,24 @@ class MovieData():
         """
         name = "PlaceHolder Title"
         if lang == "English":
+            success=False
             try:
                 data = self._seasonSelectionTMDB(seasonNum, title, tmdbID)
                 name = self._getEnglishNameTMDB(data, epNum)
+                success=True
 
             except:
                 print("TMDB Episode Name Finder Failed")
-            try:
-                self._getEpisodesURLWiki(title, year)
-                self._getSeasonSectionsWiki()
-                self._getSeasonHTMLDictWiki(seasonNum)
-                if lang == "English":
-                    name = self._getEnglishNameWiki(
-                        self._seasonsHTMLDictWiki[seasonNum][epNum])
-
-            except:
-                print("Wiki Episode Name Finder Failed")
+            if not success:
+                try:
+                    self._getEpisodesURLWiki(title, year)
+                    self._getSeasonSectionsWiki()
+                    self._getSeasonHTMLDictWiki(seasonNum)
+                    if lang == "English":
+                        name = self._getEnglishNameWiki(
+                            self._seasonsHTMLDictWiki[seasonNum][epNum])
+                except:
+                    print("Wiki Episode Name Finder Failed")
             return re.sub('"', '', name)
 
     def _getEpisodeIMDB(self, imdbID, tmdbID, seasonNum, epNum, title, year):
@@ -1330,7 +1327,7 @@ class MovieData():
         str
             tmdb id 
         """
-        data = find.find_by_imdb_id(id)
+        data = tmdb.Find(id).info(external_source="imdb_id")
         results = []
         if kind == "TV":
             results.extend(data["tv_results"])
@@ -1363,7 +1360,8 @@ class MovieData():
         """
         data = self._seasonSearchTMDB(title, tmdbID)
         select = data[seasonNum-1]
-        return seasonTMDB.details(tmdbID, select["season_number"])
+        return tmdb.TV_Seasons(tmdbID, select["season_number"]).info()
+
 
     def _seasonSearchTMDB(self, title, tmdbID):
         """
@@ -1387,7 +1385,7 @@ class MovieData():
         List 
             Season Numbers that correspond to the found seasons from the tmdbID
         """
-        series = tv.details(tmdbID)
+        series = tmdb.TV(tmdbID).info()
         data = None
         data1 = list(filter(lambda x: x["name"] == title, series["seasons"]))
         data2 = list(filter(lambda x: re.sub(
@@ -1459,9 +1457,9 @@ class MovieData():
 
     def _searchByStringTMDB(self, title, mediatype):
         if mediatype == "TV":
-            return tv.search(title)
+            return tmdb.Search().tv(query=title)["results"]
         else:
-            return movie.search(title)
+            return tmdb.Search().movie(query=title)["results"]
 
     def _episodeIMDBMatcherTMDB(self, seasonIDList, tmdbID, imdbID, seasonNum, epNum):
         """
@@ -1491,10 +1489,9 @@ class MovieData():
         str
             imdbID for episode
         """
-        seasonData = seasonTMDB.details(
-            tmdbID, seasonIDList[seasonNum-1]["season_number"])
-        epimdbID = episodeTMDB.external_ids(
-            tmdbID, seasonData["season_number"], epNum).get("imdb_id")
+        seasonData = tmdb.TV_Seasons(
+            tmdbID,  seasonIDList[seasonNum-1]["season_number"]).info()
+        epimdbID = tmdb.TV_Episodes(tmdbID,  seasonData["season_number"], epNum).external_ids()["imdb_id"]
         if epimdbID:
             return re.sub("tt", "", epimdbID)
         # Do things the hard way
