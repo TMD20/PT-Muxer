@@ -65,7 +65,7 @@ SQLAlchemy==1.4.39
 srt==3.5.2
 tesserocr==2.5.2
 tifffile==2022.5.4
-tmdbv3api==1.7.7
+tmdbsimple==2.9.1
 tomli==2.0.1
 torch==1.12.0
 torchvision==0.13.0
