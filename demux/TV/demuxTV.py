@@ -28,7 +28,7 @@ def demux(args):
         sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None)
         
         demuxFolder = demuxHelper.getDemuxFolder(sources, args.outpath)
-        os.listdir("dsd")
+       
 
         movieObj = movieData.MovieData()
         movieObj.setData("TV",utils.getTitle(sources[0]))
