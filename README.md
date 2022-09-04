@@ -119,12 +119,16 @@ see config.py "*SystemPath" for file paths.
 Typically mounting provides the best results when trying to extract an ISO. However, it usually requires sudo access. udevil will allow files to be "mounted" without the need for sudo access
 https://github.com/IgnorantGuru/spacefm/wiki/Distros * it is mixed in with spacefm, make sure to only get udevil
 
-### Installing Tesseract
-Tesseract allows for many more languages to be ocr, but it does require sudo
+### Installing Tesseocr 
+Two ocr engines are in the program
+
+Tesseocr llows for many more languages to be ocr, but it does require sudo
 and requires packages on the system
 The easiest way would just be to follow the instructions in this repo
+https://github.com/sirfz/tesserocr
 
-
+You can use a pure python module called easyocr as the only ocr engines.
+Read the disabling tesseocr instructions 
 
 
 # Before Running The Program
