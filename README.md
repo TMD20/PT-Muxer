@@ -43,6 +43,36 @@
 - [Acknowledgement](#acknowledgement)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+# Overview
+
+PT_Remuxer is designed to assist in creating remuxes for various private tracker websites.
+The primary goal of this program is to automate as much of the process as possible. A secondary goal is to provide as much data as possible to the user, so they can verifiy information through secondary sources. For example in the case of commentary subtitles, and providing them the correct title
+
+# Features
+* Extract Tracks From Multiple Sources: 
+* Gathers BDINFO and Eac3to from Sources, along with Files
+* Extract Compatibility Track from True HD
+* Guess Track Title Based on Site 
+* Extract Forced Subtitles if Present
+* Gather basic Language Information for tracks
+* Optional OCR of Subtitles for Identification: Compatibility with over 100 languages
+* Generate MKV from JSON output
+* Optional Validatidation MKV with modified https://github.com/werrpy/vdator/ [blutopia only]
+* Configuration via  JSON
+*  Gathers IMDB and TMDB Data
+* Enhanched Support for Anime Series
+* Generates  XML data during muxing
+* Easy Shorthands for Track Name in JSON
+* Support For single playlist TV Shows
+* Support For Batch Remuxing of TV Shows
+* Supoort For ISO Extraction
+* Can Generate Subtitle Images
+* Can Autoretrive Episode Titles
+
+
+
+
+
 
 
 # How to Install/Get Started 
