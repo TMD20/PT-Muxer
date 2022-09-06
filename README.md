@@ -45,8 +45,16 @@
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 # Overview
 
-PT_Remuxer is designed to assist in creating remuxes for various private tracker websites.
+PTMuxer is designed to assist in creating remuxes for various private tracker websites.
+
 The primary goal of this program is to automate as much of the process as possible. A secondary goal is to provide as much data as possible to the user, so they can verifiy information through secondary sources. For example in the case of commentary subtitles, and providing them the correct title
+
+PTMuxer can assist in various parts of the remuxing chain from
+- Demuxing files
+- Remuxing
+- Generate metadata for xmls
+
+
 
 # Features
 * Extract Tracks From Multiple Sources: 
