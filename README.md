@@ -2,6 +2,8 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
 
+- [Overview](#overview)
+- [Features](#features)
 - [How to Install/Get Started](#how-to-installget-started)
   - [Linux:](#linux)
   - [Windows](#windows)
@@ -19,7 +21,7 @@
   - [TV Option](#tv-option-1)
   - [Movie Option](#movie-option-1)
 - [JSON](#json)
-  - [Overview](#overview)
+  - [Overview](#overview-1)
   - [Examples](#examples)
   - [Sections](#sections)
 - [Default Enabled Tracks](#default-enabled-tracks)
