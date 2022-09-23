@@ -3,7 +3,6 @@ import textwrap
 
 import mediatools.bdinfo as bdinfo
 import tools.general as utils
-import mediatools.extract as Extract
 import config
 import demux.paths as paths
 import remux.helpers as remuxHelper
@@ -41,7 +40,7 @@ def getNewStartTime(startTime, streams):
     return startTime
 
 
-def getSources(options,inpath, sortpref,multi):
+def getSources(options,inpath, sortpref,multi,extract=False):
     if len(options) == 0:
         print("No Valid Source Directories Found")
         quit()
@@ -50,9 +49,10 @@ def getSources(options,inpath, sortpref,multi):
         sources = addMultiSource(options, sortpref)
     else:
         sources = [addSingleSource(options)]
-    for i in range(0, len(sources)):
-        if re.search(".iso", sources[i]):
-            sources[i] = paths.Extract(sources[i], inpath)
+    if extract:
+        for i in range(0, len(sources)):
+            if re.search(".iso", sources[i]):
+                sources[i] = paths.extractISO(sources[i], inpath)
     return sources
 
 

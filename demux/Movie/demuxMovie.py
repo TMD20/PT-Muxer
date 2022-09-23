@@ -58,4 +58,5 @@ def demux(args):
         tools.writeFinalJSON(outdict)
     except Exception as e:
         print(e)
-        utils.rmDir(parentDir)
+        if os.path.exists(parentDir):
+            utils.rmDir(parentDir)

@@ -27,8 +27,8 @@ bdinfoSystemPath = ""
 bdinfoProjectPath = os.path.join(
     root_dir, "binaries/bdinfo/BDInfo.exe")
 
-powerisoWindows = os.path.join(root_dir, "binaries/poweriso/Windows/piso.exe")
-powerisoLinux= os.path.join(root_dir, "binaries/poweriso/Linux/poweriso")
+isoExtractWindows = os.path.join(root_dir, "binaries/7z/Windows/7za.exe")
+isoExtractLinux= os.path.join(root_dir, "binaries/7z/Linux/7zzs")
 demuxPrefix = "Mux"
 isoTemps=os.path.join(root_dir,"ISOTemps")
 cacheDir = os.path.expanduser("~")

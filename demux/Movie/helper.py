@@ -53,9 +53,10 @@ def getSources(options, inpath, sortpref):
     if sources == None or len(sources) == 0:
         print("No sources Selected")
         quit()
+    
     for i in range(0, len(sources)):
         if re.search(".iso", sources[i]):
-            sources[i] = paths.Extract(sources[i], inpath)
+            sources[i] = paths.extractISO(sources[i], inpath)
     return sources
 
 

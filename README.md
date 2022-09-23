@@ -99,7 +99,7 @@ Instructions are provided for Linux and Windows
 * which python -> should be the virtualenv
 * pip3 install -r requirements.txt
 * deactivate -> Do this after installing the requirements
-* chmod +x -R ./binaries | Alternativly poweriso, mkvmerge both need execution permission
+* chmod +x -R ./binaries | Alternativly 7zip, mkvmerge both need execution permission
 
 ## Windows
 ### Required

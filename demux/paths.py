@@ -1,4 +1,5 @@
 
+
 import os
 import re
 import subprocess
@@ -6,7 +7,6 @@ import shutil
 import functools
 import itertools
 
-import mediatools.extract as extract
 import tools.general as utils
 import config
 import tools.commands as commands
@@ -31,6 +31,7 @@ def createParentDemuxFolder(sources, outpath):
     parentDemux = re.sub(" +", " ", parentDemux)
     parentDemux = re.sub(" ", ".", parentDemux)
     parentDemux = utils.convertPathType(parentDemux, "Linux")
+    print(f"Creating a new Parent Directory for TV Show ->{parentDemux}")
     os.mkdir(parentDemux)
     return parentDemux
 
@@ -42,7 +43,7 @@ def createChildDemuxFolder(parentDir, show):
     return utils.convertPathType(os.path.join(parentDir, show), "Linux")
 
 
-def Extract(source, inpath):
+def extractISO(source, inpath):
     basename = f"{os.path.basename(os.path.dirname(source))}_Extracted"
     outpath = os.path.join(inpath, basename)
     if os.path.exists(outpath):
@@ -53,8 +54,9 @@ def Extract(source, inpath):
             utils.rmDir(outpath)
         else:
             return utils.findMatches(outpath, "STREAM")[0]
-    commandlist = [functools.partial(extract.main, source, extract_to=outpath), functools.partial(
-        powerISOExtractHelper, source, outpath), functools.partial(udevilExtractHelper, source, outpath)]
+    commandlist = [functools.partial(
+        ISOBinaryExtractHelper, source, outpath), functools.partial(udevilExtractHelper, source, outpath)]
+
     for command in commandlist:
         try:
             command()
@@ -68,24 +70,12 @@ def Extract(source, inpath):
     return utils.findMatches(outpath, "STREAM")[0]
 
 
-def powerISOExtractHelper(source, outpath):
-    command = list(itertools.chain.from_iterable([commands.poweriso(), [
-                   "extract", utils.convertPathType(source, "Linux"), "/", "-od", outpath]]))
-    with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
-        error = ""
-        msg = ""
-        for line in p.stdout:
-            print(line, end='')
-            msg = msg+line
-        for line in p.stderr:
-            print(line, end='')
-            error = error+"line"
-        p.wait()
-        if len(error) > 0:
-            raise Exception(error)
-        if re.search("Error occured", msg):
-            raise Exception(msg)
-
+def ISOBinaryExtractHelper(source, outpath):
+    command = list(itertools.chain.from_iterable([commands.isoBinary(), [
+                   "x", utils.convertPathType(source, "Linux"),  "-bsp1","-y" ,f"-o{outpath}", ]]))
+    with subprocess.Popen(command) as p:
+        if p.returncode!=0:
+            raise Exception("7z Extraction Error")
 
 def udevilExtractHelper(source, outpath):
     print("\nTrying Mounting ISO\nThen Extracting")
