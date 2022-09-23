@@ -32,12 +32,12 @@ class siteTrackSorter():
     def addForcedSubs(self, movieLang, audioPref):
         audioLangs = self._getAudioPrefs(movieLang, audioPref)
         if audioLangs[0].lower() != "english":
-            audioLangs = [audioLangs[0],"english"]
+            audioLangs = [audioLangs[0], "english"]
         else:
-            audioLangs=audioLangs[0]
+            audioLangs = audioLangs[0]
 
-        primary=[]
-        all=[]
+        primary = []
+        all = []
         # Get Forced Subtitles
         for oldTrack in self._unSortedSub:
             if oldTrack["lang"].lower() not in audioLangs:
@@ -45,16 +45,14 @@ class siteTrackSorter():
             oldFile = oldTrack["file"]
             newFile = re.sub("\.sup", ".forced.sup", oldFile)
             newEac3to = re.sub("\.sup", ".forced.sup", oldTrack["eac3to"])
-            command=list(itertools.chain.from_iterable([commands.bdSup(),[oldFile,"-o", newFile, "--forced-only"]]))
+            command = list(itertools.chain.from_iterable(
+                [commands.bdSup(), [oldFile, "-o", newFile, "--forced-only"]]))
             output = ""
-            with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
+            with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
                 for line in p.stdout:
                     print(line, end='')
                     output = output+line
-                for line in p.stderr:
-                    print(line, end='')
-                    output = output+line
-
+    
                 p.wait()
 
                 # Forced Sub Not Even made
@@ -87,7 +85,7 @@ class siteTrackSorter():
                     self._enabledSub.append(newTrack)
                     all.append(newTrack)
         primary.extend(self._enabledSub)
-        self._enabledSub=primary
+        self._enabledSub = primary
         self._unSortedSub.extend(all)
 
     """
@@ -158,8 +156,7 @@ class siteTrackSorter():
         # sanitize prefs
         audioLang = self._getAudioPrefs(movieLangs, audioPrefs)
         subPrefs = utils.removeDupesList(subPrefs)
-        #set default track
-
+        # set default track
 
         self._sortAudio(audioTracks, audioLang, sortPref)
         self._sortCompatAudio(audioTracks)
@@ -198,9 +195,10 @@ class siteTrackSorter():
             # Get All Tracks That Match This Language
             newTracks = [ele for ele in audioTracks if ele["lang"].lower()
                          == lang and ele["compat"] == False]
-            #set original language flag
-            if lang==audioLang[0]:
-                for track in newTracks: track["original"]=True
+            # set original language flag
+            if lang == audioLang[0]:
+                for track in newTracks:
+                    track["original"] = True
             if len(newTracks) == 0:
                 continue
             if sortPref == "size":
@@ -225,7 +223,7 @@ class siteTrackSorter():
         tracks = list(
             filter(lambda x: x["parent"] != None, tracks))
         tracks = list(
-            filter(lambda x: re.search("True", x["parent"],re.IGNORECASE) != None, tracks))
+            filter(lambda x: re.search("True", x["parent"], re.IGNORECASE) != None, tracks))
         # Add Every Compat Track with Matching Parent
 
         for track in tracks:
@@ -323,4 +321,3 @@ class siteTrackSorter():
                 movieLang.append("English")
             return list(map(lambda x: x.lower(), movieLang))
         return utils.removeDupesList(audioPrefs)
-

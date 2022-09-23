@@ -25,8 +25,8 @@ def demux(args):
         os.chdir(args.outpath)
 
         options = paths.getBDMVs(args.inpath)
-        sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None)
-        
+        sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None,extract=True)
+
         demuxFolder = demuxHelper.getDemuxFolder(sources, args.outpath)
        
 
@@ -54,8 +54,8 @@ def demux(args):
 
                 break
             if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
-                sources = select.getSources(
-                    options, args.inpath, args.sortpref, args.splitplaylist == None)
+                sources = demuxHelper.getSources(
+                    options, args.inpath, args.sortpref, args.splitplaylist == None,extract=False)
             offset = len(os.listdir(demuxFolder))
             message =\
                 f"""
@@ -68,7 +68,8 @@ def demux(args):
     except Exception as e:
         print(e)
         if demuxFolder not in currentFolders:
-            utils.rmDir(demuxFolder)
+            if utils.singleSelectMenu(["Yes","No"],"Do you want to delete the inprogress folder?")=="Yes":
+                utils.rmDir(demuxFolder)
 
 
 def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):

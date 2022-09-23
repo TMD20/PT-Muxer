@@ -47,10 +47,8 @@ def extract_files(playlistLocation, outputs_list, eac3toPath):
     commandslist = [command1, command2, command3, command4]
     status = 1
     for command in commandslist:
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, bufsize=1) as p:
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
             for line in p.stdout:
-                print(line, end='')
-            for line in p.stderr:
                 print(line, end='')
             p.wait()
             status = p.returncode

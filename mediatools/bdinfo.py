@@ -36,7 +36,7 @@ class Bdinfo():
             temp = tempfile.TemporaryDirectory()
             command = list(itertools.chain.from_iterable(
                 [commands.bdinfo(), ["-m", selection, self._mediaDir, temp.name]]))
-            t = subprocess.run(command)
+            subprocess.run(command)
             file = open(utils.convertPathType(os.path.join(
                 temp.name, os.listdir(temp.name)[0]), "Linux"), "r")
             self._bdinfo = file.read()
@@ -199,7 +199,7 @@ class Bdinfo():
     def _getIndex(self):
         selection = self._playlist.splitlines()[3:]
         playlistNum = utils.singleSelectMenu(selection, "Select Playlist: ")
-        selection.index(playlistNum)+1
+        selection.index(playlistNum)
 
         return selection.index(playlistNum)+1
 

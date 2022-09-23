@@ -63,9 +63,8 @@ def mkvmerge():
         return [config.mkvMergeWindows]
         
 
-
-def poweriso():
+def isoBinary():
     if utils.getSystem() == "Linux":
-        return [config.powerisoLinux]
+        return [config.isoExtractLinux]
     else:
-        return [config.powerisoWindows]
+        return [config.isoExtractWindows]
