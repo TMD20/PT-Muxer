@@ -60,6 +60,8 @@ PTMuxer can assist in various parts of the remuxing chain from
 
 # Features
 * Extract Tracks From Multiple Sources: 
+* Can Autoretrive Episode Titles
+* Some Support of DVD/Media Order 
 * Gathers BDINFO and Eac3to from Sources, along with Files
 * Extract Compatibility Track from True HD
 * Guess Track Title Based on Site 
@@ -77,7 +79,7 @@ PTMuxer can assist in various parts of the remuxing chain from
 * Support For Batch Remuxing of TV Shows
 * Supoort For ISO Extraction
 * Can Generate Subtitle Images
-* Can Autoretrive Episode Titles
+
 
 
 
