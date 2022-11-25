@@ -48,6 +48,8 @@ class MovieData():
         dict
             returns MovieData Dict with data about matches show
         """
+        if type=="TV":
+            self._movieObj["Season"]=utils.getIntInput("What Season are you demuxing")
         self._type = type
         self._getShowURLWiki(title)
         data = None

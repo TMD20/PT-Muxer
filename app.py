@@ -4,6 +4,7 @@ import os
 
 import demux.demux as demuxAction
 import remux.remux as remuxAction
+import signal
 
 
 def demux(args):
@@ -14,7 +15,16 @@ def remux(args):
     remuxAction.Remux(args)
 
 
+def signal_handler(sig, frame):
+    print("Cleaning Up")
+    quit()
+
+
+
+
+
 def main():
+    signal.signal(signal.SIGINT, signal_handler)
     parser = argparse.ArgumentParser(prog='app.py', add_help=False)
 
     subparsers = parser.add_subparsers(help='main positional commands')

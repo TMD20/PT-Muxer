@@ -11,11 +11,8 @@ import tools.commands as commands
 
 class Bdinfo():
     def __init__(self):
-        self._playlistNum = 0
-        self._playlistNumList = []
-        self._playlistFileList = []
-        self._streams = []
-        self._chapters = []
+        self._playlistDict={}
+        self._playlistKeys=None
         self._mediaDir = None
 
     '''
@@ -27,9 +24,8 @@ class Bdinfo():
         self._generate_playlists()
 
 
-    def runbdinfo(self, playlistNum=None):
-        playlistNum = playlistNum or self._playlistNum
-        selection = self._playlist.splitlines()[2+int(playlistNum)]
+    def runbdinfo(self, playlistNum):
+        selection = self._playlistDict[playlistNum]["playlistFile"]
         match = re.search("[0-9]+.MPLS", selection)
         if match != None:
             selection = selection[match.start():match.end()]
@@ -39,29 +35,30 @@ class Bdinfo():
             subprocess.run(command)
             file = open(utils.convertPathType(os.path.join(
                 temp.name, os.listdir(temp.name)[0]), "Linux"), "r")
-            self._bdinfo = file.read()
+            self._playlistDict[playlistNum]["bdinfo"] = file.read()
             file.close()
 
-    def getQuickSum(self):
-        lines = self._bdinfo.splitlines()
+    def getQuickSum(self,playlistNum):
+        lines = self._playlistDict[playlistNum]["bdinfo"]
         lines = lines[lines.index("QUICK SUMMARY:"):len(lines)-1]
         for i in range(len(lines)):
             if re.search("Video: ", lines[i]) != None:
                 lines = lines[i:len(lines)]
                 break
-        return lines
+        self._playlistDict[playlistNum]["quickSum"] = lines
 
-    def getStreams(self):
-        lines = self._bdinfo.splitlines()
+    def getStreams(self,playlistNum):
+        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
         lines = lines[lines.index("FILES:"):len(lines)-1]
         start = 0
         end = lines.index("CHAPTERS:")-1
+
         for i in range(len(lines)):
             if re.search("Name", lines[i]) != None:
                 start = i+2
                 break
         time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
-
+        streams=[]
         for line in lines[start:end]:
             data = line.split()
 
@@ -76,13 +73,13 @@ class Bdinfo():
             startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
                 *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
 
-            self._streams.append(
+            streams.append(
                 {"name": name, "start": startTime, "end": endTime})
-        return self._streams
+        self._playlistDict[playlistNum]["streams"] = streams
 
-    def getChapters(self):
+    def getChapters(self,playlistNum):
         out = []
-        lines = self._bdinfo.splitlines()
+        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
         lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
         start = 0
         end = lines.index("STREAM DIAGNOSTICS:")-1
@@ -107,8 +104,7 @@ class Bdinfo():
 
             out.append(
                 {"number": number, "start": startTime, "end": endTime})
-        self._chapters = out
-        return self._chapters
+        self._playlistDict[playlistNum]["chapters"] = out
 
     def writeBdinfo(self, path):
         utils.mkdirSafe(path)
@@ -116,34 +112,23 @@ class Bdinfo():
         file.write(self._bdinfo)
 
     def playListSelect(self):
-        num = self._getIndex()
-        self._playlistNum = num
-        self._getplaylistFile(num)
+        self._playlistKeys = [self._getIndex()]
+        self.playListFileHelper()
+    
 
     def playListRangeSelect(self):
         self._playlistFileList = []
-        self._getRange()
-        for num in self._playlistNumList:
-            self._getplaylistFile(num)
-            self._playlistFileList.append(self._playlistFile)
-
+        self._playlistKeys=self._getRange()
+        self.playListFileHelper()
+    
+       
+    def playListFileHelper(self):
+        for num in self._playlistKeys:
+            self._playlistDict[num]={}
+            self._playlistDict[num]["playListFile"]=self._getplaylistFile(num)
     '''
     Getter Functions
     '''
-
-    """
-    playlistNum of Playlist picked by User
-    """
-    @property
-    def playlistNum(self):
-        return self._playlistNum
-
-    """
-    list of playlists picked by User
-    """
-    @property
-    def playlistNumList(self):
-        return self._playlistNumList
 
     """
     Working Directory with Current BDMV Files
@@ -151,36 +136,14 @@ class Bdinfo():
     @property
     def mediaDir(self):
         return self._mediaDir
-    """
-    Path to the Full bdinfo Path
-    """
-
-    @property
-    def bdinfoPath(self):
-        return self._bdinfoPath
 
     """
-    playlist file name
+    Keys For Playlist Dict
+    Corresponds to Playlist Nums
     """
     @property
-    def playlistFile(self):
-        return self._playlistFile
-
-    """
-    List of playlist file names
-    """
-    @property
-    def playlistFileList(self):
-        return self._playlistFileList
-
-    """
-    Chapters
-    """
-    @property
-    def chapters(self):
-
-        return self._chapters
-
+    def playListKeys(self):
+        return self._playlistKeys
     '''
     Setter Functions
     '''
@@ -188,9 +151,6 @@ class Bdinfo():
     def mediaDir(self, ele):
         self._mediaDir = re.sub("/BDMV/STREAM", "", ele)
 
-    @playlistNum.setter
-    def playlistNum(self, num):
-        self._playlistNum = num
 
     '''
     Private Functions
@@ -200,7 +160,6 @@ class Bdinfo():
         selection = self._playlist.splitlines()[3:]
         playlistNum = utils.singleSelectMenu(selection, "Select Playlist: ")
         selection.index(playlistNum)
-
         return selection.index(playlistNum)+1
 
     def _getRange(self):
@@ -214,7 +173,7 @@ class Bdinfo():
         playlistNumList = utils.multiSelectMenu(
             selection, message)
 
-        self._playlistNumList = list(
+        return  list(
             map(lambda x:  selection.index(x)+1, playlistNumList))
 
     def _getplaylistFile(self, num):
@@ -224,10 +183,11 @@ class Bdinfo():
             print("Number is out of Range")
             quit()
 
-        self._playlistFile = playlistFiles[int(num)-1]
+        return playlistFiles[int(num)-1]
 
     @utils.requiredClassAttribute("_mediaDir")
     def _generate_playlists(self):
+
         if utils.getSystem() == "Linux":
             command = list(itertools.chain.from_iterable([commands.bdinfo(), [
                 "-l", self._mediaDir, "."]]))
