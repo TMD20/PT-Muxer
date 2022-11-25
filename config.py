@@ -1,5 +1,6 @@
 import os
 import requests_cache
+import tempfile
 
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
@@ -33,3 +34,4 @@ demuxPrefix = "Mux"
 isoTemps=os.path.join(root_dir,"ISOTemps")
 cacheDir = os.path.expanduser("~")
 session = requests_cache.CachedSession(os.path.join(cacheDir, ".cache","remuxer_cache"))
+tempFolder=tempfile.gettempdir()
