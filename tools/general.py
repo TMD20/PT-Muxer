@@ -6,6 +6,8 @@ import pathlib
 import sys
 import textwrap
 import shutil
+import sys
+
 
 import pynumparser
 from InquirerPy import inquirer
@@ -15,7 +17,9 @@ from guessit import guessit
 
 def convertArrow(input, parse):
     return arrow.get(input, parse)
-
+def signal_handler(sig, frame):
+    print('You pressed Ctrl+C!')
+    sys.exit(0)
 
 def subArrowTime(large, small):
     large = large.shift(hours=-small.hour)
