@@ -13,7 +13,7 @@ class AnimeBytes(siteTrackSorter):
         for track in self._enabledSub:
             if track["forced"] == True and track["lang"].lower() == "english":
                 return
-        for key in list(self._tracksDataObj.rawMediaTracksData.keys()):
+        for key in list(self._tracksDataObj.Dict.keys()):
             keyTracks = list(
                 filter(lambda x: x["sourceKey"] == key, self._unSortedSub))
             keyTracks = list(

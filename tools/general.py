@@ -57,7 +57,9 @@ def mkdirSafe(target):
 
 def sourcetoShowName(path):
     path = convertPathType(path, "Linux")
-    show = str(pathlib.Path(path).parents[1])
+    show=path
+    if re.search(path,"D[0-9]|Disc"):
+        show = str(pathlib.Path(path).parents[0])
     show = os.path.basename(show)
     show = re.sub(" +", " ", show)
     show = re.sub(" ", ".", show)
@@ -138,7 +140,7 @@ def validateFiles(fileList):
             return file
 
 
-def getBdinfo(remuxConfig):
+def setBdInfo(remuxConfig):
     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
     output = os.path.dirname(
         remuxConfig["Tracks_Details"]["Video"][key]["file"])

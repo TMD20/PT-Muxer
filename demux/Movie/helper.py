@@ -3,13 +3,12 @@ import re
 import textwrap
 
 import mediatools.bdinfo as bdinfo
-import demux.paths as paths
 import tools.general as utils
 
 
 
 
-def getBdinfoData(sources):
+def setBdInfoData(sources):
     # Generate Bdinfo/TrackInfo for Each Source
     bdObjs = []
     for source in sources:
@@ -35,9 +34,9 @@ def processBdinfo(sources, bdObjs, demuxData, dontConvert):
             output, "output_logs", f"BDINFO.{show}.txt")
         print(f"Extracting BDINFO from {source}")
         bdObj.writeBdinfo(path)
-        quickSums = bdObj.getQuickSum()
-        streams = bdObj.getStreams()
-        bdObj.getChapters()
+        quickSums = bdObj.setQuickSum()
+        streams = bdObj.setStreams()
+        bdObj.setChapters()
         currentTracks = demuxData.addTracks(
             quickSums, bdObj.playlistNum, bdObj.playlistFile, streams, source, output)
         if not dontConvert:

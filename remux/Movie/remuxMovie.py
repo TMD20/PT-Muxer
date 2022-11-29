@@ -7,6 +7,7 @@ import orjson
 import remux.helpers as remuxHelper
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
+import tools.paths as paths
 import config
 import remux.Movie.helpers as MovieHelper
 
@@ -23,7 +24,7 @@ def Remux(args):
     if not remuxConfigPath:
         print("You Must Pick at list one Config")
         quit()
-    utils.mkdirSafe(os.path.join(args.outpath, ""))
+    paths.mkdirSafe(os.path.join(args.outpath, ""))
     os.chdir(args.outpath)
     print(f"\nPreparing Data for {remuxConfigPath}\n")
     remuxConfig = None

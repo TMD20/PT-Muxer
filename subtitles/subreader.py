@@ -5,8 +5,7 @@ import shutil
 
 import subtitles.images as subimages
 import subtitles.ocr as subocr
-import tools.general as utils
-
+import tools.paths as paths
 def subreader(tracks, maxLines=None, langs=None, keep=False):
     maxLines = maxLines or 51
     if keep:
@@ -48,7 +47,7 @@ def imagesOnly(tracks):
         print(f'Working on: {file}\n\n')
         file = track["eac3to"].split(":")[1]
         newDir = os.path.join(os.path.abspath(f"./subImages"),f"{file}/")
-        utils.mkdirSafe(newDir)
+        paths.mkdirSafe(newDir)
         
         subimages.getSubImages(track["file"], newDir)
         files = os.listdir(newDir)
