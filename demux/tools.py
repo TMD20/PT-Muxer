@@ -3,7 +3,6 @@ import json
 
 import orjson
 
-import mediatools.eac3to as eac3to
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
 import tools.general as utils
@@ -30,20 +29,9 @@ def ConvertChapterList(chapters):
 
 
 
-    return outdict
-def validateBdinfo(bdObjs):
-    num = len(bdObjs[0].playlistNumList)
-    bdObj=list(filter(lambda x:x.playlistNum==0,bdObjs
-    ))
-    for bdObj in bdObjs:
-        if len(bdObj.playlistNumList) != num:
-            message = \
-                """
-           One or more sources has an additional playlist
-           Make sure every playlist is in sync
-           """
-            print(message)
-            quit()
+
+
+
 
 
 def extractTracks(demuxData, stream=False):

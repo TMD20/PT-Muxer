@@ -8,9 +8,10 @@ from pymediainfo import MediaInfo
 import natsort
 
 import remux.helpers as remuxHelper
-import mediadata.movieData as movieData
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
+import tools.paths as paths
+
 import config
 import remux.TV.helpers as TVHelper
 
@@ -28,7 +29,7 @@ def Remux(args):
     remuxConfigPaths = TVHelper.getRemuxConfigPaths(folder)
     remuxConfigs = TVHelper.getRemuxConfigs(remuxConfigPaths)
     fileNameFuncts= TVHelper.getFileNameFuncts(remuxConfigs,args)
-    utils.mkdirSafe(os.path.join(args.outpath, ""))
+    paths.mkdirSafe(os.path.join(args.outpath, ""))
     os.chdir(args.outpath)
     if(len(fileNameFuncts) == 0):
         print("No Files to Process")

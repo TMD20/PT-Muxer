@@ -1,33 +1,29 @@
 import os
-import re
 import itertools
 import subprocess
 
 import tools.commands as commands
 import tools.general as utils
-
-
-def process(source, output, outputs_list, playlistLocation):
-    start = os.getcwd()
-    show = utils.sourcetoShowName(source)
-    eac3toPath = set_eac3toPath(output, show)
-
-    utils.mkdirSafe(eac3toPath)
+import tools.paths as paths
+    
+def process(source,output,outputs_list, playlistLocation):   
+    eac3toPath = get_eac3toPath(output, source)
+    paths.mkdirSafe(eac3toPath)
 
     os.chdir(output)
-    extract_files(playlistLocation, outputs_list, eac3toPath)
+    run(playlistLocation, outputs_list, eac3toPath)
     cleanFiles(outputs_list)
-    os.chdir(start)
+    return output
+
+ 
 
 
-def extract_files(playlistLocation, outputs_list, eac3toPath):
+def run(playlistLocation, outputs_list, eac3toPath):
 
     # get list of files
     eac3toWChapters = ["1:chapters.txt"]
-    eac3toWChapters.extend(
-        [f"{ele[0]}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"])
-    eac3toWoChapters = [
-        f"{ele[0]-1}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"]
+    eac3toWChapters.extend(outputs_list)
+    eac3toWoChapters = outputs_list
     eactoCommand = None
     playlistlocationFinal = utils.convertPathType(playlistLocation, "Linux")
     if utils.getSystem() == "Linux":
@@ -56,7 +52,7 @@ def extract_files(playlistLocation, outputs_list, eac3toPath):
                 break
 
 
-def set_eac3toPath(output, show):
+def get_eac3toPath(output, show):
     return os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
 
 
@@ -66,45 +62,3 @@ def cleanFiles(outputs_list):
     for file in os.listdir("."):
         if os.path.isfile(file) and file not in outputs_list:
             os.remove(file)
-
-
-def getVideoFileName(line, index):
-    if re.search("AVC", line) != None:
-        return f"{index}:00{index}.h264"
-    if re.search("HEVC", line) != None:
-        return f"{index}:00{index}.h265"
-    if re.search("VC-1", line) != None:
-        return f"{index}:00{index}.vc1"
-    if re.search("MPEG-2", line) != None:
-        return f"{index}:00{index}.mpeg2"
-
-
-def getAudioFileName(line, langcode, index):
-    # Lossless audio
-    if re.search("flac", line, re.IGNORECASE) != None:
-        codec = "flac"
-
-    elif re.search("lpcm", line, re.IGNORECASE) != None:
-        codec = "pcm"
-    elif re.search("Master Audio", line, re.IGNORECASE) != None:
-        codec = "dtsma"
-
-    elif re.search("TrueHD", line, re.IGNORECASE) != None:
-        codec = "thd"
-
-    elif re.search("Dolby Digital", line, re.IGNORECASE) != None:
-        codec = "ac3"
-    elif re.search("AC3 Embedded", line, re.IGNORECASE) != None:
-        codec = "ac3"
-
-    elif re.search("DTS Audio", line, re.IGNORECASE) != None:
-        codec = "dts"
-    elif re.search("dts", line, re.IGNORECASE) != None:
-        codec = "dts"
-
-    return f"{index}:00{index}-{langcode}.{codec}"
-
-
-def getSubFileName(langcode, index):
-    # remove special characters
-    return f"{index}:00{index}-{langcode}.sup"

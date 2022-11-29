@@ -2,7 +2,6 @@ import os
 import re
 
 from mediadata.tracksData import TracksData
-import mediatools.eac3to as eac3to
 import tools.general as utils
 
 
@@ -22,16 +21,21 @@ class siteTrackData(TracksData):
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
-    def addTracks(self, quicksum, playlistNum, playlistFile, streams, source, output):
+    def addTracks(self,bdObj,playlistNum,output):
+        bdObjDict=bdObj.Dict[playlistNum]
+        quicksum=bdObjDict["quickSum"]
+        playlistFile=bdObjDict["playlistFile"]
+        streams=bdObjDict["playlistStreams"]
+        source=bdObj.mediaDir
+        self.Dict["source"]=source
 
-        self.updateRawTracksDict(
-            quicksum, playlistNum, playlistFile, streams, source, output)
-        current_tracks = self.filterBySource(utils.sourcetoShowName(source))["tracks"]
+        self.updateRawTracksDict(source,
+            quicksum, playlistNum, playlistFile, streams,output)
+        current_tracks = self.Dict["tracks"]
         self._updateTrackDictNames(current_tracks)
         self._updateTrackDictEac3to(current_tracks)
         self._updateTrackDictFileOutput(current_tracks, output)
         self._updateTrackDictNotes(current_tracks)
-        self._updateTrackEac3toExtra(current_tracks)
         return current_tracks
      #######################################################################
     #  This Function will convert certain lossless Tracks to flac
@@ -99,12 +103,12 @@ class siteTrackData(TracksData):
             langcode = track["langcode"]
             index = track["index"]
             if type == "audio":
-                track["eac3to"] = eac3to.getAudioFileName(
+                track["eac3to"] = TracksData.getAudioFileName(
                     line, langcode, index)
             elif type == "video":
-                track["eac3to"] = eac3to.getVideoFileName(line, index)
+                track["eac3to"] = TracksData.getVideoFileName(line, index)
             elif type == "subtitle":
-                track["eac3to"] = eac3to.getSubFileName(
+                track["eac3to"] = TracksData.getSubFileName(
                     langcode, index)
 
     def _updateTrackDictFileOutput(self, tracks, output):
@@ -115,12 +119,7 @@ class siteTrackData(TracksData):
         for track in tracks:
             track["notes"] = "Add Your Own if You want"
 
-    def _updateTrackEac3toExtra(self, tracks):
-        for track in tracks:
-            if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", track["bdinfo_title"], re.IGNORECASE) == None and track["type"] == "audio":
-                track["eac3to_extras"] = track.get("eac3to_extras") or []
-                track["eac3to_extras"].append("-keepDialnorm")
-
+   
     #####################################################################################################################
     #       These Functions Will make a best effort to Give the Track the Proper Name.
     #       Like Sorting Functions These May have to be overwritten based on Specific Site Rules

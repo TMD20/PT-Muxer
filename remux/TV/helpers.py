@@ -1,7 +1,6 @@
 
 import os
 import functools
-from webbrowser import get
 
 import orjson
 
@@ -41,12 +40,12 @@ def ProcessBatch(fileName, remuxConfig, muxGenerator, outargs,special):
 
     if chaptersTemp:
         muxGenerator.createMKV(fileName, movieTitle,
-                               chaptersTemp[1], xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
+                               chaptersTemp[1], xmlTemp[1],  utils.setBdInfo(remuxConfig), utils.getEac3to(remuxConfig))
 
         os.close(chaptersTemp[0])
     else:
         muxGenerator.createMKV(fileName, movieTitle,
-                               None, xmlTemp[1],  utils.getBdinfo(remuxConfig), utils.getEac3to(remuxConfig))
+                               None, xmlTemp[1],  utils.setBdInfo(remuxConfig), utils.getEac3to(remuxConfig))
     os.close(xmlTemp[0])
 
 def getRemuxConfigPaths(folder):

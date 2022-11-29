@@ -1,20 +1,17 @@
 
-from pickle import GET
 import re
-import time
-import datetime as dt
+import os
 
 import xxhash
 import langcodes
-import arrow
 
 import tools.general as utils
+import tools.paths as paths
 
 
 class TracksData():
     def __init__(self):
-        self._rawMediaTracksData = {}
-        self._sources = []
+        self._Dict = {}
 
     """
     Public Functions
@@ -25,31 +22,77 @@ class TracksData():
     #It also adds data about the source of the information, and where to output it                                 #
     ################################################################################################################
 
-    def updateRawTracksDict(self, trackStrs, playlistNum, playlistFile, streams, source, output):
+    def updateRawTracksDict(self,source, trackStrs, playlistNum, playlistFile, streams, output):
         tracks = []
         for index, currline in enumerate(trackStrs):
             index = index+2
-            self._appendTrack(currline, index, tracks, source)
+            tracks.extend(self._appendTrack(currline, index, source))
         for track in tracks:
             track["sourceDir"] = source
             track["sourceKey"] = utils.sourcetoShowName(source)
         self._expandRawTracksData(
             tracks, playlistNum, playlistFile, streams, source, output)
-        self.addSource(source)
 
-    def addSource(self, source):
-        self._sources.append(utils.sourcetoShowName(source))
+
+    
+    def getVideoFileName(line, index):
+        if re.search("AVC", line) != None:
+            return f"{index}:00{index}.h264"
+        if re.search("HEVC", line) != None:
+            return f"{index}:00{index}.h265"
+        if re.search("VC-1", line) != None:
+            return f"{index}:00{index}.vc1"
+        if re.search("MPEG-2", line) != None:
+            return f"{index}:00{index}.mpeg2"
+
+
+    def getAudioFileName(line, langcode, index):
+        # Lossless audio
+        if re.search("flac", line, re.IGNORECASE) != None:
+            codec = "flac"
+
+        elif re.search("lpcm", line, re.IGNORECASE) != None:
+            codec = "pcm"
+        elif re.search("Master Audio", line, re.IGNORECASE) != None:
+            codec = "dtsma"
+
+        elif re.search("TrueHD", line, re.IGNORECASE) != None:
+            codec = "thd"
+
+        elif re.search("Dolby Digital", line, re.IGNORECASE) != None:
+            codec = "ac3"
+        elif re.search("AC3 Embedded", line, re.IGNORECASE) != None:
+            codec = "ac3"
+
+        elif re.search("DTS Audio", line, re.IGNORECASE) != None:
+            codec = "dts"
+        elif re.search("dts", line, re.IGNORECASE) != None:
+            codec = "dts"
+
+        return f"{index}:00{index}-{langcode}.{codec}"
+
+
+    def getSubFileName(langcode, index):
+        # remove special characters
+        return f"{index}:00{index}-{langcode}.sup"
+
 
     ################################################################################################################
     #   Getter Functions
     ################################################################################################################
 
     @property
-    def rawMediaTracksData(self):
-        return self._rawMediaTracksData
+    def Dict(self):
+        return self._Dict
+    
+    def getPlaylistLocation(self,split=False):
+        sourceData=self._Dict
+        if split:
+            return paths.search(sourceData["sourceDir"],"STREANS",dir=True)[0]
+        else:
+            return paths.search(sourceData["sourceDir"],"PLAYLIST",dir=True)[0]
 
-    def filterBySource(self, key):
-        return self._rawMediaTracksData.get(key)
+
 
     """
    Private
@@ -143,7 +186,8 @@ class TracksData():
         ###### Adds Track to List                                                                                     #
         ################################################################################################################
 
-    def _appendTrack(self, currline, index, tracks, source):
+    def _appendTrack(self, currline, index, source):
+        tempList=[]
         tempdict = None
         tempdict2 = None
         match = re.search("([a-z|A-Z]*?):", currline, re.IGNORECASE).group(1)
@@ -163,7 +207,7 @@ class TracksData():
         tempdict["key"] = f"{key}_{post}"
         tempdict["parent"] = None
         tempdict["child"] = None
-        tracks.append(tempdict)
+        tempList.append(tempdict)
         if tempdict2 != None:
             tempdict2["index"] = index
 
@@ -177,26 +221,20 @@ class TracksData():
             tempdict2["parent"] = tempdict["bdinfo_title"]
             tempdict["child"] = tempdict2["bdinfo_title"]
             tempdict["parent"] = None
-            tracks.append(tempdict2)
+            tempList.append(tempdict2)
+        return tempList
 
     # Primary Key are Basename Source
     # Tracks are Objects
     # Output is a a string
     def _expandRawTracksData(self, tracks, playlistNum, playlistFile, streams, source, output):
-        self._rawMediaTracksData[utils.sourcetoShowName(source)] = {}
-        self._rawMediaTracksData[utils.sourcetoShowName(source)]["tracks"] = tracks
-        self._rawMediaTracksData[utils.sourcetoShowName(
-            source)]["outputDir"] = output
-        self._rawMediaTracksData[utils.sourcetoShowName(
-            source)]["sourceDir"] = source
-        self._rawMediaTracksData[utils.sourcetoShowName(
-            source)]["playlistNum"] = playlistNum
-        self._rawMediaTracksData[utils.sourcetoShowName(
-            source)]["playlistFile"] = playlistFile
-        self._rawMediaTracksData[utils.sourcetoShowName(
-            source)]["streamFiles"] = self._getStreamNames(streams)
-        self._rawMediaTracksData[utils.sourcetoShowName(
-            source)]["length"] = self._getStreamLength(streams)
+        self._Dict["tracks"] = tracks
+        self._Dict["outputDir"] = output
+        self._Dict["sourceDir"] = source
+        self._Dict["playlistNum"] = playlistNum
+        self._Dict["playlistFile"] = playlistFile
+        self._Dict["streamFiles"] = self._getStreamNames(streams)
+        self._Dict["length"] = self._getStreamLength(streams)
 
       ################################################################################################################
       ###### get data from streams
@@ -207,3 +245,5 @@ class TracksData():
     def _getStreamLength(self, streams):
         return utils.subArrowTime(utils.convertArrow(streams[-1]["end"], "HH:mm:ss.SSS"),
                                   utils.convertArrow(streams[0]["start"], "HH:mm:ss.SSS")).format("HH [hour] mm [Minutes] ss [Seconds] SSS [MicroSeconds]")
+
+   

@@ -1,60 +1,98 @@
+import re
+import textwrap
 import os
 
 from num2words import num2words
 
-import mediadata.movieData as movieData
 import tools.general as utils
-import demux.paths as paths
-import demux.tools as tools
-import demux.TV.helper as demuxHelper
-import demux.shared.playlist as playlist
+from demux.base import Demux
+import mediadata.movieData as movieData
+import tools.paths as paths
 
 
-def demux(args):
-    demuxFolder=None
-    #Protection From Deleting Restored Folder
-    currentFolders=os.listdir(args.inpath)
-    try:
-        args.audiolang = list(map(lambda x: x.lower(),  args.audiolang))
-        args.sublang = list(map(lambda x: x.lower(),  args.sublang))
 
-        # make the output directory if needed
-        utils.mkdirSafe(args.outpath)
-        os.chdir(args.outpath)
+class Demux(Demux):
+    def __init__(self,args):
+        super().__init__(args)
+        self._name="TV Shows"
+        self._type="TV"
+    def callFunction(self):
+        self.demux()
 
-        options = paths.getBDMVs(args.inpath)
-        sources = demuxHelper.getSources(options,args.inpath,args.sortpref, args.splitplaylist == None,extract=True)
 
-        demuxFolder = demuxHelper.getDemuxFolder(sources, args.outpath)
-       
+    ####
+    # Helper Functions
+    ####
+    def setStreamsLength(self,streams):
+        duration = 0
+        start = utils.convertArrow(streams[0]["start"], "hh:mm:ss.SSS")
+        end = utils.convertArrow(streams[-1]["end"], "hh:mm:ss.SSS")
+        dif = utils.subArrowTime(end, start)
+        duration = (duration+dif.hour*60)
+        duration = (duration+dif.minute)
+        duration = (duration+(dif.second/60))
+        return duration
 
+    def getNewStartTime(self,startTime, streams):
+        start = utils.convertArrow(streams[0]["start"], "hh:mm:ss.SSS")
+        end = utils.convertArrow(streams[-1]["end"], "hh:mm:ss.SSS")
+        dif = utils.subArrowTime(end, start)
+        startTime = utils.addArrowTime(startTime, dif)
+        return startTime
+
+    def getSources(self,options,inpath, sortpref,multi,extract=False):
+        if len(options) == 0:
+            print("No Valid Source Directories Found")
+            quit()
+        sources = None
+        if multi:
+            sources = self.addMultiSource(options, sortpref)
+        else:
+            sources = [self.addSingleSource(options)]
+        if extract:
+            for i in range(0, len(sources)):
+                if re.search(".iso", sources[i]):
+                    sources[i] = paths.extractISO(sources[i], inpath)
+        return sources
+
+
+
+
+    def demux(self):
+        os.chdir(self.demuxFolder)
         movieObj = movieData.MovieData()
-        movieObj.setData("TV",utils.getTitle(sources[0]))
-     
-    
+        movieObj.setData("TV",utils.getTitle(self.sources[0]))
         while True:
-            bdObjs = demuxHelper.getBdinfoData(sources)
-            tools.validateBdinfo(bdObjs)
-            offset = len(os.listdir(demuxFolder))
-            message =\
-                f"""
-            Current Iterations:{num2words(offset)}
-            """
-            if not args.splitplaylist:
-                playlist.batchPlayList(bdObjs[0], sources[0], args, demuxFolder,
-                            movieObj)
+            bdObjs = self.setBdInfoData() 
+            # playlistObj=playlist.playlist(bdObjs,self._args)
+            # playlistObj()
+            # trackObjs=playlistObj.trackObjs
+            # # offset=len(os.listdir(self.demuxFolder))
+            # for i,trackObj in enumerate(trackObjs):
+            #     newFolder=os.path.join(self.demuxFolder,str(i+offset+1))
+            #     paths.mkdirSafe(newFolder)
+            #     for source in trackObj.sources:
+            #         sourceData=trackObj.filterBySource(source)
+            #         extract.extractTracks(source,newFolder,sourceData["tracks"],trackObj.getPlaylistLocation(source,self._args.splitplaylist),self._args.extractprogram)
+            if self._args.splitplaylist:
+                None
             else:
-                playlist.batchPlayList(bdObjs[0], sources[0], args, demuxFolder,
-                            movieObj)
+                self.demuxPlaylist(bdObjs)
+
+                
+
+
+            
+
 
             if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
                 print("Thank You, make sure to double check episode numbers")
 
                 break
             if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
-                sources = demuxHelper.getSources(
-                    options, args.inpath, args.sortpref, args.splitplaylist == None,extract=False)
-            offset = len(os.listdir(demuxFolder))
+                self.setSource()
+
+            offset = len(os.listdir(self.demuxFolder))
             message =\
                 f"""
             Total Iterations:{num2words(offset)}
@@ -63,13 +101,7 @@ def demux(args):
             The previous playlist selection for every source will be reset
             """
             print(message)  
-    except Exception as e:
-        print(e)
-        if demuxFolder not in currentFolders:
-            if utils.singleSelectMenu(["Yes","No"],"Do you want to delete the inprogress folder?")=="Yes":
-                utils.rmDir(demuxFolder)
-
-
+        
 # def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
 #     # outter loop through every playlist
 #     for i in range(len(bdObj.playlistNumList)):
@@ -81,9 +113,9 @@ def demux(args):
 
 #         # get quick summary and bdinfo data
 #         bdObj.runbdinfo(playlistNum)
-#         quickSums = bdObj.getQuickSum()
-#         streams = bdObj.getStreams()
-#         chapters = bdObj.getChapters()
+#         quickSums = bdObj.setQuickSum()
+#         streams = bdObj.setStreams()
+#         chapters = bdObj.setChapters()
 #         # what should we offset the time by based on previous streams lengths
 #         # create a episode folder
 #         offset = len(os.listdir(demuxFolder))
@@ -94,7 +126,7 @@ def demux(args):
 #             stream = streams[j]
 #             # remove the folder if the source folder
 #             if args.splitplaylist < float("inf"):
-#                 if demuxHelper.getStreamsLength([stream]) < args.splitplaylist:
+#                 if demuxHelper.setStreamsLength([stream]) < args.splitplaylist:
 #                     message = \
 #                         f"""
 #                     The length of the stream: {stream}
@@ -105,7 +137,7 @@ def demux(args):
 #                     continue
 
 #             newFolder = os.path.join(demuxFolder, str(ep))
-#             utils.mkdirSafe(newFolder)
+#             paths.mkdirSafe(newFolder)
 #             os.chdir(newFolder)
 #             print(f"Creating a new episode folder at {newFolder}\n")
 

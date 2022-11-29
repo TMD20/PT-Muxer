@@ -4,10 +4,9 @@ import sites.pickers.siteDataPicker as siteDataPicker
 import sites.pickers.siteSortPicker as siteSortPicker
 import mediadata.movieData as movieData
 import tools.general as utils
-import demux.paths as paths
 import demux.tools as tools
 import demux.Movie.helper as demuxHelper
-
+import tools.paths as paths
 
 def demux(args):
     parentDir=None
@@ -17,7 +16,7 @@ def demux(args):
     
 
         # make the output directory if needed
-        utils.mkdirSafe(args.outpath)
+        paths.mkdirSafe(args.outpath)
         os.chdir(args.outpath)
 
         options = paths.getBDMVs(args.inpath)
@@ -35,7 +34,7 @@ def demux(args):
         os.chdir(parentDir)
         print(os.path.abspath("."))
 
-        bdObjs = demuxHelper.getBdinfoData(sources)
+        bdObjs = demuxHelper.setBdInfoData(sources)
         tools.validateBdinfo(bdObjs)
         demuxHelper.processBdinfo(sources, bdObjs, demuxData, args.dontconvert)
 

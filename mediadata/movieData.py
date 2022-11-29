@@ -62,7 +62,6 @@ class MovieData():
         else:
             id = self._getIMDBID(title)
             if id:
-
                 data = self._getMovieInfo(id)
 
         if data == None:
@@ -1225,6 +1224,11 @@ class MovieData():
         self._showObjDictIMDB[imdbID] = series
         return series
 
+    
+
+    
+
+    
     def _getIMDBID(self, title):
         """
         Allows user to pick title that best matches the input title sent
@@ -1241,7 +1245,7 @@ class MovieData():
         imdbPY Object
             imdb object for user picked
         """
-        results = ia.search_movie(title)
+        results = self._getMovieList(title)
         result = None
         msg = None
 

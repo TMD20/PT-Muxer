@@ -132,9 +132,9 @@ class siteTrackSorter():
     ################################################################################################################
 
     def _groupTracks(self):
-        sources = list(self._tracksDataObj.rawMediaTracksData.keys())
+        sources = list(self._tracksDataObj.Dict.keys())
         for key in sources:
-            tracks = self._tracksDataObj.rawMediaTracksData[key]["tracks"]
+            tracks = self._tracksDataObj.Dict[key]["tracks"]
             for track in tracks:
                 type = track["type"]
                 if type == "audio":
