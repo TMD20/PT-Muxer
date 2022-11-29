@@ -46,9 +46,9 @@ class Demux(Demux):
             quit()
         sources = None
         if multi:
-            sources = self.addMultiSource(options, sortpref)
+            sources = self._addMultiSource(options, sortpref)
         else:
-            sources = [self.addSingleSource(options)]
+            sources = [self._addSingleSource(options)]
         if extract:
             for i in range(0, len(sources)):
                 if re.search(".iso", sources[i]):

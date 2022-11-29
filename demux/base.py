@@ -63,7 +63,7 @@ class Demux():
 
                 return folder
         else:
-            return paths.createParentDemuxFolder(sources, outpath)
+            return self._createParentDemuxFolder(sources, outpath)
     
     def getDemuxFolder(self):
         paths.mkdirSafe(self._args.outpath)
@@ -108,7 +108,7 @@ class Demux():
         os.chdir(currpath)
         return sorted(list1)
 
-    def createParentDemuxFolder(self,sources, outpath):
+    def _createParentDemuxFolder(self,sources, outpath):
         title = utils.getTitle(sources[0])
         folder = f"{config.demuxPrefix}.{utils.getFormated('YY.MM.DD_HH:mm.ss')}.{title}"
         parentDemux = os.path.join(outpath, folder)
@@ -118,8 +118,15 @@ class Demux():
         print(f"Creating a new Parent Directory for {self._name} ->{parentDemux}")
         os.mkdir(parentDemux)
         return parentDemux
+
+    def _createChildDemuxFolder(self,parentDir, show):
+        os.chdir(parentDir)
+        show = utils.sourcetoShowName(show)
+        os.mkdir(show)
+        return utils.convertPathType(os.path.join(parentDir, show), "Linux")
+      
     #Select
-    def addMultiSource(self,paths,sortpref):
+    def _addMultiSource(self,paths,sortpref):
         if len(paths) == 0:
             print("No Valid Source Directories Found")
             quit()
@@ -164,7 +171,7 @@ class Demux():
             selection=utils.removeDupesList(selection)
             return selection
 
-def addSingleSource(self,paths):
+def _addSingleSource(self,paths):
     if len(paths) == 0:
         print("No Valid Source Directories Found")
         quit()

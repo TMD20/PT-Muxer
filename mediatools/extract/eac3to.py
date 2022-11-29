@@ -6,7 +6,7 @@ import tools.commands as commands
 import tools.general as utils
 import tools.paths as paths
     
-def process(source,output,outputs_list, playlistLocation):   
+def process(output,source,outputs_list, playlistLocation):   
     eac3toPath = get_eac3toPath(output, source)
     paths.mkdirSafe(eac3toPath)
 
@@ -52,7 +52,8 @@ def run(playlistLocation, outputs_list, eac3toPath):
                 break
 
 
-def get_eac3toPath(output, show):
+def get_eac3toPath(output, source):
+    show=utils.sourcetoShowName(source)
     return os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
 
 

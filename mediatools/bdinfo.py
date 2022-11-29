@@ -229,10 +229,10 @@ class Bdinfo():
 
         if utils.getSystem() == "Linux":
             command = list(itertools.chain.from_iterable([commands.bdinfo(), [
-                "-l", BDMV, "."]]))
+                "-l", BDMV]]))
         else:
             command = list(itertools.chain.from_iterable([commands.bdinfo(), [
-                "-l", utils.convertPathType(BDMV, "Linux"), "."]]))
+                "-l", utils.convertPathType(BDMV, "Linux")]]))
 
         self._playlist = subprocess.run(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
