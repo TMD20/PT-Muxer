@@ -13,7 +13,7 @@ def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
  
 
     for track in tracks:
-        print("\n\nAttempting to Transcription of: ", track["file"])
+        print("\n\nAttempting to Transcription of: ", track["filename"])
         if langs and (track["lang"].lower() not in langs):
             continue
         langcode={
@@ -33,7 +33,7 @@ def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
         except:
             continue
         
-        task_list = [Path(track["file"])]
+        task_list = [Path(track.getTrackLocation())]
     
         
         

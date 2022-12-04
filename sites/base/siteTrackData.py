@@ -1,11 +1,12 @@
 import os
 import re
 
-from mediadata.tracksData import TracksData
+from mediadata.sourceData import sourceData
 import tools.general as utils
 
 
-class siteTrackData(TracksData):
+
+class siteTrackData(sourceData):
     def __init__(self):
         super().__init__()
 
@@ -27,15 +28,14 @@ class siteTrackData(TracksData):
         playlistFile=bdObjDict["playlistFile"]
         streams=bdObjDict["playlistStreams"]
         source=bdObj.mediaDir
-        self.Dict["source"]=source
+        self["source"]=source
 
         self.updateRawTracksDict(source,
             quicksum, playlistNum, playlistFile, streams,output)
-        current_tracks = self.Dict["tracks"]
+        current_tracks = self["tracks"]
+        self._updateTrackDictFileNames(current_tracks)
         self._updateTrackDictNames(current_tracks)
-        self._updateTrackDictEac3to(current_tracks)
-        self._updateTrackDictFileOutput(current_tracks, output)
-        self._updateTrackDictNotes(current_tracks)
+
         return current_tracks
      #######################################################################
     #  This Function will convert certain lossless Tracks to flac
@@ -51,27 +51,27 @@ class siteTrackData(TracksData):
             if channels == None:
                 continue
             channels = float(channels.group(0))
-            eac3to = track["eac3to"]
-            file = track["file"]
+            file = track["filename"]
             if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", title, re.IGNORECASE)\
                     and channels < 3.0:
-                eac3to = re.sub("\..*", ".flac", eac3to)
-                file = os.path.join(
-                    output, eac3to.split(":")[1])
                 match = re.search(".*([0-9]\.[0-9].*)", title).group(1)
                 title = f"FLAC Audio / {match}"
                 title = re.sub(" +", " ", title)
                 track["site_title"] = title
-                track["file"] = file
-                track["eac3to"] = eac3to
+                track["filename"] = re.sub("\..*", ".flac", file)
 
     ################################################################################################################
     #   Getter Functions
     ################################################################################################################
 
     @property
-    def sources(self):
-        return self._sources
+    def source(self):
+        return self.get("source")
+    @property 
+    def showname(self):
+        if self.get("source"):
+            return utils.sourcetoShowName(self.get("source"))
+        return
 
     """
     Private Functions
@@ -95,29 +95,24 @@ class siteTrackData(TracksData):
             elif type == "subtitle":
                 track["site_title"] = self._getSubName(bdinfo)
 
-    def _updateTrackDictEac3to(self, tracks):
+   
+    def _updateTrackDictFileNames(self, tracks):
         for track in tracks:
             type = track["type"]
-            line = track["site_title"] or track["bdinfo_title"]
+            line = track.get("site_title") or track.get("bdinfo_title")
 
             langcode = track["langcode"]
             index = track["index"]
             if type == "audio":
-                track["eac3to"] = TracksData.getAudioFileName(
+                track["filename"] = sourceData.getAudioFileName(
                     line, langcode, index)
             elif type == "video":
-                track["eac3to"] = TracksData.getVideoFileName(line, index)
+                track["filename"] = sourceData.getVideoFileName(line, index)
             elif type == "subtitle":
-                track["eac3to"] = TracksData.getSubFileName(
+                track["filename"] = sourceData.getSubFileName(
                     langcode, index)
 
-    def _updateTrackDictFileOutput(self, tracks, output):
-        for track in tracks:
-            track["file"] = os.path.join(output, track["eac3to"].split(":")[1])
 
-    def _updateTrackDictNotes(self, tracks):
-        for track in tracks:
-            track["notes"] = "Add Your Own if You want"
 
    
     #####################################################################################################################
@@ -175,3 +170,5 @@ class siteTrackData(TracksData):
             site_title = f"{codec} / {other}"
         site_title = re.sub("/ DN.*dB", "", site_title)
         return re.sub(" +", " ", site_title).strip()
+
+

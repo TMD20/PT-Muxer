@@ -38,23 +38,24 @@ class Bdinfo():
         key=self._playlistKeys[i]
         playlistNum = key
         print(f"Generating Data for {self._mediaDir}\nPlaylist:{playlistNum}\n")  
-        self.setBdInfo(playlistNum)
-        self.setQuickSum(playlistNum)
-        self.setStreams(playlistNum)     
-    def setBdInfo(self, playlistNum):
+        self._setBdInfo(playlistNum)
+        self._setQuickSum(playlistNum)
+        self._setStreams(playlistNum) 
+        self._setChapters(playlistNum)    
+    def _setBdInfo(self, playlistNum):
         selection = self._playlistDict[playlistNum]["playlistFile"]
        
         tempDir = paths.createTempDir()
         command = list(itertools.chain.from_iterable(
         [commands.bdinfo(), ["-m", selection, self._mediaDir, tempDir]]))
         subprocess.run(command)
-        file = open(utils.convertPathType(os.path.join(
+        file = open(paths.convertPathType(os.path.join(
         tempDir, os.listdir(tempDir)[0]), "Linux"), "r")
         self._playlistDict[playlistNum]["bdinfo"] = file.read()
         shutil.rmtree(tempDir)
         file.close()
 
-    def setQuickSum(self,playlistNum):
+    def _setQuickSum(self,playlistNum):
         lines = self._playlistDict[playlistNum]["bdinfo"].split("\n")
         output=[]
         for line in lines:
@@ -62,7 +63,7 @@ class Bdinfo():
                 output.append(line)
         self._playlistDict[playlistNum]["quickSum"] = output
 
-    def setStreams(self,playlistNum):
+    def _setStreams(self,playlistNum):
         lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
         lines = lines[lines.index("FILES:"):len(lines)-1]
         start = 0
@@ -92,7 +93,7 @@ class Bdinfo():
                 {"name": name, "start": startTime, "end": endTime})
         self._playlistDict[playlistNum]["playlistStreams"] = streams
 
-    def setChapters(self,playlistNum):
+    def _setChapters(self,playlistNum):
         out = []
         lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
         lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
@@ -232,7 +233,7 @@ class Bdinfo():
                 "-l", BDMV]]))
         else:
             command = list(itertools.chain.from_iterable([commands.bdinfo(), [
-                "-l", utils.convertPathType(BDMV, "Linux")]]))
+                "-l", paths.convertPathType(BDMV, "Linux")]]))
 
         self._playlist = subprocess.run(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')

@@ -14,6 +14,7 @@ from InquirerPy import inquirer
 import arrow
 from guessit import guessit
 
+import tools.paths as paths
 
 def convertArrow(input, parse):
     return arrow.get(input, parse)
@@ -46,17 +47,10 @@ def getFormated(format,time=None):
     return arrow.get(time).format(format)
 
 
-def mkdirSafe(target):
-    directories = list(reversed(pathlib.Path(target).parents))
-    if len(os.path.splitext(target)[1]) == 0:
-        directories.append(target)
-    for ele in directories:
-        if not os.path.exists(ele):
-            os.mkdir(ele)
 
 
 def sourcetoShowName(path):
-    path = convertPathType(path, "Linux")
+    path = paths.convertPathType(path, "Linux")
     show=path
     if re.search(path,"D[0-9]|Disc"):
         show = str(pathlib.Path(path).parents[0])
@@ -65,13 +59,6 @@ def sourcetoShowName(path):
     show = re.sub(" ", ".", show)
 
     return show
-
-
-def findMatches(path, string, ext=None):
-    paths = glob.glob(os.path.join(path, "**", string), recursive=True)
-    if ext != None:
-        paths = list(filter(lambda x: os.path.splitext(x), paths))
-    return paths
 
 
 def requiredClassAttribute(*required):
@@ -134,30 +121,27 @@ def getRangeOfNumbers(message, default=None):
         return
 
 
-def validateFiles(fileList):
-    for file in fileList:
-        if not os.path.exists(file):
-            return file
+# def validateFiles(fileList):
+#     for file in fileList:
+#         if not os.path.exists(file):
+#             return file
 
 
-def setBdInfo(remuxConfig):
-    key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
-    output = os.path.dirname(
-        remuxConfig["Tracks_Details"]["Video"][key]["file"])
-    return findMatches(output, "BDINFO*")[0]
+# def setBdInfo(remuxConfig):
+#     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
+#     output = os.path.dirname(
+#         remuxConfig["Tracks_Details"]["Video"][key]["filename"])
+#     return paths.search(output, "BDINFO")[0]
 
 
-def getEac3to(remuxConfig):
-    key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
-    output = os.path.dirname(
-        remuxConfig["Tracks_Details"]["Video"][key]["file"])
-    return findMatches(output, "Eac3to*")[0]
+# def getEac3to(remuxConfig):
+#     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
+#     output = os.path.dirname(
+#         remuxConfig["Tracks_Details"]["Video"][key]["filename"])
+#     return paths.search(output, "Eac3to")[0]
 
 
-def convertPathType(folder, type):
-    if type == "Linux":
-        return str(pathlib.PurePosixPath(folder))
-    return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
+
 
 
 def getTitle(source):
@@ -183,28 +167,28 @@ def smart_truncate(content, length=100, suffix='...'):
         return content[:length].rsplit(' ', 1)[0]+suffix
 
 
-def getRelativeTo(track, levelUp):
-    """
-    Returns the relative Path of a file/folder from one of it's parents
+# def getRelativeTo(track, levelUp):
+#     """
+#     Returns the relative Path of a file/folder from one of it's parents
 
 
-    Parameters
-    ----------
+#     Parameters
+#     ----------
 
-    track : str
-        Track whose relative path you want
-    levelup: int
-        How many levels up the parent tree
+#     track : str
+#         Track whose relative path you want
+#     levelup: int
+#         How many levels up the parent tree
 
 
-    Returns
-    -------
+#     Returns
+#     -------
 
-    str
-        Relative path to file from one of the parents
-    """
+#     str
+#         Relative path to file from one of the parents
+#     """
 
-    return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
+#     return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
 
 
 def getSystem():

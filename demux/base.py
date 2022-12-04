@@ -1,16 +1,22 @@
 import os
 import re
+import orjson
+
 
 from num2words import num2words
 
 import tools.general as utils
 import tools.paths as paths
 import mediatools.bdinfo as bdinfo
-import remux.helpers as remuxHelper
 import config as config
 import sites.pickers.siteDataPicker as siteDataPicker
-import mediatools.extract.extract as extract
-
+import mediatools.eac3to as eac3to
+import mediatools.dgdemux as dgdemux
+import tools.paths as paths
+import sites.pickers.siteSortPicker as siteSortPicker
+import subtitles.subreader as subreader
+import transcription.voiceRecord as voiceRec
+import tools.directory as dir
 
 
 class Demux():
@@ -19,57 +25,67 @@ class Demux():
         self.demuxFolder=None
         self._name=None
         self._type=None
+        self.movieObj=None
+        self._index=0
+        self._success=False
     def __call__(self):
-        self.setSource()
-        self._fixArgs()
-        self.getDemuxFolder()
-        self.callFunction()
+        self._callFunction()
+        self._success=True
+     
 
-    def callFunction(self):
+    def _callFunction(self):
         None
+
+
+    @property
+    def success(self):
+        return self._success
     
     def demuxPlaylist(self,bdObjs):
+        #setup bdobj
         for bdObJ in bdObjs:
             bdObJ.playListRangeSelect()
-        bdObjs[0].validate(bdObjs)       
+        bdObjs[0].validate(bdObjs)
+        #process bdobj       
         for i in range(len(bdObjs[0].keys)):
+            self._index=i
             trackerObjs=[]
             newFolder=os.path.join(self.demuxFolder,str(i+1))
-            paths.mkdirSafe(newFolder)
-            for bdObj in bdObjs:
-                bdObj.generateData(i)
-                demuxData=siteDataPicker.pickSite(self._args.site)
-                currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
-                trackerObjs.append(demuxData)
-
-                extract.extractTracks(currentTracks,newFolder,bdObj.mediaDir,self._args.extractprogram,os.path.join(bdObj.playlistDir,bdObj.DictList[i]["playlistFile"]))
-                quit()
+            with dir.cwd(newFolder):
+                for bdObj in bdObjs:
+                    bdObj.generateData(i)
+                    os.path.join(bdObj.playlistDir,bdObj.DictList[i]["playlistFile"])
+                    demuxData=siteDataPicker.pickSite(self._args.site)
+                    currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
+                    trackerObjs.append(demuxData)
+                    if self._args.extractprogram=="eac3to":
+                        eac3to.process(currentTracks,demuxData["outputDir"],demuxData["sourceDir"],demuxData["playlistFile"])
+                    else:
+                        None
+                muxSorter=self._getMuxSorter(trackerObjs)
+                self._subParse(muxSorter)
+                self._voiceRec(muxSorter)
+                self._saveOutput(bdObjs,trackerObjs,muxSorter)
         
+
+            
           
+            
+                    
+            #safe outputlogs
 
-        
-    def getDemuxFolderHelper(self,sources, outpath):
-        if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
-            print("Searching for Prior TV Mode Folders")
-            folders = remuxHelper.getTVMuxFolders(outpath, config.demuxPrefix)
-            if len(folders) == 0:
-                print("No TV Mode Folders Found To Restore")
-                print("Creating a new Mux Folder")
-                return self.createParentDemuxFolder(
-                    sources, outpath)
-            else:
-                folder = utils.singleSelectMenu(
-                    folders, "Which Folder Do you want to Restore")
+    def _saveOutput(self,bdObjs,trackerObjs,muxSorter):
+        outdict = {}
+        outdict.update(self._addSourceData(trackerObjs)) 
+        outdict.update(self._ConvertChapterList(self._getChapterMedia(bdObjs))) 
+        outdict["Movie"] = self._movieObj.movieObj
+        outdict.update(self._addEnabledData(muxSorter))
+        outdict.update(self._addTrackData(muxSorter))
+        self._writeFinalJSON(outdict)
 
-                return folder
-        else:
-            return self._createParentDemuxFolder(sources, outpath)
+
     
-    def getDemuxFolder(self):
-        paths.mkdirSafe(self._args.outpath)
-        os.chdir(self._args.outpath)
-        self.demuxFolder=self.getDemuxFolderHelper(self.sources, self._args.outpath)
-
+    
 
 
 
@@ -79,11 +95,135 @@ class Demux():
     #################
     # Helper Functions
     ############
-    def setSource(self):
-        options = self._getBDMVs(self._args.inpath)
-        self.sources = self.getSources(options,self._args.inpath,self._args.sortpref, self._args.splitplaylist == None,extract=True)
+ 
 
-    def setBdInfoData(self):
+
+
+    def _addTrackData(self,muxSorter):
+        outdict={}
+        outdict["Tracks_Details"] = {}
+        outdict["Tracks_Details"]["Audio"] = {}
+        outdict["Tracks_Details"]["Sub"] = {}
+        outdict["Tracks_Details"]["Video"] = {}
+
+        for track in muxSorter.unSortedAudio:
+            key = track["key"]
+            track.pop("key")
+            outdict["Tracks_Details"]["Audio"][key] = track
+        for track in muxSorter.unSortedSub:
+            key = track["key"]
+            track.pop("key")
+            outdict["Tracks_Details"]["Sub"][key] = track
+
+        for track in muxSorter.unSortedVideo:
+            key = track["key"]
+            track.pop("key")
+            outdict["Tracks_Details"]["Video"][key] = track
+
+        return outdict
+    def _writeFinalJSON(self,outdict):
+        outputPath = os.path.abspath(os.path.join(".", "output.json"))
+        print(f"Writing to {outputPath}")
+        with open(outputPath, "wb") as p:
+            data=orjson.dumps(outdict, option=orjson.OPT_INDENT_2)
+            p.write(data)
+
+   
+    def _getChapterMedia(self,bdObjs):
+        match = bdObjs[0].mediaDir
+        if len(bdObjs) > 1:
+            match = utils.singleSelectMenu(
+                list(map(lambda x: x.mediaDir, bdObjs)), "Which Source Has The proper Chapter File")
+        return list(filter(lambda x: x.mediaDir == match, bdObjs))[0].DictList[self._index]["chapters"]
+        
+
+    def _subParse(self,muxSorter):
+        # Add OCR for Subtitles
+
+        if self._args.ocr == "enabled":
+            subreader.subreader(muxSorter.enabledSub, keep=self._args.keepocr)
+        elif self._args.ocr == "default":
+            subreader.subreader(muxSorter.unSortedSub,
+                                langs=self._movieObj.get("languages",[ ]), keep=self._args.keepocr)
+        elif self._args.ocr == "sublang":
+            subreader.subreader(muxSorter.unSortedSub,
+                                langs=self._args.sublang, keep=self._args.keepocr)
+        elif self._args.ocr == "english":
+            subreader.subreader(muxSorter.unSortedSub, langs=[
+                                "English"], keep=self._args.keepocr)
+        elif self._args.ocr == "all":
+            subreader.subreader(muxSorter.unSortedSub, keep=self._args.keepocr)
+        elif self._args.keepocr:
+            subreader.imagesOnly(muxSorter.enabledSub)
+
+    # Voice Recorder
+    def _voiceRec(self,muxSorter):
+        if self._args.voicerec == "enabled":
+            voiceRec.main(muxSorter.enabledAudio)
+        elif self._args.voicerec == "default":
+            voiceRec.main(muxSorter.unSortedAudio, self._movieObj.movieObj.get("languages", []))
+        elif self._args.voicerec == "audiolang":
+            voiceRec.main(muxSorter.unSortedAudio, self._args.audiola0ng)
+        elif self._args.voicerec == "english":
+            voiceRec.main(muxSorter.unSortedAudio, ["English"])
+        elif self._args.voicerec == "all":
+            voiceRec.main(muxSorter.unSortedAudio)   
+    def _getMuxSorter(self,trackerObjs):
+        muxSorter = siteSortPicker.pickSite(self._args.site)
+        for trackerObJ in trackerObjs:    
+            muxSorter.addTracks(trackerObJ["tracks"])
+        languages=self._movieObj.movieObj.get("languages", [])
+        muxSorter.sortTracks(languages,
+                            self._args.audiolang, self._args.sublang, self._args.sortpref)
+        muxSorter.addForcedSubs(languages, self._args.audiolang)
+        return muxSorter
+   
+    def _addSourceData(self,trackObjs):
+        outdict = {}
+        outdict["Sources"]={}
+        for trackerObj in trackObjs:
+            key=trackerObj.showname
+        
+
+            outdict["Sources"][key] = {}
+            outdict["Sources"][key]["outputDir"] = trackerObj["outputDir"]
+            outdict["Sources"][key]["sourceDir"] = trackerObj["sourceDir"]
+            outdict["Sources"][key]["playlistNum"] = trackerObj["playlistNum"]
+            outdict["Sources"][key]["playlistFile"] = trackerObj["playlistFile"]
+            outdict["Sources"][key]["streamFiles"] = trackerObj["streamFiles"]
+            outdict["Sources"][key]["length"] = trackerObj["length"]
+
+        return outdict
+
+    def _addEnabledData(self,muxSorter):
+        outdict={}
+        # Enabled Track Section
+        outdict["Enabled_Tracks"] = {}
+        outdict["Enabled_Tracks"]["Video"] = list(
+            map(lambda x: x["key"], muxSorter.enabledVideo))
+        outdict["Enabled_Tracks"]["Audio"] = list(
+            map(lambda x: x["key"], muxSorter.enabledAudio))
+        outdict["Enabled_Tracks"]["Sub"] = list(
+            map(lambda x: x["key"], muxSorter.enabledSub))   
+        return outdict 
+    def _ConvertChapterList(self,chapters):
+        output = []
+        if len(chapters) == 0:
+            return output
+        numoffset = int(chapters[0]["number"])-1
+        timeoffset = utils.convertArrow(chapters[0]["start"], "HH:mm:ss.SSS")
+        for i in range(len(chapters)):
+            chapter = chapters[i]
+            timeVar = chapter["start"]
+            timeVar = utils.convertArrow(timeVar, "HH:mm:ss.SSS")
+            timeVar = utils.subArrowTime(timeVar, timeoffset)
+            timeVar = timeVar.format("HH:mm:ss.SSS")
+            numVar = int(chapter["number"])-numoffset
+            nameString = f"CHAPTER{numVar:02d}NAME=Chapter {numVar:02d}"
+            timeString = f"CHAPTER{numVar:02d}={timeVar}"
+            output.append({"time": timeString, "name": nameString})
+        return output    
+    def _setBdInfoData(self):
         bdObjs = []
         for source in self.sources:
             print(f"\n{source}\n")
@@ -99,14 +239,12 @@ class Demux():
     
     ##Folder Stuff
     def _getBDMVs(self,path):
-        currpath = os.getcwd()
-        os.chdir(path)
-        list1 = paths.search(path, "STREAM",dir=True)
-        list2 = paths.search(path, ".iso")
-        list1.extend(list2)
-        list1 = list(map(lambda x: utils.convertPathType(x, "Linux"), list1))
-        os.chdir(currpath)
-        return sorted(list1)
+        with dir.cwd(path):
+            list1 = paths.search(path, "STREAM",dir=True)
+            list2 = paths.search(path, ".iso")
+            list1.extend(list2)
+            list1 = list(map(lambda x: paths.convertPathType(x, "Linux"), list1))
+            return sorted(list1)
 
     def _createParentDemuxFolder(self,sources, outpath):
         title = utils.getTitle(sources[0])
@@ -114,77 +252,18 @@ class Demux():
         parentDemux = os.path.join(outpath, folder)
         parentDemux = re.sub(" +", " ", parentDemux)
         parentDemux = re.sub(" ", ".", parentDemux)
-        parentDemux = utils.convertPathType(parentDemux, "Linux")
+        parentDemux = paths.convertPathType(parentDemux, "Linux")
         print(f"Creating a new Parent Directory for {self._name} ->{parentDemux}")
         os.mkdir(parentDemux)
         return parentDemux
 
     def _createChildDemuxFolder(self,parentDir, show):
-        os.chdir(parentDir)
-        show = utils.sourcetoShowName(show)
-        os.mkdir(show)
-        return utils.convertPathType(os.path.join(parentDir, show), "Linux")
-      
-    #Select
-    def _addMultiSource(self,paths,sortpref):
-        if len(paths) == 0:
-            print("No Valid Source Directories Found")
-            quit()
-        msg=None
-        if sortpref=="size":
-            msg = \
-            """
-            Click on the Source(s) You Want for this Demux
+        with dir.cwd(parentDir):
+            show = utils.sourcetoShowName(show)
+            os.mkdir(show)
+            return paths.convertPathType(os.path.join(parentDir, show), "Linux")
+        
 
-            TV Mode will run multiple times
-            for more advanced source selection
-
-            Press Space to add/remove selection
-            Press Enter when Done
-            """
-            return utils.multiSelectMenu(paths, msg)
-        else:
-            msg = \
-            """
-    Since you selected --sortpref order
-    You will be prompted multiple times to make a selection
-    Pay attention to the order of the list printed out, as this will effect enabled tracks
-
-    Click on the Source You Want for this Demux
-    For TV Shows you can change the Source(s) Per Episode
-
-    When Finish Click 'I'm Done Selecting Sources'
-            """
-            list=["I'm done selecting sources","I want to reset my list"]
-            list.extend(paths)
-            selection=[]
-            while True:
-                print(f"Your list thus far\n\n")
-                print("\n".join(selection))
-                curr_select = utils.singleSelectMenu(list, msg)
-                selection.append(curr_select)
-                if curr_select == "I want to reset my list":
-                    selection=[]
-                if curr_select=="I'm done selecting sources":
-                    break
-            selection=list(filter(lambda x:x!="done" and x!=None))
-            selection=utils.removeDupesList(selection)
-            return selection
-
-def _addSingleSource(self,paths):
-    if len(paths) == 0:
-        print("No Valid Source Directories Found")
-        quit()
-    msg = \
-        """
-        Click on the Source You Want for this Demux
-
-        TV Mode will run multiple times
-        for more advanced source selection
-
-        Press Enter to confirm when Done
-        """
-    return utils.singleSelectMenu(paths, msg)
 
 
 
@@ -202,8 +281,7 @@ def _addSingleSource(self,paths):
 #         # get quick summary and bdinfo data
 #         bdObj.runbdinfo(playlistNum)
 #         quickSums = bdObj.setQuickSum()
-#         streams = bdObj.setStreams()
-#         chapters = bdObj.setChapters()
+
 #         # what should we offset the time by based on previous streams lengths
 #         # create a episode folder
 #         offset = len(os.listdir(demuxFolder))
@@ -248,26 +326,7 @@ def _addSingleSource(self,paths):
 #             tools.extractTracks(demuxData, stream=True)
 #             tools.sortTracks(muxSorter, demuxData, movieObj.movieObj, args)
 #             tools.machineReader(muxSorter, args, movieObj.movieObj)
-#             chaptersFiltered = list(
-#                 filter(lambda x: x["start"] >= stream["start"], chapters))
-#             chaptersFiltered = list(
-#                 filter(lambda x: x["start"] < stream["end"], chaptersFiltered))
-#             outdict = {}
-#             outdict["Sources"] = tools.addSourceData(demuxData)
-#             outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
-#             movieDict = movieObj.movieObj
-#             movieDict["episode"] = ep
-#             movieDict["season"] = season
-#             outdict["Movie"] = movieDict
-
-#             tools.addEnabledData(outdict, muxSorter)
-#             tools.addTrackData(outdict, muxSorter)
-
-#             os.chdir(newFolder)
-#             tools.writeFinalJSON(outdict)
-#             # change pack to parent
-#             os.chdir(demuxFolder)
-#             ep = ep+1
+#             
 
 
 
