@@ -23,7 +23,7 @@ class Blu(siteTrackSorter):
             source = track["sourceKey"]
             prevSource = prevTrack["sourceKey"]
 
-            filename = track.getTrackLocation()
+            filename = track["filename"]
 
             t = None
             # guard cases
@@ -52,10 +52,10 @@ class Blu(siteTrackSorter):
                 else:
                     remove.append(track["key"])
                 i = i+1
-            i = 0
-            while i < len(self._enabledAudio):
-                track = self._enabledAudio[i]
-                if track["key"] in remove:
-                    self._enabledAudio.pop(i)
-                else:
-                    i = i+1
+        i = 0
+        while i < len(self._enabledAudio):
+            track = self._enabledAudio[i]
+            if track["key"] in remove:
+                self._enabledAudio.pop(i)
+            else:
+                i = i+1

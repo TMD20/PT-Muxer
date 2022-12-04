@@ -41,16 +41,18 @@ class Demux():
     def success(self):
         return self._success
     
-    def demuxPlaylist(self,bdObjs):
+    def demuxPlaylist(self,bdObjs,multiSelect=False):
         #setup bdobj
-        for bdObJ in bdObjs:
-            bdObJ.playListRangeSelect()
-        bdObjs[0].validate(bdObjs)
-        #process bdobj       
+        for bdObj in bdObjs:
+            if multiSelect==True:
+                bdObj.playListRangeSelect()
+            else:
+                bdObj.playListSelect()
+        bdObjs[0].validate(bdObjs) 
         for i in range(len(bdObjs[0].keys)):
             self._index=i
             trackerObjs=[]
-            newFolder=os.path.join(self.demuxFolder,str(i+1))
+            newFolder=self._getNewFolder(i)
             with dir.cwd(newFolder):
                 for bdObj in bdObjs:
                     bdObj.generateData(i)
@@ -58,13 +60,14 @@ class Demux():
                     demuxData=siteDataPicker.pickSite(self._args.site)
                     currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
                     trackerObjs.append(demuxData)
-                    if self._args.extractprogram=="eac3to":
-                        eac3to.process(currentTracks,demuxData["outputDir"],demuxData["sourceDir"],demuxData["playlistFile"])
-                    else:
-                        None
-                muxSorter=self._getMuxSorter(trackerObjs)
-                self._subParse(muxSorter)
-                self._voiceRec(muxSorter)
+                    with dir.cwd(demuxData["outputDir"]):
+                        if self._args.extractprogram=="eac3to":
+                            eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
+                        else:
+                            None
+                        muxSorter=self._getMuxSorter(trackerObjs)
+                        self._subParse(muxSorter)
+                        self._voiceRec(muxSorter)
                 self._saveOutput(bdObjs,trackerObjs,muxSorter)
         
 
@@ -95,6 +98,8 @@ class Demux():
     #################
     # Helper Functions
     ############
+    def _getNewFolder(self,i=None):
+        return os.path.join(self.demuxFolder,str(i+1))
  
 
 

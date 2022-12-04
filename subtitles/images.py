@@ -1,16 +1,21 @@
-import subprocess
 import os
-import shutil
-import itertools
-
-import tools.commands as commands
+from mediatools.BDSupReader.src.bdsupreader import *
+import tools.paths as paths
 
 
 
-def getSubImages(supFile, dir):
-    # suprip outputs to same directory sup file is in always
-    movedSup = os.path.join(dir, "temp.sup")
-    shutil.copy2(supFile,movedSup)
-    command=list(itertools.chain.from_iterable([commands.suprip(),[movedSup, "1"]]))
-    subprocess.run(command)
-    os.remove(movedSup)
+
+def getSubImages(supFile):
+    outputDir= os.path.join(os.path.abspath(f"./subImages"),f"{os.path.basename(supFile)}/")
+    paths.mkdirSafe(outputDir)
+    t=BDSupReader(supFile)
+    i=0
+    for r in t.subPictures:
+        for image in r.imageList:
+            i=i+1
+            newImage=os.path.join(outputDir,f"image{i}.png")
+            print(f"Saving {newImage}\n")
+            image["data"].save(newImage)
+    return outputDir
+
+        

@@ -8,7 +8,7 @@ import tools.general as utils
 import tools.paths as paths
 import tools.directory as dir
     
-def eac3toTrack(index,bdinfo,name,type):
+def eac3toTrack(index,name,bdinfo,type):
     output = []
     output.append((f"{index}:{name}"))
     if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", bdinfo, re.IGNORECASE) == None and type== "audio":
@@ -19,11 +19,11 @@ def eac3toTrack(index,bdinfo,name,type):
 
 
 
-def process(tracks,output,source, playlistFile):   
-    with dir.cwd(output):
-        eac3toPath = get_eac3toPath(output, source)
-        playlistLocation=getPlaylistLocation(source,playlistFile)
-        run(playlistLocation, tracks,eac3toPath)
+def process(tracks,source, playlistFile):
+    output=os.path.abspath(".") 
+    eac3toPath = get_eac3toPath(output, source)
+    playlistLocation=getPlaylistLocation(source,playlistFile)
+    run(playlistLocation, tracks,eac3toPath)
 
 def getPlaylistLocation(source,playlistFile):
     playlistFiles=paths.search(source,playlistFile)
@@ -49,9 +49,9 @@ def getChaptersBool(playlistLocation):
 def run(playlistLocation, tracks,eac3toPath):
 
     # get list of files
-    trackArgs =  trackArgs=["1:chapters.txt"]; [trackArgs.extend(eac3toTrack(track["index"],track["bdinfo_title"],track["filename"],track["type"])) for track in tracks]
+    trackArgs =  trackArgs=["1:chapters.txt"]; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
     if getChaptersBool(playlistLocation)==False:   
-        trackArgs = []; [trackArgs.extend(eac3toTrack(track["index"],track["bdinfo_title"],track["filename"],track["type"])) for track in tracks]
+        trackArgs = []; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
     playlistlocationFinal = paths.switchPathType(playlistLocation)  
     command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
                     playlistlocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))

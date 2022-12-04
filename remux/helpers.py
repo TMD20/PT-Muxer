@@ -8,11 +8,12 @@ from InquirerPy import inquirer
 import mediadata.movieData as movieData
 import tools.general as utils
 import config
+import tools.paths as paths
 
 
 def getRemuxConfigs(path):
     demuxList = []
-    folders = utils.findMatches(path, "Mux.*")
+    folders = paths.search(path, "Mux",dir=True)
 
     if len(demuxList) == 0:
         print("Deep Search of Directory Could Not Find any output.json Files")
@@ -113,8 +114,8 @@ def getFullPaths(remuxConfig, parentDir):
             parentDir, remuxConfig["Tracks_Details"]["Sub"][key]["filename"])
 
 
-def getTVMuxFolders(inpath, demuxPrefix):
-    folders = utils.findMatches(inpath, f"{demuxPrefix}[.]*")
+def getTVMuxFolders(inpath):
+    folders = paths.search(inpath, f"{config.demuxPrefix}[.]",dir=True)
     folders=list(filter(lambda x: os.path.isdir(x),folders))
     folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
     folders = list(filter(lambda x: re.search(
@@ -123,8 +124,8 @@ def getTVMuxFolders(inpath, demuxPrefix):
     return folders
 
 
-def getMovieMuxFolders(inpath, demuxPrefix):
-    folders = utils.findMatches(inpath, f"{demuxPrefix}[.]*")
+def getMovieMuxFolders(inpath):
+    folders = paths.search(inpath, f"{config.demuxPrefix}[.]",dir=True)
     folders=list(filter(lambda x: os.path.isdir(x),folders))
     folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
     folders = list(filter(lambda x: re.search(

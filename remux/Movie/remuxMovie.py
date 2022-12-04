@@ -7,8 +7,6 @@ import orjson
 import remux.helpers as remuxHelper
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
-import tools.paths as paths
-import config
 import remux.Movie.helpers as MovieHelper
 import tools.directory as dir
 
@@ -17,7 +15,7 @@ import tools.directory as dir
 def Remux(args):
     # Variables
     muxGenerator = muxPicker.pickSite(args.site)
-    folders = remuxHelper.getMovieMuxFolders(args.inpath, config.demuxPrefix)
+    folders = remuxHelper.getMovieMuxFolders(args.inpath)
     if len(folders) == 0:
         print("You need to demux a folder with Movie Mode first")
         quit()

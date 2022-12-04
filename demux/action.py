@@ -17,6 +17,7 @@ def endProcess():
     if demuxObj==None:
         None
     elif demuxObj.demuxFolder!=None and demuxObj.success==False:
+        print("Program Forced to stop\n")
         if utils.singleSelectMenu(["Yes","No"],f"Do you want to delete the current Mux Folder\n{demuxObj.demuxFolder}?")=="Yes":
                 utils.rmDir(demuxObj.demuxFolder)
     print("Good Bye")
