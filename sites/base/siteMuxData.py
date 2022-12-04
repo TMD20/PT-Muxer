@@ -44,7 +44,7 @@ class MuxOBj():
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Video"][key]
             name = trackjson["site_title"]
-            file = trackjson["file"]
+            file = trackjson.getTrackLocation()
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
@@ -66,7 +66,7 @@ class MuxOBj():
             trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
             langcode = trackjson["langcode"]
             name = trackjson["site_title"]
-            file = trackjson["file"]
+            file = trackjson.getTrackLocation()
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
@@ -104,7 +104,7 @@ class MuxOBj():
             # get base data
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
-            file = trackjson["file"]
+            file = trackjson.getTrackLocation()
             name = trackjson.get("site_title")
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:

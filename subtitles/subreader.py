@@ -11,11 +11,12 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
     if keep:
         os.mkdir("subImages")
     for track in tracks:
-        print("\n\nAttempting to OCR: ", track["file"])
+        subLocation=track.getTrackLocation()
+        print("\n\nAttempting to OCR: ", subLocation)
         if langs and (track["lang"].lower() not in langs):
             continue
         with tempfile.TemporaryDirectory() as tmpdirname:
-            subimages.getSubImages(track["file"], tmpdirname)
+            subimages.getSubImages(subLocation, tmpdirname)
             files = os.listdir(tmpdirname)
             # if for some reason no images created for OCR
             if len(files) == 0:
@@ -35,7 +36,7 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
             track["machine_parse_final"] = lastlines
             track["length"] = len(files)
             if keep:
-                file = track["eac3to"].split(":")[1]
+                file = track["filename"].split(":")[1]
                 newDir = f"./subImages/{file}"
                 os.mkdir(newDir)
                 for file in os.listdir(tmpdirname):
@@ -43,13 +44,13 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
 def imagesOnly(tracks):
     print("Generating Subtitle Images\n\n")
     for track in tracks:
-        file=track["file"]
+        file=track["filename"]
         print(f'Working on: {file}\n\n')
-        file = track["eac3to"].split(":")[1]
+
         newDir = os.path.join(os.path.abspath(f"./subImages"),f"{file}/")
         paths.mkdirSafe(newDir)
         
-        subimages.getSubImages(track["file"], newDir)
+        subimages.getSubImages(track.getTrackLocation(), newDir)
         files = os.listdir(newDir)
         # if for some reason no images created
         if len(files) == 0:

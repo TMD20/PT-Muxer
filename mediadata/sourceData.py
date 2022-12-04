@@ -7,11 +7,21 @@ import langcodes
 
 import tools.general as utils
 import tools.paths as paths
+import mediatools.eac3to as eac3to
+import mediadata.trackObj as trackObj
 
 
-class TracksData():
+
+class sourceData(dict):
+
     def __init__(self):
-        self._Dict = {}
+        super().__init__()
+        self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","streamFile","length","streamFiles"}
+    #prevent 
+    def __setitem__(self, key, value):
+        if key not in self._allowedKeys:
+            raise AttributeError(f"sourceData does not accept {key}")
+        super().__setitem__(key, value)
 
     """
     Public Functions
@@ -24,14 +34,20 @@ class TracksData():
 
     def updateRawTracksDict(self,source, trackStrs, playlistNum, playlistFile, streams, output):
         tracks = []
+        #verify if chapter file is present
+        offset=1
+        if eac3to.getChaptersBool(os.path.join(paths.search(source,"PLAYLIST",dir=True)[0],playlistFile)):
+                offset = offset+1
         for index, currline in enumerate(trackStrs):
-            index = index+2
-            tracks.extend(self._appendTrack(currline, index, source))
+            tracks.extend(self._appendTrack(currline, index+offset, source))
         for track in tracks:
             track["sourceDir"] = source
             track["sourceKey"] = utils.sourcetoShowName(source)
-        self._expandRawTracksData(
+            track["outputDir"] = os.path.join(output,utils.sourcetoShowName(source))
+        self._updateTrackDictNotes(tracks)
+        self._setSourceDict(
             tracks, playlistNum, playlistFile, streams, source, output)
+        
 
 
     
@@ -43,7 +59,7 @@ class TracksData():
         if re.search("VC-1", line) != None:
             return f"{index}:00{index}.vc1"
         if re.search("MPEG-2", line) != None:
-            return f"{index}:00{index}.mpeg2"
+            return f"00{index}.mpeg2"
 
 
     def getAudioFileName(line, langcode, index):
@@ -69,24 +85,21 @@ class TracksData():
         elif re.search("dts", line, re.IGNORECASE) != None:
             codec = "dts"
 
-        return f"{index}:00{index}-{langcode}.{codec}"
+        return f"00{index}-{langcode}.{codec}"
 
 
     def getSubFileName(langcode, index):
         # remove special characters
-        return f"{index}:00{index}-{langcode}.sup"
+        return f"00{index}-{langcode}.sup"
 
 
     ################################################################################################################
     #   Getter Functions
     ################################################################################################################
 
-    @property
-    def Dict(self):
-        return self._Dict
-    
+
     def getPlaylistLocation(self,split=False):
-        sourceData=self._Dict
+        sourceData=self
         if split:
             return paths.search(sourceData["sourceDir"],"STREANS",dir=True)[0]
         else:
@@ -103,7 +116,7 @@ class TracksData():
     ################################################################################################################
 
     def _videoParser(self, currline):
-        tempdict = {}
+        tempdict = trackObj.TrackObJ()
         bdinfo = re.search(
             "(?:.*?: (.*))", currline).group(1)
         tempdict = self._defaultMediaDict(bdinfo)
@@ -111,7 +124,6 @@ class TracksData():
         return tempdict
 
     def _audioParser(self, currline):
-        tempdict = {}
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = list(filter(lambda x: x != None, list(
@@ -125,7 +137,6 @@ class TracksData():
         return tempdict
 
     def _audioCompatParser(self, currline):
-        tempdict = {}
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = re.search("(?:.*?)(?:\((.*?)\))", currline)
@@ -145,7 +156,6 @@ class TracksData():
         return tempdict
 
     def _subParser(self, currline):
-        tempdict = {}
         lang = self._medialang(currline)
         bdinfo = currline
         langcode = self._mediacode(lang)
@@ -158,7 +168,7 @@ class TracksData():
 
     # Standard Track Data Helper
     def _defaultMediaDict(self, bdinfo, langcode=None, lang=None):
-        tempdict = {}
+        tempdict = trackObj.TrackObJ()
         tempdict["bdinfo_title"] = bdinfo
         tempdict["langcode"] = langcode
         tempdict["lang"] = lang
@@ -224,17 +234,24 @@ class TracksData():
             tempList.append(tempdict2)
         return tempList
 
-    # Primary Key are Basename Source
-    # Tracks are Objects
-    # Output is a a string
-    def _expandRawTracksData(self, tracks, playlistNum, playlistFile, streams, source, output):
-        self._Dict["tracks"] = tracks
-        self._Dict["outputDir"] = output
-        self._Dict["sourceDir"] = source
-        self._Dict["playlistNum"] = playlistNum
-        self._Dict["playlistFile"] = playlistFile
-        self._Dict["streamFiles"] = self._getStreamNames(streams)
-        self._Dict["length"] = self._getStreamLength(streams)
+
+    def _setSourceDict(self, tracks, playlistNum, playlistFile, streams, source, output):
+        self["tracks"] = tracks
+        self["outputDir"] = os.path.join(output,utils.sourcetoShowName(source))
+        self["sourceDir"] = source
+        self["playlistNum"] = playlistNum
+        self["playlistFile"] = playlistFile
+        self["streamFiles"] = self._getStreamNames(streams)
+        self["length"] = self._getStreamLength(streams)
+
+    #####################################################################################################################
+    #       These Functions add Addition Data to Tracks Obj
+    ################################################################################################################
+
+    def _updateTrackDictNotes(self, tracks):
+        for track in tracks:
+            track["notes"] = "Add Your Own if You want"
+   
 
       ################################################################################################################
       ###### get data from streams

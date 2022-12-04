@@ -84,13 +84,13 @@ def writeXMLTV(imdb, tmdb, title, year, season, episode):
 
 
 def checkMissing(remuxConfig):
-    if utils.validateFiles([remuxConfig["Tracks_Details"]["Sub"][x]["file"] for x in remuxConfig["Enabled_Tracks"]["Sub"]]) != None:
+    if utils.validateFiles([remuxConfig["Tracks_Details"]["Sub"][x]["filename"] for x in remuxConfig["Enabled_Tracks"]["Sub"]]) != None:
         print("At Least one subtitle file is missing\nCheck file key for all enabled subs tracks\nSkipping to Next Item")
         return True
-    if utils.validateFiles([remuxConfig["Tracks_Details"]["Audio"][x]["file"] for x in remuxConfig["Enabled_Tracks"]["Audio"]]) != None:
+    if utils.validateFiles([remuxConfig["Tracks_Details"]["Audio"][x]["filename"] for x in remuxConfig["Enabled_Tracks"]["Audio"]]) != None:
         print("At Least one audio file is missing\nCheck file key for all enabled audio tracks\nSkipping to Next Item")
         return True
-    if utils.validateFiles([remuxConfig["Tracks_Details"]["Video"][x]["file"] for x in remuxConfig["Enabled_Tracks"]["Video"]]) != None:
+    if utils.validateFiles([remuxConfig["Tracks_Details"]["Video"][x]["filename"] for x in remuxConfig["Enabled_Tracks"]["Video"]]) != None:
         print("At Least one video file is missing\nCheck file key for all enabled video tracks\nSkipping to Next Item")
         return True
     if len([key for key in remuxConfig["Sources"]]) == 0:
@@ -104,13 +104,13 @@ def getFullPaths(remuxConfig, parentDir):
     videoTrackKeys=remuxConfig["Enabled_Tracks"]["Video"]
     subTrackKeys=remuxConfig["Enabled_Tracks"]["Sub"]
     for key in audioTrackKeys:
-        remuxConfig["Tracks_Details"]["Audio"][key]["file"] = os.path.join(parentDir, remuxConfig["Tracks_Details"]["Audio"][key]["file"])
+        remuxConfig["Tracks_Details"]["Audio"][key]["filename"] = os.path.join(parentDir, remuxConfig["Tracks_Details"]["Audio"][key]["filename"])
     for key in videoTrackKeys:
-        remuxConfig["Tracks_Details"]["Video"][key]["file"] = os.path.join(
-            parentDir, remuxConfig["Tracks_Details"]["Video"][key]["file"])
+        remuxConfig["Tracks_Details"]["Video"][key]["filename"] = os.path.join(
+            parentDir, remuxConfig["Tracks_Details"]["Video"][key]["filename"])
     for key in subTrackKeys:
-        remuxConfig["Tracks_Details"]["Sub"][key]["file"] = os.path.join(
-            parentDir, remuxConfig["Tracks_Details"]["Sub"][key]["file"])
+        remuxConfig["Tracks_Details"]["Sub"][key]["filename"] = os.path.join(
+            parentDir, remuxConfig["Tracks_Details"]["Sub"][key]["filename"])
 
 
 def getTVMuxFolders(inpath, demuxPrefix):

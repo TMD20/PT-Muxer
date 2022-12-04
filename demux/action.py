@@ -3,7 +3,7 @@ import re
 import os
 
 import tools.general as utils
-# import demux.demuxMovie as demuxMovie
+import demux.demuxMovies as demuxMovies
 import demux.demuxTV as demuxTV
 import tools.general as utils
 import config as config
@@ -13,10 +13,10 @@ import tools.exit as exit
 
 
 def endProcess():
-    folders=paths.getTempDirs()
-    for folder in folders:
-        os.remove(folder)
-    if demuxObj!=None and demuxObj.demuxFolder!=None:
+    paths.deleteTempDirs()
+    if demuxObj==None:
+        None
+    elif demuxObj.demuxFolder!=None and demuxObj.success==False:
         if utils.singleSelectMenu(["Yes","No"],f"Do you want to delete the current Mux Folder\n{demuxObj.demuxFolder}?")=="Yes":
                 utils.rmDir(demuxObj.demuxFolder)
     print("Good Bye")
@@ -25,18 +25,19 @@ def endProcess():
 
     
 def demux(args):
+    #Help user out delete all temp directories
+    paths.deleteTempDirs()
     global demuxObj
     demuxObj=None
     with exit.GracefulExit(endProcess):
         options = ["Movie", "TV"]
         try:
             if utils.singleSelectMenu(options, "What Type of Media are you Demuxing?") == "Movie":
-                None
-                # demuxObj=demuxMovies.Demux(args)
-                # demuxMovie.getDemuxFolder(args)
-            else:
-               
+                demuxObj=demuxMovies.Demux(args)
+                demuxObj()
+            else:   
                 demuxObj=demuxTV.Demux(args)
                 demuxObj()
         except Exception as E:
             print(E)
+

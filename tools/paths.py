@@ -11,12 +11,16 @@ import itertools
 import config as config
 import tools.general as utils
 import tools.commands as commands
+import tools.paths as paths
 def createTempDir():
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
 def getTempDirs():
     tmpHome=tempfile.gettempdir()
-    tmpFiles=list(map(lambda x:os.path.join(tmpHome,x),os.listdir(tmpHome)))
-    return list(filter(lambda x: re.search(x,config.tempPrefix) and os.path.isdir(x),tmpFiles))
+    return search(tmpHome,config.tempPrefix,dir=True)
+def deleteTempDirs():
+    folders=getTempDirs()
+    for folder in folders:
+        shutil.rmtree(folder)
 def search(path,query,case=False,dir=False):
     paths = glob.glob(os.path.join(path, "**", "*"), recursive=True)
     paths=list(filter(lambda x:os.path.isdir(x)==dir,paths))
@@ -66,12 +70,12 @@ def extractISO(source, inpath):
     if os.listdir(outPath) == 0:
         print("Issue Extracting Files")
         quit()
-    return utils.findMatches(outPath, "STREAM")[0]
+    return paths.search(outPath, "STREAM",dir=True)[0]
 
 
 def ISOBinaryExtractHelper(source, outPath):
     command = list(itertools.chain.from_iterable([commands.isoBinary(), [
-                   "x", utils.convertPathType(source, "Linux"),  "-bsp1","-y" ,f"-o{outPath}", ]]))
+                   "x", convertPathType(source, "Linux"),  "-bsp1","-y" ,f"-o{outPath}", ]]))
     with subprocess.Popen(command) as p:
         p.wait()
         if p.returncode!=0:
@@ -91,3 +95,12 @@ def udevilExtractHelper(source, outPath):
     subprocess.run(
         ["udevil", "umount", mountpoint], subprocess.PIPE)
 
+def convertPathType(folder, type):
+    if type == "Linux":
+        return str(pathlib.PurePosixPath(folder))
+    return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
+
+def switchPathType(folder):
+    if utils.getSystem() == "Linux":
+        return convertPathType(folder,"Windows")
+    return convertPathType(folder,"Linux")

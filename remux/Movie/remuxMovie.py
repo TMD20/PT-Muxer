@@ -10,6 +10,8 @@ import tools.general as utils
 import tools.paths as paths
 import config
 import remux.Movie.helpers as MovieHelper
+import tools.directory as dir
+
 
 
 def Remux(args):
@@ -24,34 +26,33 @@ def Remux(args):
     if not remuxConfigPath:
         print("You Must Pick at list one Config")
         quit()
-    paths.mkdirSafe(os.path.join(args.outpath, ""))
-    os.chdir(args.outpath)
-    print(f"\nPreparing Data for {remuxConfigPath}\n")
-    remuxConfig = None
+    with dir.cwd(args.outpath):
+        print(f"\nPreparing Data for {remuxConfigPath}\n")
+        remuxConfig = None
 
-    with open(remuxConfigPath, "r") as p:
-        remuxConfig = orjson.loads(p.read())
-    remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
+        with open(remuxConfigPath, "r") as p:
+            remuxConfig = orjson.loads(p.read())
+        remuxHelper.getFullPaths(remuxConfig, os.path.dirname(remuxConfigPath))
 
-    if remuxHelper.checkMissing(remuxConfig) == True:
-        return
-    title = remuxConfig['Movie'].get(
-        'title') or remuxConfig['Movie'].get('engTitle')
-    year = remuxConfig['Movie']['year']
+        if remuxHelper.checkMissing(remuxConfig) == True:
+            return
+        title = remuxConfig['Movie'].get(
+            'title') or remuxConfig['Movie'].get('engTitle')
+        year = remuxConfig['Movie']['year']
 
-    fileName = muxGenerator.getFileName(
-        remuxConfig, args.group, title, year, args.skipnamecheck)
-    if remuxHelper.overwriteIfExists(fileName) == False:
-        quit()
+        fileName = muxGenerator.getFileName(
+            remuxConfig, args.group, title, year, args.skipnamecheck)
+        if remuxHelper.overwriteIfExists(fileName) == False:
+            quit()
 
-    MovieHelper.ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
-    message = """If the Program made it this far the Movie MKV...
-    Should be in the output directory picked \
-    # Before Closing We will now print off file location and mediainfo"""
-    print(message)
-    mediainfo = MediaInfo.parse(fileName, output="", full=False)
-    print(f"\n\n{mediainfo}\n\n")
-    print(f"As a Reminder the output location: {fileName}")
+        MovieHelper.ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
+        message = """If the Program made it this far the Movie MKV...
+        Should be in the output directory picked \
+        # Before Closing We will now print off file location and mediainfo"""
+        print(message)
+        mediainfo = MediaInfo.parse(fileName, output="", full=False)
+        print(f"\n\n{mediainfo}\n\n")
+        print(f"As a Reminder the output location: {fileName}")
 
 
 

@@ -14,6 +14,8 @@ import tools.paths as paths
 
 import config
 import remux.TV.helpers as TVHelper
+import tools.directory as dir
+
 
 
 def Remux(args):
@@ -30,31 +32,31 @@ def Remux(args):
     remuxConfigs = TVHelper.getRemuxConfigs(remuxConfigPaths)
     fileNameFuncts= TVHelper.getFileNameFuncts(remuxConfigs,args)
     paths.mkdirSafe(os.path.join(args.outpath, ""))
-    os.chdir(args.outpath)
-    if(len(fileNameFuncts) == 0):
-        print("No Files to Process")
-        quit()
-    for i in range(len(fileNameFuncts)):
-        funct = fileNameFuncts[i]
-        fileNameList.append(funct())
-    if remuxHelper.overwriteIfExists(*fileNameList)==False:
-        quit()
-    print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
-    for i in range(len(fileNameList)):
-        fileName = fileNameList[i]
-        print(f"Creating this File\n{fileName}")
-        muxGenerator = muxPicker.pickSite(args.site)
-        remuxConfig = remuxConfigs[i]
-        TVHelper.ProcessBatch(fileName,
-                        remuxConfig, muxGenerator, args.outargs,args.special)
-    message = """If the Program made it this far all MKV(s)...
-    Should be in the output directory picked \
-    Before Closing We will now print off file locations and mediainfo"""
-    print(message)
-    for ele in fileNameList:
-        print(f"New File at {ele}\n")
-        mediainfo = MediaInfo.parse(ele, output="", full=False)
-        print(f"\n\n{mediainfo}\n\n")
-    print(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
+    with dir.cwd(args.outpath):
+        if(len(fileNameFuncts) == 0):
+            print("No Files to Process")
+            quit()
+        for i in range(len(fileNameFuncts)):
+            funct = fileNameFuncts[i]
+            fileNameList.append(funct())
+        if remuxHelper.overwriteIfExists(*fileNameList)==False:
+            quit()
+        print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
+        for i in range(len(fileNameList)):
+            fileName = fileNameList[i]
+            print(f"Creating this File\n{fileName}")
+            muxGenerator = muxPicker.pickSite(args.site)
+            remuxConfig = remuxConfigs[i]
+            TVHelper.ProcessBatch(fileName,
+                            remuxConfig, muxGenerator, args.outargs,args.special)
+        message = """If the Program made it this far all MKV(s)...
+        Should be in the output directory picked \
+        Before Closing We will now print off file locations and mediainfo"""
+        print(message)
+        for ele in fileNameList:
+            print(f"New File at {ele}\n")
+            mediainfo = MediaInfo.parse(ele, output="", full=False)
+            print(f"\n\n{mediainfo}\n\n")
+        print(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
 
 
