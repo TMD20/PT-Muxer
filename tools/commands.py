@@ -28,18 +28,7 @@ def eac3to():
         
     else:
         return [eactoBin]
-def suprip():
-    supBin = config.supripSystemPath
-    wineBin = config.wineSystemPath
 
-    if not os.path.isfile(supBin):
-        supBin = config.supripProjectPath
-    if not os.path.isfile(wineBin):
-        wineBin = config.wineProjectPath
-    if utils.getSystem()=="Linux":
-       return [wineBin, supBin]
-    else:
-        return  [ supBin]
 def bdinfo():
     bdinfoBin = config.bdinfoSystemPath
     if not os.path.isfile(bdinfoBin):
