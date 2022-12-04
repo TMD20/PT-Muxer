@@ -20,9 +20,7 @@ bdSupSystemPath = "/usr/local/bin/bdsup2sub.exe"
 bdSupProjectPath = os.path.join(root_dir, "binaries/bdsup2sub.exe")
 
 
-supripSystemPath = "/usr/local/bin/Subrip.exe"
-supripProjectPath = os.path.join(
-    root_dir, "binaries/suprip/SupRip.exe")
+
 
 bdinfoSystemPath = ""
 bdinfoProjectPath = os.path.join(
