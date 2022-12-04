@@ -16,7 +16,7 @@ class AnimeBytes(siteTrackSorter):
             if forceDict.get(key)==None:
                 forceDict[key]=[track]
             else:
-                forceDict[key].push(track)
+                forceDict[key].append(track)
         for key in list(forceDict.keys()):
             keyTracks = list(
                 filter(lambda x: (x["sourceKey"] == key and x["lang"].lower() == "english"), self._unSortedSub))

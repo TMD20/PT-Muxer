@@ -38,7 +38,7 @@ class Demux(Demux):
                 if self._args.splitplaylist:
                     None
                 else:
-                    self.demuxPlaylist(bdObjs)
+                    self.demuxPlaylist(bdObjs,multiSelect=True)
 
                     
 
@@ -110,7 +110,7 @@ class Demux(Demux):
     def getDemuxFolderHelper(self,sources, outpath):
             if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
                 print("Searching for Prior TV Mode Folders")
-                folders = remuxHelper.getTVMuxFolders(outpath, config.demuxPrefix)
+                folders = remuxHelper.getTVMuxFolders(outpath)
                 if len(folders) == 0:
                     print("No TV Mode Folders Found To Restore")
                     print("Creating a new Mux Folder")

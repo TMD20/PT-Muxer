@@ -53,11 +53,11 @@ class sourceData(dict):
     
     def getVideoFileName(line, index):
         if re.search("AVC", line) != None:
-            return f"{index}:00{index}.h264"
+            return f"00{index}.h264"
         if re.search("HEVC", line) != None:
             return f"{index}:00{index}.h265"
         if re.search("VC-1", line) != None:
-            return f"{index}:00{index}.vc1"
+            return f"00{index}.vc1"
         if re.search("MPEG-2", line) != None:
             return f"00{index}.mpeg2"
 
@@ -176,6 +176,7 @@ class sourceData(dict):
         tempdict["default"] = False
         tempdict["forced"] = False
         tempdict["machine_parse"] = []
+        tempdict["machine_parse_endlines"] = []        
         tempdict["length"] = None
         return tempdict
 

@@ -11,7 +11,6 @@ import itertools
 import config as config
 import tools.general as utils
 import tools.commands as commands
-import tools.paths as paths
 def createTempDir():
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
 def getTempDirs():
@@ -51,14 +50,16 @@ def extractISO(source, inpath):
         opts = ["Yes", "No"]
         remove = utils.singleSelectMenu(
             opts, f"Files already extraced\nDo you want to delete the folder:\n {outPath} ")
-        if remove == "Yes":
-            rmSafe(outPath)
-        else:
+        if remove == "No":
             return search(outPath, "STREAM",dir=True)[0]
+    _extractISOProcessor(source,outPath)
+            
+    
+def _extractISOProcessor(source,outPath):
+    rmSafe(outPath)
     mkdirSafe(outPath)
     commandlist = [functools.partial(
-        ISOBinaryExtractHelper, source, outPath), functools.partial(udevilExtractHelper, source, outPath)]
-
+        _ISOBinaryExtractHelper, source, outPath), functools.partial(_udevilExtractHelper, source, outPath)]
     for command in commandlist:
         try:
             command()
@@ -70,10 +71,11 @@ def extractISO(source, inpath):
     if os.listdir(outPath) == 0:
         print("Issue Extracting Files")
         quit()
-    return paths.search(outPath, "STREAM",dir=True)[0]
+    if utils.singleSelectMenu(["Yes","No"],f"Do you want to remove the ISO?\n{source}")=="Yes":
+        os.remove(source)
+    return search(outPath, "STREAM",dir=True)[0]
 
-
-def ISOBinaryExtractHelper(source, outPath):
+def _ISOBinaryExtractHelper(source, outPath):
     command = list(itertools.chain.from_iterable([commands.isoBinary(), [
                    "x", convertPathType(source, "Linux"),  "-bsp1","-y" ,f"-o{outPath}", ]]))
     with subprocess.Popen(command) as p:
@@ -81,7 +83,7 @@ def ISOBinaryExtractHelper(source, outPath):
         if p.returncode!=0:
             raise Exception("7z Extraction Error")
 
-def udevilExtractHelper(source, outPath):
+def _udevilExtractHelper(source, outPath):
     print("\nTrying Mounting ISO\nThen Extracting")
     mountpoint = f"/media/{os.getlogin()}/custom"
     mkdirSafe(f"/media/{os.getlogin()}")
