@@ -64,7 +64,7 @@ class Demux():
                         if self._args.extractprogram=="eac3to":
                             eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         else:
-                            None
+                            dgdemux.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         muxSorter=self._getMuxSorter(trackerObjs)
                         self._subParse(muxSorter)
                         self._voiceRec(muxSorter)
@@ -239,9 +239,12 @@ class Demux():
         return bdObjs
 
     def _fixArgs(self):
+        print("Normalize audiolang and sublang args")
         self._args.audiolang = list(map(lambda x: x.lower(),  self._args.audiolang))
         self._args.sublang = list(map(lambda x: x.lower(),  self._args.sublang))
-    
+        if self._args.extractprogram=="dgdemux":
+            print("dgdemux does not support track converting\nSetting dontconvert arg to True\n")
+            self._args.dontconvert=True
     ##Folder Stuff
     def _getBDMVs(self,path):
         with dir.cwd(path):

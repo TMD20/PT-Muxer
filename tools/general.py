@@ -121,26 +121,6 @@ def getRangeOfNumbers(message, default=None):
         return
 
 
-# def validateFiles(fileList):
-#     for file in fileList:
-#         if not os.path.exists(file):
-#             return file
-
-
-# def setBdInfo(remuxConfig):
-#     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
-#     output = os.path.dirname(
-#         remuxConfig["Tracks_Details"]["Video"][key]["filename"])
-#     return paths.search(output, "BDINFO")[0]
-
-
-# def getEac3to(remuxConfig):
-#     key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
-#     output = os.path.dirname(
-#         remuxConfig["Tracks_Details"]["Video"][key]["filename"])
-#     return paths.search(output, "Eac3to")[0]
-
-
 
 
 
@@ -167,34 +147,16 @@ def smart_truncate(content, length=100, suffix='...'):
         return content[:length].rsplit(' ', 1)[0]+suffix
 
 
-# def getRelativeTo(track, levelUp):
-#     """
-#     Returns the relative Path of a file/folder from one of it's parents
-
-
-#     Parameters
-#     ----------
-
-#     track : str
-#         Track whose relative path you want
-#     levelup: int
-#         How many levels up the parent tree
-
-
-#     Returns
-#     -------
-
-#     str
-#         Relative path to file from one of the parents
-#     """
-
-#     return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
-
 
 def getSystem():
     if sys.platform == "linux":
         return "Linux"
     else:
         return "Windows"
+def getShell():
+    if sys.platform=="linux":
+        return "bash"
+    else:
+        return None
 def rmDir(path):
     shutil.rmtree(path)

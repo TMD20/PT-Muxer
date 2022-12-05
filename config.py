@@ -8,6 +8,10 @@ root_dir = os.path.dirname(os.path.realpath(__file__))
 eac3toSystemPath = "/usr/local/bin/eac3to/eac3to.exe"
 eac3toProjectPath = os.path.join(root_dir, "binaries/eac3to/eac3to.exe")
 
+dgDemuxLinux=os.path.join(root_dir,"binaries/dgdemux/Linux/dgdemux")
+dgDemuxWindow=os.path.join(root_dir,"binaries/dgdemux/Linux/dgdemux")
+
+
 wineSystemPath = "/usr/bin/wine"
 wineProjectPath = os.path.join(root_dir, "binaries/wine/wine")
 

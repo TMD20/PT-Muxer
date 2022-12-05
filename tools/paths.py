@@ -20,13 +20,16 @@ def deleteTempDirs():
     folders=getTempDirs()
     for folder in folders:
         shutil.rmtree(folder)
-def search(path,query,case=False,dir=False):
+def search(path,query,case=False,dir=False,ignore=[]):
     paths = glob.glob(os.path.join(path, "**", "*"), recursive=True)
-    paths=list(filter(lambda x:os.path.isdir(x)==dir,paths))
+    regexPattern=re.compile("|".join(ignore))
+    filtered=list(filter(lambda x:os.path.isdir(x)==dir,paths))
+    filtered=list(filter(lambda x:len(regexPattern.pattern)==0 or re.search(regexPattern,x)==None,filtered))
     if case:
-        return list(filter(lambda x:re.search(query,x,re.IGNORECASE),paths))
+        return list(filter(lambda x:re.search(query,x,re.IGNORECASE),filtered))
     else:
-        return list(filter(lambda x:re.search(query,x),paths))
+        return list(filter(lambda x:re.search(query,x),filtered))
+    
 def mkdirSafe(target):
     directories = list(reversed(pathlib.Path(target).parents))
     if len(os.path.splitext(target)[1]) == 0:
@@ -106,3 +109,9 @@ def switchPathType(folder):
     if utils.getSystem() == "Linux":
         return convertPathType(folder,"Windows")
     return convertPathType(folder,"Linux")
+
+def listdir(path):
+    if os.path.isdir(path):
+        paths=list(pathlib.Path(path).iterdir())
+        return list(map(lambda x: str(x),paths))
+    return []

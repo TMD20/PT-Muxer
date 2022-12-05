@@ -52,11 +52,11 @@ def run(playlistLocation, tracks,eac3toPath):
     trackArgs =  trackArgs=["1:chapters.txt"]; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
     if getChaptersBool(playlistLocation)==False:   
         trackArgs = []; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
-    playlistlocationFinal = paths.switchPathType(playlistLocation)  
+    playlistLocationFinal = paths.switchPathType(playlistLocation)  
     command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
-                    playlistlocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+                    playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
     command2 = list(itertools.chain.from_iterable([commands.eac3to(), [
-                    playlistlocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+                    playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
     commandslist = [command1, command2]               
     status = 1
     for command in commandslist:
