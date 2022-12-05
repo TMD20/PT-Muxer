@@ -57,3 +57,9 @@ def isoBinary():
         return [config.isoExtractLinux]
     else:
         return [config.isoExtractWindows]
+
+def dgdemux():
+    if utils.getSystem() == "Linux":
+        return [config.dgDemuxLinux]
+    else:
+        return [config.dgDemuxWindow]
