@@ -23,8 +23,7 @@ def Remux(args):
     fileNameList = []
     folders = remuxHelper.getTVMuxFolders(args.inpath, config.demuxPrefix)
     if len(folders) == 0:
-        print("You need to demux a folder with TV Mode first")
-        quit()
+        raise RuntimeError("You need to demux a folder with TV Mode first")
     folder = utils.singleSelectMenu(
         folders, "Pick the folder with the files you want to remux")
 
@@ -34,12 +33,12 @@ def Remux(args):
     paths.mkdirSafe(os.path.join(args.outpath, ""))
     with dir.cwd(args.outpath):
         if(len(fileNameFuncts) == 0):
-            print("No Files to Process")
-            quit()
+            raise RuntimeError("No Files to Process")
         for i in range(len(fileNameFuncts)):
             funct = fileNameFuncts[i]
             fileNameList.append(funct())
         if remuxHelper.overwriteIfExists(*fileNameList)==False:
+            print("Keeping Current Files\nGood Bye")
             quit()
         print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
         for i in range(len(fileNameList)):

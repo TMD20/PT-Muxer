@@ -16,8 +16,10 @@ from guessit import guessit
 
 import tools.paths as paths
 
-def convertArrow(input, parse):
-    return arrow.get(input, parse)
+def convertArrow(input, parse=None):
+    if parse:
+        return arrow.get(input, parse)
+    return arrow.get(input)
 def signal_handler(sig, frame):
     print('You pressed Ctrl+C!')
     sys.exit(0)
@@ -30,12 +32,12 @@ def subArrowTime(large, small):
     return large
 
 
-def addArrowTime(large, small):
-    large = large.shift(hours=+small.hour)
-    large = large.shift(minutes=+small.minute)
-    large = large.shift(seconds=+small.second)
-    large = large.shift(microseconds=+small.microsecond)
-    return large
+def addArrowTime(value, value2):
+    value = value.shift(hours=+value2.hour)
+    value= value.shift(minutes=+value2.minute)
+    value = value.shift(seconds=+value.second)
+    value= value.shift(microseconds=+value2.microsecond)
+    return value
 
 
 def dehumanizeArrow(input):
@@ -47,6 +49,7 @@ def getFormated(format,time=None):
     return arrow.get(time).format(format)
 
 
+        
 
 
 def sourcetoShowName(path):

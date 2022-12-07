@@ -17,13 +17,12 @@ def Remux(args):
     muxGenerator = muxPicker.pickSite(args.site)
     folders = remuxHelper.getMovieMuxFolders(args.inpath)
     if len(folders) == 0:
-        print("You need to demux a folder with Movie Mode first")
-        quit()
+        raise RuntimeError("You need to demux a folder with Movie Mode first")
     remuxConfigPath = os.path.join(utils.singleSelectMenu(folders, "Pick the folder with the files you want to remux"), "output.json")
 #     # double check to make sure every path is current
     if not remuxConfigPath:
-        print("You Must Pick at list one Config")
-        quit()
+        raise RuntimeError("You Must Pick at list one Config")
+  
     with dir.cwd(args.outpath):
         print(f"\nPreparing Data for {remuxConfigPath}\n")
         remuxConfig = None
@@ -41,6 +40,7 @@ def Remux(args):
         fileName = muxGenerator.getFileName(
             remuxConfig, args.group, title, year, args.skipnamecheck)
         if remuxHelper.overwriteIfExists(fileName) == False:
+            print("Keeping Current Files\nGood Bye")
             quit()
 
         MovieHelper.ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)

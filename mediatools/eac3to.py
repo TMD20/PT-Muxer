@@ -19,18 +19,27 @@ def eac3toTrack(index,name,bdinfo,type):
 
 
 
-def process(tracks,source, playlistFile):
+def process(tracks,source, file):
     output=os.path.abspath(".") 
     eac3toPath = get_eac3toPath(output, source)
-    playlistLocation=getPlaylistLocation(source,playlistFile)
+    playlistLocation=_getFileHelper(source,file)
     run(playlistLocation, tracks,eac3toPath)
 
-def getPlaylistLocation(source,playlistFile):
-    playlistFiles=paths.search(source,playlistFile)
+def _getFileHelper(source,file):
+    if re.search("\.mpls",file,re.IGNORECASE):
+        return _getPlaylistLocation(source,file)
+    return _getStreamLocation(source,file)
+
+def _getPlaylistLocation(source,playlistFile):
+    playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
     if len(playlistFiles)>0:
         return playlistFiles[0]
     return ""
-
+def _getStreamLocation(source,playlistFile):
+    playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
+    if len(playlistFiles)>0:
+        return playlistFiles[0]
+    return ""
 def getChaptersBool(playlistLocation):
     with dir.cwd(paths.createTempDir()):
         playlistLocationFinal=paths.switchPathType(playlistLocation)
@@ -49,9 +58,12 @@ def getChaptersBool(playlistLocation):
 def run(playlistLocation, tracks,eac3toPath):
 
     # get list of files
-    trackArgs =  trackArgs=["1:chapters.txt"]; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
-    if getChaptersBool(playlistLocation)==False:   
-        trackArgs = []; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
+    trackArgs = []; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
+    if getChaptersBool(playlistLocation)==True:
+            #update track index
+            for x in tracks:x["index"]=x["index"]+1
+            trackArgs =  trackArgs=["1:chapters.txt"]; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
+   
     playlistLocationFinal = paths.switchPathType(playlistLocation)  
     command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
                     playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))

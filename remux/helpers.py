@@ -16,8 +16,9 @@ def getRemuxConfigs(path):
     folders = paths.search(path, "Mux",dir=True)
 
     if len(demuxList) == 0:
-        print("Deep Search of Directory Could Not Find any output.json Files")
-        quit()
+        raise RuntimeError("Deep Search of Directory Could Not Find any output.json Files")
+
+
     demuxList = sorted(demuxList)
     message = \
         """
@@ -115,7 +116,7 @@ def getFullPaths(remuxConfig, parentDir):
 
 
 def getTVMuxFolders(inpath):
-    folders = paths.search(inpath, f"{config.demuxPrefix}[.]",dir=True)
+    folders = paths.search(inpath, f"{config.demuxPrefix}[.]",dir=True,recursive=False)
     folders=list(filter(lambda x: os.path.isdir(x),folders))
     folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
     folders = list(filter(lambda x: re.search(
