@@ -67,8 +67,7 @@ def getRemuxConfigPaths(folder):
     remuxConfigPaths = list(
        filter(lambda x: os.path.isfile(x), remuxConfigPaths))
     if not remuxConfigPaths or len(remuxConfigPaths) == 0:
-       print("Their must be at least one output.json in the path")
-       quit()
+       raise RuntimeError("Their must be at least one output.json in the path")
     return remuxConfigPaths
 
 

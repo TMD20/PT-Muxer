@@ -16,7 +16,7 @@ class sourceData(dict):
 
     def __init__(self):
         super().__init__()
-        self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","streamFile","length","streamFiles"}
+        self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","length","streamFiles"}
     #prevent 
     def __setitem__(self, key, value):
         if key not in self._allowedKeys:
@@ -34,10 +34,7 @@ class sourceData(dict):
 
     def updateRawTracksDict(self,source, trackStrs, playlistNum, playlistFile, streams, output):
         tracks = []
-        #verify if chapter file is present
         offset=1
-        if eac3to.getChaptersBool(os.path.join(paths.search(source,"PLAYLIST",dir=True)[0],playlistFile)):
-                offset = offset+1
         for index, currline in enumerate(trackStrs):
             tracks.extend(self._appendTrack(currline, index+offset, source))
         for track in tracks:

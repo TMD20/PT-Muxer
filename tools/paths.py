@@ -15,21 +15,30 @@ def createTempDir():
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
 def getTempDirs():
     tmpHome=tempfile.gettempdir()
-    return search(tmpHome,config.tempPrefix,dir=True)
+    return search(tmpHome,f"{config.tempPrefix}[^/]*$",dir=True,fullMatch=True)
 def deleteTempDirs():
     folders=getTempDirs()
     for folder in folders:
         shutil.rmtree(folder)
-def search(path,query,case=False,dir=False,ignore=[]):
-    paths = glob.glob(os.path.join(path, "**", "*"), recursive=True)
+def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=True):
+    searchMethod=re.search
+    if fullMatch==True:
+        searchMethod=re.match
+    globSearch="**/*"
+    if recursive==False:
+        globSearch="*/"
+    paths = list(map(lambda x: str(x),list(pathlib.Path(path).glob(globSearch))))
+    filtered=_excludeHelper(paths,dir,ignore)
+    if case:
+        return list(filter(lambda x:searchMethod(query,x),filtered))
+    else:
+        return list(filter(lambda x:searchMethod(query,x,re.IGNORECASE),filtered))
+def _excludeHelper(paths,dir,ignore):
     regexPattern=re.compile("|".join(ignore))
     filtered=list(filter(lambda x:os.path.isdir(x)==dir,paths))
     filtered=list(filter(lambda x:len(regexPattern.pattern)==0 or re.search(regexPattern,x)==None,filtered))
-    if case:
-        return list(filter(lambda x:re.search(query,x,re.IGNORECASE),filtered))
-    else:
-        return list(filter(lambda x:re.search(query,x),filtered))
-    
+    return filtered
+
 def mkdirSafe(target):
     directories = list(reversed(pathlib.Path(target).parents))
     if len(os.path.splitext(target)[1]) == 0:
@@ -72,8 +81,8 @@ def _extractISOProcessor(source,outPath):
             rmSafe(outPath)
             continue
     if os.listdir(outPath) == 0:
-        print("Issue Extracting Files")
-        quit()
+        raise RuntimeError("Issue Extracting Files")
+
     if utils.singleSelectMenu(["Yes","No"],f"Do you want to remove the ISO?\n{source}")=="Yes":
         os.remove(source)
     return search(outPath, "STREAM",dir=True)[0]
@@ -115,3 +124,8 @@ def listdir(path):
         paths=list(pathlib.Path(path).iterdir())
         return list(map(lambda x: str(x),paths))
     return []
+
+def copytree(source,dest):
+    shutil.copytree(source,dest,dirs_exist_ok=True)
+def move(source,dest):
+    shutil.move(source,dest)   

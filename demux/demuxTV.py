@@ -7,8 +7,13 @@ import tools.general as utils
 from demux.base import Demux
 import mediadata.movieData as movieData
 import tools.paths as paths
-import remux.helpers as remuxHelper
 import tools.directory as dir
+import sites.pickers.siteSortPicker as siteSortPicker
+import sites.pickers.siteDataPicker as siteDataPicker
+import mediatools.dgdemux as dgdemux
+
+import mediatools.eac3to as eac3to
+import config
 
 
 
@@ -25,26 +30,10 @@ class Demux(Demux):
             self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
             while True:
                 bdObjs = self._setBdInfoData() 
-                # playlistObj=playlist.playlist(bdObjs,self._args)
-                # playlistObj()
-                # trackObjs=playlistObj.trackObjs
-                # # offset=len(os.listdir(self.demuxFolder))
-                # for i,trackObj in enumerate(trackObjs):
-                #     newFolder=os.path.join(self.demuxFolder,str(i+offset+1))
-                #     paths.mkdirSafe(newFolder)
-                #     for source in trackObj.sources:
-                #         sourceData=trackObj.filterBySource(source)
-                #         extract.extractTracks(source,newFolder,sourceData["tracks"],trackObj.getPlaylistLocation(source,self._args.splitplaylist),self._args.extractprogram)
-                if self._args.splitplaylist:
-                    None
+                if self._args.splitplaylist and self._args.splitplaylist>0:
+                    self.demuxSplitPlayList(bdObjs)
                 else:
                     self.demuxPlaylist(bdObjs,multiSelect=True)
-
-                    
-
-
-                
-
 
                 if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
                     print("Thank You, make sure to double check episode numbers")
@@ -63,7 +52,138 @@ class Demux(Demux):
                 """
                 print(message)  
         
+    def demuxSplitPlayList(self,bdObjs):
+        for bdObj in bdObjs:
+             bdObj.playListRangeSelect()
+        for i in range(len(bdObjs[0].keys)):
+            self._index=i
+            for bdObj in bdObjs:
+                    bdObj.generateData(i)
+                    demuxData=siteDataPicker.pickSite(self._args.site)
+        bdObjs[0].validateStreams(bdObjs) 
 
+        
+        if self._args.extractprogram=="eac3to":
+            self._eac3toSplitPlaylistHelper(bdObjs)
+               
+        else:
+           self._dgdemuxSplitPlaylistHelper(bdObjs)
+      
+    
+
+
+    def _eac3toSplitPlaylistHelper(self,bdObjs):
+    # outter loop through every playlist
+        for i in range(len(bdObjs[0].DictList)):
+            startdex = len(os.listdir(self.demuxFolder))
+            trackerObjDict={}
+            [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].DictList[i]["playlistStreams"]))]
+            for bdObj in bdObjs:
+                    print(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]['playlistFile']}")
+                    streams=bdObj.filterStreams(i,self._args.splitplaylist)
+                    for j,stream in enumerate(streams):
+                        newFolder = self._getNewFolder(startdex+j)
+                        with dir.cwd(newFolder):
+                            demuxData = siteDataPicker.pickSite(self._args.site)
+                            currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder,streams=[stream])
+                            with dir.cwd(demuxData["outputDir"]):
+                                if not self._args.dontconvert:
+                                    demuxData.convertFlac(currentTracks)
+                                bdObj.writeBDInfo(i)
+                                print( f"\nExtracting Files From stream:{stream['name']}")
+                                eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["streamFiles"][0])
+                                trackerObjDict[j]["list"].append(demuxData)
+
+            #Take combined data struture process each stream index
+            for key in trackerObjDict.keys():
+                trackerObjs=trackerObjDict[key]["list"]
+                newFolder=trackerObjDict[key]["folder"]
+                with dir.cwd(newFolder):
+                    muxSorter=self._getMuxSorter(trackerObjs)
+                    self._subParse(muxSorter)
+                    self._voiceRec(muxSorter)
+                    self._saveOutput(bdObjs,trackerObjs,muxSorter)
+      
+
+             
+                
+
+
+           
+                # outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
+                # movieDict = movieObj.movieObj
+                # movieDict["episode"] = ep
+                # movieDict["season"] = season
+                # outdict["Movie"] = movieDict
+
+                # tools.addEnabledData(outdict, muxSorter)
+                # tools.addTrackData(outdict, muxSorter)
+
+                # os.chdir(newFolder)
+                # tools.writeFinalJSON(outdict)
+                # # change pack to parent
+                # os.chdir(demuxFolder)
+                # ep = ep+1        
+
+    
+    
+    
+    
+    def _dgdemuxSplitPlaylistHelper(self,bdObjs):
+        print("Note in dgdemux Mode all streams will be outputted\n You will have to manually remove any short streams")     
+        #i represent each playlist
+        for i in range(len(bdObjs[0].keys)):
+            startdex=len(os.listdir(self.demuxFolder))
+            trackerObjDict={}
+            [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].DictList[i]["playlistStreams"]))]
+            #dgdemux won't allow individual mt2s processing
+            # Each playlist must be processed in batches
+            for bdObj in bdObjs:
+                print(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]}")
+                tempdir=paths.createTempDir()
+                with dir.cwd(tempdir):
+                        newFolder=""
+                        demuxData=siteDataPicker.pickSite(self._args.site)
+                        currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
+                        dgdemux.run(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"],ep=True)
+                
+                #Process each stream index with data from one source
+                # Save in combined data struture, organized by stream index
+                for j,ele in enumerate(bdObj.DictList[i]["playlistStreams"]):
+                    newFolder=self._getNewFolder(startdex+j)
+                    with dir.cwd(newFolder):
+                        demuxData=siteDataPicker.pickSite(self._args.site)
+                        demuxData.addTracks(bdObj,bdObj.keys[i],newFolder,streams=[ele])
+                        #copy files to new outputdir
+                        with dir.cwd(demuxData["outputDir"]):
+                            paths.copytree(paths.listdir(tempdir)[j],".")
+                            bdObj.writeBDInfo(i)
+                            trackerObjDict[j]["list"].append(demuxData)
+            
+            #Take combined data struture process each stream index
+            for key in trackerObjDict.keys():
+                trackerObjs=trackerObjDict[key]["list"]
+                newFolder=trackerObjDict[key]["folder"]
+                with dir.cwd(newFolder):
+                    muxSorter=self._getMuxSorter(trackerObjs)
+                    self._subParse(muxSorter)
+                    self._voiceRec(muxSorter)
+                    self._saveOutput(bdObjs,trackerObjs,muxSorter)
+    
+                
+
+
+                
+
+
+
+
+
+                
+            
+      
+                    
+        
     ####
     # Helper Functions
     ####
@@ -75,17 +195,13 @@ class Demux(Demux):
 
     def setSource(self):
         options = self._getBDMVs(self._args.inpath)
-        self.sources = self.getSources(options,self._args.inpath,self._args.sortpref, self._args.splitplaylist == None)
+        self.sources = self.getSources(options,self._args.inpath,self._args.sortpref)
 
-    def getSources(self,options,inpath, sortpref,multi):
+    def getSources(self,options,inpath, sortpref):
         if len(options) == 0:
-            print("No Valid Source Directories Found")
-            quit()
+            raise RuntimeError("No Sources Directories Found")
         sources = None
-        if multi:
-            sources = self._addMultiSource(options, sortpref)
-        else:
-            sources = [self._addSingleSource(options)]
+        sources = self._addMultiSource(options, sortpref)
         for i in range(0, len(sources)):
                     if re.search(".iso", sources[i]):
                         sources[i] = paths.extractISO(sources[i], inpath)
@@ -110,7 +226,7 @@ class Demux(Demux):
     def getDemuxFolderHelper(self,sources, outpath):
             if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
                 print("Searching for Prior TV Mode Folders")
-                folders = remuxHelper.getTVMuxFolders(outpath)
+                folders = self._getTVMuxFolders(outpath)
                 if len(folders) == 0:
                     print("No TV Mode Folders Found To Restore")
                     print("Creating a new Mux Folder")
@@ -132,8 +248,7 @@ class Demux(Demux):
     #Select
     def _addMultiSource(self,paths,sortpref):
         if len(paths) == 0:
-            print("No Valid Source Directories Found")
-            quit()
+            raise RuntimeError("No Sources Directories Found")
         msg=None
         if sortpref=="size":
             msg = \
@@ -177,8 +292,7 @@ class Demux(Demux):
 
     def _addSingleSource(self,paths):
         if len(paths) == 0:
-            print("No Valid Source Directories Found")
-            quit()
+            raise RuntimeError("No Sources Directories Found")
         msg = \
             """
             Click on the Source You Want for this Demux
@@ -190,87 +304,17 @@ class Demux(Demux):
             """
         return utils.singleSelectMenu(paths, msg)
 
+    def _getTVMuxFolders(self,inpath):
+        folders = paths.search(inpath, f"{config.demuxPrefix}[.]",dir=True,recursive=False)
+        emptyFolders =  list(filter(lambda x: len(os.listdir(x)) ==0, folders))       
+        tvFolders= list(filter(lambda x: len(os.listdir(x)) > 0, folders))
+        tvFolders = list(filter(lambda x: re.search(
+            "^[0-9]+$", os.listdir(x)[0]) != None, tvFolders))
+        tvFolders.extend(emptyFolders)
+        return tvFolders
 
 
 
-# def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
-#     # outter loop through every playlist
-#     for i in range(len(bdObj.playlistNumList)):
-#         playlistNum = bdObj.playlistNumList[i]
-#         playlistFile = bdObj.playlistFileList[i]
-
-#         print(
-#             f"Processing all streams from playlist number {num2words(playlistNum)}\n")
-
-#         # get quick summary and bdinfo data
-#         bdObj.runbdinfo(playlistNum)
-#         quickSums = bdObj.setQuickSum()
-#         streams = bdObj.setStreams()
-#         chapters = bdObj.setChapters()
-#         # what should we offset the time by based on previous streams lengths
-#         # create a episode folder
-#         offset = len(os.listdir(demuxFolder))
-#         ep = offset+1
-#         for j in range(len(streams)):
-#             demuxData = siteDataPicker.pickSite(args.site)
-#             muxSorter = siteSortPicker.pickSite(args.site)
-#             stream = streams[j]
-#             # remove the folder if the source folder
-#             if args.splitplaylist < float("inf"):
-#                 if demuxHelper.setStreamsLength([stream]) < args.splitplaylist:
-#                     message = \
-#                         f"""
-#                     The length of the stream: {stream}
-#                     is less then the min that you picked
-#                     """
-#                     print(message)
-#                     os.chdir(demuxFolder)
-#                     continue
-
-#             newFolder = os.path.join(demuxFolder, str(ep))
-#             paths.mkdirSafe(newFolder)
-#             os.chdir(newFolder)
-#             print(f"Creating a new episode folder at {newFolder}\n")
-
-#             # create a source folder
-#             output = paths.createChildDemuxFolder(os.getcwd(), source)
-#             print(f"\nCreating a new source folder at {output}")
-#             os.chdir(output)
-#             show = utils.sourcetoShowName(source)
-#             path = os.path.join(output, "output_logs", f"BDINFO.{show}.txt")
-
-#             # copy bdinfo to folder
-#             print(f"\nParsing STREAM: {stream}")
-#             bdObj.writeBdinfo(path)
-
-#             currentTracks = demuxData.addTracks(quickSums, playlistNum, playlistFile,
-#                                                 [stream], source, output)
-#             if not args.dontconvert:
-#                 demuxData.convertFlac(currentTracks, output)
-
-#             tools.extractTracks(demuxData, stream=True)
-#             tools.sortTracks(muxSorter, demuxData, movieObj.movieObj, args)
-#             tools.machineReader(muxSorter, args, movieObj.movieObj)
-#             chaptersFiltered = list(
-#                 filter(lambda x: x["start"] >= stream["start"], chapters))
-#             chaptersFiltered = list(
-#                 filter(lambda x: x["start"] < stream["end"], chaptersFiltered))
-#             outdict = {}
-#             outdict["Sources"] = tools.addSourceData(demuxData)
-#             outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
-#             movieDict = movieObj.movieObj
-#             movieDict["episode"] = ep
-#             movieDict["season"] = season
-#             outdict["Movie"] = movieDict
-
-#             tools.addEnabledData(outdict, muxSorter)
-#             tools.addTrackData(outdict, muxSorter)
-
-#             os.chdir(newFolder)
-#             tools.writeFinalJSON(outdict)
-#             # change pack to parent
-#             os.chdir(demuxFolder)
-#             ep = ep+1
 
 
 

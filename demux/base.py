@@ -52,11 +52,10 @@ class Demux():
         for i in range(len(bdObjs[0].keys)):
             self._index=i
             trackerObjs=[]
-            newFolder=self._getNewFolder(i)
+            newFolder=self._getNewFolder(len(os.listdir(self.demuxFolder)))
             with dir.cwd(newFolder):
                 for bdObj in bdObjs:
                     bdObj.generateData(i)
-                    os.path.join(bdObj.playlistDir,bdObj.DictList[i]["playlistFile"])
                     demuxData=siteDataPicker.pickSite(self._args.site)
                     currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
                     trackerObjs.append(demuxData)
@@ -64,7 +63,8 @@ class Demux():
                         if self._args.extractprogram=="eac3to":
                             eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         else:
-                            dgdemux.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
+                            dgdemux.run(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
+                        bdObj.writeBdinfo()
                         muxSorter=self._getMuxSorter(trackerObjs)
                         self._subParse(muxSorter)
                         self._voiceRec(muxSorter)
@@ -77,7 +77,7 @@ class Demux():
                     
             #safe outputlogs
 
-    def _saveOutput(self,bdObjs,trackerObjs,muxSorter):
+    def _saveOutputPlayList(self,bdObjs,trackerObjs,muxSorter):
         outdict = {}
         outdict.update(self._addSourceData(trackerObjs)) 
         outdict.update(self._ConvertChapterList(self._getChapterMedia(bdObjs))) 
@@ -86,7 +86,14 @@ class Demux():
         outdict.update(self._addTrackData(muxSorter))
         self._writeFinalJSON(outdict)
 
-
+    def _saveOutputStream(self,bdObjs,trackerObjs,muxSorter):
+        outdict = {}
+        outdict.update(self._addSourceData(trackerObjs)) 
+        outdict.update(self._ConvertChapterList(self._getChapterMedia(bdObjs))) 
+        outdict["Movie"] = self._movieObj.movieObj
+        outdict.update(self._addEnabledData(muxSorter))
+        outdict.update(self._addTrackData(muxSorter))
+        self._writeFinalJSON(outdict)
     
     
 
@@ -248,8 +255,8 @@ class Demux():
     ##Folder Stuff
     def _getBDMVs(self,path):
         with dir.cwd(path):
-            list1 = paths.search(path, "STREAM",dir=True)
-            list2 = paths.search(path, ".iso")
+            list1 = paths.search(path, "/STREAM",dir=True,ignore=["BACKUP"])
+            list2 = paths.search(path, "\.iso$")
             list1.extend(list2)
             list1 = list(map(lambda x: paths.convertPathType(x, "Linux"), list1))
             return sorted(list1)
@@ -270,8 +277,6 @@ class Demux():
             show = utils.sourcetoShowName(show)
             os.mkdir(show)
             return paths.convertPathType(os.path.join(parentDir, show), "Linux")
-        
-
 
 
 

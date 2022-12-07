@@ -12,6 +12,7 @@ import tools.directory as dir
 
 
 
+
 class Demux(Demux):
     def __init__(self,args):
         super().__init__(args)
@@ -37,6 +38,8 @@ class Demux(Demux):
     def _getNewFolder(self,i=None):
         return os.path.join(self.demuxFolder)
     def _callFunction(self):
+        if self._args.splitplaylist and self._args.splitplaylist>0:
+            raise RuntimeError("splitplaylist Not allowed for Movie Mode")
         self.setSource()
         self._fixArgs()
         self.getDemuxFolder()
@@ -48,12 +51,8 @@ class Demux(Demux):
     def getSources(self,options, inpath, sortpref):
         if len(options) == 0:
             print("No Valid Source Directories Found")
-            quit()
-        sources = self._addMultiSource(options, sortpref)
-        if sources == None or len(sources) == 0:
-            print("No sources Selected")
-            quit()
-        
+            raise RuntimeError("No Sources Directories Found")
+        sources = self._addMultiSource(options, sortpref)     
         for i in range(0, len(sources)):
             if re.search(".iso", sources[i]):
                 sources[i] = paths.extractISO(sources[i], inpath)

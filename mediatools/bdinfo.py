@@ -32,8 +32,68 @@ class Bdinfo():
             One or more sources has the a incorrect amount of playlist
             Make sure every playlist is in sync
             """
-                print(message)
-                quit()        
+                raise RuntimeError(message)
+ 
+   
+    def validateStreams(self,bdObjs):
+        validateStreams=self._flattenStreams()
+        for bdObj in bdObjs:
+            compareStreams=bdObj._flattenStreams()
+            if len(compareStreams)!=len(validateStreams):
+                message = \
+                    """
+            Their is an issue with the playlist that you picked.
+
+            For each source the sum of all the streams for all the playlist for that source is calculated, and compared
+            Example: 
+            Playlist 00001.mpls may have 8 streams in it
+            Playlist 00002.mpls may have 4 streams
+            12 total streams
+
+            This sum does not match
+
+            Tip:
+            -For non-advance users user make sure all sources are for the same movie. The only differences
+            should be the language at most.
+            - Pick the same playlist for all sources
+            - If you want to use a source for one set of episodes, and not the next. You will need to run the program
+            multiple times
+            """
+                raise RuntimeError(message)
+            for index in range(len(validateStreams)):
+                compareLength=self._getStreamLengthHelper(compareStreams[index])
+                validatorLength=self._getStreamLengthHelper(validateStreams[index])
+                if compareLength!=validatorLength:
+                    message = \
+                    f"""
+                    Their is an issue with the playlist that you picked.
+                    {bdObj.mediaDir} and {self.mediaDir} have a unmatch stream
+                    at stream number {index+1}.
+
+                    This is {validateStreams[index]["name"]} and {compareStreams[index]["name"]} respectively
+                    Please check the length of all streams
+                    """
+                    raise RuntimeError(message)
+    
+    
+    def filterStreams(self,i,time):
+        time=float(time)
+        if time==float("inf") or time==0:
+            return self.DictList[i]["playlistStreams"]
+        return list(filter(lambda x: (self._getStreamLengthHelper(x).hour*60)+(self._getStreamLengthHelper(x).minute)+(self._getStreamLengthHelper(x).second/60)>=time,self.DictList[i]["playlistStreams"]))
+
+    def _flattenStreams(self):
+        output=[]
+        for key in self._playlistKeys:
+            for stream in self._playlistDict[key]["playlistStreams"]:
+                output.append(stream)
+        return output
+    
+    def _getStreamLengthHelper(self,stream):
+        return utils.subArrowTime(utils.convertArrow(stream["end"],"HH:mm:ss.SSS"),utils.convertArrow(stream["start"],"HH:mm:ss.SSS"))
+                
+  
+
     def generateData(self,i):
         key=self._playlistKeys[i]
         playlistNum = key
@@ -122,11 +182,31 @@ class Bdinfo():
                 {"number": number, "start": startTime, "end": endTime})
         self._playlistDict[playlistNum]["chapters"] = out
 
-    def writeBdinfo(self, path):
+    
+    
+    def writeBDInfo(self, index,path=None):
+        if path==None:
+            path=os.path.join(".","output_logs",utils.sourcetoShowName(self._mediaDir))
         paths.mkdirSafe(path)
         file = open(path, "w")
-        file.write(self._bdinfo)
+        file.write(self.DictList[index]["bdinfo"])
+        
 
+    
+    def getStreamChapter(self,playlistDex,streamDex):
+        streamData=self.DictList[playlistDex]["playlistStreams"][streamDex]
+        start = utils.convertArrow(streamData["start"], "HH:mm:ss.SSS")
+        end = utils.convertArrow(streamData["end"], "HH:mm:ss.SSS")
+        chapters=[]
+        for time in self.DictList[playlistDex]["chapters"]:
+            if utils.convertArrow(time["start"])<start:
+                continue
+            elif utils.convertArrow(time["start"])>end:
+                break
+            chapters.append(time)
+        return chapters
+          
+    
     def playListSelect(self):
         self._playlistKeys = [self._getIndex()]
         self.playListFileHelper()
@@ -215,8 +295,7 @@ class Bdinfo():
         playlistNames = re.findall(
             "[0-9]+\.MPLS", self._playlist)
         if int(num)-1 > len(playlistNames):
-            print("Number is out of Range")
-            quit()
+            raise RuntimeError("playlist Number is out of range")
         #match bdinfo track name with what appears in file directory
         playListFiles=os.listdir(self._getPlaylistDir())
         playlistName=playlistNames[int(num)-1]

@@ -296,8 +296,8 @@ class MovieData():
                 result = ia.get_movie(re.sub("tt", "", id))
                 return self._getMovieInfo(result["imdbID"])
             except:
-                print("Error with ID")
-                quit()
+                raise RuntimeError("Error with IMDBID")
+
 
     ########################################################################################
     # Wikipedia Functions
