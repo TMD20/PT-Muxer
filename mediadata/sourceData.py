@@ -16,8 +16,9 @@ class sourceData(dict):
 
     def __init__(self):
         super().__init__()
-        self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","length","streamFiles"}
-    #prevent 
+        self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","length","streamFiles","chapters"}
+        self._tracks=[]
+        self._source=None
     def __setitem__(self, key, value):
         if key not in self._allowedKeys:
             raise AttributeError(f"sourceData does not accept {key}")
@@ -32,19 +33,24 @@ class sourceData(dict):
     #It also adds data about the source of the information, and where to output it                                 #
     ################################################################################################################
 
-    def updateRawTracksDict(self,source, trackStrs, playlistNum, playlistFile, streams, output):
-        tracks = []
+    
+    def updateRawTracksDict(self,trackStrs):
+        tracks = self._tracks
+        source=self._source
         offset=1
         for index, currline in enumerate(trackStrs):
             tracks.extend(self._appendTrack(currline, index+offset, source))
         for track in tracks:
             track["sourceDir"] = source
             track["sourceKey"] = utils.sourcetoShowName(source)
-            track["outputDir"] = os.path.join(output,utils.sourcetoShowName(source))
         self._updateTrackDictNotes(tracks)
-        self._setSourceDict(
-            tracks, playlistNum, playlistFile, streams, source, output)
-        
+    def addOutput(self,output,source=None):
+        source=source or self._source
+        self._output=output
+        for track in self._tracks:
+            track["outputDir"]=os.path.join(output,utils.sourcetoShowName(source))
+        self["outputDir"] = os.path.join(output,utils.sourcetoShowName(self._source))
+
 
 
     
@@ -89,7 +95,6 @@ class sourceData(dict):
         # remove special characters
         return f"00{index}-{langcode}.sup"
 
-
     ################################################################################################################
     #   Getter Functions
     ################################################################################################################
@@ -107,6 +112,21 @@ class sourceData(dict):
     """
    Private
     """
+    def _setUp(self,playlistNum,bdObj,streams):
+        self._playlistNum=playlistNum
+        self._bdObj=bdObj
+        self._playlistFile=bdObj.Dict[playlistNum]["playlistFile"]
+        self._source=bdObj.mediaDir
+        self._streams=streams
+
+    def _setSourceDict(self):
+        self["tracks"] = self._tracks
+        self["sourceDir"] = self._source
+        self["playlistNum"] = self._playlistNum
+        self["playlistFile"] = self._playlistFile
+        self["streamFiles"] = self._getStreamNames(self._streams)
+        self["length"] = self._getStreamLength(self._streams)
+        self["chapters"]=self._bdObj.getStreamChapter(self._streams,self._playlistNum)
 
     ################################################################################################################
     ###### These Functions are used to parse Data from String for the corresponding Track Type i.e Video, Audio,etc#
@@ -233,14 +253,7 @@ class sourceData(dict):
         return tempList
 
 
-    def _setSourceDict(self, tracks, playlistNum, playlistFile, streams, source, output):
-        self["tracks"] = tracks
-        self["outputDir"] = os.path.join(output,utils.sourcetoShowName(source))
-        self["sourceDir"] = source
-        self["playlistNum"] = playlistNum
-        self["playlistFile"] = playlistFile
-        self["streamFiles"] = self._getStreamNames(streams)
-        self["length"] = self._getStreamLength(streams)
+  
 
     #####################################################################################################################
     #       These Functions add Addition Data to Tracks Obj

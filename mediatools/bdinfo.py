@@ -76,22 +76,7 @@ class Bdinfo():
                     raise RuntimeError(message)
     
     
-    def filterStreams(self,i,time):
-        time=float(time)
-        if time==float("inf") or time==0:
-            return self.DictList[i]["playlistStreams"]
-        return list(filter(lambda x: (self._getStreamLengthHelper(x).hour*60)+(self._getStreamLengthHelper(x).minute)+(self._getStreamLengthHelper(x).second/60)>=time,self.DictList[i]["playlistStreams"]))
 
-    def _flattenStreams(self):
-        output=[]
-        for key in self._playlistKeys:
-            for stream in self._playlistDict[key]["playlistStreams"]:
-                output.append(stream)
-        return output
-    
-    def _getStreamLengthHelper(self,stream):
-        return utils.subArrowTime(utils.convertArrow(stream["end"],"HH:mm:ss.SSS"),utils.convertArrow(stream["start"],"HH:mm:ss.SSS"))
-                
   
 
     def generateData(self,i):
@@ -102,85 +87,6 @@ class Bdinfo():
         self._setQuickSum(playlistNum)
         self._setStreams(playlistNum) 
         self._setChapters(playlistNum)    
-    def _setBdInfo(self, playlistNum):
-        selection = self._playlistDict[playlistNum]["playlistFile"]
-       
-        tempDir = paths.createTempDir()
-        command = list(itertools.chain.from_iterable(
-        [commands.bdinfo(), ["-m", selection, self._mediaDir, tempDir]]))
-        subprocess.run(command)
-        file = open(paths.convertPathType(os.path.join(
-        tempDir, os.listdir(tempDir)[0]), "Linux"), "r")
-        self._playlistDict[playlistNum]["bdinfo"] = file.read()
-        shutil.rmtree(tempDir)
-        file.close()
-
-    def _setQuickSum(self,playlistNum):
-        lines = self._playlistDict[playlistNum]["bdinfo"].split("\n")
-        output=[]
-        for line in lines:
-            if re.search("(Video|Audio|Subtitle): ", line,re.IGNORECASE) != None:
-                output.append(line)
-        self._playlistDict[playlistNum]["quickSum"] = output
-
-    def _setStreams(self,playlistNum):
-        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
-        lines = lines[lines.index("FILES:"):len(lines)-1]
-        start = 0
-        end = lines.index("CHAPTERS:")-1
-
-        for i in range(len(lines)):
-            if re.search("Name", lines[i]) != None:
-                start = i+2
-                break
-        time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
-        streams=[]
-        for line in lines[start:end]:
-            data = line.split()
-
-            startTime = data[1]
-            length = data[2]
-            name = data[0]
-
-            t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
-            t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
-            endTime = str((t1 - time_zero + t2).time())[:-3]
-
-            startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
-                *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
-
-            streams.append(
-                {"name": name, "start": startTime, "end": endTime})
-        self._playlistDict[playlistNum]["playlistStreams"] = streams
-
-    def _setChapters(self,playlistNum):
-        out = []
-        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
-        lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
-        start = 0
-        end = lines.index("STREAM DIAGNOSTICS:")-1
-        for i in range(len(lines)):
-            if re.search("Number ", lines[i]) != None:
-                start = i+2
-                break
-        time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
-        for line in lines[start:end]:
-            data = line.split()
-
-            startTime = data[1]
-            length = data[2]
-            number = data[0]
-
-            t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
-            t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
-            endTime = str((t1 - time_zero + t2).time())[:-3]
-
-            startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
-                *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
-
-            out.append(
-                {"number": number, "start": startTime, "end": endTime})
-        self._playlistDict[playlistNum]["chapters"] = out
 
     
     
@@ -193,34 +99,33 @@ class Bdinfo():
         
 
     
-    def getStreamChapter(self,playlistDex,streamDex):
-        streamData=self.DictList[playlistDex]["playlistStreams"][streamDex]
-        start = utils.convertArrow(streamData["start"], "HH:mm:ss.SSS")
-        end = utils.convertArrow(streamData["end"], "HH:mm:ss.SSS")
+    def getStreamChapter(self,streamDataList,playlistKey):
         chapters=[]
-        for time in self.DictList[playlistDex]["chapters"]:
-            if utils.convertArrow(time["start"])<start:
-                continue
-            elif utils.convertArrow(time["start"])>end:
-                break
-            chapters.append(time)
-        return chapters
-          
-    
+        parseString="HH:mm:ss.SSS"
+        if isinstance(streamDataList, list)==False:
+            streamDataList=[streamDataList]
+        for streamData in streamDataList:
+            start = utils.convertArrow(streamData["start"],parseString )
+            end = utils.convertArrow(streamData["end"], parseString)
+        
+            for time in self.Dict[playlistKey]["chapters"]:
+                if utils.convertArrow(time["start"],parseString)<start:
+                    continue
+                elif utils.convertArrow(time["start"],parseString)>end:
+                    break
+                chapters.append(time)
+        return self._chapterOffsetHelper(chapters)
+
     def playListSelect(self):
         self._playlistKeys = [self._getIndex()]
-        self.playListFileHelper()
+        self._playListFileHelper()
     
 
     def playListRangeSelect(self):
         self._playlistKeys=self._getRange()
-        self.playListFileHelper()
+        self._playListFileHelper()
     
-       
-    def playListFileHelper(self):
-        for num in self._playlistKeys:
-            self._playlistDict[num]={}
-            self._playlistDict[num]["playlistFile"]=self._getplaylistFile(num)
+    
     '''
     Getter Functions
     '''
@@ -316,5 +221,121 @@ class Bdinfo():
 
         self._playlist = subprocess.run(
             command, stdout=subprocess.PIPE, stderr=subprocess.PIPE).stdout.decode('utf8', 'strict')
+    def _setBdInfo(self, playlistNum):
+        selection = self._playlistDict[playlistNum]["playlistFile"]
+       
+        tempDir = paths.createTempDir()
+        command = list(itertools.chain.from_iterable(
+        [commands.bdinfo(), ["-m", selection, self._mediaDir, tempDir]]))
+        subprocess.run(command)
+        file = open(paths.convertPathType(os.path.join(
+        tempDir, os.listdir(tempDir)[0]), "Linux"), "r")
+        self._playlistDict[playlistNum]["bdinfo"] = file.read()
+        shutil.rmtree(tempDir)
+        file.close()
 
+    def _setQuickSum(self,playlistNum):
+        lines = self._playlistDict[playlistNum]["bdinfo"].split("\n")
+        output=[]
+        for line in lines:
+            if re.search("(Video|Audio|Subtitle): ", line,re.IGNORECASE) != None:
+                output.append(line)
+        self._playlistDict[playlistNum]["quickSum"] = output
 
+    def _setStreams(self,playlistNum):
+        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
+        lines = lines[lines.index("FILES:"):len(lines)-1]
+        start = 0
+        end = lines.index("CHAPTERS:")-1
+
+        for i in range(len(lines)):
+            if re.search("Name", lines[i]) != None:
+                start = i+2
+                break
+        time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
+        streams=[]
+        for line in lines[start:end]:
+            data = line.split()
+
+            startTime = data[1]
+            length = data[2]
+            name = data[0]
+
+            t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
+            t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
+            endTime = str((t1 - time_zero + t2).time())[:-3]
+
+            startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
+                *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
+
+            streams.append(
+                {"name": name, "start": startTime, "end": endTime})
+        self._playlistDict[playlistNum]["playlistStreams"] = streams
+
+    def _setChapters(self,playlistNum):
+        out = []
+        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
+        lines = lines[lines.index("CHAPTERS:"):len(lines)-1]
+        start = 0
+        end = lines.index("STREAM DIAGNOSTICS:")-1
+        for i in range(len(lines)):
+            if re.search("Number ", lines[i]) != None:
+                start = i+2
+                break
+        time_zero = dt.datetime.strptime('00:00:00.0', '%H:%M:%S.%f')
+        for line in lines[start:end]:
+            data = line.split()
+
+            startTime = data[1]
+            length = data[2]
+            number = int(data[0])
+
+            t1 = dt.datetime.strptime(startTime, '%H:%M:%S.%f')
+            t2 = dt.datetime.strptime(length, '%H:%M:%S.%f')
+            endTime = str((t1 - time_zero + t2).time())[:-3]
+
+            startTime = '{:0>2}:{:0<2}:{:0<2}.{:0<3}'.format(
+                *startTime.split(":")[:2], *startTime.split(":")[2].split("."))
+
+            out.append(
+                {"number": number, "start": startTime, "end": endTime})
+        self._playlistDict[playlistNum]["chapters"] = out
+
+    ##################################
+    #  Stream Functions
+    #
+    ##################################################
+    def filterStreams(self,i,time):
+        time=float(time)
+        if time==float("inf") or time==0:
+            return self.DictList[i]["playlistStreams"]
+        return list(filter(lambda x: (self._getStreamLengthHelper(x).hour*60)+(self._getStreamLengthHelper(x).minute)+(self._getStreamLengthHelper(x).second/60)>=time,self.DictList[i]["playlistStreams"]))
+
+    def _flattenStreams(self):
+        output=[]
+        for key in self._playlistKeys:
+            for stream in self._playlistDict[key]["playlistStreams"]:
+                output.append(stream)
+        return output
+    
+    def _getStreamLengthHelper(self,stream):
+        return utils.subArrowTime(utils.convertArrow(stream["end"],"HH:mm:ss.SSS"),utils.convertArrow(stream["start"],"HH:mm:ss.SSS"))
+                
+    ####################################
+    # Helper Functions
+    ######################################
+    def _chapterOffsetHelper(self,chapters):
+        parseString="HH:mm:ss.SSS"
+        if utils.convertArrow(chapters[0]["start"],parseString)==utils.convertArrow("00","mm"):
+            return chapters
+        timeOffset=utils.convertArrow(chapters[0]["start"],parseString)
+        numOffset=chapters[0]["number"]-1
+        for chapter in chapters:
+            chapter["start"]=utils.subArrowTime(utils.convertArrow(chapter["start"],parseString),timeOffset).format(parseString)
+            chapter["end"]=utils.subArrowTime(utils.convertArrow(chapter["end"],parseString),timeOffset).format(parseString)
+            chapter["number"]=chapters[0]["number"]-numOffset
+        return chapters    
+    def _playListFileHelper(self):
+        for num in self._playlistKeys:
+            self._playlistDict[num]={}
+            self._playlistDict[num]["playlistFile"]=self._getplaylistFile(num)        
