@@ -85,7 +85,8 @@ class Demux(Demux):
                         newFolder = self._getNewFolder(startdex+j)
                         with dir.cwd(newFolder):
                             demuxData = siteDataPicker.pickSite(self._args.site)
-                            currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder,streams=[stream])
+                            currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],streams=[stream])
+                            demuxData.addOutput(newFolder)
                             with dir.cwd(demuxData["outputDir"]):
                                 if not self._args.dontconvert:
                                     demuxData.convertFlac(currentTracks)
@@ -102,7 +103,7 @@ class Demux(Demux):
                     muxSorter=self._getMuxSorter(trackerObjs)
                     self._subParse(muxSorter)
                     self._voiceRec(muxSorter)
-                    self._saveOutput(bdObjs,trackerObjs,muxSorter)
+                    self._saveOutput(trackerObjs,muxSorter)
       
 
              
@@ -144,16 +145,17 @@ class Demux(Demux):
                 with dir.cwd(tempdir):
                         newFolder=""
                         demuxData=siteDataPicker.pickSite(self._args.site)
-                        currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
+                        currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i])
                         dgdemux.run(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"],ep=True)
                 
                 #Process each stream index with data from one source
                 # Save in combined data struture, organized by stream index
-                for j,ele in enumerate(bdObj.DictList[i]["playlistStreams"]):
+                for j,stream in enumerate(bdObj.DictList[i]["playlistStreams"]):
                     newFolder=self._getNewFolder(startdex+j)
                     with dir.cwd(newFolder):
                         demuxData=siteDataPicker.pickSite(self._args.site)
-                        demuxData.addTracks(bdObj,bdObj.keys[i],newFolder,streams=[ele])
+                        currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],streams=[stream])
+                        demuxData.addOutput(newFolder)
                         #copy files to new outputdir
                         with dir.cwd(demuxData["outputDir"]):
                             paths.copytree(paths.listdir(tempdir)[j],".")
@@ -168,7 +170,7 @@ class Demux(Demux):
                     muxSorter=self._getMuxSorter(trackerObjs)
                     self._subParse(muxSorter)
                     self._voiceRec(muxSorter)
-                    self._saveOutput(bdObjs,trackerObjs,muxSorter)
+                    self._saveOutput(trackerObjs,muxSorter)
     
                 
 

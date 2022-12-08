@@ -10,6 +10,7 @@ class siteTrackData(sourceData):
     def __init__(self):
         super().__init__()
 
+
     """
     Public Functions
     """
@@ -22,22 +23,23 @@ class siteTrackData(sourceData):
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
-    def addTracks(self,bdObj,playlistNum,output,streams=None):
-        bdObjDict=bdObj.Dict[playlistNum]
-        quicksum=bdObjDict["quickSum"]
-        playlistFile=bdObjDict["playlistFile"]
-        source=bdObj.mediaDir
-        self["source"]=source
+
+
+    def addTracks(self,bdinfo,playlistNum,streams=None):
         if streams==None:
             streams=bdObjDict["playlistStreams"]
+        self._setUp(playlistNum, bdinfo, streams)
+        bdObjDict=self._bdObj.Dict[playlistNum]
+        quicksum=bdObjDict["quickSum"]
 
-        self.updateRawTracksDict(source,
-            quicksum, playlistNum, playlistFile, streams,output)
-        current_tracks = self["tracks"]
+        self.updateRawTracksDict(quicksum)
+        current_tracks = self._tracks
         self._updateTrackDictFileNames(current_tracks)
         self._updateTrackDictNames(current_tracks)
-
+        self._setSourceDict()
         return current_tracks
+  
+
      #######################################################################
     #  This Function will convert certain lossless Tracks to flac
     ########################################################################

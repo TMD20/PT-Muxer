@@ -57,7 +57,8 @@ class Demux():
                 for bdObj in bdObjs:
                     bdObj.generateData(i)
                     demuxData=siteDataPicker.pickSite(self._args.site)
-                    currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],newFolder)
+                    currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i])
+                    demuxData.addOutput(newFolder)
                     trackerObjs.append(demuxData)
                     with dir.cwd(demuxData["outputDir"]):
                         if self._args.extractprogram=="eac3to":
@@ -68,19 +69,18 @@ class Demux():
                         muxSorter=self._getMuxSorter(trackerObjs)
                         self._subParse(muxSorter)
                         self._voiceRec(muxSorter)
-                self._saveOutput(bdObjs,trackerObjs,muxSorter)
+                        self._saveOutput(trackerObjs,muxSorter)
         
 
             
           
             
                     
-            #safe outputlogs
 
-    def _saveOutputPlayList(self,bdObjs,trackerObjs,muxSorter):
+    def _saveOutput(self,trackerObjs,muxSorter):
         outdict = {}
         outdict.update(self._addSourceData(trackerObjs)) 
-        outdict.update(self._ConvertChapterList(self._getChapterMedia(bdObjs))) 
+        outdict.update(self._ConvertChapterList(self._getChapterMedia(trackerObjs))) 
         outdict["Movie"] = self._movieObj.movieObj
         outdict.update(self._addEnabledData(muxSorter))
         outdict.update(self._addTrackData(muxSorter))
@@ -141,12 +141,12 @@ class Demux():
             p.write(data)
 
    
-    def _getChapterMedia(self,bdObjs):
-        match = bdObjs[0].mediaDir
-        if len(bdObjs) > 1:
+    def _getChapterMedia(self,trackerObjs):
+        match = trackerObjs[0]["sourceDir"]
+        if len(trackerObjs) > 1:
             match = utils.singleSelectMenu(
-                list(map(lambda x: x.mediaDir, bdObjs)), "Which Source Has The proper Chapter File")
-        return list(filter(lambda x: x.mediaDir == match, bdObjs))[0].DictList[self._index]["chapters"]
+                list(map(lambda x: x["sourceDir"], trackerObjs)), "Which Source Has The proper Chapter File")
+        return list(filter(lambda x: x["sourceDir"] == match, trackerObjs))[0]["chapters"]
         
 
     def _subParse(self,muxSorter):
@@ -190,13 +190,11 @@ class Demux():
         muxSorter.addForcedSubs(languages, self._args.audiolang)
         return muxSorter
    
-    def _addSourceData(self,trackObjs):
+    def _addSourceData(self,trackerObjs):
         outdict = {}
         outdict["Sources"]={}
-        for trackerObj in trackObjs:
-            key=trackerObj.showname
-        
-
+        for trackerObj in trackerObjs:
+            key=utils.sourcetoShowName(trackerObj["sourceDir"])
             outdict["Sources"][key] = {}
             outdict["Sources"][key]["outputDir"] = trackerObj["outputDir"]
             outdict["Sources"][key]["sourceDir"] = trackerObj["sourceDir"]
@@ -222,17 +220,9 @@ class Demux():
         output = []
         if len(chapters) == 0:
             return output
-        numoffset = int(chapters[0]["number"])-1
-        timeoffset = utils.convertArrow(chapters[0]["start"], "HH:mm:ss.SSS")
-        for i in range(len(chapters)):
-            chapter = chapters[i]
-            timeVar = chapter["start"]
-            timeVar = utils.convertArrow(timeVar, "HH:mm:ss.SSS")
-            timeVar = utils.subArrowTime(timeVar, timeoffset)
-            timeVar = timeVar.format("HH:mm:ss.SSS")
-            numVar = int(chapter["number"])-numoffset
-            nameString = f"CHAPTER{numVar:02d}NAME=Chapter {numVar:02d}"
-            timeString = f"CHAPTER{numVar:02d}={timeVar}"
+        for chapter in chapters:
+            nameString = f"CHAPTER{chapter['number']:02d}NAME=Chapter {chapter['number']:02d}"
+            timeString = f"CHAPTER{chapter['number']:02d}={chapter['start']}"
             output.append({"time": timeString, "name": nameString})
         return output    
     def _setBdInfoData(self):
