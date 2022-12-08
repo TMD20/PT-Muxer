@@ -8,12 +8,12 @@ from demux.base import Demux
 import mediadata.movieData as movieData
 import tools.paths as paths
 import tools.directory as dir
-import sites.pickers.siteSortPicker as siteSortPicker
 import sites.pickers.siteDataPicker as siteDataPicker
 import mediatools.dgdemux as dgdemux
-
 import mediatools.eac3to as eac3to
 import config
+import tools.logger as logger
+
 
 
 
@@ -26,7 +26,7 @@ class Demux(Demux):
 
     def demux(self):
         with dir.cwd(self.demuxFolder):
-            self._movieObj = movieData.MovieData()
+            self._movieObj = movieData.MovieData("TV")
             self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
             while True:
                 bdObjs = self._setBdInfoData() 
@@ -36,7 +36,7 @@ class Demux(Demux):
                     self.demuxPlaylist(bdObjs,multiSelect=True)
 
                 if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
-                    print("Thank You, make sure to double check episode numbers")
+                    logger.logger.info("Thank You, make sure to double check episode numbers")
 
                     break
                 if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
@@ -48,9 +48,9 @@ class Demux(Demux):
                 Total Iterations:{num2words(offset)}
                 Next Iteration: {num2words(offset+1)}
 
-                The previous playlist selection for every source will be reset
+                Resetting playlist selection
                 """
-                print(message)  
+                logger.logger.print(message)  
         
     def demuxSplitPlayList(self,bdObjs):
         for bdObj in bdObjs:
@@ -79,7 +79,7 @@ class Demux(Demux):
             trackerObjDict={}
             [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].DictList[i]["playlistStreams"]))]
             for bdObj in bdObjs:
-                    print(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]['playlistFile']}")
+                    logger.logger.info(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]['playlistFile']}")
                     streams=bdObj.filterStreams(i,self._args.splitplaylist)
                     for j,stream in enumerate(streams):
                         newFolder = self._getNewFolder(startdex+j)
@@ -91,7 +91,7 @@ class Demux(Demux):
                                 if not self._args.dontconvert:
                                     demuxData.convertFlac(currentTracks)
                                 bdObj.writeBDInfo(i)
-                                print( f"\nExtracting Files From stream:{stream['name']}")
+                                logger.logger.info( f"\nExtracting Files From stream:{stream['name']}")
                                 eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["streamFiles"][0])
                                 trackerObjDict[j]["list"].append(demuxData)
 
@@ -131,7 +131,7 @@ class Demux(Demux):
     
     
     def _dgdemuxSplitPlaylistHelper(self,bdObjs):
-        print("Note in dgdemux Mode all streams will be outputted\n You will have to manually remove any short streams")     
+        logger.print("Note in dgdemux Mode all streams will be outputted\n You will have to manually remove any short streams")     
         #i represent each playlist
         for i in range(len(bdObjs[0].keys)):
             startdex=len(os.listdir(self.demuxFolder))
@@ -140,7 +140,7 @@ class Demux(Demux):
             #dgdemux won't allow individual mt2s processing
             # Each playlist must be processed in batches
             for bdObj in bdObjs:
-                print(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]}")
+                logger.logger.info(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]['playlistFile']}")
                 tempdir=paths.createTempDir()
                 with dir.cwd(tempdir):
                         newFolder=""
@@ -199,6 +199,7 @@ class Demux(Demux):
         options = self._getBDMVs(self._args.inpath)
         self.sources = self.getSources(options,self._args.inpath,self._args.sortpref)
 
+
     def getSources(self,options,inpath, sortpref):
         if len(options) == 0:
             raise RuntimeError("No Sources Directories Found")
@@ -227,11 +228,11 @@ class Demux(Demux):
         return startTime
     def getDemuxFolderHelper(self,sources, outpath):
             if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
-                print("Searching for Prior TV Mode Folders")
+                logger.print("Searching for Prior TV Mode Folders")
                 folders = self._getTVMuxFolders(outpath)
                 if len(folders) == 0:
-                    print("No TV Mode Folders Found To Restore")
-                    print("Creating a new Mux Folder")
+                    logger.print("No TV Mode Folders Found To Restore")
+                    logger.print("Creating a new Mux Folder")
                     return self._createParentDemuxFolder(
                         sources, outpath)
                 else:
@@ -259,29 +260,26 @@ class Demux(Demux):
 
             TV Mode will run multiple times
             for more advanced source selection
-
-            Press Space to add/remove selection
-            Press Enter when Done
             """
             return utils.multiSelectMenu(paths, msg)
         else:
             msg = \
             """
-    Since you selected --sortpref order
-    You will be prompted multiple times to make a selection
-    Pay attention to the order of the list printed out, as this will effect enabled tracks
+            Since you selected --sortpref order
+            You will be prompted multiple times to make a selection
+            Pay attention to the order of the list printed out, as this will effect enabled tracks
 
-    Click on the Source You Want for this Demux
-    For TV Shows you can change the Source(s) Per Episode
+            Source You Want for this Demux
+            For TV Shows you can change the Source(s) Per Episode
 
-    When Finish Click 'I'm Done Selecting Sources'
+            When Finish Click 'I'm Done Selecting Sources'
             """
             list=["I'm done selecting sources","I want to reset my list"]
             list.extend(paths)
             selection=[]
             while True:
-                print(f"Your list thus far\n\n")
-                print("\n".join(selection))
+                logger.print(f"Your list thus far\n\n")
+                logger.print("\n".join(selection))
                 curr_select = utils.singleSelectMenu(list, msg)
                 selection.append(curr_select)
                 if curr_select == "I want to reset my list":
@@ -296,13 +294,13 @@ class Demux(Demux):
         if len(paths) == 0:
             raise RuntimeError("No Sources Directories Found")
         msg = \
-            """
-            Click on the Source You Want for this Demux
+        """
+        Click on the Source You Want for this Demux
 
-            TV Mode will run multiple times
-            for more advanced source selection
+        TV Mode will run multiple times
+        for more advanced source selection
 
-            Press Enter to confirm when Done
+        Press Enter to confirm when Done
             """
         return utils.singleSelectMenu(paths, msg)
 

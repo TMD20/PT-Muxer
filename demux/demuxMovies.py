@@ -9,6 +9,8 @@ from demux.base import Demux
 import mediadata.movieData as movieData
 import tools.paths as paths
 import tools.directory as dir
+import tools.logger as logger
+
 
 
 
@@ -22,7 +24,7 @@ class Demux(Demux):
 
     def demux(self):
         with dir.cwd(self.demuxFolder):
-            self._movieObj = movieData.MovieData()
+            self._movieObj = movieData.MovieData("Movies")
             self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
             while True:
                 bdObjs = self._setBdInfoData() 
@@ -50,7 +52,7 @@ class Demux(Demux):
 
     def getSources(self,options, inpath, sortpref):
         if len(options) == 0:
-            print("No Valid Source Directories Found")
+            logger.info("No Valid Source Directories Found")
             raise RuntimeError("No Sources Directories Found")
         sources = self._addMultiSource(options, sortpref)     
         for i in range(0, len(sources)):
@@ -87,7 +89,7 @@ class Demux(Demux):
             Since you selected --sortpref order
             You will be prompted multiple times to make a selection
             """)
-            print(msg)
+            logger.logger.print(msg)
             list = ["I'm done selecting sources", "I want to reset my list"]
             list.extend(paths)
             selection = []

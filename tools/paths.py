@@ -11,6 +11,8 @@ import itertools
 import config as config
 import tools.general as utils
 import tools.commands as commands
+import tools.logger as logger
+
 def createTempDir():
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
 def getTempDirs():
@@ -77,7 +79,7 @@ def _extractISOProcessor(source,outPath):
             command()
             break
         except Exception as e:
-            print(e)
+            logger.print(e)
             rmSafe(outPath)
             continue
     if os.listdir(outPath) == 0:
@@ -96,7 +98,7 @@ def _ISOBinaryExtractHelper(source, outPath):
             raise Exception("7z Extraction Error")
 
 def _udevilExtractHelper(source, outPath):
-    print("\nTrying Mounting ISO\nThen Extracting")
+    logger.print("\nTrying Mounting ISO\nThen Extracting")
     mountpoint = f"/media/{os.getlogin()}/custom"
     mkdirSafe(f"/media/{os.getlogin()}")
     if os.path.exists(mountpoint):
@@ -119,7 +121,8 @@ def switchPathType(folder):
         return convertPathType(folder,"Windows")
     return convertPathType(folder,"Linux")
 
-def listdir(path):
+def listdir(path=None):
+    path= path or "."
     if os.path.isdir(path):
         paths=list(pathlib.Path(path).iterdir())
         return list(map(lambda x: str(x),paths))

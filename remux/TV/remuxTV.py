@@ -15,6 +15,8 @@ import tools.paths as paths
 import config
 import remux.TV.helpers as TVHelper
 import tools.directory as dir
+import tools.logger as logger
+
 
 
 
@@ -38,12 +40,12 @@ def Remux(args):
             funct = fileNameFuncts[i]
             fileNameList.append(funct())
         if remuxHelper.overwriteIfExists(*fileNameList)==False:
-            print("Keeping Current Files\nGood Bye")
+            logger.print("Keeping Current Files\nGood Bye")
             quit()
-        print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
+        logger.print("\nAll Data is Prepared\nNext Step is Creating the MKV(s)")
         for i in range(len(fileNameList)):
             fileName = fileNameList[i]
-            print(f"Creating this File\n{fileName}")
+            logger.logger.info(f"Creating this File\n{fileName}")
             muxGenerator = muxPicker.pickSite(args.site)
             remuxConfig = remuxConfigs[i]
             TVHelper.ProcessBatch(fileName,
@@ -51,11 +53,11 @@ def Remux(args):
         message = """If the Program made it this far all MKV(s)...
         Should be in the output directory picked \
         Before Closing We will now print off file locations and mediainfo"""
-        print(message)
+        logger.print(message)
         for ele in fileNameList:
-            print(f"New File at {ele}\n")
+            logger.logger.info(f"New File at {ele}\n")
             mediainfo = MediaInfo.parse(ele, output="", full=False)
-            print(f"\n\n{mediainfo}\n\n")
-        print(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
+            logger.print(f"\n\n{mediainfo}\n\n")
+        logger.logger.info(f"As a Reminder the output location is: {os.path.dirname(fileNameList[0])}")
 
 

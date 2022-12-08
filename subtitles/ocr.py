@@ -9,11 +9,14 @@ import tesserocr
 import easyocr
 from PIL import Image
 import langcodes
+import tools.logger as logger
+
 
 
 
 NUM_THREADS = 4
 ocr_queue = queue.Queue()
+
 
 
 def perform_ocr(img):
@@ -24,7 +27,7 @@ def perform_ocr(img):
             return ocr_obj.readtext(img, detail=0)
          
         except queue.Empty:
-            print('Empty exception caught!')
+            logger.logger.debug('Empty exception caught!')
             return None
         finally:
             if ocr_obj is not None:
@@ -36,7 +39,7 @@ def perform_ocr(img):
             ocr_obj.SetImage(img)
             return [ocr_obj.GetUTF8Text()]
         except queue.Empty:
-                print('Empty exception caught!')
+                logger.logger.debug('Empty exception caught!')
                 return None
         finally:
             if ocr_obj is not None:
@@ -59,7 +62,7 @@ def subocr(files,langcode):
             output.append(r)
         ocr_queue.queue.clear()
         elapsed = timer() - start_time
-        print(f"Execution Time {elapsed } seconds")
+        logger.logger.info(f"Execution Time {elapsed } seconds")
         return list(itertools.chain.from_iterable(output))
 def getocr_obj(langcode):
 
