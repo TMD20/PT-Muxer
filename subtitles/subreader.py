@@ -7,6 +7,8 @@ import subtitles.images as subimages
 import subtitles.ocr as subocr
 import tools.paths as paths
 import tools.directory as dir
+import tools.logger as logger
+
 def subreader(tracks, maxLines=None, langs=None, keep=False):
     maxLines = maxLines or 51
     if keep:
@@ -19,14 +21,14 @@ def subreader(tracks, maxLines=None, langs=None, keep=False):
 def ocrHelper(tracks, maxLines=None, langs=None, keep=False):
     for track in tracks:
         subLocation=track.getTrackLocation()
-        print("\n\nAttempting to OCR: ", subLocation)
+        logger.logger.info("\n\nAttempting to OCR: ", subLocation)
         if langs and (track["lang"].lower() not in langs):
             continue
         tmpdir=subimages.getSubImages(subLocation)
         files = os.listdir(tmpdir)
         # if for some reason no images created for OCR
         if len(files) == 0:
-            print("Could Not Generate Images for OCR")
+            logger.logger.info("Could Not Generate Images for OCR",style="bold red")
             continue
         files = list(
             sorted(files, key=lambda x: int(re.findall(r'\d+', x)[0])))
@@ -44,15 +46,15 @@ def ocrHelper(tracks, maxLines=None, langs=None, keep=False):
 
 
 def imagesOnly(tracks):
-    print("Generating Subtitle Images\n\n")
+    logger.logger.info("Generating Subtitle Images\n\n")
     for track in tracks:
         file=track["filename"]
-        print(f'Working on: {file}\n\n')
+        logger.logger.info(f'Working on: {file}\n\n')
 
         newDir=subimages.getSubImages(track.getTrackLocation())
         files = os.listdir(newDir)
         # if for some reason no images created
         if len(files) == 0:
-            print("Could Not Generate Images for OCR")
+            logger.logger.info("Could Not Generate Images for OCR")
             continue
        

@@ -75,7 +75,7 @@ def getRemuxConfigs(remuxConfigPaths):
     remuxConfigs=[]
     for remuxConfigPath in remuxConfigPaths:
         remuxConfig = None
-        print(f"\nPreparing Data for {remuxConfigPath}\n")
+        logger.logger.info(f"\nPreparing Data for {remuxConfigPath}\n")
 
         remuxConfig = None
 

@@ -7,6 +7,7 @@ from pymediainfo import MediaInfo
 from sites.base.siteMuxData import MuxOBj
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
+import tools.logger as logger
 
 
 class Blu(MuxOBj):
@@ -21,7 +22,7 @@ class Blu(MuxOBj):
 
         with open(mediainfoPath, "w") as p:
             p.write(mediainfo)
-        print("\n\nRunning Blutopia Validator\n\n")
+        logger.print("\n\nRunning Blutopia Validator\n\n")
         command = ["/usr/local/bin/mine/remux/bin/python3", os.path.join(utils.getRootDir(), "vdator/vdator/main.py"),
                    mediainfoPath, bdinfo, eac3to]
 

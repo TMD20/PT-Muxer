@@ -17,6 +17,7 @@ import sites.pickers.siteSortPicker as siteSortPicker
 import subtitles.subreader as subreader
 import transcription.voiceRecord as voiceRec
 import tools.directory as dir
+import tools.logger as logger
 
 
 class Demux():
@@ -29,6 +30,7 @@ class Demux():
         self._index=0
         self._success=False
     def __call__(self):
+        logger.setUpLogging(self._args.loglevel)
         self._callFunction()
         self._success=True
      
@@ -65,7 +67,8 @@ class Demux():
                             eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         else:
                             dgdemux.run(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
-                        bdObj.writeBdinfo()
+                        bdObj.writeBDInfo(0)
+
                         muxSorter=self._getMuxSorter(trackerObjs)
                         self._subParse(muxSorter)
                         self._voiceRec(muxSorter)
@@ -135,7 +138,7 @@ class Demux():
         return outdict
     def _writeFinalJSON(self,outdict):
         outputPath = os.path.abspath(os.path.join(".", "output.json"))
-        print(f"Writing to {outputPath}")
+        logger.logger.info(f"Writing to {outputPath}")
         with open(outputPath, "wb") as p:
             data=orjson.dumps(outdict, option=orjson.OPT_INDENT_2)
             p.write(data)
@@ -228,20 +231,21 @@ class Demux():
     def _setBdInfoData(self):
         bdObjs = []
         for source in self.sources:
-            print(f"\n{source}\n")
-            print(f"Setting BDINFO Object for {source}...\n")
+            logger.logger.info(f"\n{source}\n")
+            logger.logger.info(f"Setting BDINFO Object for {source}...\n")
             bdObj = bdinfo.Bdinfo()
             bdObj.setup(source)
             bdObjs.append(bdObj)
         return bdObjs
 
     def _fixArgs(self):
-        print("Normalize audiolang and sublang args")
+        logger.print("Normalize audiolang and sublang args")
         self._args.audiolang = list(map(lambda x: x.lower(),  self._args.audiolang))
         self._args.sublang = list(map(lambda x: x.lower(),  self._args.sublang))
         if self._args.extractprogram=="dgdemux":
-            print("dgdemux does not support track converting\nSetting dontconvert arg to True\n")
+            logger.print("dgdemux does not support track converting\nSetting dontconvert arg to True\n")
             self._args.dontconvert=True
+        logger.logger.debug(str(self._args))
     ##Folder Stuff
     def _getBDMVs(self,path):
         with dir.cwd(path):
@@ -258,7 +262,7 @@ class Demux():
         parentDemux = re.sub(" +", " ", parentDemux)
         parentDemux = re.sub(" ", ".", parentDemux)
         parentDemux = paths.convertPathType(parentDemux, "Linux")
-        print(f"Creating a new Parent Directory for {self._name} ->{parentDemux}")
+        logger.logger.info(f"Creating a new Parent Directory for {self._name} ->{parentDemux}")
         os.mkdir(parentDemux)
         return parentDemux
 
@@ -268,68 +272,6 @@ class Demux():
             os.mkdir(show)
             return paths.convertPathType(os.path.join(parentDir, show), "Linux")
 
-
-
-
-
-# def batchStreams(bdObj, source, args, demuxFolder, movieObj, season):
-#     # outter loop through every playlist
-#     for i in range(len(bdObj.playlistNumList)):
-#         playlistNum = bdObj.playlistNumList[i]
-#         playlistFile = bdObj.playlistFileList[i]
-
-#         print(
-#             f"Processing all streams from playlist number {num2words(playlistNum)}\n")
-
-#         # get quick summary and bdinfo data
-#         bdObj.runbdinfo(playlistNum)
-#         quickSums = bdObj.setQuickSum()
-
-#         # what should we offset the time by based on previous streams lengths
-#         # create a episode folder
-#         offset = len(os.listdir(demuxFolder))
-#         ep = offset+1
-#         for j in range(len(streams)):
-#             demuxData = siteDataPicker.pickSite(args.site)
-#             muxSorter = siteSortPicker.pickSite(args.site)
-#             stream = streams[j]
-#             # remove the folder if the source folder
-#             if args.splitplaylist < float("inf"):
-#                 if demuxHelper.setStreamsLength([stream]) < args.splitplaylist:
-#                     message = \
-#                         f"""
-#                     The length of the stream: {stream}
-#                     is less then the min that you picked
-#                     """
-#                     print(message)
-#                     os.chdir(demuxFolder)
-#                     continue
-
-#             newFolder = os.path.join(demuxFolder, str(ep))
-#             paths.mkdirSafe(newFolder)
-#             os.chdir(newFolder)
-#             print(f"Creating a new episode folder at {newFolder}\n")
-
-#             # create a source folder
-#             output = paths.createChildDemuxFolder(os.getcwd(), source)
-#             print(f"\nCreating a new source folder at {output}")
-#             os.chdir(output)
-#             show = utils.sourcetoShowName(source)
-#             path = os.path.join(output, "output_logs", f"BDINFO.{show}.txt")
-
-#             # copy bdinfo to folder
-#             print(f"\nParsing STREAM: {stream}")
-#             bdObj.writeBdinfo(path)
-
-#             currentTracks = demuxData.addTracks(quickSums, playlistNum, playlistFile,
-#                                                 [stream], source, output)
-#             if not args.dontconvert:
-#                 demuxData.convertFlac(currentTracks, output)
-
-#             tools.extractTracks(demuxData, stream=True)
-#             tools.sortTracks(muxSorter, demuxData, movieObj.movieObj, args)
-#             tools.machineReader(muxSorter, args, movieObj.movieObj)
-#             
 
 
 

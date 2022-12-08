@@ -9,6 +9,8 @@ import mediadata.movieData as movieData
 import tools.general as utils
 import config
 import tools.paths as paths
+import tools.logger as logger
+
 
 
 def getRemuxConfigs(path):
@@ -26,9 +28,6 @@ def getRemuxConfigs(path):
     
     These should be either one Movie or one Show
     Batching of Multiple shows or Movies Not supported
-
-    Press Space to add/remove selection
-    When Done Press Enter
     """
 
     return utils.multiSelectMenu(message=message, items=demuxList)
@@ -87,16 +86,16 @@ def writeXMLTV(imdb, tmdb, title, year, season, episode):
 
 def checkMissing(remuxConfig):
     if utils.validateFiles([remuxConfig["Tracks_Details"]["Sub"][x]["filename"] for x in remuxConfig["Enabled_Tracks"]["Sub"]]) != None:
-        print("At Least one subtitle file is missing\nCheck file key for all enabled subs tracks\nSkipping to Next Item")
+        logger.print("At Least one subtitle file is missing\nCheck file key for all enabled subs tracks\nSkipping to Next Item",style="bold red")
         return True
     if utils.validateFiles([remuxConfig["Tracks_Details"]["Audio"][x]["filename"] for x in remuxConfig["Enabled_Tracks"]["Audio"]]) != None:
-        print("At Least one audio file is missing\nCheck file key for all enabled audio tracks\nSkipping to Next Item")
+        logger.print("At Least one audio file is missing\nCheck file key for all enabled audio tracks\nSkipping to Next Item",style="bold red")
         return True
     if utils.validateFiles([remuxConfig["Tracks_Details"]["Video"][x]["filename"] for x in remuxConfig["Enabled_Tracks"]["Video"]]) != None:
-        print("At Least one video file is missing\nCheck file key for all enabled video tracks\nSkipping to Next Item")
+        logger.print("At Least one video file is missing\nCheck file key for all enabled video tracks\nSkipping to Next Item",style="bold red")
         return True
     if len([key for key in remuxConfig["Sources"]]) == 0:
-        print("No Sources Found For this item\nSkipping to Next Item")
+        logger.print("No Sources Found For this item\nSkipping to Next Item")
         return True
     return False
 

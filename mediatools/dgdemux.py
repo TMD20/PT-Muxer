@@ -7,6 +7,8 @@ import tools.commands as commands
 import tools.paths as paths
 import tools.directory as dir
 import tools.general as utils
+import tools.logger as logger
+
 
 
 
@@ -25,6 +27,10 @@ def run(tracks,source, playlistFile,ep=False):
 def _runEP(tracks,source, playlistFile):
     playlistLocation=getPlaylistLocation(source,playlistFile)
     dgDemuxTracks=getTracks(playlistLocation)
+    logger.logger.debug(f"Checking dgdemux track info")
+    logger.logger.debug(f"dgDemux Tracks Length:{len(dgDemuxTracks)}")
+    logger.logger.debug(f"bdinfo track length:{len(tracks)}")
+    logger.logger.debug(f"Absolute Value Dif:{abs(len(dgDemuxTracks)-len(tracks))}")
     if abs(len(dgDemuxTracks)-len(tracks))>1:
         raise RuntimeError("Track Lengths are Missmatched")
     dgDex=0
@@ -51,6 +57,9 @@ def _runEP(tracks,source, playlistFile):
 def _runNormal(tracks,source, playlistFile):
     playlistLocation=getPlaylistLocation(source,playlistFile)
     dgDemuxTracks=getTracks(playlistLocation)
+    logger.logger.debug(f"dgDemux Tracks Length:{len(dgDemuxTracks)}")
+    logger.logger.debug(f"bdinfo track length:{len(tracks)}")
+    logger.logger.debug(f"Absolute Value Dif:{abs(len(dgDemuxTracks)-len(tracks))}")
     if abs(len(dgDemuxTracks)-len(tracks))>1:
         raise RuntimeError("Track Lengths are Missmatched")
     dgDex=0
@@ -94,14 +103,19 @@ def getTracks(playlistLocation):
         if status !=0:
             raise RuntimeError("dgdemux had an Error")       
     outputList=output.split("\n")
-    outputList=list(filter(lambda x: re.search("([0-9]{4}:|Chapters)",x),outputList))
+    logger.logger.debug(f"outputList: {outputList}")
+    outputList=list(filter(lambda x: re.search("([0-9]{2}[0-9a-z]{2}:|Chapters)",x,re.IGNORECASE),outputList))
+    logger.logger.debug(f"Filtered outputList: {outputList}")
+
     outputList=list(map(lambda x:re.sub(":.*","",x),outputList))
+    logger.logger.debug(f"output Codes: {outputList}")
+
     return outputList
 
 
 def _handleChapter(ele,playlistLocation):
     tempDir=paths.createTempDir()
-    print(f"Processing {os.path.abspath('chapter.txt')}\n")
+    logger.logger.debug(f"Processing {os.path.abspath('chapter.txt')}\n")
 
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
@@ -114,10 +128,11 @@ def _handleChapter(ele,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
+    logger.logger.debug(f"dgdemux tempdir files:{files}")
     os.replace(paths.listdir(tempDir)[0],"chapter.txt")
 def _handleChapterEP(ele,playlistLocation):
     tempDir=paths.createTempDir()
-    print(f"batching chapter.txt")
+    logger.logger.debug(f"batching chapter.txt")
 
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
@@ -130,13 +145,15 @@ def _handleChapterEP(ele,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
+    
     for index,ele in enumerate(paths.listdir(tempDir)):
+        logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
         #create newpath with index
         with dir.cwd(os.path.join(".",str(index))):
             os.replace(paths.listdir(tempDir)[index],"chapter.txt")
 def _handleNormal(ele,newFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    print(f"Processing {os.path.abspath(newFileName)}\n")
+    logger.logger.debug(f"Processing {os.path.abspath(newFileName)}\n")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele]])))
@@ -148,10 +165,12 @@ def _handleNormal(ele,newFileName,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
+    logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
+
     os.replace(paths.listdir(tempDir)[0],newFileName)    
 def _handleNormalEP(ele,newFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    print(f"Batching {newFileName}")
+    logger.logger.debug(f"Batching {newFileName}")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele,"-ep"]])))
@@ -165,12 +184,13 @@ def _handleNormalEP(ele,newFileName,playlistLocation):
                 raise RuntimeError("dgdemux had an Error")
     for index,ele in enumerate(paths.listdir(tempDir)):
         #create newpath with index
+        logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
         with dir.cwd(os.path.join(".",str(index))):
             os.replace(ele,newFileName)       
    
 def _handleCompat(ele,newNormalFileName,newCompatFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    print(f"Processing {os.path.abspath(newNormalFileName)} and {os.path.abspath(newCompatFileName)}\n")
+    logger.logger.debug(f"Processing {os.path.abspath(newNormalFileName)} and {os.path.abspath(newCompatFileName)}\n")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele]])))
@@ -182,13 +202,14 @@ def _handleCompat(ele,newNormalFileName,newCompatFileName,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
-    files=list(sorted(paths.listdir(),key=os.path.getsize))
+    files=list(sorted(paths.listdir(tempDir),key=os.path.getsize,reverse=True))
+    logger.logger.debug(f"dgdemux tempdir files:{files}")
     os.replace(files[0],newNormalFileName)    
     os.replace(files[1],newCompatFileName)  
 
 def _handleCompatEP(ele,newNormalFileName,newCompatFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    print(f"Batching {newNormalFileName} and {newCompatFileName}")
+    logger.logger.debug(f"Batching {newNormalFileName} and {newCompatFileName}")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele,"-ep"]])))
@@ -202,7 +223,7 @@ def _handleCompatEP(ele,newNormalFileName,newCompatFileName,playlistLocation):
                 raise RuntimeError("dgdemux had an Error")
     thd=paths.search(tempDir,"(\.thd)")
     compat=paths.search(tempDir,"",ignore=["\.thd"])
-    
+    logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
 
     for index in range(len(thd)):
         #create newpath with index

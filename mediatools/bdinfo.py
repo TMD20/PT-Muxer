@@ -8,6 +8,8 @@ import shutil
 import tools.general as utils
 import tools.commands as commands
 import tools.paths as paths
+import tools.logger as logger
+
 
 
 class Bdinfo():
@@ -82,7 +84,7 @@ class Bdinfo():
     def generateData(self,i):
         key=self._playlistKeys[i]
         playlistNum = key
-        print(f"Generating Data for {self._mediaDir}\nPlaylist:{playlistNum}\n")  
+        logger.logger.info(f"Generating Data for {self._mediaDir}\nPlaylist:{playlistNum}\n")  
         self._setBdInfo(playlistNum)
         self._setQuickSum(playlistNum)
         self._setStreams(playlistNum) 

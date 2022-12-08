@@ -1,7 +1,6 @@
 import os
 import re
 import functools
-import glob
 import pathlib
 import sys
 import textwrap
@@ -15,13 +14,15 @@ import arrow
 from guessit import guessit
 
 import tools.paths as paths
+import tools.logger as logger
+
 
 def convertArrow(input, parse=None):
     if parse:
         return arrow.get(input, parse)
     return arrow.get(input)
 def signal_handler(sig, frame):
-    print('You pressed Ctrl+C!')
+    logger.print('You pressed Ctrl+C!')
     sys.exit(0)
 
 def subArrowTime(large, small):
@@ -106,7 +107,12 @@ def rawSelectMenu(items, message):
 
 
 def multiSelectMenu(items, message):
-    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    instructions=\
+        """
+        Press Space to add/remove selection
+        Press Enter when Done
+        """
+    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n{instructions}\n"), choices=items).execute()
 
 
 def textEnter(message, default=None):
@@ -163,3 +169,4 @@ def getShell():
         return None
 def rmDir(path):
     shutil.rmtree(path)
+

@@ -14,7 +14,7 @@ def getSubImages(supFile):
         for image in r.imageList:
             i=i+1
             newImage=os.path.join(outputDir,f"image{i}.png")
-            print(f"Saving {newImage}\n")
+            logger.logger.debug(f"Saving {newImage}\n")
             image["data"].save(newImage)
     return outputDir
 

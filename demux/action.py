@@ -9,6 +9,8 @@ import tools.general as utils
 import config as config
 import tools.paths as paths
 import tools.exit as exit
+import tools.logger as logger
+
 
 
 
@@ -17,10 +19,10 @@ def endProcess():
     if demuxObj==None:
         None
     elif demuxObj.demuxFolder!=None and demuxObj.success==False:
-        print("Program Forced to stop\n")
+        logger.logger.info("Program Forced to stop\n")
         if utils.singleSelectMenu(["Yes","No"],f"Do you want to delete the current Mux Folder\n{demuxObj.demuxFolder}?")=="Yes":
                 utils.rmDir(demuxObj.demuxFolder)
-    print("Good Bye")
+    logger.logger.info("Good Bye\n")
     quit()
 
 
@@ -40,5 +42,5 @@ def demux(args):
                 demuxObj=demuxTV.Demux(args)
                 demuxObj()
         except Exception as E:
-            print(E)
+            logger.print(E,style="bold red")
 

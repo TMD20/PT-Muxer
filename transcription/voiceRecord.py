@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
-
-import logging
 from pathlib import Path
 
 import transcription.transcriper as transcriberClass
-
+import tools.logger as logger
 
 
 def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
-    logging.getLogger().setLevel("INFO")
     maxLines=maxLines or 51
  
 
     for track in tracks:
-        print("\n\nAttempting to Transcription of: ", track["filename"])
+        logger.logger.info("\n\nAttempting Transcription of: ", track["filename"])
         if langs and (track["lang"].lower() not in langs):
             continue
         langcode={

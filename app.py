@@ -4,6 +4,7 @@ import os
 
 import demux.action as demuxAction
 import remux.remux as remuxAction
+import tools.general as utils
 
 
 
@@ -52,6 +53,9 @@ def main():
                           help="During TV Mode extract each mt2s as seperate episode")
     parser_d.add_argument('-ep', '--extractprogram',choices=["eac3to","dgdemux"],default="eac3to",required=False,
                           help="Which Program for extracting raw files")
+    parser_d.add_argument('-l', '--loglevel',choices=["WARNING","DEBUG","INFO"],default="INFO",required=False,
+                          help="What Level of logs")
+   
     parser_d.set_defaults(func=demux)
 
     parser_r = subparsers.add_parser(
@@ -85,7 +89,11 @@ def main():
     args.func(args)
 
 
-if __name__ == "__main__":
+
+
+
+
+if __name__ == "__main__":   
     main()
 
  

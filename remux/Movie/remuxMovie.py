@@ -9,6 +9,8 @@ import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
 import remux.Movie.helpers as MovieHelper
 import tools.directory as dir
+import tools.logger as logger
+
 
 
 
@@ -24,7 +26,7 @@ def Remux(args):
         raise RuntimeError("You Must Pick at list one Config")
   
     with dir.cwd(args.outpath):
-        print(f"\nPreparing Data for {remuxConfigPath}\n")
+        logger.logger.info(f"\nPreparing Data for {remuxConfigPath}\n")
         remuxConfig = None
 
         with open(remuxConfigPath, "r") as p:
@@ -40,17 +42,17 @@ def Remux(args):
         fileName = muxGenerator.getFileName(
             remuxConfig, args.group, title, year, args.skipnamecheck)
         if remuxHelper.overwriteIfExists(fileName) == False:
-            print("Keeping Current Files\nGood Bye")
+            logger.print("Keeping Current Files\nGood Bye")
             quit()
 
         MovieHelper.ProcessBatch(fileName, remuxConfig, muxGenerator, args.outargs)
         message = """If the Program made it this far the Movie MKV...
         Should be in the output directory picked \
         # Before Closing We will now print off file location and mediainfo"""
-        print(message)
+        logger.print(message)
         mediainfo = MediaInfo.parse(fileName, output="", full=False)
-        print(f"\n\n{mediainfo}\n\n")
-        print(f"As a Reminder the output location: {fileName}")
+        logger.print(f"\n\n{mediainfo}\n\n")
+        logger.print(f"As a Reminder the output location: {fileName}")
 
 
 

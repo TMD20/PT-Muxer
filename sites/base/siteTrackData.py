@@ -26,11 +26,14 @@ class siteTrackData(sourceData):
 
 
     def addTracks(self,bdinfo,playlistNum,streams=None):
+        bdObjDict=bdinfo.Dict[playlistNum]
         if streams==None:
             streams=bdObjDict["playlistStreams"]
         self._setUp(playlistNum, bdinfo, streams)
-        bdObjDict=self._bdObj.Dict[playlistNum]
+
         quicksum=bdObjDict["quickSum"]
+   
+        
 
         self.updateRawTracksDict(quicksum)
         current_tracks = self._tracks

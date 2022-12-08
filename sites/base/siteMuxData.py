@@ -8,6 +8,8 @@ import langcodes
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import tools.commands as commands
+import tools.logger as logger
+
 
 
 class MuxOBj():
@@ -196,7 +198,7 @@ class MuxOBj():
             command = list(itertools.chain.from_iterable(
                 [commands.mkvmerge(), ["--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
         commandStr = " ".join(command)
-        print(f"Running This Command\n{commandStr}")
+        logger.logger.debug(f"Running This Command\n{commandStr}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
