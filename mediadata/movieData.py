@@ -1169,7 +1169,7 @@ class MovieData():
     @functools.lru_cache
     def _getMovieList(self, title):
         """
-        Retrives a list of Possible Matches via wikepedia title search
+        Retrives a list of Possible Matches via title search
 
         Parameters
         ----------
