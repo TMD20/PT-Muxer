@@ -3,15 +3,23 @@ You can find the current version at
 
 https://ptmuxer.gitbook.io/api-docs/
 
+Most if not all the features of the main branch should be implemented
+
+
 dgDemux Branch 
-* Has some upcoming changes 
-* Rewrite of code
-* new --extractprogram arg to handle dgdemux 
-* eac3to extractprogram works
-* dgdemux support almost done
-    need to confirm tracks match with eac3to output
-* splitplaylist mode still in progress
-* windows support still in progress
+* Refactor of code
+* Support for dgdemux
+* added logging
+* added failsafes for clearing program files
+* added native subimage processing
+
+
+
+Still to do
+* Confirm tracks match
+* Test multiple sources
+* Probably revamp remuxer
+    - Thankfully most of the heavy work is done by the demux side
 
 
 
