@@ -1,9 +1,8 @@
 import string
-import requests
 import re
-import json
 import os
 import functools
+import traceback
 
 import tools.general as utils
 from bs4 import BeautifulSoup
@@ -844,6 +843,7 @@ class MovieData():
         try:
             return req.json()["data"]
         except Exception as e:
+            logger.print(traceback.format_exc(),style="white")
             logger.print(e,style="bold red")
             return e
 

@@ -1,12 +1,12 @@
 import tempfile
 import re
 import os
-import glob
 import pathlib
 import subprocess
 import functools
 import shutil
 import itertools
+import traceback
 
 import config as config
 import tools.general as utils
@@ -79,6 +79,7 @@ def _extractISOProcessor(source,outPath):
             command()
             break
         except Exception as e:
+            logger.print(traceback.format_exc(),style="white")
             logger.print(e)
             rmSafe(outPath)
             continue

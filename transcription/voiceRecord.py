@@ -3,6 +3,7 @@ from pathlib import Path
 
 import transcription.transcriper as transcriberClass
 import tools.logger as logger
+import traceback
 
 
 def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
@@ -27,7 +28,9 @@ def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
 
         try:
             transcriber = transcriberClass.Transcriber(model,model_name,langcode)
-        except:
+        except Exception as E:
+            logger.print(traceback.format_exc(),style="white")
+            logger.print(E)
             continue
         
         task_list = [Path(track.getTrackLocation())]
