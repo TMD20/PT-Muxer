@@ -1,6 +1,4 @@
-import signal
-import re
-import os
+import traceback
 
 import tools.general as utils
 import demux.demuxMovies as demuxMovies
@@ -42,5 +40,6 @@ def demux(args):
                 demuxObj=demuxTV.Demux(args)
                 demuxObj()
         except Exception as E:
+            logger.print(traceback.format_exc(),style="white")
             logger.print(E,style="bold red")
 
