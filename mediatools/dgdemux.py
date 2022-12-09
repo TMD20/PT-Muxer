@@ -75,7 +75,7 @@ def _runNormal(tracks,source, playlistFile):
         if re.search("(\.dts$)",normalTrack,re.IGNORECASE):
             trackDex=trackDex+1
         elif re.search("(\.thd$)",normalTrack,re.IGNORECASE):
-            compatTrack=normalTrack=tracks[trackDex+1]["filename"]
+            compatTrack=tracks[trackDex+1]["filename"]
             _handleCompat(ele,normalTrack,compatTrack,playlistLocation)
             dgDex=dgDex+1 
             trackDex=trackDex+2 
