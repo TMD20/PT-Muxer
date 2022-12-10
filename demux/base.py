@@ -156,7 +156,7 @@ class Demux():
         
     def _filterTracks(self,tracks):
         if self._args.extractprogram=="eac3to":
-            return
+            return tracks
         return list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks))
         
     def _subParse(self,muxSorter):
