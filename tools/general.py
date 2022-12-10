@@ -98,8 +98,8 @@ def getIntInput(string, maxVal=float("inf")):
     ).execute())
 
 
-def singleSelectMenu(items, message):
-    return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+def singleSelectMenu(items, message,default=None):
+    return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items,default=default).execute()
 
 
 def rawSelectMenu(items, message):

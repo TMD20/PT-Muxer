@@ -31,6 +31,8 @@ def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=T
         globSearch="*/"
     paths = list(map(lambda x: str(x),list(pathlib.Path(path).glob(globSearch))))
     filtered=_excludeHelper(paths,dir,ignore)
+
+    output=None
     if case:
         return list(filter(lambda x:searchMethod(query,x),filtered))
     else:
@@ -133,3 +135,8 @@ def copytree(source,dest):
     shutil.copytree(source,dest,dirs_exist_ok=True)
 def move(source,dest):
     shutil.move(source,dest)   
+def getParentDir(path,level=0):
+    parents=pathlib.Path(path).parents
+    if level>=len(parents):
+        return
+    return str(parents[level])

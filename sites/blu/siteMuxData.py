@@ -8,6 +8,7 @@ from sites.base.siteMuxData import MuxOBj
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import tools.logger as logger
+import config
 
 
 class Blu(MuxOBj):
@@ -23,7 +24,7 @@ class Blu(MuxOBj):
         with open(mediainfoPath, "w") as p:
             p.write(mediainfo)
         logger.print("\n\nRunning Blutopia Validator\n\n")
-        command = ["/usr/local/bin/mine/remux/bin/python3", os.path.join(utils.getRootDir(), "vdator/vdator/main.py"),
+        command = ["/usr/local/bin/mine/remux/bin/python3", os.path.join(config.root_dir, "vdator/vdator/main.py"),
                    mediainfoPath, bdinfo, eac3to]
 
         with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:

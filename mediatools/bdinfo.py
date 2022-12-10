@@ -94,7 +94,7 @@ class Bdinfo():
     
     def writeBDInfo(self, index,path=None):
         if path==None:
-            path=os.path.join(".","output_logs",utils.sourcetoShowName(self._mediaDir))
+            path=os.path.join(".","output_logs",f"{utils.sourcetoShowName(self._mediaDir)}.BDINFO")
         paths.mkdirSafe(path)
         file = open(path, "w")
         file.write(self.DictList[index]["bdinfo"])

@@ -35,10 +35,9 @@ def demux(args):
         try:
             if utils.singleSelectMenu(options, "What Type of Media are you Demuxing?") == "Movie":
                 demuxObj=demuxMovies.Demux(args)
-                demuxObj()
             else:   
                 demuxObj=demuxTV.Demux(args)
-                demuxObj()
+            demuxObj()
         except Exception as E:
             logger.print(traceback.format_exc(),style="white")
             logger.print(E,style="bold red")
