@@ -3,10 +3,11 @@ import itertools
 import subprocess
 import re
 
+import langcodes
+
 import tools.commands as commands
 import tools.paths as paths
 import tools.directory as dir
-import tools.general as utils
 import tools.logger as logger
 
 
@@ -24,73 +25,80 @@ def run(tracks,source, playlistFile,ep=False):
 
 
 
-def _runEP(tracks,source, playlistFile):
-    playlistLocation=getPlaylistLocation(source,playlistFile)
-    dgDemuxTracks=getTracks(playlistLocation)
-    logger.logger.debug(f"Checking dgdemux track info")
-    logger.logger.debug(f"dgDemux Tracks Length:{len(dgDemuxTracks)}")
-    logger.logger.debug(f"bdinfo track length:{len(tracks)}")
-    logger.logger.debug(f"Absolute Value Dif:{abs(len(dgDemuxTracks)-len(tracks))}")
-    if abs(len(dgDemuxTracks)-len(tracks))>1:
-        raise RuntimeError("Track Lengths are Missmatched")
-    dgDex=0
-    trackDex=0
-    while dgDex<len(dgDemuxTracks) and trackDex<len(tracks):
-        ele=dgDemuxTracks[dgDex]
-
-        if re.search("Chapter",ele):
-            _handleChapterEP(ele,playlistLocation)
-            dgDex=dgDex+1
-            continue
-        normalTrack=tracks[trackDex]["filename"]
-        if re.search("(\.dts$)",normalTrack,re.IGNORECASE):
-            trackDex=trackDex+1
-        elif re.search("(\.thd$)",normalTrack,re.IGNORECASE):
-            compatTrack=tracks[trackDex+1]["filename"]
-            _handleCompatEP(ele,normalTrack,compatTrack,playlistLocation)
-            dgDex=dgDex+1 
-            trackDex=trackDex+2 
-        else:
-            _handleNormalEP(ele,normalTrack,playlistLocation)
-            dgDex=dgDex+1
-            trackDex=trackDex+1
 def _runNormal(tracks,source, playlistFile):
-    playlistLocation=getPlaylistLocation(source,playlistFile)
-    dgDemuxTracks=getTracks(playlistLocation)
-    logger.logger.debug(f"dgDemux Tracks Length:{len(dgDemuxTracks)}")
-    logger.logger.debug(f"bdinfo track length:{len(tracks)}")
-    logger.logger.debug(f"Absolute Value Dif:{abs(len(dgDemuxTracks)-len(tracks))}")
-    if abs(len(dgDemuxTracks)-len(tracks))>1:
+    playlistLocation=_getPlaylistLocation(source,playlistFile)
+    dgDemuxTrackOutPut=_getDgDemuxTrackInfo(playlistLocation)
+    dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
+    dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
+
+    filteredBDInfo=list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks)) 
+    normalTracks=list(filter(lambda x:x["compat"]==False,filteredBDInfo))
+    compatTracks=list(filter(lambda x:x["compat"]==True,filteredBDInfo))
+    _logHelper(normalTracks,compatTracks,dgDemuxTracks,_getChapterTrackInfo(dgDemuxTrackOutPut))
+    _verifyTracksCodec(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
+    _verifyTracksLang(normalTracks,_getTrackInfo(dgDemuxTrackOutPut))
+    _verifyTracksLength(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
+    dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
+    dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
+    if len(dgDemuxTracks)-len(normalTracks)>0:
         raise RuntimeError("Track Lengths are Missmatched")
-    dgDex=0
-    trackDex=0
-    while dgDex<len(dgDemuxTracks) and trackDex<len(tracks):
-        ele=dgDemuxTracks[dgDex]
-        
-        if re.search("Chapter",ele):
-            _handleChapter(ele,playlistLocation)
-            dgDex=dgDex+1
-            continue
-        normalTrack=tracks[trackDex]["filename"]
-        if re.search("(\.dts$)",normalTrack,re.IGNORECASE):
+    trackDex=0 
+    compatDex=0    
+    while trackDex<len(dgDemuxTracks):
+        if re.search("(\.thd$)",normalTracks[trackDex]["filename"],re.IGNORECASE):
+            _handleCompat(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],compatTracks[compatDex]["filename"],playlistLocation)
             trackDex=trackDex+1
-        elif re.search("(\.thd$)",normalTrack,re.IGNORECASE):
-            compatTrack=tracks[trackDex+1]["filename"]
-            _handleCompat(ele,normalTrack,compatTrack,playlistLocation)
-            dgDex=dgDex+1 
-            trackDex=trackDex+2 
+            compatDex=compatDex+1
         else:
-            _handleNormal(ele,normalTrack,playlistLocation)
-            dgDex=dgDex+1
+            _handleNormal(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],playlistLocation)
             trackDex=trackDex+1
+
+    for index,track in enumerate(dgDemuxChapters):
+        _handleChapter(track,playlistLocation)    
     
 
-def getPlaylistLocation(source,playlistFile):
+
+
+       
+def _runEP(tracks,source, playlistFile):
+    playlistLocation=_getPlaylistLocation(source,playlistFile)
+    dgDemuxTrackOutPut=_getDgDemuxTrackInfo(playlistLocation)
+    dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
+    dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
+
+    filteredBDInfo=list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks)) 
+    normalTracks=list(filter(lambda x:x["compat"]==False,filteredBDInfo))
+    compatTracks=list(filter(lambda x:x["compat"]==True,filteredBDInfo))
+    _logHelper(normalTracks,compatTracks,dgDemuxTracks,_getChapterTrackInfo(dgDemuxTrackOutPut))
+    _verifyTracksCodec(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
+    _verifyTracksLang(normalTracks,_getTrackInfo(dgDemuxTrackOutPut))
+    _verifyTracksLength(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
+
+    dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
+    dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
+    if len(dgDemuxTracks)-len(normalTracks)>0:
+        raise RuntimeError("Track Lengths are Missmatched")
+    trackDex=0 
+    compatDex=0    
+    while trackDex<len(dgDemuxTracks):
+        if re.search("(\.thd$)",normalTracks[trackDex]["filename"],re.IGNORECASE):
+            _handleCompatEP(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],compatTracks[compatDex]["filename"],playlistLocation)
+            trackDex=trackDex+1
+            compatDex=compatDex+1
+        else:
+            _handleNormalEP(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],playlistLocation)
+            trackDex=trackDex+1
+
+    for index,track in enumerate(dgDemuxChapters):
+        _handleChapterEP(track,playlistLocation)    
+    
+
+def _getPlaylistLocation(source,playlistFile):
     playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
     if len(playlistFiles)>0:
         return playlistFiles[0]
     return ""
-def getTracks(playlistLocation):
+def _getDgDemuxTrackInfo(playlistLocation):
     output=""
     command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation]])))
@@ -102,16 +110,25 @@ def getTracks(playlistLocation):
         status = p.returncode
         if status !=0:
             raise RuntimeError("dgdemux had an Error")       
+    return output
+def _getChapterTrackInfo(output):
     outputList=output.split("\n")
     logger.logger.debug(f"outputList: {outputList}")
-    outputList=list(filter(lambda x: re.search("([0-9]{2}[0-9a-z]{2}:|Chapters)",x,re.IGNORECASE),outputList))
-    logger.logger.debug(f"Filtered outputList: {outputList}")
+    filtered=list(filter(lambda x: re.search("Chapters",x,re.IGNORECASE),outputList))
+    logger.logger.debug(f"Filtered Chapters List: {filtered}")
+    return filtered
 
-    outputList=list(map(lambda x:re.sub(":.*","",x),outputList))
-    logger.logger.debug(f"output Codes: {outputList}")
 
-    return outputList
-
+def _getTrackInfo(output):
+    outputList=output.split("\n")
+    logger.logger.debug(f"outputList: {outputList}")
+    filtered=list(filter(lambda x: re.search("[0-9]{2}[0-9a-z]{2}:",x,re.IGNORECASE),outputList))
+    logger.logger.debug(f"Filtered Track List: {filtered}")
+    return filtered
+def _getFilterOutput(output):
+    filtered=list(map(lambda x:re.sub(":.*","",x),output))
+    logger.logger.debug(f"output Codes: {filtered}")
+    return filtered
 
 def _handleChapter(ele,playlistLocation):
     tempDir=paths.createTempDir()
@@ -128,7 +145,7 @@ def _handleChapter(ele,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
-    logger.logger.debug(f"dgdemux tempdir files:{files}")
+    logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
     os.replace(paths.listdir(tempDir)[0],"chapter.txt")
 def _handleChapterEP(ele,playlistLocation):
     tempDir=paths.createTempDir()
@@ -232,10 +249,75 @@ def _handleCompatEP(ele,newNormalFileName,newCompatFileName,playlistLocation):
             os.replace(compat[index],newCompatFileName)    
 
 
+def _verifyTracksLength(normalTracks,compatTracks,dgDemuxTracks):
+    if len(list(filter(lambda x:re.search("thd",x,re.IGNORECASE),dgDemuxTracks)))!=len(compatTracks):
+        raise Exception("dgdemux compatability track count verification Error")
+    if len(dgDemuxTracks)!=len(normalTracks):
+        raise Exception("dgdemux track count verification Error")
 
-   
+def _verifyTracksCodec(normalTracks,compatTracks,dgDemuxTracks):
+    if len(list(filter(lambda x:re.search("thd",x,re.IGNORECASE),dgDemuxTracks)))!=len(compatTracks):
+        raise Exception("dgdemux compatability track count verification Error")
+    if len(dgDemuxTracks)!=len(normalTracks):
+        raise Exception("dgdemux track count verification Error")
     
+    for i in range(len(dgDemuxTracks)):
+        dgDemuxTrack=dgDemuxTracks[i]
+        bdTrack=normalTracks[i]["bdinfo_title"]
+        if re.search("hevc",dgDemuxTrack,re.IGNORECASE) and re.search("hevc",bdTrack,re.IGNORECASE):
+            continue
+        elif re.search("thd",dgDemuxTrack,re.IGNORECASE) and re.search("truehd",bdTrack,re.IGNORECASE):
+            continue
+        elif re.search("ac3",dgDemuxTrack,re.IGNORECASE) and re.search("dolby digital audio",bdTrack,re.IGNORECASE):
+            continue
+        elif re.search("dts hdma",dgDemuxTrack,re.IGNORECASE) and re.search("dts-hd master audio",bdTrack,re.IGNORECASE):
+            continue  
+        elif re.search("pgs",dgDemuxTrack,re.IGNORECASE) and re.search("subtitle",bdTrack,re.IGNORECASE):
+            continue       
+        else:
+            message=\
+           f"""
+            Track codec error
+            dgdemux Track:{dgDemuxTrack}
+            bdInfo Track:{bdTrack}
+            """
+            raise Exception(message)
+
+
+def _verifyTracksLang(normalTracks,dgDemuxTracks):
+    dgFilteredTracks=list(filter(lambda x:re.search("video",x,re.IGNORECASE)==None,dgDemuxTracks))
+    normalTrackFiltered=list(filter(lambda x:re.search("video",x["bdinfo_title"],re.IGNORECASE)==None,normalTracks))
+    for i in range(len(dgFilteredTracks)):
+        dgDemuxTrack=re.search("\[([a-z]{3})\]", dgFilteredTracks[i],re.IGNORECASE)
+        bdTrack=normalTrackFiltered[i]["langcode"]
+        if langcodes.standardize_tag(dgDemuxTrack.group(1))!=langcodes.standardize_tag(bdTrack):
+            message=\
+           f"""
+            Track lang code error
+
+            dgdemux Track:{dgFilteredTracks[i]}
+            dgdemux Track Code:{langcodes.standardize_tag(dgDemuxTrack.group(1))}
+            bdInfo Track:{normalTrackFiltered[i]["langcode"]}
+            bdInfo Track Code:{langcodes.standardize_tag(bdTrack)}
+            """
+            raise Exception(message)
+
+                       
     
+def _logHelper(normalTracks,compatTracks,dgDemuxTracks,dgDemuxChapters):
+    logger.logger.debug(f"Checking dgdemux track info")
+    logger.logger.debug(f"dgDemux Tracks:{dgDemuxTracks}")
+    logger.logger.debug(f"dgDemux Tracks Length:{len(dgDemuxTracks)}")
+    logger.logger.debug(f"bdinfo Tracks:{normalTracks}")
+    logger.logger.debug(f"bdinfo Tracks Length:{len(normalTracks)}")
+    logger.logger.debug(f"Absolute Value Dif:{abs(len(dgDemuxTracks)-len(normalTracks))}")
+    logger.logger.debug(f"dgDemux Chapter Tracks:{dgDemuxChapters}")
+    logger.logger.debug(f"dgDemux Chapter Tracks Length:{len(dgDemuxChapters)}")
+    logger.logger.debug(f"bdinfo Compatibility Tracks:{compatTracks}")
+    logger.logger.debug(f"dgDemux Compatibility Tracks Length:{len(compatTracks)}")
+
+
+        
 
 
   

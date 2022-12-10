@@ -11,7 +11,7 @@ import remux.helpers as remuxHelper
 import mediadata.movieData as movieData
 import sites.pickers.siteMuxPicker as muxPicker
 import tools.general as utils
-import config
+import tools.logger as logger
 
 def ProcessBatch(fileName, remuxConfig, muxGenerator, outargs,special):
     # Variables

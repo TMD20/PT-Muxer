@@ -25,7 +25,7 @@ def getSubImages(supFile):
     except Exception as E:
         logger.print(traceback.format_exc(),style="white")
         logger.print(E)
-        logger.print("Ignoring SubImage Error Continue")
+        logger.print("Ignoring SubImage Error Contining")
     return outputDir
 
         

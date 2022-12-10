@@ -58,7 +58,7 @@ class sourceData(dict):
         if re.search("AVC", line) != None:
             return f"00{index}.h264"
         if re.search("HEVC", line) != None:
-            return f"{index}:00{index}.h265"
+            return f"00{index}.h265"
         if re.search("VC-1", line) != None:
             return f"00{index}.vc1"
         if re.search("MPEG-2", line) != None:

@@ -59,7 +59,10 @@ class Demux():
                 for bdObj in bdObjs:
                     bdObj.generateData(i)
                     demuxData=siteDataPicker.pickSite(self._args.site)
-                    currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i])
+                    demuxData.addTracks(bdObj,bdObj.keys[i])
+                    demuxData["tracks"]=self._filterTracks(demuxData["tracks"])
+                    currentTracks=demuxData["tracks"]
+                    
                     demuxData.addOutput(newFolder)
                     trackerObjs.append(demuxData)
                     with dir.cwd(demuxData["outputDir"]):
@@ -72,7 +75,7 @@ class Demux():
                         muxSorter=self._getMuxSorter(trackerObjs)
                         self._subParse(muxSorter)
                         self._voiceRec(muxSorter)
-                        self._saveOutput(trackerObjs,muxSorter)
+                    self._saveOutput(trackerObjs,muxSorter)
         
 
             
@@ -151,7 +154,11 @@ class Demux():
                 list(map(lambda x: x["sourceDir"], trackerObjs)), "Which Source Has The proper Chapter File")
         return list(filter(lambda x: x["sourceDir"] == match, trackerObjs))[0]["chapters"]
         
-
+    def _filterTracks(self,tracks):
+        if self._args.extractprogram=="eac3to":
+            return
+        return list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks))
+        
     def _subParse(self,muxSorter):
         # Add OCR for Subtitles
 
@@ -220,6 +227,7 @@ class Demux():
             map(lambda x: x["key"], muxSorter.enabledSub))   
         return outdict 
     def _ConvertChapterList(self,chapters):
+        outdict={}
         output = []
         if len(chapters) == 0:
             return output
@@ -227,7 +235,8 @@ class Demux():
             nameString = f"CHAPTER{chapter['number']:02d}NAME=Chapter {chapter['number']:02d}"
             timeString = f"CHAPTER{chapter['number']:02d}={chapter['start']}"
             output.append({"time": timeString, "name": nameString})
-        return output    
+        outdict["Chapters"]=output
+        return outdict  
     def _setBdInfoData(self):
         bdObjs = []
         for source in self.sources:
