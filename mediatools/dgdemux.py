@@ -162,12 +162,14 @@ def _handleChapterEP(ele,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
+    chapterFiles=paths.search(tempDir,'chapters.txt',dir=False)
     
-    for index,ele in enumerate(paths.listdir(tempDir)):
-        logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
+    for ele in chapterFiles:
+        index=_getIndexDgdemuxHelper(ele)
+        logger.logger.debug(str(chapterFiles))
         #create newpath with index
         with dir.cwd(os.path.join(".",str(index))):
-            os.replace(paths.listdir(tempDir)[index],"chapter.txt")
+            os.replace(chapterFiles[0],"chapter.txt")
 def _handleNormal(ele,newFileName,playlistLocation):
     tempDir=paths.createTempDir()
     logger.logger.debug(f"Processing {os.path.abspath(newFileName)}\n")
@@ -199,8 +201,9 @@ def _handleNormalEP(ele,newFileName,playlistLocation):
             status = p.returncode
             if status !=0:
                 raise RuntimeError("dgdemux had an Error")
-    for index,ele in enumerate(paths.listdir(tempDir)):
+    for ele in paths.listdir(tempDir):
         #create newpath with index
+        index=index=_getIndexDgdemuxHelper(ele)
         logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
         with dir.cwd(os.path.join(".",str(index))):
             os.replace(ele,newFileName)       
@@ -242,10 +245,15 @@ def _handleCompatEP(ele,newNormalFileName,newCompatFileName,playlistLocation):
     compat=paths.search(tempDir,"",ignore=["\.thd"])
     logger.logger.debug(f"dgdemux tempdir files:{paths.listdir(tempDir)}")
 
-    for index in range(len(thd)):
+    for ele in thd:
         #create newpath with index
+        index=_getIndexDgdemuxHelper(ele)
         with dir.cwd(os.path.join(".",str(index))):
-            os.replace(thd[index],newNormalFileName)    
+            os.replace(thd[0],newNormalFileName)    
+    for ele in compat:
+        #create newpath with index
+        index=_getIndexDgdemuxHelper(ele)
+        with dir.cwd(os.path.join(".",str(index))):
             os.replace(compat[index],newCompatFileName)    
 
 
@@ -318,7 +326,8 @@ def _logHelper(normalTracks,compatTracks,dgDemuxTracks,dgDemuxChapters):
     logger.logger.debug(f"bdinfo Compatibility Tracks:{compatTracks}")
     logger.logger.debug(f"dgDemux Compatibility Tracks Length:{len(compatTracks)}")
 
-
+def _getIndexDgdemuxHelper(track):
+    return re.search("\[([0-9]+)\]",track).group(1)
         
 
 

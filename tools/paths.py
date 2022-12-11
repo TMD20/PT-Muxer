@@ -141,7 +141,9 @@ def listdir(path=None):
     path= path or "."
     if os.path.isdir(path):
         paths=list(pathlib.Path(path).iterdir())
-        return list(map(lambda x: str(x),paths))
+        paths=list(map(lambda x: str(x),paths))
+        return list(natsort.natsorted
+    (paths))
     return []
 
 def copytree(source,dest):
