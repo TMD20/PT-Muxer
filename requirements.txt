@@ -75,7 +75,7 @@ url-normalize==1.4.3
 urllib3==1.26.11
 vosk==0.3.42
 wcwidth==0.2.5
-websockets==10.3
+websockets==10.4
 xxhash==3.0.0
 yarl==1.8.1
 zipp==3.8.1
