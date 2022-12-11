@@ -249,12 +249,12 @@ def _handleCompatEP(ele,newNormalFileName,newCompatFileName,playlistLocation):
         #create newpath with index
         index=_getIndexDgdemuxHelper(ele)
         with dir.cwd(os.path.join(".",str(index))):
-            os.replace(thd[0],newNormalFileName)    
+            os.replace(ele,newNormalFileName)    
     for ele in compat:
         #create newpath with index
         index=_getIndexDgdemuxHelper(ele)
         with dir.cwd(os.path.join(".",str(index))):
-            os.replace(compat[index],newCompatFileName)    
+            os.replace(ele,newCompatFileName)    
 
 
 def _verifyTracksLength(normalTracks,compatTracks,dgDemuxTracks):
