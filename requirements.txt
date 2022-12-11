@@ -77,5 +77,5 @@ vosk==0.3.42
 wcwidth==0.2.5
 websockets==10.4
 xxhash==3.0.0
-yarl==1.8.1
+yarl==1.8.2
 zipp==3.8.1
