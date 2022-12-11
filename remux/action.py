@@ -13,6 +13,7 @@ import tools.logger as logger
 
 def endProcess():
     logger.print("Good Bye")
+    quit()
 
     
 def remux(args):

@@ -26,12 +26,14 @@ class Demux(Demux):
         with dir.cwd(self.demuxFolder):
             self._movieObj = movieData.MovieData("Movies")
             self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
+
             while True:
                 bdObjs = self._setBdInfoData() 
                 self.demuxPlaylist(bdObjs)
                 if utils.singleSelectMenu(["Yes", "No"], "Extract more Movies") == "No":
                     break
-                self.setSource()
+                self.__init__(self._args)
+                self.__call__()
                 
 
 
