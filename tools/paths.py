@@ -8,6 +8,8 @@ import shutil
 import itertools
 import traceback
 
+import natsort
+
 import config as config
 import tools.general as utils
 import tools.commands as commands
@@ -39,6 +41,8 @@ def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=T
     if recursive==False:
         globSearch="*/"
     paths = list(map(lambda x: str(x),list(pathlib.Path(path).glob(globSearch))))
+    paths=list(natsort.natsorted
+    (paths))
     filtered=_excludeHelper(paths,dir,ignore)
 
     output=None

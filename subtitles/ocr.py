@@ -3,13 +3,20 @@ import queue
 import itertools
 import concurrent
 import concurrent.futures
-from timeit import default_timer as timer
+import traceback
 
-import tesserocr
 import easyocr
 from PIL import Image
 import langcodes
 import tools.logger as logger
+
+try:
+    import tesserocr
+except Exception as E:
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Not using tesseocr")
+
 
 
 
