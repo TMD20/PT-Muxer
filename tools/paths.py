@@ -13,13 +13,22 @@ import tools.general as utils
 import tools.commands as commands
 import tools.logger as logger
 
+tempDirs=[]
 def createTempDir():
+    tempDir=tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
+    tempDirs.append(tempDir)
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
+def getOldTempPathDirs():
+    criticalTime = utils.convertArrow("12","hh")
+    results=search(config.tempFolder,f"{config.tempPrefix}[^/]*$",dir=True,fullMatch=True)
+    return list(filter(lambda x:utils.convertArrow(os.stat(x).st_mtime)>criticalTime,results))
 def getTempDirs():
-    tmpHome=tempfile.gettempdir()
-    return search(tmpHome,f"{config.tempPrefix}[^/]*$",dir=True,fullMatch=True)
+    return tempDirs
 def deleteTempDirs():
     folders=getTempDirs()
+    for folder in folders:
+        shutil.rmtree(folder)
+    folders=getOldTempPathDirs()
     for folder in folders:
         shutil.rmtree(folder)
 def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=True):

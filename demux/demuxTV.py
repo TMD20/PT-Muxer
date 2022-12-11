@@ -37,7 +37,6 @@ class Demux(Demux):
 
                 if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
                     logger.logger.info("Thank You, make sure to double check episode numbers")
-
                     break
                 if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
                     self.setSource()
@@ -51,6 +50,8 @@ class Demux(Demux):
                 Resetting playlist selection
                 """
                 logger.logger.print(message)  
+                self.__init__(self._args)
+                self.__call__()
         
     def demuxSplitPlayList(self,bdObjs):
         for bdObj in bdObjs:
@@ -108,23 +109,6 @@ class Demux(Demux):
 
              
                 
-
-
-           
-                # outdict["ChapterData"] = tools.ConvertChapterList(chaptersFiltered)
-                # movieDict = movieObj.movieObj
-                # movieDict["episode"] = ep
-                # movieDict["season"] = season
-                # outdict["Movie"] = movieDict
-
-                # tools.addEnabledData(outdict, muxSorter)
-                # tools.addTrackData(outdict, muxSorter)
-
-                # os.chdir(newFolder)
-                # tools.writeFinalJSON(outdict)
-                # # change pack to parent
-                # os.chdir(demuxFolder)
-                # ep = ep+1        
 
     
     
