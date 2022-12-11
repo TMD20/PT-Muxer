@@ -28,7 +28,7 @@ jikanpy==4.3.2
 langcodes==3.3.0
 language-data==1.1
 lxml==4.9.1
-marisa-trie==0.7.7
+marisa-trie==0.7.8
 multidict==6.0.2
 natsort==8.1.0
 networkx==2.8.5
