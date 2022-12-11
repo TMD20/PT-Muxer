@@ -16,7 +16,7 @@ class Remux():
     def __init__(self,args):
         self._args=args
         self._remuxConfig=None
-        self._filename=None
+        self._fileName=None
         self._muxGenerator=muxPicker.pickSite(self._args.site)
 
    
@@ -32,7 +32,7 @@ class Remux():
     def _callFunction(self):
         self._getRemuxConfig()
         self._getfilename()
-        if self._overwriteexists==False:
+        if self._overwriteexists()==False:
             self._success=True
             return
         self._processRemux()
@@ -48,14 +48,14 @@ class Remux():
         year = self._getYear()
         movieTitle = f"{title} ({year})"
         if chaptersTemp:
-            self._muxGenerator.createMKV(self._filename, movieTitle,
+            self._muxGenerator.createMKV(self._fileName, movieTitle,
                                 chaptersTemp, xmlTemp, self._getPrimaryBDInfo(), self._getPrimaryEac3to())
         else:
-            self._muxGenerator.createMKV(self._filename, title, year,
+            self._muxGenerator.createMKV(self._fileName, title, year,
                                 None, xmlTemp, self._getPrimaryBDInfo(), self._getPrimaryEac3to())
     
     def _getRemuxConfig(self):
-        folders = self._getRemuxFolder()
+        folders = self._getRemuxFolders()
         if len(folders) == 0:
             raise RuntimeError("You need to demux a folder with Movie Mode first")
         remuxConfigPath = os.path.join(utils.singleSelectMenu(folders, "Pick the folder with the files you want to remux"), "output.json")
@@ -66,14 +66,14 @@ class Remux():
         self._checkMissing()    
     def _getfilename(self):
          with dir.cwd(self._args.outpath):
-            self._filename = self._muxGenerator.getFileName(
+            self._fileName = self._muxGenerator.getFileName(
                 self._remuxConfig, self._args.group, self._getTitle(), self._getYear(), self._args.skipnamecheck)
     def _getTitle(self):
         return self._remuxConfig['Movie'].get(
             'title') or self._remuxConfig['Movie'].get('engTitle')
     def _getYear(self):
         return self._remuxConfig['Movie']['year']
-    def _getRemuxFolder(self):
+    def _getRemuxFolders(self):
         folders = paths.search(self._args.inpath, f"/{config.demuxPrefix}[.]",dir=True,recursive=False)
         folders=list(filter(lambda x: os.path.isdir(x),folders))
         folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
@@ -107,8 +107,8 @@ class Remux():
                 raise Exception(f"Remuxing File Missing {file}")
 
     def _overwriteexists(self):
-        if os.path.exists(self._filename):
-            if utils.singleSelectMenu(["Yes","No"],"Some files already exist\nDo you want overwrite the file(s), and continue the remux process")=="No":
+        if os.path.exists(self._fileName):
+            if utils.singleSelectMenu(["Yes","No"],f"{self._fileName} already exist\nDo you want overwrite the file(s), and continue the remux process")=="No":
                 return False
             else:
                 return True

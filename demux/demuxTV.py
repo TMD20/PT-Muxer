@@ -104,7 +104,8 @@ class Demux(Demux):
                     muxSorter=self._getMuxSorter(trackerObjs)
                     self._subParse(muxSorter)
                     self._voiceRec(muxSorter)
-                    self._saveOutput(trackerObjs,muxSorter)
+                    self._writeFinalJSON(self._saveOutput(trackerObjs,muxSorter))
+
       
 
              
@@ -154,7 +155,8 @@ class Demux(Demux):
                     muxSorter=self._getMuxSorter(trackerObjs)
                     self._subParse(muxSorter)
                     self._voiceRec(muxSorter)
-                    self._saveOutput(trackerObjs,muxSorter)
+                    self._writeFinalJSON(self._saveOutput(trackerObjs,muxSorter))
+
     
                 
 
@@ -164,7 +166,13 @@ class Demux(Demux):
 
 
 
+    def _saveOutput(self, trackerObjs, muxSorter):
+        outdict=super()._saveOutput(trackerObjs, muxSorter)
+        outdict["Movie"]["episode"]= len(os.listdir(self.demuxFolder))
+        return outdict
 
+
+    
                 
             
       

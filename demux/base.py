@@ -75,7 +75,8 @@ class Demux():
                         muxSorter=self._getMuxSorter(trackerObjs)
                         self._subParse(muxSorter)
                         self._voiceRec(muxSorter)
-                    self._saveOutput(trackerObjs,muxSorter)
+                    
+                    self._writeFinalJSON(self._saveOutput(trackerObjs,muxSorter))
         
 
             
@@ -90,7 +91,7 @@ class Demux():
         outdict["Movie"] = self._movieObj.movieObj
         outdict.update(self._addEnabledData(muxSorter))
         outdict.update(self._addTrackData(muxSorter))
-        self._writeFinalJSON(outdict)
+        return outdict
 
     def _saveOutputStream(self,bdObjs,trackerObjs,muxSorter):
         outdict = {}
@@ -101,7 +102,7 @@ class Demux():
         outdict.update(self._addTrackData(muxSorter))
         self._writeFinalJSON(outdict)
     
-    
+       
 
 
 

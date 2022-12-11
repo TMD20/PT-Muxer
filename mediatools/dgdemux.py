@@ -266,6 +266,8 @@ def _verifyTracksCodec(normalTracks,compatTracks,dgDemuxTracks):
         bdTrack=normalTracks[i]["bdinfo_title"]
         if re.search("hevc",dgDemuxTrack,re.IGNORECASE) and re.search("hevc",bdTrack,re.IGNORECASE):
             continue
+        elif re.search("avc",dgDemuxTrack,re.IGNORECASE) and re.search("avc",bdTrack,re.IGNORECASE):
+            continue
         elif re.search("thd",dgDemuxTrack,re.IGNORECASE) and re.search("truehd",bdTrack,re.IGNORECASE):
             continue
         elif re.search("ac3",dgDemuxTrack,re.IGNORECASE) and re.search("dolby digital audio",bdTrack,re.IGNORECASE):

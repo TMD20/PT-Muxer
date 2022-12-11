@@ -1,7 +1,94 @@
 from remux.base import Remux
+import os
+import re
+from string import Template
 
+import orjson
+
+import tools.logger as logger
+import tools.general as utils
+import tools.paths as paths
+import config as config
+import tools.directory as dir
+import sites.pickers.siteMuxPicker as muxPicker
+import mediadata.movieData as movieData
 class Remux(Remux):
     def __init__(self,args):
         super().__init__(args)
-        self._name="Movies"
-        self._type="Movies"
+        self._movieObj=movieData.MovieData("TV")
+        self._fileNames=[]
+    def _callFunction(self):
+        fileNames=[]
+        for file in paths.search(self._getRemuxConfig(),"output.json",recursive=True):
+            logger.logger.info(f"Processing {file}")
+            self._remuxConfigHelper(file)
+            self._fileName=self._getfilename()
+            if self._overwriteexists()==False:
+                self._success=True
+                continue
+            self._fileNames.append(self._fileName)
+        for fileName in self._fileNames:
+            self._fileName=fileName
+            self._processRemux()        
+    def _getRemuxFolders(self):
+        folders = paths.search(self._args.inpath ,f"/{config.demuxPrefix}[.]",dir=True,recursive=False)
+        folders=list(filter(lambda x: os.path.isdir(x),folders))
+        folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
+        folders = list(filter(lambda x: re.search(
+            "^[0-9]+$", os.listdir(x)[0]) != None, folders))
+        return folders
+    def _getRemuxConfig(self):
+        folders = self._getRemuxFolders()
+        if len(folders) == 0:
+            raise RuntimeError("You need to demux a folder with Movie Mode first")
+        return utils.singleSelectMenu(folders, "Pick the folder with the files you want to remux")
+
+    def _remuxConfigHelper(self,remuxConfigPath):    
+        with open(remuxConfigPath, "r") as p:
+            self._remuxConfig = orjson.loads(p.read()) 
+        logger.logger.debug(f"Remux Config: {self._remuxConfig}")
+        self._getFullPaths()
+        self._checkMissing()
+    def _writeXML(self):
+
+        imdb=self._remuxConfig["Movie"]["imdb"]
+        tmdb= self._remuxConfig["Movie"]["tmdb"]
+        season=self._remuxConfig["Movie"]["season"]
+        episode=self._remuxConfig["Movie"]["episode"]
+        year=self._getYear()
+        title=self._getTitle()
+        epIMDB=self._movieObj.retriveEpisodeIMDB(imdb,tmdb, season, episode, title, year)
+        epCount = self._movieObj.retriveNumberofEpisodes(season,  title, year, tmdb)
+
+        tempData = paths.createTempDir()
+        infile = os.path.join(config.root_dir,  f"xml/tv")
+        xmlPath=os.path.join(tempData,"xml.txt")
+        with open(infile, 'r') as f:
+            src = Template(f.read())
+            result = src.substitute(
+                {"imdb": imdb, "tmdb": tmdb, "imdbEP": epIMDB, "totalEP": epCount, "season": season, "episode": episode})
+        with open(xmlPath, "w") as p:
+            p.writelines(result)
+        return xmlPath
+         
+    def _getfilename(self):
+        with dir.cwd(self._args.outpath):
+            self._movieObj.type= self._remuxConfig['Movie']["type"]
+            title = self._getTitle() or self._getJapTitle()
+           
+
+            year = self._remuxConfig['Movie']['year']
+            season = self._remuxConfig["Movie"]["season"]
+            episode = self._remuxConfig["Movie"]["episode"]
+            tmdb = self._remuxConfig["Movie"]["tmdb"]
+
+            episodeTitle = self._movieObj.retriveEpisodeTitle(
+                season, episode, title, year, tmdb)
+           
+
+            if not self._args.special:
+                    return self._muxGenerator.getFileName( self._remuxConfig, self._args.group, title, year, self._args.skipnamecheck, int(season), int(episode), episodeTitle)
+            else:
+                    return self._muxGenerator.getFileName( self._remuxConfig, self._args.group, title, year, self._args.skipnamecheck, episodeTitle=f"Special.{episode}", directory=f"{enTitle}.Specials")
+    def _getJapTitle(self):
+        return  self._remuxConfig['Movie'].get('japTitle')

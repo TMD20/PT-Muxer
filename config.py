@@ -1,6 +1,7 @@
 import os
 import requests_cache
 import tempfile
+import sys
 
 
 root_dir = os.path.dirname(os.path.realpath(__file__))
@@ -37,3 +38,4 @@ cacheDir = os.path.join(os.path.expanduser("~"), ".cache","remuxer_cache")
 session = requests_cache.CachedSession(cacheDir)
 tempFolder=tempfile.gettempdir()
 tempPrefix="PTMuxer_"
+pythonPath='/usr/bin/python3'

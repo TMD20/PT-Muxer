@@ -51,7 +51,7 @@ class MovieData():
         """
    
 
-        if type=="TV":self._movieObj["Season"]=utils.getIntInput("What Season are you demuxing")
+        if type=="TV":self._movieObj["season"]=utils.getIntInput("What Season are you demuxing")
         self._getShowURLWiki(title)
         data = None
         anime = self._getIsAnimeWiki()
