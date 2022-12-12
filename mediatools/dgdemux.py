@@ -25,7 +25,7 @@ def run(tracks,source, playlistFile,ep=False):
 
 
 
-def _runNormal(tracks,source, playlistFile):
+def _runNormal(tracks,source, playlistFile,directory="."):
     playlistLocation=_getPlaylistLocation(source,playlistFile)
     dgDemuxTrackOutPut=_getDgDemuxTrackInfo(playlistLocation)
     dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
@@ -40,27 +40,26 @@ def _runNormal(tracks,source, playlistFile):
     _verifyTracksLength(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
     dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
     dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
-    if len(dgDemuxTracks)-len(normalTracks)>0:
-        raise RuntimeError("Track Lengths are Missmatched")
     trackDex=0 
-    compatDex=0    
-    while trackDex<len(dgDemuxTracks):
-        if re.search("(\.thd$)",normalTracks[trackDex]["filename"],re.IGNORECASE):
-            _handleCompat(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],compatTracks[compatDex]["filename"],playlistLocation)
-            trackDex=trackDex+1
-            compatDex=compatDex+1
-        else:
-            _handleNormal(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],playlistLocation)
-            trackDex=trackDex+1
+    compatDex=0 
+    with dir.cwd(directory):     
+        while trackDex<len(dgDemuxTracks):
+            if re.search("(\.thd$)",normalTracks[trackDex]["filename"],re.IGNORECASE):
+                _handleCompat(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],compatTracks[compatDex]["filename"],playlistLocation)
+                trackDex=trackDex+1
+                compatDex=compatDex+1
+            else:
+                _handleNormal(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],playlistLocation)
+                trackDex=trackDex+1
 
-    for index,track in enumerate(dgDemuxChapters):
-        _handleChapter(track,playlistLocation)    
+        for index,track in enumerate(dgDemuxChapters):
+            _handleChapter(track,playlistLocation)    
     
 
 
 
        
-def _runEP(tracks,source, playlistFile):
+def _runEP(tracks,source, playlistFile,directory="."):
     playlistLocation=_getPlaylistLocation(source,playlistFile)
     dgDemuxTrackOutPut=_getDgDemuxTrackInfo(playlistLocation)
     dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
@@ -76,21 +75,20 @@ def _runEP(tracks,source, playlistFile):
 
     dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
     dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
-    if len(dgDemuxTracks)-len(normalTracks)>0:
-        raise RuntimeError("Track Lengths are Missmatched")
     trackDex=0 
-    compatDex=0    
-    while trackDex<len(dgDemuxTracks):
-        if re.search("(\.thd$)",normalTracks[trackDex]["filename"],re.IGNORECASE):
-            _handleCompatEP(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],compatTracks[compatDex]["filename"],playlistLocation)
-            trackDex=trackDex+1
-            compatDex=compatDex+1
-        else:
-            _handleNormalEP(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],playlistLocation)
-            trackDex=trackDex+1
+    compatDex=0 
+    with dir.cwd(directory):  
+        while trackDex<len(dgDemuxTracks):
+            if re.search("(\.thd$)",normalTracks[trackDex]["filename"],re.IGNORECASE):
+                _handleCompatEP(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],compatTracks[compatDex]["filename"],playlistLocation)
+                trackDex=trackDex+1
+                compatDex=compatDex+1
+            else:
+                _handleNormalEP(dgDemuxTracks[trackDex],normalTracks[trackDex]["filename"],playlistLocation)
+                trackDex=trackDex+1
 
-    for index,track in enumerate(dgDemuxChapters):
-        _handleChapterEP(track,playlistLocation)    
+        for index,track in enumerate(dgDemuxChapters):
+            _handleChapterEP(track,playlistLocation)    
     
 
 def _getPlaylistLocation(source,playlistFile):
@@ -132,7 +130,7 @@ def _getFilterOutput(output):
 
 def _handleChapter(ele,playlistLocation):
     tempDir=paths.createTempDir()
-    logger.logger.debug(f"Processing {os.path.abspath('chapter.txt')}\n")
+    logger.logger.debug(f"Processing {os.path.abspath('chapter.txt')}\n into tempdir")
 
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
@@ -149,7 +147,7 @@ def _handleChapter(ele,playlistLocation):
     os.replace(paths.listdir(tempDir)[0],"chapter.txt")
 def _handleChapterEP(ele,playlistLocation):
     tempDir=paths.createTempDir()
-    logger.logger.debug(f"batching chapter.txt")
+    logger.logger.debug(f"batching chapter.txt into tempdir")
 
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
@@ -169,10 +167,10 @@ def _handleChapterEP(ele,playlistLocation):
         logger.logger.debug(str(chapterFiles))
         #create newpath with index
         with dir.cwd(os.path.join(".",str(index))):
-            os.replace(chapterFiles[0],"chapter.txt")
+            os.replace(ele,"chapter.txt")
 def _handleNormal(ele,newFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    logger.logger.debug(f"Processing {os.path.abspath(newFileName)}\n")
+    logger.logger.debug(f"Processing {os.path.abspath(newFileName)}\n into tempdir")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele]])))
@@ -189,7 +187,7 @@ def _handleNormal(ele,newFileName,playlistLocation):
     os.replace(paths.listdir(tempDir)[0],newFileName)    
 def _handleNormalEP(ele,newFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    logger.logger.debug(f"Batching {newFileName}")
+    logger.logger.debug(f"Batching {newFileName} into tempdir")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele,"-ep"]])))
@@ -210,7 +208,7 @@ def _handleNormalEP(ele,newFileName,playlistLocation):
    
 def _handleCompat(ele,newNormalFileName,newCompatFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    logger.logger.debug(f"Processing {os.path.abspath(newNormalFileName)} and {os.path.abspath(newCompatFileName)}\n")
+    logger.logger.debug(f"Processing {os.path.abspath(newNormalFileName)} and {os.path.abspath(newCompatFileName)}\n into tempdir")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele]])))
@@ -229,7 +227,7 @@ def _handleCompat(ele,newNormalFileName,newCompatFileName,playlistLocation):
 
 def _handleCompatEP(ele,newNormalFileName,newCompatFileName,playlistLocation):
     tempDir=paths.createTempDir()
-    logger.logger.debug(f"Batching {newNormalFileName} and {newCompatFileName}")
+    logger.logger.debug(f"Batching {newNormalFileName} and {newCompatFileName} into tempdir")
     with dir.cwd(tempDir):
         command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
                         playlistLocation,"-o",".","-demux",ele,"-ep"]])))

@@ -17,6 +17,7 @@ class Bdinfo():
         self._playlistDict={}
         self._playlistKeys=None
         self._mediaDir = None
+    
 
     '''
     Public Functions
@@ -88,7 +89,8 @@ class Bdinfo():
         self._setBdInfo(playlistNum)
         self._setQuickSum(playlistNum)
         self._setStreams(playlistNum) 
-        self._setChapters(playlistNum)    
+        self._setChapters(playlistNum)   
+        self._setStreamTracks(playlistNum) 
 
     
     
@@ -102,21 +104,24 @@ class Bdinfo():
 
     
     def getStreamChapter(self,streamDataList,playlistKey):
-        chapters=[]
+        streamChapters=[]
         parseString="HH:mm:ss.SSS"
         if isinstance(streamDataList, list)==False:
             streamDataList=[streamDataList]
         for streamData in streamDataList:
             start = utils.convertArrow(streamData["start"],parseString )
             end = utils.convertArrow(streamData["end"], parseString)
+            chapters=self.Dict[playlistKey]["chapters"]
+            if len(chapters)==0:
+                return []
         
-            for time in self.Dict[playlistKey]["chapters"]:
+            for time in chapters:
                 if utils.convertArrow(time["start"],parseString)<start:
                     continue
                 elif utils.convertArrow(time["start"],parseString)>end:
                     break
-                chapters.append(time)
-        return self._chapterOffsetHelper(chapters)
+                streamChapters.append(time)
+        return self._chapterOffsetHelper(streamChapters)
 
     def playListSelect(self):
         self._playlistKeys = [self._getIndex()]
@@ -302,8 +307,30 @@ class Bdinfo():
             out.append(
                 {"number": number, "start": startTime, "end": endTime})
         self._playlistDict[playlistNum]["chapters"] = out
-
-    ##################################
+   #Used to account for hidden tracks
+    def _setStreamTracks(self,playlistNum):
+        streamTracks={}
+        lines = self._playlistDict[playlistNum]["bdinfo"].splitlines()
+        lines = lines[lines.index("STREAM DIAGNOSTICS:"):len(lines)-1]
+        start = 0
+        end = lines.index("[/code]")-1
+        for i in range(len(lines)):
+            if re.search("File", lines[i]) != None:
+                start = i+2
+                break
+        for line in lines[start:end]:
+            data = line.split()
+            key = data[0]
+            codec = data[4]
+            lang="None"
+            if len(data)==11:
+                lang = data[5]
+            if not streamTracks.get(key):
+                streamTracks[key]=[]
+            streamTracks[key].append({"codec":codec,"lang":lang})
+        self.Dict[playlistNum]["streamTracks"]=streamTracks
+            ######################
+            # ############
     #  Stream Functions
     #
     ##################################################
@@ -327,6 +354,8 @@ class Bdinfo():
     # Helper Functions
     ######################################
     def _chapterOffsetHelper(self,chapters):
+        if len(chapters)==0:
+            return []
         parseString="HH:mm:ss.SSS"
         if utils.convertArrow(chapters[0]["start"],parseString)==utils.convertArrow("00","mm"):
             return chapters

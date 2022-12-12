@@ -66,6 +66,8 @@ class Demux():
                     demuxData.addOutput(newFolder)
                     trackerObjs.append(demuxData)
                     with dir.cwd(demuxData["outputDir"]):
+                        if not self._args.dontconvert:
+                                    demuxData.convertFlac(currentTracks)
                         if self._args.extractprogram=="eac3to":
                             eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         else:
@@ -162,35 +164,60 @@ class Demux():
         
     def _subParse(self,muxSorter):
         # Add OCR for Subtitles
+        tracks=None
+        keep=self._args.keepocr
+        langs=None
+        if self._args.ocr!=None:
+            if self._args.ocr == "enabled":
+                tracks=muxSorter.enabledSub
+                keep=self._args.keepocr
+            elif self._args.ocr == "default":
+                tracks=muxSorter.unSortedSub
+                langs=self._movieObj.get("languages",[ ])
+            
+            elif self._args.ocr == "sublang":
+                tracks=muxSorter.unSortedSub
+                langs=self._args.sublang,
 
-        if self._args.ocr == "enabled":
-            subreader.subreader(muxSorter.enabledSub, keep=self._args.keepocr)
-        elif self._args.ocr == "default":
-            subreader.subreader(muxSorter.unSortedSub,
-                                langs=self._movieObj.get("languages",[ ]), keep=self._args.keepocr)
-        elif self._args.ocr == "sublang":
-            subreader.subreader(muxSorter.unSortedSub,
-                                langs=self._args.sublang, keep=self._args.keepocr)
-        elif self._args.ocr == "english":
-            subreader.subreader(muxSorter.unSortedSub, langs=[
-                                "English"], keep=self._args.keepocr)
-        elif self._args.ocr == "all":
-            subreader.subreader(muxSorter.unSortedSub, keep=self._args.keepocr)
+            elif self._args.ocr == "english":
+                tracks=muxSorter.unSortedSub
+                langs=["English"]
+
+            elif self._args.ocr == "all":
+                keep=muxSorter.unSortedSub
+            for track in tracks:
+                with dir.cwd(tracks["outputDir"]):
+                    subreader.subreader([track],keep=keep,langs=langs)
+
+
         elif self._args.keepocr:
-            subreader.imagesOnly(muxSorter.enabledSub)
+            tracks=muxSorter.enabledSub
+            for track in tracks:
+                with dir.cwd(tracks["outputDir"]):
+                    subreader.imagesOnly([track])
 
     # Voice Recorder
     def _voiceRec(self,muxSorter):
+        tracks=None
+        langs=None
         if self._args.voicerec == "enabled":
-            voiceRec.main(muxSorter.enabledAudio)
+            tracks=muxSorter.enabledAudio
         elif self._args.voicerec == "default":
-            voiceRec.main(muxSorter.unSortedAudio, self._movieObj.movieObj.get("languages", []))
+            tracks=muxSorter.unSortedAudio
+            langs=self._movieObj.movieObj.get("languages", [])
         elif self._args.voicerec == "audiolang":
-            voiceRec.main(muxSorter.unSortedAudio, self._args.audiola0ng)
+            tracks=muxSorter.unSortedAudio
+            langs=self._args.audiolang
         elif self._args.voicerec == "english":
-            voiceRec.main(muxSorter.unSortedAudio, ["English"])
+            tracks=muxSorter.unSortedAudio
+            langs=["English"]
+
         elif self._args.voicerec == "all":
-            voiceRec.main(muxSorter.unSortedAudio)   
+            tracks=muxSorter.unSortedAudio
+        for track in tracks:
+                    with dir.cwd(tracks["outputDir"]):
+                       voiceRec.main([track])
+        
     def _getMuxSorter(self,trackerObjs):
         muxSorter = siteSortPicker.pickSite(self._args.site)
         for trackerObJ in trackerObjs:    

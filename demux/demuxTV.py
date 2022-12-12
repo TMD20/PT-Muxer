@@ -2,6 +2,7 @@ import re
 import os
 
 from num2words import num2words
+import langcodes
 
 import tools.general as utils
 from demux.base import Demux
@@ -78,7 +79,7 @@ class Demux(Demux):
         for i in range(len(bdObjs[0].DictList)):
             startdex = len(os.listdir(self.demuxFolder))
             trackerObjDict={}
-            [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].DictList[i]["playlistStreams"]))]
+            [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].filterStreams(i,self._args.splitplaylist)))]
             for bdObj in bdObjs:
                     logger.logger.info(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]['playlistFile']}")
                     streams=bdObj.filterStreams(i,self._args.splitplaylist)
@@ -87,6 +88,8 @@ class Demux(Demux):
                         with dir.cwd(newFolder):
                             demuxData = siteDataPicker.pickSite(self._args.site)
                             currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],streams=[stream])
+                            currentTracks=self._filterStreamTracks(currentTracks,bdObj.DictList[i]["streamTracks"][stream["name"]])
+                            demuxData["tracks"]=currentTracks
                             demuxData.addOutput(newFolder)
                             with dir.cwd(demuxData["outputDir"]):
                                 if not self._args.dontconvert:
@@ -121,25 +124,31 @@ class Demux(Demux):
         for i in range(len(bdObjs[0].keys)):
             startdex=len(os.listdir(self.demuxFolder))
             trackerObjDict={}
-            [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].DictList[i]["playlistStreams"]))]
+            [trackerObjDict.update({m:{"folder":self._getNewFolder(startdex+m),"list":[]}}) for m in range(len(bdObjs[0].filterStreams(i,self._args.splitplaylist)))]
             #dgdemux won't allow individual mt2s processing
             # Each playlist must be processed in batches
             for bdObj in bdObjs:
                 logger.logger.info(f"Processing all streams for {bdObj.mediaDir} Playlist: {bdObj.DictList[i]['playlistFile']}")
                 tempdir=paths.createTempDir()
+                streams=bdObjs[0].filterStreams(i,self._args.splitplaylist)
                 with dir.cwd(tempdir):
                         newFolder=""
                         demuxData=siteDataPicker.pickSite(self._args.site)
+                        #Send every track
+                        #dgdemux will filter via indexes
                         currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i])
                         dgdemux.run(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"],ep=True)
                 
                 #Process each stream index with data from one source
                 # Save in combined data struture, organized by stream index
-                for j,stream in enumerate(bdObj.DictList[i]["playlistStreams"]):
+                for j,stream in enumerate(streams):
                     newFolder=self._getNewFolder(startdex+j)
                     with dir.cwd(newFolder):
                         demuxData=siteDataPicker.pickSite(self._args.site)
+                        #filter hidden tracks here 
                         currentTracks=demuxData.addTracks(bdObj,bdObj.keys[i],streams=[stream])
+                        currentTracks=self._filterStreamTracks(currentTracks,bdObj.DictList[i]["streamTracks"][stream["name"]])
+                        demuxData["tracks"]=currentTracks
                         demuxData.addOutput(newFolder)
                         #copy files to new outputdir
                         with dir.cwd(demuxData["outputDir"]):
@@ -181,6 +190,89 @@ class Demux(Demux):
     ####
     # Helper Functions
     ####
+    def _filterStreamTracks(self,bdTracks,streamTracks):
+        tracks=[]
+        tracks.extend(self._videoTrackHelper(bdTracks,streamTracks))
+        tracks.extend(self._audioTrackHelper(bdTracks,streamTracks))
+        tracks.extend(self._subTrackHelper(bdTracks,streamTracks))
+          
+        return tracks
+
+    def _audioTrackHelper(self,bdTracks,streamTracks):
+        bdTracksNormalTemp=list(filter(lambda x:x["type"]=="audio" and x["compat"]==False,bdTracks))
+        bdTracksCompatTemp=list(filter(lambda x:x["type"]=="audio" and x["compat"],bdTracks))
+
+        streamTracksTemp=list(filter(lambda x:re.search("(TrueHD|dolby|dts)",x["codec"],re.IGNORECASE),streamTracks))
+        logger.logger.debug(f"Audio StreamTracks: {streamTracksTemp}")
+        logger.logger.debug(f"Audio bdTracks: {bdTracksNormalTemp}")
+        i=0
+        j=0
+        k=0
+        tracks=[]
+        while i<len(streamTracksTemp) and j<len(bdTracksNormalTemp) and k<len(bdTracksCompatTemp):
+            streamTrack=streamTracksTemp[i]
+            bdTrack=bdTracksNormalTemp[i]
+    
+            if re.search(streamTrack["codec"],bdTrack["bdinfo_title"])==None:
+                j=j+1
+                continue
+            if langcodes.standardize_tag(bdTrack["langcode"])==langcodes.standardize_tag(streamTrack["lang"]):
+                j=j+1
+                i=i+1
+                tracks.append(bdTrack)
+                if re.search("(truehd|dts)",bdTrack["bdinfo_title"],re.IGNORECASE):
+                    tracks.append(bdTracksCompatTemp[k])
+                    k=k+1
+            else:
+                j=j+1
+        return tracks
+
+    def _videoTrackHelper(self,bdTracks,streamTracks):
+            bdTracksTemp=list(filter(lambda x:x["type"]=="video",bdTracks))
+            streamTracksTemp=list(filter(lambda x:re.search("(hevc|avc)",x["codec"],re.IGNORECASE),streamTracks))
+            logger.logger.debug(f"Video StreamTracks: {streamTracksTemp}")
+            logger.logger.debug(f"Video bdTracks: {bdTracksTemp}")
+            i=0
+            j=0
+            tracks=[]
+            while i<len(streamTracksTemp) and j<len(bdTracksTemp):
+                streamTrack=streamTracksTemp[i]
+                bdTrack=bdTracksTemp[j]
+                if re.search(streamTrack["codec"],bdTrack["bdinfo_title"]):
+                    j=j+1
+                    i=i+1
+                    tracks.append(bdTrack)
+                else:
+                    j=j+1
+            return tracks
+    def _subTrackHelper(self,bdTracks,streamTracks):
+            bdTracksTemp=list(filter(lambda x:x["type"]=="subtitle",bdTracks))
+            streamTracksTemp=list(filter(lambda x:re.search("(pgs)",x["codec"],re.IGNORECASE),streamTracks))
+            logger.logger.debug(f"Subtitle StreamTracks: {streamTracksTemp}")
+            logger.logger.debug(f"Subtitle bdTracks: {bdTracksTemp}")
+            i=0
+            j=0
+            tracks=[]
+            while i<len(streamTracksTemp) and j<len(bdTracksTemp):
+                streamTrack=streamTracksTemp[i]
+                bdTrack=bdTracksTemp[j]
+                if langcodes.standardize_tag(bdTrack["langcode"])==langcodes.standardize_tag(streamTrack["lang"]):
+                    j=j+1
+                    i=i+1
+                    tracks.append(bdTrack)
+                else:
+                    j=j+1
+            return tracks
+
+
+
+
+
+
+
+            
+
+      
     def _callFunction(self):
         self.setSource()
         self._fixArgs()

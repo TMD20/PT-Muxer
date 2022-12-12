@@ -279,8 +279,9 @@ class siteTrackSorter():
         if sortPref == "size":
             newTracks = sorted(newTracks,
                                key=self._VideoRankingSize, reverse=True)
-        newTracks[0]["default"] = True
-        self._enabledVideo.append(newTracks[0])
+        if len(newTracks)>0:
+            newTracks[0]["default"] = True
+            self._enabledVideo.append(newTracks[0])
 
     #########################################################################################
     # Helper Functions to Rank Tracks

@@ -21,8 +21,8 @@ def createTempDir():
     tempDirs.append(tempDir)
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
 def getOldTempPathDirs():
-    criticalTime = utils.convertArrow("12","hh")
-    results=search(config.tempFolder,f"{config.tempPrefix}[^/]*$",dir=True,fullMatch=True)
+    criticalTime = utils.convertArrow("01","hh")
+    results=search(config.tempFolder,f"/{config.tempPrefix}[^/]*$",dir=True)
     return list(filter(lambda x:utils.convertArrow(os.stat(x).st_mtime)>criticalTime,results))
 def getTempDirs():
     return tempDirs
@@ -44,8 +44,6 @@ def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=T
     paths=list(natsort.natsorted
     (paths))
     filtered=_excludeHelper(paths,dir,ignore)
-
-    output=None
     if case:
         return list(filter(lambda x:searchMethod(query,x),filtered))
     else:
