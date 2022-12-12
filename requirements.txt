@@ -69,7 +69,7 @@ tmdbsimple==2.9.1
 tomli==2.0.1
 torch==1.12.0
 torchvision==0.13.0
-tqdm==4.64.0
+tqdm==4.64.1
 typing-extensions==4.3.0
 url-normalize==1.4.3
 urllib3==1.26.11
