@@ -7,11 +7,12 @@ import tools.commands as commands
 import tools.general as utils
 import tools.paths as paths
 import tools.directory as dir
+import tools.logger as logger
     
-def eac3toTrack(index,name,bdinfo,type):
+def eac3toTrack(index,name,bdinfotitle,type):
     output = []
     output.append((f"{index}:{name}"))
-    if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", bdinfo, re.IGNORECASE) == None and type== "audio":
+    if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", bdinfotitle, re.IGNORECASE) == None and type== "audio":
         output.append("-keepDialnorm")
     return output
 
@@ -58,12 +59,11 @@ def getChaptersBool(playlistLocation):
 def run(playlistLocation, tracks,eac3toPath):
 
     # get list of files
-    trackArgs = []; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
-    if getChaptersBool(playlistLocation)==True:
-            #update track index
-            for x in tracks:x["index"]=x["index"]+1
-            trackArgs =  trackArgs=["1:chapters.txt"]; [trackArgs.extend(eac3toTrack(track["index"],track["filename"],track["bdinfo_title"],track["type"])) for track in tracks]
-   
+    normalTracks=list(filter(lambda x:x["compat"]==False,tracks))
+    compatTracks=list(filter(lambda x:x["compat"],tracks
+    ))
+    trackArgs=addTracks(normalTracks,compatTracks,playlistLocation)
+    logger.logger.debug(str(trackArgs))
     playlistLocationFinal = paths.switchPathType(playlistLocation)  
     command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
                     playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
@@ -81,7 +81,24 @@ def run(playlistLocation, tracks,eac3toPath):
             cleanFiles(list(map(lambda x:x["filename"],tracks)))
             return
     
-    
+def addTracks(normalTracks,compatTracks,playlistLocation):
+    i=0
+    j=0
+    index=1
+    trackArgs=[]
+    if getChaptersBool(playlistLocation)==True:
+        index=2
+        trackArgs.append("1:chapters.txt")
+    while i<len(normalTracks) and j<len(compatTracks):
+        normalTrack=normalTracks[i]
+        trackArgs.extend(eac3toTrack(index,normalTrack["filename"],normalTrack["bdinfo_title"],normalTrack["type"]))
+        i=i+1
+        if re.search("(thd|dts)",normalTrack["filename"],re.IGNORECASE):
+            compatTrack=compatTracks[j]
+            trackArgs.extend(eac3toTrack(index,compatTrack["filename"],compatTrack["bdinfo_title"],compatTrack["type"]))
+            j=j+1
+        index=index+1
+    return trackArgs
 
 
   
