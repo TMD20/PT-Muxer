@@ -34,7 +34,7 @@ natsort==8.1.0
 networkx==2.8.5
 num2words==0.5.10
 numpy==1.23.5
-opencv-python-headless==4.5.4.60
+opencv-python-headless==4.6.0.66
 orjson==3.7.12
 packaging==21.3
 pfzy==0.3.4
