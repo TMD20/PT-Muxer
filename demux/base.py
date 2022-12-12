@@ -217,7 +217,7 @@ class Demux():
         for track in tracks:
                     with dir.cwd(tracks["outputDir"]):
                        voiceRec.main([track])
-        
+      d  
     def _getMuxSorter(self,trackerObjs):
         muxSorter = siteSortPicker.pickSite(self._args.site)
         for trackerObJ in trackerObjs:    
