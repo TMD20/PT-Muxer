@@ -103,11 +103,11 @@ class Bdinfo():
         
 
     
-    def getStreamChapter(self,streamDataList,playlistKey):
+    def getStreamChapters(self,streamDataList,playlistKey):
         streamChapters=[]
         parseString="HH:mm:ss.SSS"
         if isinstance(streamDataList, list)==False:
-            streamDataList=[streamDataList]
+            streamChapters=[streamDataList]
         for streamData in streamDataList:
             start = utils.convertArrow(streamData["start"],parseString )
             end = utils.convertArrow(streamData["end"], parseString)
@@ -116,9 +116,9 @@ class Bdinfo():
                 return []
         
             for time in chapters:
-                if utils.convertArrow(time["start"],parseString)<start:
+                if start>utils.convertArrow(time["start"],parseString):
                     continue
-                elif utils.convertArrow(time["start"],parseString)>end:
+                elif end<utils.convertArrow(time["start"],parseString):
                     break
                 streamChapters.append(time)
         return self._chapterOffsetHelper(streamChapters)
@@ -327,14 +327,22 @@ class Bdinfo():
                 lang = data[5]
             if not streamTracks.get(key):
                 streamTracks[key]=[]
-            streamTracks[key].append({"codec":codec,"lang":lang})
+            streamTracks[key].append({"codec":codec,"lang":lang,"type":self._codecTypeHelper(codec)})
         self.Dict[playlistNum]["streamTracks"]=streamTracks
+    def _codecTypeHelper(self,codec):
+        if re.search("(ac3|truehd|dts|digital)",codec,re.IGNORECASE):
+            return "audio"
+        elif re.search("(hevc|avc)",codec,re.IGNORECASE):
+            return "video"
+        elif re.search("pgs",codec,re.IGNORECASE):
+            return "subtitle"
+        
             ######################
             # ############
     #  Stream Functions
     #
     ##################################################
-    def filterStreams(self,i,time):
+    def streamTracks(self,i,time):
         time=float(time)
         if time==float("inf") or time==0:
             return self.DictList[i]["playlistStreams"]
@@ -364,7 +372,7 @@ class Bdinfo():
         for chapter in chapters:
             chapter["start"]=utils.subArrowTime(utils.convertArrow(chapter["start"],parseString),timeOffset).format(parseString)
             chapter["end"]=utils.subArrowTime(utils.convertArrow(chapter["end"],parseString),timeOffset).format(parseString)
-            chapter["number"]=chapters[0]["number"]-numOffset
+            chapter["number"]=chapter["number"]-numOffset
         return chapters    
     def _playListFileHelper(self):
         for num in self._playlistKeys:

@@ -18,13 +18,17 @@ class Remux():
         self._remuxConfig=None
         self._fileName=None
         self._muxGenerator=muxPicker.pickSite(self._args.site)
+        self._sucess=False
 
    
     def __call__(self):
         logger.setUpLogging(self._args.loglevel)
         self._callFunction()
         self._success=True
-    
+    @property
+    def success(self):
+        return self._success
+        
     ##########
     #
     #Private

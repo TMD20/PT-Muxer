@@ -2,6 +2,7 @@ from remux.base import Remux
 import os
 import re
 from string import Template
+import traceback
 
 import orjson
 
@@ -18,10 +19,18 @@ class Remux(Remux):
         self._movieObj=movieData.MovieData("TV")
         self._fileNames=[]
     def _callFunction(self):
-        fileNames=[]
         for file in paths.search(self._getRemuxConfig(),"output.json",recursive=True):
             logger.logger.info(f"Processing {file}")
             self._remuxConfigHelper(file)
+            try:
+                self._checkMissing()
+            except Exception as E:
+                # logger.logger.warn(E)
+                logger.print(traceback.format_exc(),style="white")
+                logger.print("Skipping",style="white")
+                continue
+                
+
             self._fileName=self._getfilename()
             if self._overwriteexists()==False:
                 self._success=True
@@ -48,7 +57,7 @@ class Remux(Remux):
             self._remuxConfig = orjson.loads(p.read()) 
         logger.logger.debug(f"Remux Config: {self._remuxConfig}")
         self._getFullPaths()
-        self._checkMissing()
+        
     def _writeXML(self):
 
         imdb=self._remuxConfig["Movie"]["imdb"]

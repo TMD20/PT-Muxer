@@ -12,8 +12,9 @@ import tools.logger as logger
 
 
 def endProcess():
-    logger.print("Good Bye")
-    paths.deleteTempDirs()
+    if remuxObj!=None and remuxObj.success==True:
+        logger.print("Remuxing Complete")
+        paths.deleteTempDirs()
     quit()
 
     
