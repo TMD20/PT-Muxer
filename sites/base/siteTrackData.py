@@ -32,22 +32,19 @@ class siteTrackData(sourceData):
         self._setUp(playlistNum, bdinfo, streams)
 
         quicksum=bdObjDict["quickSum"]
-   
-        
 
         self.updateRawTracksDict(quicksum)
-        current_tracks = self._tracks
-        self._updateTrackDictFileNames(current_tracks)
-        self._updateTrackDictNames(current_tracks)
-        self._setSourceDict()
-        return current_tracks
+        self._updateTrackDictFileNames()
+        self._updateTrackDictNames()
+        return self.tracks
   
 
      #######################################################################
     #  This Function will convert certain lossless Tracks to flac
     ########################################################################
 
-    def convertFlac(self, current_tracks):
+    def convertFlac(self):
+        current_tracks=self.tracks
         for i in range(len(current_tracks)):
             track = current_tracks[i]
             if track["type"] != "audio":
@@ -87,7 +84,8 @@ class siteTrackData(sourceData):
     #       These Functions add Addition Data to Tracks Obj
     ################################################################################################################
 
-    def _updateTrackDictNames(self, tracks):
+    def _updateTrackDictNames(self):
+        tracks=self.tracks
         for track in tracks:
             type = track["type"]
             bdinfo = track["bdinfo_title"]
@@ -102,7 +100,8 @@ class siteTrackData(sourceData):
                 track["site_title"] = self._getSubName(bdinfo)
 
    
-    def _updateTrackDictFileNames(self, tracks):
+    def _updateTrackDictFileNames(self):
+        tracks=self.tracks
         for track in tracks:
             type = track["type"]
             line = track.get("site_title") or track.get("bdinfo_title")

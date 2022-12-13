@@ -82,21 +82,18 @@ def run(playlistLocation, tracks,eac3toPath):
             return
     
 def addTracks(normalTracks,compatTracks,playlistLocation):
-    i=0
-    j=0
     index=1
     trackArgs=[]
     if getChaptersBool(playlistLocation)==True:
         index=2
         trackArgs.append("1:chapters.txt")
-    while i<len(normalTracks) and j<len(compatTracks):
-        normalTrack=normalTracks[i]
+    for normalTrack in normalTracks:
         trackArgs.extend(eac3toTrack(index,normalTrack["filename"],normalTrack["bdinfo_title"],normalTrack["type"]))
-        i=i+1
-        if re.search("(thd|dts)",normalTrack["filename"],re.IGNORECASE):
-            compatTrack=compatTracks[j]
-            trackArgs.extend(eac3toTrack(index,compatTrack["filename"],compatTrack["bdinfo_title"],compatTrack["type"]))
-            j=j+1
+        if normalTrack["childKey"]:
+            compatTrack=list(filter(lambda x:x["key"]==normalTrack["childKey"],compatTracks))
+            if compatTrack:
+                compatTrack=compatTrack[0]
+                trackArgs.extend(eac3toTrack(index,compatTrack["filename"],compatTrack["bdinfo_title"],compatTrack["type"]))
         index=index+1
     return trackArgs
 

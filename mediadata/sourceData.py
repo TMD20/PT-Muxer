@@ -17,7 +17,7 @@ class sourceData(dict):
     def __init__(self):
         super().__init__()
         self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","length","streamFiles","chapters"}
-        self._tracks=[]
+        self["tracks"]={}
         self._source=None
     def __setitem__(self, key, value):
         if key not in self._allowedKeys:
@@ -35,19 +35,18 @@ class sourceData(dict):
 
     
     def updateRawTracksDict(self,trackStrs):
-        tracks = self._tracks
         source=self._source
         offset=1
         for index, currline in enumerate(trackStrs):
-            tracks.extend(self._appendTrack(currline, index+offset, source))
-        for track in tracks:
-            track["sourceDir"] = source
-            track["sourceKey"] = utils.sourcetoShowName(source)
-        self._updateTrackDictNotes(tracks)
-    def addOutput(self,output,source=None):
+            self._appendTrack(currline, index+offset, source)
+        self._setSourceDict()
+
+        
+
+    def setOutput(self,output,source=None):
         source=source or self._source
         self._output=output
-        for track in self._tracks:
+        for track in self.tracks:
             track["outputDir"]=os.path.join(output,utils.sourcetoShowName(source))
         self["outputDir"] = os.path.join(output,utils.sourcetoShowName(self._source))
 
@@ -107,8 +106,74 @@ class sourceData(dict):
         else:
             return paths.search(sourceData["sourceDir"],"PLAYLIST",dir=True)[0]
 
+  
 
-
+    @property
+    def tracks(self):
+        return list(self["tracks"].values())
+        
+    def _getfilteredvalues(self,type):
+        return list(filter(lambda x:x["type"]==type,self.values))
+    
+    @property
+    def video(self):
+        return self._getfilteredvalues("video")
+        
+    @property
+    def subtitle(self):
+        return self._getfilteredvalues("subtitle")
+    @property
+    def audio(self):
+        return self._getfilteredvalues("audio")
+    @property
+    def compat(self):
+        values=self._getfilteredvalues("audio")
+        return list(filter(lambda x:x["compat"]=="true",values))
+    @property
+    def trackkey(self):
+        return list(self["tracks"].keys())
+    def _getfilteredkey(self,type):
+        keys=self["tracks"].keys()
+        return list(filter(lambda x:self["tracks"][x]["type"]==type,keys))
+    
+    @property
+    def videokeys(self):
+        return self._getfilteredkey("video")
+        
+    @property
+    def subtitlekeys(self):
+        return self._getfilteredkey("subtitle")
+    @property
+    def audiokeys(self):
+        return self._getfilteredkey("audio")
+    @property
+    def compatkeys(self):
+        keys=self._getfilteredkey("audio")
+        return list(filter(lambda x:self["tracks"][x]["compat"]==True,keys))
+     
+  
+    @property
+    def trackitems(self):
+        return list(self["tracks"].items())
+    def _getfiltereditems(self,type):
+        items=self["tracks"].items()
+        return list(filter(lambda x:x[1]["type"]==type,items))
+    
+    @property
+    def videoitems(self):
+        return self._getfiltereditems("video")
+        
+    @property
+    def subtitleitems(self):
+        return self._getfiltereditems("subtitle")
+    @property
+    def audioitems(self):
+        return self._getfiltereditems("audio")
+    @property
+    def compatitems(self):
+        items=self._getfiltereditems("audio")
+        return list(filter(lambda x:x[1]["compat"]==True,items))      
+                  
     """
    Private
     """
@@ -120,32 +185,31 @@ class sourceData(dict):
         self._streams=streams
 
     def _setSourceDict(self):
-        self["tracks"] = self._tracks
         self["sourceDir"] = self._source
         self["playlistNum"] = self._playlistNum
         self["playlistFile"] = self._playlistFile
         self["streamFiles"] = self._getStreamNames(self._streams)
         self["length"] = self._getStreamLength(self._streams)
-        self["chapters"]=self._bdObj.getStreamChapter(self._streams,self._playlistNum)
+        self["chapters"]=self._bdObj.getStreamChapters(self._streams,self._playlistNum)
 
     ################################################################################################################
     ###### These Functions are used to parse Data from String for the corresponding Track Type i.e Video, Audio,etc#
     ################################################################################################################
 
-    def _videoParser(self, currline):
+    def _videoParser(self, currline,source):
         tempdict = trackObj.TrackObJ()
         bdinfo = re.search(
             "(?:.*?: (.*))", currline).group(1)
-        tempdict = self._defaultMediaDict(bdinfo)
+        tempdict = self._defaultMediaDict(bdinfo,source)
         tempdict["type"] = "video"
         return tempdict
 
-    def _audioParser(self, currline):
+    def _audioParser(self, currline,source):
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = list(filter(lambda x: x != None, list(
             re.search("(?:.*?/ )(?:(.*?) \(.*)?(.*)?", currline).groups())))[0]
-        tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
+        tempdict = self._defaultMediaDict(bdinfo,source, langcode, lang)
         tempdict["type"] = "audio"
         tempdict["auditorydesc"] = False
         tempdict["original"] = False
@@ -153,7 +217,7 @@ class sourceData(dict):
 
         return tempdict
 
-    def _audioCompatParser(self, currline):
+    def _audioCompatParser(self, currline,source):
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = re.search("(?:.*?)(?:\((.*?)\))", currline)
@@ -164,7 +228,7 @@ class sourceData(dict):
         if len(bdinfo) == 0:
             return
         bdinfo = bdinfo[0]
-        tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
+        tempdict = self._defaultMediaDict(bdinfo,source ,langcode, lang)
         tempdict["type"] = "audio"
         tempdict["compat"] = True
         tempdict["auditorydesc"] = False
@@ -172,11 +236,11 @@ class sourceData(dict):
         tempdict["commentary"] = False
         return tempdict
 
-    def _subParser(self, currline):
+    def _subParser(self, currline,source):
         lang = self._medialang(currline)
         bdinfo = currline
         langcode = self._mediacode(lang)
-        tempdict = self._defaultMediaDict(bdinfo, langcode, lang)
+        tempdict = self._defaultMediaDict(bdinfo,source, langcode, lang)
         tempdict["type"] = "subtitle"
         tempdict["sdh"] = False
         tempdict["textdesc"] = False
@@ -184,7 +248,7 @@ class sourceData(dict):
         return tempdict
 
     # Standard Track Data Helper
-    def _defaultMediaDict(self, bdinfo, langcode=None, lang=None):
+    def _defaultMediaDict(self, bdinfo, source,langcode=None, lang=None):
         tempdict = trackObj.TrackObJ()
         tempdict["bdinfo_title"] = bdinfo
         tempdict["langcode"] = langcode
@@ -195,6 +259,14 @@ class sourceData(dict):
         tempdict["machine_parse"] = []
         tempdict["machine_parse_endlines"] = []        
         tempdict["length"] = None
+        tempdict["sourceDir"] = source
+        tempdict["sourceKey"]=utils.sourcetoShowName(source)
+        tempdict["notes"] = "Add Your Own if You want"
+        tempdict["child"] = None
+        tempdict["parent"] = None
+        tempdict["parentKey"] = None
+        tempdict["childKey"] = None
+
         return tempdict
 
         ################################################################################################################
@@ -215,17 +287,17 @@ class sourceData(dict):
         ################################################################################################################
 
     def _appendTrack(self, currline, index, source):
-        tempList=[]
         tempdict = None
         tempdict2 = None
         match = re.search("([a-z|A-Z]*?):", currline, re.IGNORECASE).group(1)
         if match == "Video":
-            tempdict = self._videoParser(currline)
+            tempdict = self._videoParser(currline,source)
         elif match == "Audio":
-            tempdict = self._audioParser(currline)
-            tempdict2 = self._audioCompatParser(currline)
+            tempdict = self._audioParser(currline,source)
+            tempdict2 = self._audioCompatParser(currline,source)
         elif match == "Subtitle":
-            tempdict = self._subParser(currline)
+            tempdict = self._subParser(currline,source)
+    
     # Try to Get Unique Key Values
         tempdict["index"] = index
         value = tempdict["bdinfo_title"] + \
@@ -235,7 +307,10 @@ class sourceData(dict):
         tempdict["key"] = f"{key}_{post}"
         tempdict["parent"] = None
         tempdict["child"] = None
-        tempList.append(tempdict)
+        key=tempdict["key"]
+        self["tracks"][key]=tempdict
+        
+
         if tempdict2 != None:
             tempdict2["index"] = index
 
@@ -245,12 +320,18 @@ class sourceData(dict):
             key = xxhash.xxh32_hexdigest(value)
             post = tempdict2["langcode"] or "vid"
             tempdict2["key"] = f"{key}_{post}"
-            tempdict2["child"] = None
-            tempdict2["parent"] = tempdict["bdinfo_title"]
+
             tempdict["child"] = tempdict2["bdinfo_title"]
-            tempdict["parent"] = None
-            tempList.append(tempdict2)
-        return tempList
+            tempdict["childKey"] =tempdict2["key"]
+
+            tempdict2["parent"] = tempdict["bdinfo_title"]
+            tempdict2["parentKey"] =tempdict["key"]
+
+          
+
+            key=tempdict2["key"]
+            self["tracks"][key]=tempdict2
+        
 
 
   
@@ -259,9 +340,8 @@ class sourceData(dict):
     #       These Functions add Addition Data to Tracks Obj
     ################################################################################################################
 
-    def _updateTrackDictNotes(self, tracks):
-        for track in tracks:
-            track["notes"] = "Add Your Own if You want"
+
+            
    
 
       ################################################################################################################

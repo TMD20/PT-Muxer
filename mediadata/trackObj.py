@@ -6,7 +6,7 @@ class TrackObJ(dict):
         "type","index","compat","forced","default","lang","auditorydesc"
         ,"original","commentary","textdesc","langcode","machine_parse","length",
         "key","parent","child","sdh","sourceDir","sourceKey","outputDir","notes"
-        ,"machine_parse_endlines"}
+        ,"machine_parse_endlines","parentKey","childKey"}
     #prevent 
     def __setitem__(self, key, value):
         if key not in self._allowedKeys:

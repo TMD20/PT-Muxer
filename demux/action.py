@@ -20,7 +20,8 @@ def endProcess():
         logger.logger.info("Program Forced to stop\nExtraction Process May not be complete\n")
         if utils.singleSelectMenu(["Yes","No"],f"Do you want to delete the current Mux Folder\n{demuxObj.demuxFolder}?")=="Yes":
                 utils.rmDir(demuxObj.demuxFolder)
-    logger.logger.info("Good Bye\n")
+    if demuxObj.success==True:
+        logger.logger.info("Demux Complete\n")
     quit()
 
 

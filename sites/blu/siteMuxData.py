@@ -38,7 +38,7 @@ class Blu(MuxOBj):
         except Exception as E:
             logger.print(E)
             logger.print(traceback.format_exc(),style="white")
-            logger.print("Vdator Error")
+            logger.print("Ignoring Vdator Error")
 
             
 

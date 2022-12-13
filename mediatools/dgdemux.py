@@ -18,6 +18,7 @@ import tools.logger as logger
 
 
 def run(tracks,source, playlistFile,ep=False):
+    tracks=_filterBDInfo(tracks)
     if ep==False:
         _runNormal(tracks,source, playlistFile)
     else:
@@ -31,9 +32,8 @@ def _runNormal(tracks,source, playlistFile,directory="."):
     dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
     dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
 
-    filteredBDInfo=list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks)) 
-    normalTracks=list(filter(lambda x:x["compat"]==False,filteredBDInfo))
-    compatTracks=list(filter(lambda x:x["compat"]==True,filteredBDInfo))
+    normalTracks=list(filter(lambda x:x["compat"]==False,tracks))
+    compatTracks=list(filter(lambda x:x["compat"]==True,tracks))
     _logHelper(normalTracks,compatTracks,dgDemuxTracks,_getChapterTrackInfo(dgDemuxTrackOutPut))
     _verifyTracksCodec(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
     _verifyTracksLang(normalTracks,_getTrackInfo(dgDemuxTrackOutPut))
@@ -65,9 +65,8 @@ def _runEP(tracks,source, playlistFile,directory="."):
     dgDemuxTracks=_getFilterOutput(_getTrackInfo(dgDemuxTrackOutPut))
     dgDemuxChapters=_getFilterOutput(_getChapterTrackInfo(dgDemuxTrackOutPut))
 
-    filteredBDInfo=list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks)) 
-    normalTracks=list(filter(lambda x:x["compat"]==False,filteredBDInfo))
-    compatTracks=list(filter(lambda x:x["compat"]==True,filteredBDInfo))
+    normalTracks=list(filter(lambda x:x["compat"]==False,tracks))
+    compatTracks=list(filter(lambda x:x["compat"]==True,tracks))
     _logHelper(normalTracks,compatTracks,dgDemuxTracks,_getChapterTrackInfo(dgDemuxTrackOutPut))
     _verifyTracksCodec(normalTracks,compatTracks,_getTrackInfo(dgDemuxTrackOutPut))
     _verifyTracksLang(normalTracks,_getTrackInfo(dgDemuxTrackOutPut))
@@ -293,7 +292,8 @@ def _verifyTracksCodec(normalTracks,compatTracks,dgDemuxTracks):
 
 
 def _verifyTracksLang(normalTracks,dgDemuxTracks):
-    dgFilteredTracks=list(filter(lambda x:re.search("video",x,re.IGNORECASE)==None,dgDemuxTracks))
+    dgFilteredTracks=list(filter
+    (lambda x:re.search("video",x,re.IGNORECASE)==None,dgDemuxTracks))
     normalTrackFiltered=list(filter(lambda x:re.search("video",x["bdinfo_title"],re.IGNORECASE)==None,normalTracks))
     for i in range(len(dgFilteredTracks)):
         dgDemuxTrack=re.search("\[([a-z]{3})\]", dgFilteredTracks[i],re.IGNORECASE)
@@ -326,6 +326,9 @@ def _logHelper(normalTracks,compatTracks,dgDemuxTracks,dgDemuxChapters):
 
 def _getIndexDgdemuxHelper(track):
     return re.search("\[([0-9]+)\]",track).group(1)
+def _filterBDInfo(tracks):
+    return list(filter(lambda x:re.search("(DTS Core)",x["bdinfo_title"],re.IGNORECASE)==None,tracks)) 
+
         
 
 
