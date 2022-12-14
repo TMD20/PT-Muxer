@@ -1,9 +1,8 @@
 import string
-import requests
 import re
-import json
 import os
 import functools
+import traceback
 
 import tools.general as utils
 from bs4 import BeautifulSoup
@@ -12,6 +11,8 @@ from imdb import Cinemagoer as imdb
 # Episode, Season,
 import tmdbsimple as tmdb
 import config
+import tools.logger as logger
+
 # Globals
 ia = imdb()
 tmdb.API_KEY = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
@@ -19,8 +20,8 @@ tmdb.REQUESTS_SESSION=config.session
 
 
 class MovieData():
-    def __init__(self):
-        self._type = None
+    def __init__(self,type):
+        self._type = type
         self._episodesURL = ""
         self._showURL = ""
         self._movieObj = {}
@@ -48,10 +49,18 @@ class MovieData():
         dict
             returns MovieData Dict with data about matches show
         """
-        self._type = type
+   
+
+        if type=="TV":self._movieObj["season"]=utils.getIntInput("What Season are you demuxing")
         self._getShowURLWiki(title)
         data = None
         anime = self._getIsAnimeWiki()
+        
+        logger.logger.debug(f"Movie Data")
+        logger.logger.debug(f"type: {type}")
+        logger.logger.debug(f"title: {title}")
+        logger.logger.debug(f"show wikiurl:{self._showURL}")
+        logger.logger.debug(f"Anime:{anime}")
         if anime:
             id = self._getMalID(title)
             if id:
@@ -60,12 +69,11 @@ class MovieData():
         else:
             id = self._getIMDBID(title)
             if id:
-
                 data = self._getMovieInfo(id)
+        logger.logger.debug(f"Automatic Data: {data}")
 
-        if data == None:
-            data = self._userInputMovie()
-        return data
+        data=self._verifyData(data)
+        logger.logger.debug(f"Verified Data: {data}")
 
     def retriveEpisodeTitle(self, seasonNum, epNum, title, year, tmdbID, lang="English"):
         """
@@ -166,7 +174,11 @@ class MovieData():
     ########################################################################################
     # helpers
     ########################################################################################
-
+    def _verifyData(self,data):
+        if data == None:
+            data = self._userInputMovie()
+        return data
+    
     def _getEpisodeName(self,  seasonNum, epNum, title, year, tmdbID, lang):
         """
         Helper Function to get Episode Title Via Wikepedia or TMDB
@@ -201,7 +213,7 @@ class MovieData():
                 success=True
 
             except:
-                print("TMDB Episode Name Finder Failed")
+                logger.print("TMDB Episode Name Finder Failed",style="bold red")
             if not success:
                 try:
                     self._getEpisodesURLWiki(title, year)
@@ -211,7 +223,7 @@ class MovieData():
                         name = self._getEnglishNameWiki(
                             self._seasonsHTMLDictWiki[seasonNum][epNum])
                 except:
-                    print("Wiki Episode Name Finder Failed")
+                    logger.print("Wiki Episode Name Finder Failed",style="bold red")
             return re.sub('"', '', name)
 
     def _getEpisodeIMDB(self, imdbID, tmdbID, seasonNum, epNum, title, year):
@@ -243,13 +255,13 @@ class MovieData():
             return self._episodeIMDBMatcherTMDB(seasonIDList, tmdbID, imdbID, seasonNum, epNum)
 
         except:
-            print("TMDB Episode IMDB Matcher Failed")
+            logger.print("TMDB Episode IMDB Matcher Failed",style="bold red")
         try:
             self._getEpisodesURLWiki(title, year)
             self._getSeasonSectionsWiki()
             return self._episodeIMDBMatcherWiki(imdbID, seasonNum, epNum)
         except:
-            print("Wiki Episode IMDB Matcher Failed")
+            logger.print("Wiki Episode IMDB Matcher Failed",style="bold red")
 
     def _getNumberofEpisodes(self, seasonNum, title, year, tmdbID):
         """
@@ -274,13 +286,13 @@ class MovieData():
         try:
             return self._getTotalEPSeasonTMDB(seasonNum, title, tmdbID)
         except:
-            print("TMDB Episode Counter Failed")
+            logger.print("TMDB Episode Counter Failed",style="bold red")
         try:
             self._getEpisodesURLWiki(title, year)
             self._getSeasonSectionsWiki()
             return self. getSeasonEPCountWiki(seasonNum)
         except:
-            print("Wiki Episode Counter Failed")
+            logger.print("Wiki Episode Counter Failed",style="bold red")
 
     def _userInputMovie(self):
         if utils.singleSelectMenu(["Yes", "No"], "Is this a Anime?") == "Yes":
@@ -295,8 +307,8 @@ class MovieData():
                 result = ia.get_movie(re.sub("tt", "", id))
                 return self._getMovieInfo(result["imdbID"])
             except:
-                print("Error with ID")
-                quit()
+                raise RuntimeError("Error with IMDBID")
+
 
     ########################################################################################
     # Wikipedia Functions
@@ -350,7 +362,7 @@ class MovieData():
         if overallEP < totalEPIMDBSeason:
             startEP = (max(1, overallEP - offset))
         matchObj = None
-        print("Searching for Matching Episode\nThis may take a while...")
+        logger.print("Searching for Matching Episode\nThis may take a while...",style="bold red")
         for i in range(startEP, totalEPIMDBSeason+1):
             curr = series["episodes"][matchSeason][i]
             releaseDate = self._getEpisodeReleaseDateIMDB(curr.movieID)[0]
@@ -831,7 +843,8 @@ class MovieData():
         try:
             return req.json()["data"]
         except Exception as e:
-            print(e)
+            logger.print(traceback.format_exc(),style="white")
+            logger.print(e,style="bold red")
             return e
 
     def _getMalID(self, title):
@@ -1156,7 +1169,7 @@ class MovieData():
     @functools.lru_cache
     def _getMovieList(self, title):
         """
-        Retrives a list of Possible Matches via wikepedia title search
+        Retrives a list of Possible Matches via title search
 
         Parameters
         ----------
@@ -1223,6 +1236,11 @@ class MovieData():
         self._showObjDictIMDB[imdbID] = series
         return series
 
+    
+
+    
+
+    
     def _getIMDBID(self, title):
         """
         Allows user to pick title that best matches the input title sent
@@ -1239,7 +1257,8 @@ class MovieData():
         imdbPY Object
             imdb object for user picked
         """
-        results = ia.search_movie(title)
+        results = self._getMovieList(title)
+        logger.logger.debug(f"IMDB Title Results {list(map(lambda x: x['long imdb title'], results))}")
         result = None
         msg = None
 
@@ -1252,7 +1271,7 @@ class MovieData():
         else:
             titles = list(map(lambda x: x["long imdb title"], results))
             titles.insert(0, "None of these Titles Match")
-            match = utils.singleSelectMenu(titles, msg)
+            match = utils.singleSelectMenu(titles, msg,default=titles[1])
             if match == "None of these Titles Match":
                 return
             else:
@@ -1521,7 +1540,7 @@ class MovieData():
         if overallEP < totalEPIMDBSeason:
             startEP = (max(1, overallEP - offset))
         matchObj = None
-        print("Searching for Matching Episode\nThis may take a while...")
+        logger.print("Searching for Matching Episode\nThis may take a while...")
         for i in range(startEP, totalEPIMDBSeason+1):
             curr = series["episodes"][matchSeason][i]
             releaseDate = self._getEpisodeReleaseDateIMDB(curr.movieID)[0]

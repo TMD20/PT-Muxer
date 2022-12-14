@@ -8,6 +8,8 @@ import langcodes
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import tools.commands as commands
+import tools.logger as logger
+
 
 
 class MuxOBj():
@@ -44,7 +46,7 @@ class MuxOBj():
             key = str(key)
             trackjson = remuxConfig["Tracks_Details"]["Video"][key]
             name = trackjson["site_title"]
-            file = trackjson["file"]
+            file = trackjson["filename"]
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
@@ -66,7 +68,7 @@ class MuxOBj():
             trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
             langcode = trackjson["langcode"]
             name = trackjson["site_title"]
-            file = trackjson["file"]
+            file = trackjson["filename"]
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
@@ -104,7 +106,7 @@ class MuxOBj():
             # get base data
             trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
             langcode = trackjson["langcode"]
-            file = trackjson["file"]
+            file = trackjson["filename"]
             name = trackjson.get("site_title")
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
@@ -195,8 +197,8 @@ class MuxOBj():
         if chapters == None:
             command = list(itertools.chain.from_iterable(
                 [commands.mkvmerge(), ["--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
-        commandStr = " ".join(command)
-        print(f"Running This Command\n{commandStr}")
+        logger.logger.debug(f"Running This Command: \n{command}")
+        logger.logger.debug(f"Running This CommandString :\n{' '.join(command)}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')

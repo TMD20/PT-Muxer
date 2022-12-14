@@ -1,12 +1,16 @@
 import os
 import subprocess
 import tempfile
+import traceback
 
 from pymediainfo import MediaInfo
 
 from sites.base.siteMuxData import MuxOBj
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
+import tools.logger as logger
+import config
+
 
 
 class Blu(MuxOBj):
@@ -21,15 +25,22 @@ class Blu(MuxOBj):
 
         with open(mediainfoPath, "w") as p:
             p.write(mediainfo)
-        print("\n\nRunning Blutopia Validator\n\n")
-        command = ["/usr/local/bin/mine/remux/bin/python3", os.path.join(utils.getRootDir(), "vdator/vdator/main.py"),
-                   mediainfoPath, bdinfo, eac3to]
+        try:
+            logger.print("\n\nRunning Blutopia Validator\n\n")
+            command = [config.pythonPath, os.path.join(config.root_dir, "vdator/vdator/main.py"),
+                    mediainfoPath, bdinfo, eac3to]
 
-        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
-            for line in p.stdout:
-                print(line, end='')
-            for line in p.stderr:
-                print(line, end='')
+            with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
+                for line in p.stdout:
+                    print(line, end='')
+                for line in p.stderr:
+                    print(line, end='')
+        except Exception as E:
+            logger.logger.debug(traceback.format_exc())
+            logger.logger.debug(str(E))
+
+            logger.print("Ignoring Vdator Error")
+    
 
     def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None, directory=None):
         videoCodec = mkvTool.getVideo(

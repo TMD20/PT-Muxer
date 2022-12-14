@@ -18,11 +18,13 @@ class siteTrackSorter():
         self._enabledAudio = []
         self._enabledSub = []
         self._enabledVideo = []
-        self._tracksDataObj = None
+        self._tracks = []
     """
     Public Functions
     """
-
+    def addTracks(self,tracks):
+        self._tracks.extend(tracks)
+    
     def sortTracks(self, movieLangs, audioPrefs, subPrefs, sortPref):
         self._groupTracks()
         self._sortTracksHelper(movieLangs, audioPrefs, subPrefs, sortPref)
@@ -42,11 +44,10 @@ class siteTrackSorter():
         for oldTrack in self._unSortedSub:
             if oldTrack["lang"].lower() not in audioLangs:
                 continue
-            oldFile = oldTrack["file"]
-            newFile = re.sub("\.sup", ".forced.sup", oldFile)
-            newEac3to = re.sub("\.sup", ".forced.sup", oldTrack["eac3to"])
+            oldFile = oldTrack.getTrackLocation()
+            newFileName = re.sub("\.sup", ".forced.sup", oldFile)
             command = list(itertools.chain.from_iterable(
-                [commands.bdSup(), [oldFile, "-o", newFile, "--forced-only"]]))
+                [commands.bdSup(), [oldFile, "-o", newFileName, "--forced-only"]]))
             output = ""
             with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
                 for line in p.stdout:
@@ -60,8 +61,7 @@ class siteTrackSorter():
                     continue
 
                 newTrack = copy.deepcopy(oldTrack)
-                newTrack["file"] = newFile
-                newTrack["eac3to"] = newEac3to
+                newTrack["filename"] = newFileName
                 value = newTrack["bdinfo_title"] + \
                     newTrack["sourceKey"] + str(newTrack["index"])+"forced"
                 key = xxhash.xxh32_hexdigest(value)
@@ -92,12 +92,9 @@ class siteTrackSorter():
     Setters/Getters
     """
     @property
-    def tracksDataObj(self):
-        return self._tracksDataObj
+    def tracks(self):
+        return self._tracks
 
-    @tracksDataObj.setter
-    def tracksDataObj(self, a):
-        self._tracksDataObj = a
 
     @property
     def unSortedAudio(self):
@@ -132,17 +129,14 @@ class siteTrackSorter():
     ################################################################################################################
 
     def _groupTracks(self):
-        sources = list(self._tracksDataObj.rawMediaTracksData.keys())
-        for key in sources:
-            tracks = self._tracksDataObj.rawMediaTracksData[key]["tracks"]
-            for track in tracks:
-                type = track["type"]
-                if type == "audio":
-                    self._unSortedAudio.append(track)
-                elif type == "video":
-                    self._unSortedVideo.append(track)
-                elif type == "subtitle":
-                    self._unSortedSub.append(track)
+        for track in self._tracks:
+            type = track["type"]
+            if type == "audio":
+                self._unSortedAudio.append(track)
+            elif type == "video":
+                self._unSortedVideo.append(track)
+            elif type == "subtitle":
+                self._unSortedSub.append(track)
 
     #####################################################################################################################
     #       Sort Track Helpers
@@ -175,7 +169,7 @@ class siteTrackSorter():
                 if match["bdinfo_title"] != track["bdinfo_title"]:
                     continue
                 # Greater then 10MB difference in size
-                if os.path.getsize(match["file"])-os.path.getsize(track["file"]) > 10000000:
+                if os.path.getsize(match.getTrackLocation())-os.path.getsize(track.getTrackLocation()) > 10000000:
                     continue
                 dupe = True
             if dupe == False:
@@ -285,8 +279,9 @@ class siteTrackSorter():
         if sortPref == "size":
             newTracks = sorted(newTracks,
                                key=self._VideoRankingSize, reverse=True)
-        newTracks[0]["default"] = True
-        self._enabledVideo.append(newTracks[0])
+        if len(newTracks)>0:
+            newTracks[0]["default"] = True
+            self._enabledVideo.append(newTracks[0])
 
     #########################################################################################
     # Helper Functions to Rank Tracks
@@ -295,7 +290,7 @@ class siteTrackSorter():
 
     def _AudioRankingSize(self, track):
         title = track["bdinfo_title"]
-        size = os.path.getsize(track["file"])
+        size = os.path.getsize(track.getTrackLocation())
         # lossless
         if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X|FLAC", title, re.IGNORECASE) != None:
             return 1+(size/100*100000000)
@@ -304,11 +299,12 @@ class siteTrackSorter():
             return 10+(size/100*100000000)
 
     def _VideoRankingSize(self, track):
-        size = os.path.getsize(track["file"])
+        size = os.path.getsize(track.getTrackLocation())
         return size
 
     def _subAlphaOrder(self, track):
         return track["lang"]
+
 
 ##################################################################################
 # Additional helper functions

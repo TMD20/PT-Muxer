@@ -1,21 +1,29 @@
 import os
 import re
 import functools
-import glob
 import pathlib
 import sys
 import textwrap
 import shutil
+import sys
+
 
 import pynumparser
 from InquirerPy import inquirer
 import arrow
 from guessit import guessit
 
+import tools.paths as paths
+import tools.logger as logger
 
-def convertArrow(input, parse):
-    return arrow.get(input, parse)
 
+def convertArrow(input, parse=None):
+    if parse:
+        return arrow.get(input, parse)
+    return arrow.get(input)
+def signal_handler(sig, frame):
+    logger.print('You pressed Ctrl+C!')
+    sys.exit(0)
 
 def subArrowTime(large, small):
     large = large.shift(hours=-small.hour)
@@ -25,12 +33,12 @@ def subArrowTime(large, small):
     return large
 
 
-def addArrowTime(large, small):
-    large = large.shift(hours=+small.hour)
-    large = large.shift(minutes=+small.minute)
-    large = large.shift(seconds=+small.second)
-    large = large.shift(microseconds=+small.microsecond)
-    return large
+def addArrowTime(value, value2):
+    value = value.shift(hours=+value2.hour)
+    value= value.shift(minutes=+value2.minute)
+    value = value.shift(seconds=+value.second)
+    value= value.shift(microseconds=+value2.microsecond)
+    return value
 
 
 def dehumanizeArrow(input):
@@ -42,30 +50,19 @@ def getFormated(format,time=None):
     return arrow.get(time).format(format)
 
 
-def mkdirSafe(target):
-    directories = list(reversed(pathlib.Path(target).parents))
-    if len(os.path.splitext(target)[1]) == 0:
-        directories.append(target)
-    for ele in directories:
-        if not os.path.exists(ele):
-            os.mkdir(ele)
+        
 
 
 def sourcetoShowName(path):
-    path = convertPathType(path, "Linux")
-    show = str(pathlib.Path(path).parents[1])
+    path = paths.convertPathType(path, "Linux")
+    show=path
+    if re.search(path,"D[0-9]|Disc"):
+        show = str(pathlib.Path(path).parents[0])
     show = os.path.basename(show)
     show = re.sub(" +", " ", show)
     show = re.sub(" ", ".", show)
 
     return show
-
-
-def findMatches(path, string, ext=None):
-    paths = glob.glob(os.path.join(path, "**", string), recursive=True)
-    if ext != None:
-        paths = list(filter(lambda x: os.path.splitext(x), paths))
-    return paths
 
 
 def requiredClassAttribute(*required):
@@ -101,8 +98,8 @@ def getIntInput(string, maxVal=float("inf")):
     ).execute())
 
 
-def singleSelectMenu(items, message):
-    return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+def singleSelectMenu(items, message,default=None):
+    return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items,default=default).execute()
 
 
 def rawSelectMenu(items, message):
@@ -110,7 +107,12 @@ def rawSelectMenu(items, message):
 
 
 def multiSelectMenu(items, message):
-    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
+    instructions=\
+        """
+        Press Space to add/remove selection
+        Press Enter when Done
+        """
+    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n{instructions}\n"), choices=items).execute()
 
 
 def textEnter(message, default=None):
@@ -128,30 +130,7 @@ def getRangeOfNumbers(message, default=None):
         return
 
 
-def validateFiles(fileList):
-    for file in fileList:
-        if not os.path.exists(file):
-            return file
 
-
-def getBdinfo(remuxConfig):
-    key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
-    output = os.path.dirname(
-        remuxConfig["Tracks_Details"]["Video"][key]["file"])
-    return findMatches(output, "BDINFO*")[0]
-
-
-def getEac3to(remuxConfig):
-    key = str(remuxConfig["Enabled_Tracks"]["Video"][0])
-    output = os.path.dirname(
-        remuxConfig["Tracks_Details"]["Video"][key]["file"])
-    return findMatches(output, "Eac3to*")[0]
-
-
-def convertPathType(folder, type):
-    if type == "Linux":
-        return str(pathlib.PurePosixPath(folder))
-    return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
 
 
 def getTitle(source):
@@ -177,34 +156,17 @@ def smart_truncate(content, length=100, suffix='...'):
         return content[:length].rsplit(' ', 1)[0]+suffix
 
 
-def getRelativeTo(track, levelUp):
-    """
-    Returns the relative Path of a file/folder from one of it's parents
-
-
-    Parameters
-    ----------
-
-    track : str
-        Track whose relative path you want
-    levelup: int
-        How many levels up the parent tree
-
-
-    Returns
-    -------
-
-    str
-        Relative path to file from one of the parents
-    """
-
-    return str(pathlib.Path(track).relative_to(pathlib.Path(track).parents[levelUp-1]))
-
 
 def getSystem():
     if sys.platform == "linux":
         return "Linux"
     else:
         return "Windows"
+def getShell():
+    if sys.platform=="linux":
+        return "bash"
+    else:
+        return None
 def rmDir(path):
     shutil.rmtree(path)
+

@@ -1,50 +1,75 @@
 import os
-import re
 import itertools
 import subprocess
+import re
 
 import tools.commands as commands
 import tools.general as utils
+import tools.paths as paths
+import tools.directory as dir
+import tools.logger as logger
+    
+def eac3toTrack(index,name,bdinfotitle,type):
+    output = []
+    output.append((f"{index}:{name}"))
+    if re.search("LPCM|TrueHD|DTS-HD MA|DTS:.*?X", bdinfotitle, re.IGNORECASE) == None and type== "audio":
+        output.append("-keepDialnorm")
+    return output
 
 
-def process(source, output, outputs_list, playlistLocation):
-    start = os.getcwd()
-    show = utils.sourcetoShowName(source)
-    eac3toPath = set_eac3toPath(output, show)
-
-    utils.mkdirSafe(eac3toPath)
-
-    os.chdir(output)
-    extract_files(playlistLocation, outputs_list, eac3toPath)
-    cleanFiles(outputs_list)
-    os.chdir(start)
 
 
-def extract_files(playlistLocation, outputs_list, eac3toPath):
+
+def process(tracks,source, file):
+    output=os.path.abspath(".") 
+    eac3toPath = get_eac3toPath(output, source)
+    playlistLocation=_getFileHelper(source,file)
+    run(playlistLocation, tracks,eac3toPath)
+
+def _getFileHelper(source,file):
+    if re.search("\.mpls",file,re.IGNORECASE):
+        return _getPlaylistLocation(source,file)
+    return _getStreamLocation(source,file)
+
+def _getPlaylistLocation(source,playlistFile):
+    playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
+    if len(playlistFiles)>0:
+        return playlistFiles[0]
+    return ""
+def _getStreamLocation(source,playlistFile):
+    playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
+    if len(playlistFiles)>0:
+        return playlistFiles[0]
+    return ""
+def getChaptersBool(playlistLocation):
+    with dir.cwd(paths.createTempDir()):
+        playlistLocationFinal=paths.switchPathType(playlistLocation)
+        command= list(itertools.chain.from_iterable([commands.eac3to(), [
+                        playlistLocationFinal]]))
+        out=""
+        with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
+            for line in p.stdout:
+                out=f"{out} {line}"
+            p.wait()
+        return re.search("chapter",out,re.IGNORECASE)!=None
+  
+
+
+
+def run(playlistLocation, tracks,eac3toPath):
 
     # get list of files
-    eac3toWChapters = ["1:chapters.txt"]
-    eac3toWChapters.extend(
-        [f"{ele[0]}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"])
-    eac3toWoChapters = [
-        f"{ele[0]-1}:{ele[1]}"for ele in outputs_list if ele != "-keepDialnorm"]
-    eactoCommand = None
-    playlistlocationFinal = utils.convertPathType(playlistLocation, "Linux")
-    if utils.getSystem() == "Linux":
-        playlistlocationFinal = utils.convertPathType(
-            playlistLocation, "Windows")
-    eactoCommand = commands.eac3to()
-
-    command1 = list(itertools.chain.from_iterable([eactoCommand, [
-                    playlistlocationFinal], eac3toWChapters, ["-progressnumbers", f"-log={eac3toPath}"]]))
-
-    command2 = list(itertools.chain.from_iterable([eactoCommand, [
-                    playlistlocationFinal], eac3toWoChapters, ["-progressnumbers", f"-log={eac3toPath}"]]))
-    command3 = list(itertools.chain.from_iterable([eactoCommand, [
-                    playlistlocationFinal], eac3toWChapters, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]))
-    command4 = list(itertools.chain.from_iterable([eactoCommand, [
-                    playlistlocationFinal], eac3toWoChapters, ["-progressnumbers", "-demux", f"-log={eac3toPath}"]]))
-    commandslist = [command1, command2, command3, command4]
+    normalTracks=list(filter(lambda x:x["compat"]==False,tracks))
+    compatTracks=list(filter(lambda x:x["compat"],tracks
+    ))
+    trackArgs=addTracks(normalTracks,compatTracks,playlistLocation)
+    logger.logger.debug(str(trackArgs))
+    playlistLocationFinal = paths.switchPathType(playlistLocation)  
+    command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
+                    playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+    command2 = list(itertools.chain.from_iterable([commands.eac3to(), [
+                    playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+    commandslist = [command1, command2]               
     status = 1
     for command in commandslist:
         with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
@@ -52,59 +77,40 @@ def extract_files(playlistLocation, outputs_list, eac3toPath):
                 print(line, end='')
             p.wait()
             status = p.returncode
-            if status == 0:
-                break
+        if status == 0:
+            cleanFiles(list(map(lambda x:x["filename"],tracks)))
+            return
+    
+def addTracks(normalTracks,compatTracks,playlistLocation):
+    index=1
+    trackArgs=[]
+    if getChaptersBool(playlistLocation)==True:
+        index=2
+        trackArgs.append("1:chapters.txt")
+    for normalTrack in normalTracks:
+        trackArgs.extend(eac3toTrack(index,normalTrack["filename"],normalTrack["bdinfo_title"],normalTrack["type"]))
+        if normalTrack["childKey"]:
+            compatTrack=list(filter(lambda x:x["key"]==normalTrack["childKey"],compatTracks))
+            if compatTrack:
+                compatTrack=compatTrack[0]
+                trackArgs.extend(eac3toTrack(index,compatTrack["filename"],compatTrack["bdinfo_title"],compatTrack["type"]))
+        index=index+1
+    return trackArgs
 
 
-def set_eac3toPath(output, show):
-    return os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
+  
+
+
+
+def get_eac3toPath(output, source):
+    show=utils.sourcetoShowName(source)
+    txtPath= os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
+    paths.mkdirSafe(txtPath)
+    return txtPath
 
 
 def cleanFiles(outputs_list):
-    outputs_list = [f"{ele[1]}"for ele in outputs_list]
     outputs_list.append("chapters.txt")
     for file in os.listdir("."):
         if os.path.isfile(file) and file not in outputs_list:
             os.remove(file)
-
-
-def getVideoFileName(line, index):
-    if re.search("AVC", line) != None:
-        return f"{index}:00{index}.h264"
-    if re.search("HEVC", line) != None:
-        return f"{index}:00{index}.h265"
-    if re.search("VC-1", line) != None:
-        return f"{index}:00{index}.vc1"
-    if re.search("MPEG-2", line) != None:
-        return f"{index}:00{index}.mpeg2"
-
-
-def getAudioFileName(line, langcode, index):
-    # Lossless audio
-    if re.search("flac", line, re.IGNORECASE) != None:
-        codec = "flac"
-
-    elif re.search("lpcm", line, re.IGNORECASE) != None:
-        codec = "pcm"
-    elif re.search("Master Audio", line, re.IGNORECASE) != None:
-        codec = "dtsma"
-
-    elif re.search("TrueHD", line, re.IGNORECASE) != None:
-        codec = "thd"
-
-    elif re.search("Dolby Digital", line, re.IGNORECASE) != None:
-        codec = "ac3"
-    elif re.search("AC3 Embedded", line, re.IGNORECASE) != None:
-        codec = "ac3"
-
-    elif re.search("DTS Audio", line, re.IGNORECASE) != None:
-        codec = "dts"
-    elif re.search("dts", line, re.IGNORECASE) != None:
-        codec = "dts"
-
-    return f"{index}:00{index}-{langcode}.{codec}"
-
-
-def getSubFileName(langcode, index):
-    # remove special characters
-    return f"{index}:00{index}-{langcode}.sup"

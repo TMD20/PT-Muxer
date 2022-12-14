@@ -2,7 +2,6 @@ import json
 import subprocess
 import srt
 import datetime
-import os
 import logging
 import asyncio
 import websockets

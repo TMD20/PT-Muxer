@@ -3,8 +3,10 @@ import os
 import copy
 import random
 
-from sites.base.siteTrackData import siteTrackData
 import xxhash
+
+from sites.base.siteTrackData import siteTrackData
+import tools.directory as dir
 
 
 
@@ -13,14 +15,13 @@ class Blu(siteTrackData):
         super().__init__()
 
     
-    def addTracks(self, quicksum, playlistNum,playlistFile,streams, source, output):
-        current_tracks = super().addTracks(quicksum, playlistNum, playlistFile,streams,source, output)
-        self._checkPadding(current_tracks ,output)
+    def addTracks(self, bdinfo,playlistNum,streams=None):
+        current_tracks = super().addTracks(bdinfo,playlistNum,streams=None)
+        
+        self._checkPadding(current_tracks)
         return current_tracks
 
-    def _checkPadding(self, current_tracks, output):
-        start = os.getcwd()
-        os.chdir(output)
+    def _checkPadding(self, current_tracks):
         insertDict = []
         for i in range(len(current_tracks)):
             track = current_tracks[i]
@@ -33,9 +34,7 @@ class Blu(siteTrackData):
                 newTitle= f"FLAC Audio / {match}"
                 newTitle=re.sub(" +"," ",newTitle)
                 newTrack["site_title"] =newTitle
-                newTrack["eac3to"] = re.sub("\..*", ".flac", track["eac3to"])
-                newTrack["file"] = os.path.join(
-                    output, newTrack["eac3to"].split(":")[1])
+                newTrack["filename"] = re.sub("\..*", ".flac", track["filename"])
                 newTrack["child"] = None
                 value = newTrack["bdinfo_title"] + \
                     newTrack["sourceKey"] + str(newTrack["index"])
@@ -45,4 +44,3 @@ class Blu(siteTrackData):
                 insertDict.append((i+1, newTrack))
         for tup in insertDict:
             current_tracks.insert(tup[0], tup[1])
-        os.chdir(start)

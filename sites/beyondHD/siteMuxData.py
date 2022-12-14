@@ -4,7 +4,7 @@ from sites.base.siteMuxData import MuxOBj
 import mediatools.mkvtoolnix as mkvTool
 
 
-class AnimeBytes(MuxOBj):
+class BeyondHD(MuxOBj):
     def __init__(self):
         super().__init__()
 

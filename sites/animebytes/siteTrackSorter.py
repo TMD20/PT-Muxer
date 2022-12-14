@@ -9,19 +9,26 @@ class AnimeBytes(siteTrackSorter):
         super().__init__()
     def addForcedSubs(self, movieLang, audioPref):
         super().addForcedSubs(movieLang, audioPref)
-        # Check if a force english track has been found
-        for track in self._enabledSub:
-            if track["forced"] == True and track["lang"].lower() == "english":
-                return
-        for key in list(self._tracksDataObj.rawMediaTracksData.keys()):
+        #set force track
+        forceDict={}
+        for track in self._unSortedSub:
+            key=track["sourceKey"]
+            if forceDict.get(key)==None:
+                forceDict[key]=[track]
+            else:
+                forceDict[key].append(track)
+        for key in list(forceDict.keys()):
             keyTracks = list(
-                filter(lambda x: x["sourceKey"] == key, self._unSortedSub))
-            keyTracks = list(
-                filter(lambda x: x["lang"].lower() == "english", keyTracks))
+                filter(lambda x: (x["sourceKey"] == key and x["lang"].lower() == "english"), self._unSortedSub))
+            # Check if a source already has forced subs
+            if len(list(
+                filter(lambda x: (x["forced"] == True), keyTracks)))>0:
+                continue
+            #Try to find force track
             if len(keyTracks) < 2:
-                return
+                continue
             forcedTrack = keyTracks[0]
-            if os.path.getsize(keyTracks[1]["file"]) < os.path.getsize(keyTracks[0]["file"]):
+            if os.path.getsize(keyTracks[1].getTrackLocation()) < os.path.getsize(keyTracks[0].getTrackLocation()):
                 forcedTrack = keyTracks[1]
             forcedTrack["default"] = True
             forcedTrack["forced"] = True
