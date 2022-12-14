@@ -46,6 +46,7 @@ class Demux():
     def demuxPlaylist(self,bdObjs,multiSelect=False):
         #setup bdobj
         for bdObj in bdObjs:
+            logger.print(bdObj.mediaDir,style="white")
             if multiSelect==True:
                 bdObj.playListRangeSelect()
             else:
@@ -60,24 +61,22 @@ class Demux():
                     bdObj.generateData(i)
                     demuxData=siteDataPicker.pickSite(self._args.site)
                     demuxData.addTracks(bdObj,bdObj.keys[i])
-                    self._filterTracks(demuxData.audio)
-                    
-                    demuxData.addOutput(newFolder)
+                    self._filterTracks(demuxData)        
+                    demuxData.setOutput(newFolder)
                     trackerObjs.append(demuxData)
                     with dir.cwd(demuxData["outputDir"]):
                         if not self._args.dontconvert:
                                     demuxData.convertFlac()
                         if self._args.extractprogram=="eac3to":
-                            eac3to.process(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
+                            eac3to.process(demuxData.tracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         else:
-                            dgdemux.run(currentTracks,demuxData["sourceDir"],demuxData["playlistFile"])
+                            dgdemux.run(demuxData.tracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         bdObj.writeBDInfo(0)
-
-                        muxSorter=self._getMuxSorter(trackerObjs)
-                        self._subParse(muxSorter)
-                        self._voiceRec(muxSorter)
-                    
-                    self._writeFinalJSON(self._saveOutput(trackerObjs,muxSorter))
+                with dir.cwd(demuxData["outputDir"]):
+                    muxSorter=self._getMuxSorter(trackerObjs)
+                    self._subParse(muxSorter)
+                    self._voiceRec(muxSorter) 
+                self._writeFinalJSON(self._saveOutput(trackerObjs,muxSorter))
         
 
             
@@ -158,12 +157,9 @@ class Demux():
         
     def _filterTracks(self,demuxData):
         tracks=demuxData.audio
-        if self._args.extractprogram=="eac3to":
-            return tracks
         for track in tracks:
             if re.search("(DTS Core)",track["bdinfo_title"],re.IGNORECASE):
                 demuxData["audio"].pop(track["key"])
-        return demuxData.audio
         
     def _subParse(self,muxSorter):
         # Add OCR for Subtitles

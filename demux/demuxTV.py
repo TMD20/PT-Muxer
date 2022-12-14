@@ -29,34 +29,16 @@ class Demux(Demux):
         with dir.cwd(self.demuxFolder):
             self._movieObj = movieData.MovieData("TV")
             self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
-            while True:
-                bdObjs = self._setBdInfoData() 
-                if self._args.splitplaylist and self._args.splitplaylist>0:
-                    self.demuxSplitPlayList(bdObjs)
-                else:
-                    self.demuxPlaylist(bdObjs,multiSelect=True)
+            bdObjs = self._setBdInfoData() 
+            if self._args.splitplaylist and self._args.splitplaylist>0:
+                self.demuxSplitPlayList(bdObjs)
+            else:
+                self.demuxPlaylist(bdObjs,multiSelect=True)
 
-                if utils.singleSelectMenu(["Yes", "No"], "Extract more playlist") == "No":
-                    logger.logger.info("Thank You, make sure to double check episode numbers")
-                    break
-                if utils.singleSelectMenu(["Yes", "No"], "Change Sources") == "Yes":
-                    self.setSource()
-
-                offset = len(os.listdir(self.demuxFolder))
-                message =\
-                    f"""
-                Total Iterations:{num2words(offset)}
-                Next Iteration: {num2words(offset+1)}
-
-                Resetting playlist selection
-                """
-                logger.logger.print(message)  
-                self.__init__(self._args)
-                self.__call__()
-        
     def demuxSplitPlayList(self,bdObjs):
         for bdObj in bdObjs:
-             bdObj.playListRangeSelect()
+            logger.print(bdObj.mediaDir,style="white")
+            bdObj.playListRangeSelect()
         for i in range(len(bdObjs[0].keys)):
             self._index=i
             for bdObj in bdObjs:
