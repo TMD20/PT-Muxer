@@ -23,8 +23,8 @@ def getSubImages(supFile):
                 logger.logger.debug(f"Saving {newImage}\n")
                 image["data"].save(newImage)
     except Exception as E:
-        logger.print(traceback.format_exc(),style="white")
-        logger.print(E)
+        logger.logger.debug(traceback.format_exc())
+        logger.logger.debug(str(E))
         logger.print("Ignoring SubImage Error Contining")
     return outputDir
 

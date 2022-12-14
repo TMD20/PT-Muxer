@@ -36,11 +36,11 @@ class Blu(MuxOBj):
                 for line in p.stderr:
                     print(line, end='')
         except Exception as E:
-            logger.print(E)
-            logger.print(traceback.format_exc(),style="white")
-            logger.print("Ignoring Vdator Error")
+            logger.logger.debug(traceback.format_exc())
+            logger.logger.debug(str(E))
 
-            
+            logger.print("Ignoring Vdator Error")
+    
 
     def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None, directory=None):
         videoCodec = mkvTool.getVideo(

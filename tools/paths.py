@@ -28,10 +28,10 @@ def getTempDirs():
     return tempDirs
 def deleteTempDirs():
     folders=getTempDirs()
-    for folder in folders:
+    for folder in list(filter(lambda x: os.path.exists(x),folders)):
         shutil.rmtree(folder)
     folders=getOldTempPathDirs()
-    for folder in folders:
+    for folder in list(filter(lambda x: os.path.exists(x),folders)):
         shutil.rmtree(folder)
 def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=True):
     searchMethod=re.search

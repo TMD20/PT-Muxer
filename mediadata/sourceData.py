@@ -113,7 +113,8 @@ class sourceData(dict):
         return list(self["tracks"].values())
         
     def _getfilteredvalues(self,type):
-        return list(filter(lambda x:x["type"]==type,self.values))
+        values=self["tracks"].values()
+        return list(filter(lambda x:x["type"]==type,values))
     
     @property
     def video(self):
