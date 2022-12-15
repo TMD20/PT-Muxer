@@ -8,9 +8,10 @@ import subtitles.ocr as subocr
 import tools.paths as paths
 import tools.directory as dir
 import tools.logger as logger
+import config
 
-def subreader(tracks, maxLines=None, langs=None, keep=False):
-    maxLines = maxLines or 51
+def subreader(tracks, langs=None, keep=False):
+    maxLines = maxLines = config.subImageCount +1
     if keep:
         ocrHelper(tracks, maxLines, langs)
     else:

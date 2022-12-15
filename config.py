@@ -44,3 +44,4 @@ session = requests_cache.CachedSession(cacheDir)
 tempFolder=tempfile.gettempdir()
 tempPrefix="PTMuxer_"
 pythonPath='/usr/bin/python3'
+subImageCount=50
