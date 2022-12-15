@@ -11,7 +11,7 @@ import tools.logger as logger
 import config
 
 def subreader(tracks, langs=None, keep=False):
-    maxLines = maxLines = config.subImageCount +1
+    maxLines = maxLines = config.maxOCRLineCount +1
     if keep:
         ocrHelper(tracks, maxLines, langs)
     else:
