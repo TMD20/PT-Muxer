@@ -48,12 +48,12 @@ class Demux(Demux):
 
     def getSources(self,options, inpath, sortpref):
         if len(options) == 0:
-            logger.info("No Valid Source Directories Found")
-            raise RuntimeError("No Sources Directories Found")
+            raise RuntimeError("No Sources Found")
         sources = self._addMultiSource(options, sortpref)     
         for i in range(0, len(sources)):
             if re.search(".iso", sources[i]):
                 sources[i] = paths.extractISO(sources[i], inpath)
+
         return sources
     def getDemuxFolder(self):
         paths.mkdirSafe(self._args.outpath)

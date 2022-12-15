@@ -76,10 +76,10 @@ def extractISO(source, inpath):
     if os.path.exists(outPath):
         opts = ["Yes", "No"]
         remove = utils.singleSelectMenu(
-            opts, f"Files already extraced\nDo you want to delete the folder:\n {outPath} ")
+            opts, f"Files already extraced\nDo you want to delete the folder:\n {outPath} ",default="No")
         if remove == "No":
             return search(outPath, "STREAM",dir=True)[0]
-    _extractISOProcessor(source,outPath)
+    return _extractISOProcessor(source,outPath)
             
     
 def _extractISOProcessor(source,outPath):
@@ -99,7 +99,7 @@ def _extractISOProcessor(source,outPath):
     if os.listdir(outPath) == 0:
         raise RuntimeError("Issue Extracting Files")
 
-    if utils.singleSelectMenu(["Yes","No"],f"Do you want to remove the ISO?\n{source}")=="Yes":
+    if utils.singleSelectMenu(["Yes","No"],f"Do you want to remove the ISO?\n{source}",default="No")=="Yes":
         os.remove(source)
     return search(outPath, "STREAM",dir=True)[0]
 

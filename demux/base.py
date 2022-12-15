@@ -159,7 +159,7 @@ class Demux():
         tracks=demuxData.audio
         for track in tracks:
             if re.search("(DTS Core)",track["bdinfo_title"],re.IGNORECASE):
-                demuxData["audio"].pop(track["key"])
+                demuxData["tracks"].pop(track["key"])
         
     def _subParse(self,muxSorter):
         # Add OCR for Subtitles

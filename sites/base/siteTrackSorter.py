@@ -3,11 +3,19 @@ import os
 import re
 import subprocess
 import itertools
+import tarfile
+import shutil
 
 import xxhash
+import rich.progress
+
 
 import tools.general as utils
 import tools.commands as commands
+import config
+import tools.paths as paths
+import tools.directory as dirs
+import tools.logger as logger
 
 
 class siteTrackSorter():
@@ -41,13 +49,15 @@ class siteTrackSorter():
         primary = []
         all = []
         # Get Forced Subtitles
+        if self._javaInstallHelper()==False:
+            print("Could Not Get Java\nSkipping Extraction of embedded forced subs")
         for oldTrack in self._unSortedSub:
             if oldTrack["lang"].lower() not in audioLangs:
                 continue
             oldFile = oldTrack.getTrackLocation()
             newFileName = re.sub("\.sup", ".forced.sup", oldFile)
             command = list(itertools.chain.from_iterable(
-                [commands.bdSup(), [oldFile, "-o", newFileName, "--forced-only"]]))
+                [commands.bdSup2Sub(), [oldFile, "-o", newFileName, "--forced-only"]]))
             output = ""
             with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
                 for line in p.stdout:
@@ -317,3 +327,36 @@ class siteTrackSorter():
                 movieLang.append("English")
             return list(map(lambda x: x.lower(), movieLang))
         return utils.removeDupesList(audioPrefs)
+    def _javaInstallHelper(self):
+        if utils.getSystem()=="Windows":
+            return True
+        if os.path.exists(config.javaPath):
+            return True
+        javaInstall=os.path.join(config.root_dir,"binaries","java")
+        msg=\
+        f"""
+        Java is not installed do you want some assistance installing it
+        Install Location: {javaInstall}
+        """
+        if utils.singleSelectMenu(["Yes","No"],msg)=="No":
+            return False
+        javaFile="https://download.java.net/java/GA/jdk19.0.1/afdd2e245b014143b62ccb916125e3ce/10/GPL/openjdk-19.0.1_linux-x64_bin.tar.gz"
+        javaTempTar="java.tar.gz"
+        from rich.progress import track
+
+        with dirs.cwd(paths.createTempDir()):
+            response=config.session.get(javaFile)
+            content=list(response.iter_content(1024))
+            with open(javaTempTar,"wb") as fp:
+                for i in track(range((len(content))),description="Downloading Java"):
+                    fp.write(content[i])
+            with tarfile.open(javaTempTar) as fp:
+                fp.extractall(".")
+            os.remove(javaTempTar)
+            os.replace(os.listdir(".")[0],"java")
+            os.replace("java",javaInstall)
+        return True
+                
+
+
+

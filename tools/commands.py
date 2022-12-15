@@ -3,7 +3,7 @@ import os
 import config
 import tools.general as utils
 
-def bdSup():
+def bdSup2Sub():
     if utils.getSystem()=="Linux":
 
         return [config.javaPath,"-jar",config.bdSupLinux]
