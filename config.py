@@ -26,6 +26,7 @@ bdSupLinux= os.path.join(root_dir, "binaries/bdsup2sub/Linux/BDSup2Sub512.jar")
 bdSupWindows= os.path.join(root_dir, "binaries/bdsup2sub.exe")
 
 
+
 bdinfoWindowsPath = os.path.join(
     root_dir, "binaries/bdinfo/BDInfo.exe")
 bdinfoLinuxPath = os.path.join(
