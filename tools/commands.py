@@ -6,39 +6,25 @@ import tools.general as utils
 def bdSup():
     if utils.getSystem()=="Linux":
 
-        return [config.javaSystemPath,"-jar",config.bdSupLinux]
+        return [config.javaPath,"-jar",config.bdSupLinux]
     else:
         return [config.bdSupWindows]
 def eac3to():
-    eactoBin = config.eac3toSystemPath
-    if not os.path.isfile(eactoBin):
-        eactoBin = config.eac3toProjectPath
-
-    wineBin = config.wineSystemPath
-    if not os.path.isfile(wineBin):
-        wineBin = config.wineProjectPath
     if utils.getSystem()=="Linux":
-        return [wineBin, eactoBin]
+        return [config.winePath, config.eac3toPath]
         
     else:
-        return [eactoBin]
+        return [config.eac3toPath]
 
 def bdinfo():
-  
-    wineBin = config.wineSystemPath
-    if not os.path.isfile(wineBin):
-        wineBin = config.wineProjectPath
     if utils.getSystem()=="Linux":
-        return [wineBin, config.bdinfoLinuxPath]
+        return [config.winePath, config.bdinfoLinuxPath]
     else:
-        return [config.bdinfoLinuxPath]
+        return [config.bdinfoWindowsPath]
 
 def mkvmerge():
     if utils.getSystem()=="Linux":
-        mkvmergeBin = config.mkvmergeSystemPath
-        if not os.path.isfile(mkvmergeBin):
-            mkvmergeBin = config.mkvMergeLinux
-        return [mkvmergeBin]
+        return [config.mkvMergeLinux]
     else:
         return [config.mkvMergeWindows]
         
