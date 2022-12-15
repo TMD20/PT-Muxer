@@ -296,7 +296,7 @@ class Demux(Demux):
         startTime = utils.addArrowTime(startTime, dif)
         return startTime
     def getDemuxFolderHelper(self,sources, outpath):
-            if utils.singleSelectMenu(["Yes", "No"], "Restore Folder Old MuxFolder Data") == "Yes":
+            if utils.singleSelectMenu(["Yes", "No"], "Continue with Previous MuxFolder") == "Yes":
                 logger.print("Searching for Prior TV Mode Folders")
                 folders = self._getTVMuxFolders(outpath)
                 if len(folders) == 0:

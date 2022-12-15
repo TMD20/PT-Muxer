@@ -15,21 +15,22 @@ dgDemuxWindow=os.path.join(root_dir,"binaries/dgdemux/Linux/dgdemux")
 
 wineSystemPath = "/usr/bin/wine"
 wineProjectPath = os.path.join(root_dir, "binaries/wine/wine")
+javaSystemPath="/usr/bin/java"
+
 
 mkvmergeSystemPath = "/usr/bin/mkvmerge"
 mkvMergeLinux = os.path.join(root_dir, "binaries/mkvmerge/Linux/mkvmerge")
 mkvMergeWindows = os.path.join(
     root_dir, "binaries/mkvmerge/Windows/mkvmerge.exe")
 
-bdSupSystemPath = "/usr/local/bin/bdsup2sub.exe"
-bdSupProjectPath = os.path.join(root_dir, "binaries/bdsup2sub.exe")
+bdSupWindows= os.path.join(root_dir, "binaries/bdsup2sub.exe")
+bdSupLinux= os.path.join(root_dir, "binaries/bdsup2sub/Linux/BDSup2Sub512.jar")
 
 
-
-
-bdinfoSystemPath = ""
-bdinfoProjectPath = os.path.join(
+bdinfoWindowsPath = os.path.join(
     root_dir, "binaries/bdinfo/BDInfo.exe")
+bdinfoLinuxPath = os.path.join(
+    root_dir, "binaries/bdinfo/BDInfo.exe")    
 
 isoExtractWindows = os.path.join(root_dir, "binaries/7z/Windows/7za.exe")
 isoExtractLinux= os.path.join(root_dir, "binaries/7z/Linux/7zzs")

@@ -18,7 +18,7 @@ class Remux():
         self._remuxConfig=None
         self._fileName=None
         self._muxGenerator=muxPicker.pickSite(self._args.site)
-        self._sucess=False
+        self._success=False
 
    
     def __call__(self):
