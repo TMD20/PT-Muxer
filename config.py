@@ -15,7 +15,7 @@ dgDemuxWindow=shutil.which("dgdemux") or os.path.join(root_dir,"binaries/dgdemux
 
 
 winePath = shutil.which("wine") or os.path.join(root_dir, "binaries/wine/wine")
-javaPath=shutil.which("java2")  or os.path.join(root_dir,"binaries","java/bin/java")
+javaPath=shutil.which("java")  or os.path.join(root_dir,"binaries","java/bin/java")
 
 
 mkvMergeLinux = shutil.which("mkvmerge") or os.path.join(root_dir, "binaries/mkvmerge/Linux/mkvmerge")

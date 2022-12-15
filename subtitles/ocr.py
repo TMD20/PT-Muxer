@@ -72,13 +72,13 @@ def subocr(files,langcode):
         logger.logger.info(f"Execution Time {elapsed } seconds")
         return list(itertools.chain.from_iterable(output))
 def getocr_obj(langcode):
-
+    if langcode in easyocr.config.all_lang_list:
+         return easyocr.Reader([langcode],gpu=False)
+    logger.logger.warning(f"easyocr does not support {str(langcodes.get(langcode).display_name())}\nTrying tesseract-ocr")
     try:
-        return easyocr.Reader([langcode],gpu=False)
-    except:
-        None
-    try:
-        return tesserocr.PyTessBaseAPI(path="/usr/share/tesseract-ocr/5/tessdata", lang=langcodes.Language.get(langcode).to_alpha3())
-    except:
-        None
-    return None
+        return tesserocr.PyTessBaseAPI( lang=langcodes.Language.get(langcode).to_alpha3())
+    except E:
+        logger.logger.warning(f"tesseract-ocr ran into an issue")
+        logger.logger.debug(str(E))
+        logger.logger.debug(traceback.format_exc(),style="white")
+   
