@@ -1,9 +1,9 @@
 import os, logging
 import numpy as np
-from bufferedrandomplus import BufferedRandomPlus
-from imageutil import *
-from timeutil import *
-from enumerations import *
+from .bufferedrandomplus import BufferedRandomPlus
+from .imageutil import *
+from .timeutil import *
+from .enumerations import *
 
 logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger(__name__)
