@@ -5,11 +5,13 @@ import concurrent
 import concurrent.futures
 import traceback
 
+
 import easyocr
 from PIL import Image
 import langcodes
-import tools.logger as logger
+from timeit import default_timer as timer
 
+import tools.logger as logger
 try:
     import tesserocr
 except Exception as E:

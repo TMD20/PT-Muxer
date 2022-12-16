@@ -44,7 +44,7 @@ cacheDir = os.path.join(os.path.expanduser("~"), ".cache","remuxer_cache")
 session = requests_cache.CachedSession(cacheDir)
 tempFolder=tempfile.gettempdir()
 tempPrefix="PTMuxer_"
-tempFolderCleanupTime=60
+tempFolderCleanupTime=60 #Max Value accepted is 1440 Minutes
 pythonPath='/usr/bin/python3'
 maxOCRLineCount=50
 

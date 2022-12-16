@@ -21,7 +21,10 @@ def createTempDir():
     tempDirs.append(tempDir)
     return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
 def getOldTempPathDirs():
-    criticalTime = utils.convertArrow("01","hh")
+    timeLimit=min(config.tempFolderCleanupTime,1440)
+    hour=timeLimit//60
+    minute=timeLimit-(60*hour)
+    criticalTime = utils.convertArrow(f"{hour:02d}:{minute:02d}","hh:mm")
     results=search(config.tempFolder,f"/{config.tempPrefix}[^/]*$",dir=True)
     return list(filter(lambda x:utils.convertArrow(os.stat(x).st_mtime)>criticalTime,results))
 def getTempDirs():

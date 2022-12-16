@@ -1,7 +1,7 @@
 import os
 import traceback
 
-from mediatools.BDSupReader.src.bdsupreader import *
+from mediatools.BDSupReader.bdsupreader import *
 import tools.paths as paths
 import tools.logger as logger
 
