@@ -79,8 +79,7 @@ def getocr_obj(langcode):
     logger.logger.warning(f"easyocr does not support {str(langcodes.get(langcode).display_name())}\nTrying tesseract-ocr")
     try:
         return tesserocr.PyTessBaseAPI( lang=langcodes.Language.get(langcode).to_alpha3())
-    except E:
+    except Exception as E:
         logger.logger.warning(f"tesseract-ocr ran into an issue")
         logger.logger.debug(str(E))
-        logger.logger.debug(traceback.format_exc(),style="white")
-   
+        logger.logger.debug(traceback.format_exc()) 
