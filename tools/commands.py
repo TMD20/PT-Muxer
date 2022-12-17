@@ -1,7 +1,9 @@
 import os
+import shutil
 
 import config
 import tools.general as utils
+
 
 def bdSup2Sub():
     if utils.getSystem()=="Linux":
@@ -11,14 +13,17 @@ def bdSup2Sub():
         return [config.bdSupWindows]
 def eac3to():
     if utils.getSystem()=="Linux":
-        return [config.winePath, config.eac3toPath]
-        
+        if shutil.which("wine"):
+            return [config.winePath, config.eac3toPath]
+        return [config.contyPath,"wine",config.eac3toPath]  
     else:
         return [config.eac3toPath]
 
 def bdinfo():
     if utils.getSystem()=="Linux":
-        return [config.winePath, config.bdinfoLinuxPath]
+        if shutil.which("mono"):
+            return [config.monoPath, config.bdinfoLinuxPath]
+        return [config.contyPath,"wine",config.bdinfoLinuxPath]  
     else:
         return [config.bdinfoWindowsPath]
 

@@ -68,6 +68,7 @@ class Demux():
                         if not self._args.dontconvert:
                                     demuxData.convertFlac()
                         if self._args.extractprogram=="eac3to":
+
                             eac3to.process(demuxData.tracks,demuxData["sourceDir"],demuxData["playlistFile"])
                         else:
                             dgdemux.run(demuxData.tracks,demuxData["sourceDir"],demuxData["playlistFile"])

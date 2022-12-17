@@ -9,13 +9,16 @@ root_dir = os.path.dirname(os.path.realpath(__file__))
 ###
 #Binaries
 ###
+winePath = shutil.which("wine")
+javaPath=shutil.which("java")  or os.path.join(root_dir,"binaries","java/bin/java")
+monoPath=shutil.which("mono")
+contyPath= os.path.join(root_dir,"binaries","conty/conty.sh")
+
 eac3toPath = shutil.which("eac3to.exe") or os.path.join(root_dir, "binaries/eac3to/eac3to.exe")
 dgDemuxLinux=shutil.which("dgdemux") or os.path.join(root_dir,"binaries/dgdemux/Linux/dgdemux")
 dgDemuxWindow=shutil.which("dgdemux") or os.path.join(root_dir,"binaries/dgdemux/Windows/dgdemux")
 
 
-winePath = shutil.which("wine") or os.path.join(root_dir, "binaries/wine/wine")
-javaPath=shutil.which("java")  or os.path.join(root_dir,"binaries","java/bin/java")
 
 
 mkvMergeLinux = shutil.which("mkvmerge") or os.path.join(root_dir, "binaries/mkvmerge/Linux/mkvmerge")

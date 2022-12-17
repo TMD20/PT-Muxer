@@ -9,7 +9,7 @@ import tools.general as utils
 import tools.commands as commands
 import tools.paths as paths
 import tools.logger as logger
-
+import tools.install as install
 
 
 class Bdinfo():
@@ -218,6 +218,8 @@ class Bdinfo():
     @utils.requiredClassAttribute("_mediaDir")
     def _generatePlaylistsNames(self):
         BDMV=paths.search(self._mediaDir,"BDMV",dir=True)[0]
+        if install.contyInstallCheckMono()==False:
+            raise Exception("Mono or Conky Required for bdinfo on Linux")
 
         if utils.getSystem() == "Linux":
             command = list(itertools.chain.from_iterable([commands.bdinfo(), [

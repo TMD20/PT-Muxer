@@ -8,7 +8,17 @@ import tools.general as utils
 import tools.paths as paths
 import tools.directory as dir
 import tools.logger as logger
+import tools.install as install
     
+def process(tracks,source, file):
+    if install.contyInstallCheckWine()==False:
+        raise Exception("Wine or Conky Required for eac3to on Linux")
+    output=os.path.abspath(".") 
+    eac3toPath = get_eac3toPath(output, source)
+    playlistLocation=_getFileHelper(source,file)
+    run(playlistLocation, tracks,eac3toPath)
+
+
 def eac3toTrack(index,name,bdinfotitle,type):
     output = []
     output.append((f"{index}:{name}"))
@@ -20,11 +30,7 @@ def eac3toTrack(index,name,bdinfotitle,type):
 
 
 
-def process(tracks,source, file):
-    output=os.path.abspath(".") 
-    eac3toPath = get_eac3toPath(output, source)
-    playlistLocation=_getFileHelper(source,file)
-    run(playlistLocation, tracks,eac3toPath)
+
 
 def _getFileHelper(source,file):
     if re.search("\.mpls",file,re.IGNORECASE):
