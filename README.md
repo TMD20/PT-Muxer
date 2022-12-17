@@ -1,5 +1,4 @@
-Docs Still need some reworking
-You can find the current version at
+# Docs
 
 https://ptmuxer.gitbook.io/api-docs/
 
