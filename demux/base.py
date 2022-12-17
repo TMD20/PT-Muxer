@@ -226,7 +226,8 @@ class Demux():
         languages=self._movieObj.movieObj.get("languages", [])
         muxSorter.sortTracks(languages,
                             self._args.audiolang, self._args.sublang, self._args.sortpref)
-        muxSorter.addForcedSubs(languages, self._args.audiolang)
+        if not self._args.skipforced:                   
+            muxSorter.addForcedSubs(languages, self._args.audiolang)
         return muxSorter
    
     def _addSourceData(self,trackerObjs):

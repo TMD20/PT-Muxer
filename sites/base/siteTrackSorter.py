@@ -14,7 +14,7 @@ import tools.install as install
 
 
 class siteTrackSorter():
-    def __init__(self):
+    def __init__(self,forcedsubs):
         self._unSortedAudio = []
         self._unSortedVideo = []
         self._unSortedSub = []

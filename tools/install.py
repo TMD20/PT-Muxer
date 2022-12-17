@@ -25,6 +25,8 @@ def javaInstallCheck():
         Java was not found
         Java is required to extract embedded forced subs on Linux
         Do you want some assistance installing it?
+
+        Note: If you select No, then the program will continue without trying to extract from .sup files
         Install Location: {java}
         """
         if utils.singleSelectMenu(["Yes","No"],msg)=="No":

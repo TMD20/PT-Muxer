@@ -39,6 +39,8 @@ def setParser():
     can be changed with --ocr")
     parser_d.add_argument('-dc', '--dontconvert',  action='store_true',
                         help="Don't convert any lossless track to FLAC")
+    parser_d.add_argument('-sf', '--skipforced',  action='store_true',
+                        help="Skip Extraction of embedded forced subtitles\nGood if you can't use bdsuptosub")                        
     parser_d.add_argument('-ct', '--coretracks',  action='store_true',
                         help="Don't Add any compatiblity Tracks")   
     parser_d.add_argument('-sp', '--splitplaylist', type=float,
