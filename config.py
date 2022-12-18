@@ -39,6 +39,10 @@ isoExtractWindows = os.path.join(root_dir, "binaries/7z/Windows/7za.exe")
 isoExtractLinux= os.path.join(root_dir, "binaries/7z/Linux/7zzs")
 
 
+supripPath = shutil.which("Subrip.exe") or  os.path.join(
+    root_dir, "binaries/suprip/SupRip.exe")
+
+
 ###
 #Global Settings
 ###

@@ -3,7 +3,7 @@ import tempfile
 import re
 import shutil
 
-import subtitles.images as subimages
+import subtitles.image as subimages
 import subtitles.ocr as subocr
 import tools.paths as paths
 import tools.directory as dir
