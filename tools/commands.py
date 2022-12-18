@@ -44,3 +44,11 @@ def dgdemux():
         return [config.dgDemuxLinux]
     else:
         return [config.dgDemuxWindow]
+
+def suprip():
+    supBin = config.supripPath
+    wineBin = config.winePath
+    if utils.getSystem()=="Linux":
+       return [wineBin, supBin]
+    else:
+        return  [ supBin]
