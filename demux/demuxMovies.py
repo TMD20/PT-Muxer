@@ -53,8 +53,7 @@ class Demux(Demux):
         for i in range(0, len(sources)):
             if re.search(".iso", sources[i]):
                 sources[i] = paths.extractISO(sources[i], inpath)
-
-        return sources
+        return list(map(lambda x:paths.convertPathType(x,type="Linux"),sources))
     def getDemuxFolder(self):
         paths.mkdirSafe(self._args.outpath)
         self.demuxFolder=self.getDemuxFolderHelper(self.sources, self._args.outpath)        

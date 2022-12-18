@@ -5,9 +5,6 @@ from .imageutil import *
 from .timeutil import *
 from .enumerations import *
 
-logging.basicConfig(level = logging.INFO)
-logger = logging.getLogger(__name__)
-
 class InvalidSegmentError(Exception):
     pass
 

@@ -16,7 +16,7 @@ contyPath= os.path.join(root_dir,"binaries","conty/conty.sh")
 
 eac3toPath = shutil.which("eac3to.exe") or os.path.join(root_dir, "binaries/eac3to/eac3to.exe")
 dgDemuxLinux=shutil.which("dgdemux") or os.path.join(root_dir,"binaries/dgdemux/Linux/dgdemux")
-dgDemuxWindow=shutil.which("dgdemux") or os.path.join(root_dir,"binaries/dgdemux/Windows/dgdemux")
+dgDemuxWindow=shutil.which("dgdemux") or os.path.join(root_dir,"binaries/dgdemux/Windows/DGDemux.exe")
 
 
 
@@ -45,7 +45,7 @@ isoExtractLinux= os.path.join(root_dir, "binaries/7z/Linux/7zzs")
 demuxPrefix = "Mux"
 cacheDir = os.path.join(os.path.expanduser("~"), ".cache","remuxer_cache")
 session = requests_cache.CachedSession(cacheDir)
-tempFolder=tempfile.gettempdir()
+tempFolder="D:/tmp" #tempfile.gettempdir()
 tempPrefix="PTMuxer_"
 tempFolderCleanupTime=60 #Max Value accepted is 1440 Minutes
 pythonPath='/usr/bin/python3'

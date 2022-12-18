@@ -17,9 +17,11 @@ import tools.logger as logger
 
 tempDirs=[]
 def createTempDir():
+    mkdirSafe(os.path.join(config.tempFolder,"x"))
+
     tempDir=tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
     tempDirs.append(tempDir)
-    return tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
+    return tempDir
 def getOldTempPathDirs():
     timeLimit=min(config.tempFolderCleanupTime,1440)
     hour=timeLimit//60
@@ -28,7 +30,7 @@ def getOldTempPathDirs():
     results=search(config.tempFolder,f"/{config.tempPrefix}[^/]*$",dir=True)
     return list(filter(lambda x:utils.convertArrow(os.stat(x).st_mtime)>criticalTime,results))
 def getTempDirs():
-    return tempDirs
+    return list(map(lambda x:convertPathType(x,type="Linux"),tempDirs))
 def deleteTempDirs():
     folders=getTempDirs()
     for folder in list(filter(lambda x: os.path.exists(x),folders)):
@@ -44,6 +46,7 @@ def search(path,query,case=False,dir=False,ignore=[],fullMatch=False,recursive=T
     if recursive==False:
         globSearch="*/"
     paths = list(map(lambda x: str(x),list(pathlib.Path(path).glob(globSearch))))
+    paths=list(map(lambda x:convertPathType(x,type="Linux"),paths))
     paths=list(natsort.natsorted
     (paths))
     filtered=_excludeHelper(paths,dir,ignore)
@@ -130,7 +133,7 @@ def _udevilExtractHelper(source, outPath):
 
 def convertPathType(folder, type):
     if type == "Linux":
-        return str(pathlib.PurePosixPath(folder))
+        return re.sub(re.escape("\\") ,"/",str(pathlib.PurePosixPath(folder))) 
     return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
 
 def switchPathType(folder):
@@ -143,8 +146,9 @@ def listdir(path=None):
     if os.path.isdir(path):
         paths=list(pathlib.Path(path).iterdir())
         paths=list(map(lambda x: str(x),paths))
-        return list(natsort.natsorted
+        paths=list(natsort.natsorted
     (paths))
+        return list(map(lambda x:convertPathType(x,type="Linux"),paths))
     return []
 
 def copytree(source,dest):
