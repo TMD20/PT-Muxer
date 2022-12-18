@@ -222,7 +222,7 @@ class Demux():
     def _getMuxSorter(self,trackerObjs):
         muxSorter = siteSortPicker.pickSite(self._args.site)
         for trackerObJ in trackerObjs:    
-            muxSorter.addTracks(trackerObJ.tracks,self._args.forcedsubs)
+            muxSorter.addTracks(trackerObJ.tracks)
         languages=self._movieObj.movieObj.get("languages", [])
         muxSorter.sortTracks(languages,
                             self._args.audiolang, self._args.sublang, self._args.sortpref)
