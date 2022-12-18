@@ -131,8 +131,8 @@ def _udevilExtractHelper(source, outPath):
 def convertPathType(folder, type):
     if type == "Linux":
         return str(pathlib.PurePosixPath(folder))
-    return str(pathlib.PureWindowsPath(pathlib.PurePosixPath(folder)))
-
+    elif type in ["Windows","Window"]:
+        return str(pathlib.PureWindowsPath(folder))
 def switchPathType(folder):
     if utils.getSystem() == "Linux":
         return convertPathType(folder,"Windows")
@@ -141,6 +141,7 @@ def switchPathType(folder):
 def listdir(path=None):
     path= path or "."
     if os.path.isdir(path):
+        
         paths=list(pathlib.Path(path).iterdir())
         paths=list(map(lambda x: str(x),paths))
         return list(natsort.natsorted
