@@ -222,7 +222,7 @@ class Demux():
     def _getMuxSorter(self,trackerObjs):
         muxSorter = siteSortPicker.pickSite(self._args.site)
         for trackerObJ in trackerObjs:    
-            muxSorter.addTracks(trackerObJ.tracks)
+            muxSorter.addTracks(trackerObJ.tracks,self._args.forcedsubs)
         languages=self._movieObj.movieObj.get("languages", [])
         muxSorter.sortTracks(languages,
                             self._args.audiolang, self._args.sublang, self._args.sortpref)
@@ -295,15 +295,16 @@ class Demux():
             return sorted(list1)
 
     def _createParentDemuxFolder(self,sources, outpath):
-        title = utils.getTitle(sources[0])
-        folder = f"{config.demuxPrefix}.{utils.getFormated('YY.MM.DD_HH:mm.ss')}.{title}"
-        parentDemux = os.path.join(outpath, folder)
-        parentDemux = re.sub(" +", " ", parentDemux)
-        parentDemux = re.sub(" ", ".", parentDemux)
-        parentDemux = paths.convertPathType(parentDemux, "Linux")
-        logger.logger.info(f"Creating a new Parent Directory for {self._name} ->{parentDemux}")
-        os.mkdir(parentDemux)
-        return parentDemux
+        with dir.cwd(outpath):
+            title = utils.getTitle(sources[0])
+            folder = f"{config.demuxPrefix}.{utils.getFormated('YY.MM.DD_HH.mm.ss')}.{title}"
+            parentDemux = os.path.join(outpath, folder)
+            parentDemux = re.sub(" +", " ", parentDemux)
+            parentDemux = re.sub(" ", ".", parentDemux)
+            parentDemux = paths.convertPathType(parentDemux, "Linux")
+            logger.logger.info(f"Creating a new Parent Directory for {self._name} ->{parentDemux}")
+            os.mkdir(parentDemux)
+            return parentDemux
 
     def _createChildDemuxFolder(self,parentDir, show):
         with dir.cwd(parentDir):

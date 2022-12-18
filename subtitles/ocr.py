@@ -6,18 +6,11 @@ import concurrent.futures
 import traceback
 
 
-import easyocr
 from PIL import Image
 import langcodes
 from timeit import default_timer as timer
 
 import tools.logger as logger
-try:
-    import tesserocr
-except Exception as E:
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Not using tesseocr")
 
 
 
@@ -25,6 +18,34 @@ except Exception as E:
 
 NUM_THREADS = 4
 ocr_queue = queue.Queue()
+
+def importTesseOSR():
+  try:
+    import tesserocr
+    return True
+  except ModuleNotFoundError:
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Missing Module Not Using tesseocr")
+
+  except Exception as E:
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Error Not using tesseocr")
+
+def importEasyOCR():
+  try:
+    import easyocr
+    return True
+  except ModuleNotFoundError:
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Missing Module Not Using easyocr")
+
+  except Exception as E:
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Error Not using easyocr")
 
 
 
@@ -74,12 +95,27 @@ def subocr(files,langcode):
         logger.logger.info(f"Execution Time {elapsed } seconds")
         return list(itertools.chain.from_iterable(output))
 def getocr_obj(langcode):
-    if langcode in easyocr.config.all_lang_list:
+    easyOCRBool=importEasyOCR()
+    tesseOCRBool=importTesseOSR()
+    if not easyOCRBool or tesseOCRBool:
+        logger.print("No OCR Engine Installed")
+    elif easyOCRBool==True and langcode in easyocr.config.all_lang_list:
          return easyocr.Reader([langcode],gpu=False)
-    logger.logger.warning(f"easyocr does not support {str(langcodes.get(langcode).display_name())}\nTrying tesseract-ocr")
-    try:
-        return tesserocr.PyTessBaseAPI( lang=langcodes.Language.get(langcode).to_alpha3())
-    except Exception as E:
-        logger.logger.warning(f"tesseract-ocr ran into an issue")
-        logger.logger.debug(str(E))
-        logger.logger.debug(traceback.format_exc()) 
+    elif tesseOCRBool:
+        try:
+            return tesserocr.PyTessBaseAPI( lang=langcodes.Language.get(langcode).to_alpha3())
+        except Exception as E:
+            logger.logger.warning(f"tesseract-ocr ran into an issue")
+            logger.logger.debug(str(E))
+            logger.logger.debug(traceback.format_exc())
+    else:
+        logger.print(f"Could Not find a OCR Engine for {str(langcodes.get(langcode).display_name())}")
+
+
+
+
+
+
+    
+        
+  

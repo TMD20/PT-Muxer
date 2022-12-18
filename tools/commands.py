@@ -7,7 +7,6 @@ import tools.general as utils
 
 def bdSup2Sub():
     if utils.getSystem()=="Linux":
-
         return [config.javaPath,"-jar",config.bdSupLinux]
     else:
         return [config.bdSupWindows]

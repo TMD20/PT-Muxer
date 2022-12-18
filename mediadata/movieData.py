@@ -1269,7 +1269,7 @@ class MovieData():
         if len(results) == 0:
             return
         else:
-            titles = list(map(lambda x: x["long imdb title"], results))
+            titles = list(map(lambda x: f"{x['long imdb title']}:::{x.movieID}", results))
             titles.insert(0, "None of these Titles Match")
             match = utils.singleSelectMenu(titles, msg,default=titles[1])
             if match == "None of these Titles Match":

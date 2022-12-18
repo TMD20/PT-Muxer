@@ -25,6 +25,7 @@ class Bdinfo():
 
     def setup(self, subfolder):
         self._mediaDir = re.sub("/BDMV/STREAM", "", subfolder)
+
         self._generatePlaylistsNames()
     
     def validate(self,bdObjs):
@@ -98,8 +99,8 @@ class Bdinfo():
         if path==None:
             path=os.path.join(".","output_logs",f"{utils.sourcetoShowName(self._mediaDir)}.BDINFO")
         paths.mkdirSafe(path)
-        file = open(path, "w")
-        file.write(self.DictList[index]["bdinfo"])
+        with open(path, "w") as fp:
+            fp.write(self.DictList[index]["bdinfo"])
         
 
     
@@ -237,11 +238,9 @@ class Bdinfo():
         command = list(itertools.chain.from_iterable(
         [commands.bdinfo(), ["-m", selection, self._mediaDir, tempDir]]))
         subprocess.run(command)
-        file = open(paths.convertPathType(os.path.join(
-        tempDir, os.listdir(tempDir)[0]), "Linux"), "r")
-        self._playlistDict[playlistNum]["bdinfo"] = file.read()
+        with open(paths.listdir(tempDir)[0]) as fp:
+            self._playlistDict[playlistNum]["bdinfo"] = fp.read()
         shutil.rmtree(tempDir)
-        file.close()
 
     def _setQuickSum(self,playlistNum):
         lines = self._playlistDict[playlistNum]["bdinfo"].split("\n")
