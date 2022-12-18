@@ -39,19 +39,20 @@ def _getFileHelper(source,file):
 
 def _getPlaylistLocation(source,playlistFile):
     playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
-    if len(playlistFiles)>0:
-        return playlistFiles[0]
-    return ""
+    if len(playlistFiles)==0:
+        return ""
+    playlistFile=playlistFiles[0]
+    return paths.convertPathType(playlistFile,type="Windows")
 def _getStreamLocation(source,playlistFile):
     playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
-    if len(playlistFiles)>0:
-        return playlistFiles[0]
-    return ""
+    if len(playlistFiles)==0:
+        return ""
+    playlistFile=playlistFiles[0]
+    return paths.convertPathType(playlistFile,type="Windows")
 def getChaptersBool(playlistLocation):
     with dir.cwd(paths.createTempDir()):
-        playlistLocationFinal=paths.switchPathType(playlistLocation)
         command= list(itertools.chain.from_iterable([commands.eac3to(), [
-                        playlistLocationFinal]]))
+                        playlistLocation]]))
         out=""
         with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
             for line in p.stdout:
@@ -68,13 +69,12 @@ def run(playlistLocation, tracks,eac3toPath):
     normalTracks=list(filter(lambda x:x["compat"]==False,tracks))
     compatTracks=list(filter(lambda x:x["compat"],tracks
     ))
-    trackArgs=addTracks(normalTracks,compatTracks,playlistLocation)
+    trackArgs=_addTracks(normalTracks,compatTracks,playlistLocation)
     logger.logger.debug(str(trackArgs))
-    playlistLocationFinal = paths.switchPathType(playlistLocation)  
     command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
-                    playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+                    playlistLocation], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
     command2 = list(itertools.chain.from_iterable([commands.eac3to(), [
-                    playlistLocationFinal], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+                    playlistLocation], trackArgs, ["-progressnumbers", "-demux",f"-log={eac3toPath}"]]))
     commandslist = [command1, command2]               
     status = 1
     for command in commandslist:
@@ -87,7 +87,7 @@ def run(playlistLocation, tracks,eac3toPath):
             cleanFiles(list(map(lambda x:x["filename"],tracks)))
             return
     
-def addTracks(normalTracks,compatTracks,playlistLocation):
+def _addTracks(normalTracks,compatTracks,playlistLocation):
     index=1
     trackArgs=[]
     if getChaptersBool(playlistLocation)==True:

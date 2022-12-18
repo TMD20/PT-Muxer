@@ -9,6 +9,7 @@ import tools.commands as commands
 import tools.paths as paths
 import tools.directory as dir
 import tools.logger as logger
+import tools.general as utils
 
 
 
@@ -92,9 +93,12 @@ def _runEP(tracks,source, playlistFile,directory="."):
 
 def _getPlaylistLocation(source,playlistFile):
     playlistFiles=paths.search(source,playlistFile,ignore=["BACKUP"])
-    if len(playlistFiles)>0:
-        return playlistFiles[0]
-    return ""
+    if len(playlistFiles)==0:
+        return ""
+    playlistFile=playlistFiles[0]
+    if utils.getSystem()=="Linux":
+        return playlistFile
+    return paths.convertPathType(playlistFile,type="Windows")
 def _getDgDemuxTrackInfo(playlistLocation):
     output=""
     command = (list(itertools.chain.from_iterable([commands.dgdemux(), ["-i",
