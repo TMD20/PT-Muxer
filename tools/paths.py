@@ -146,6 +146,7 @@ def switchPathType(folder):
 def listdir(path=None):
     path= path or "."
     if os.path.isdir(path):
+        
         paths=list(pathlib.Path(path).iterdir())
         paths=list(map(lambda x: str(x),paths))
         paths=list(natsort.natsorted
