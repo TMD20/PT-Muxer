@@ -46,7 +46,7 @@ py==1.11.0
 pycdlib==1.13.0
 pycparser==2.21
 Pygments==2.13.0
-pymediainfo==5.1.0
+pymediainfo==6.0.1
 pymplschapters==1.0.4
 pynumparser==1.4.1
 pyparsing==3.0.9
