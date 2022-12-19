@@ -12,41 +12,39 @@ from timeit import default_timer as timer
 
 import tools.logger as logger
 
+try:
+    import tesserocr
+except ModuleNotFoundError as E:
+    tesserocr=None
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Missing Module Not Using tesseocr")
+except Exception as E:
+    tesserocr=None
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Error Not using tesseocr")
 
 
+try:
+    import easyocr
+except ModuleNotFoundError as E:
+    easyocr=None
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Missing Module Not Using easyocr")
+except Exception as E:
+    easyocr=None
+    logger.print(E)
+    logger.print(traceback.format_exc(),style="white")
+    logger.print("Error Not using easyocr")
 
 
 NUM_THREADS = 4
 ocr_queue = queue.Queue()
 
-def importTesseOSR():
-  try:
-    import tesserocr
-    return True
-  except ModuleNotFoundError:
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Missing Module Not Using tesseocr")
-
-  except Exception as E:
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Error Not using tesseocr")
-
-def importEasyOCR():
-  try:
-    import easyocr
-    return True
-  except ModuleNotFoundError:
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Missing Module Not Using easyocr")
-
-  except Exception as E:
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Error Not using easyocr")
-
+easyOCRBool=easyocr!=None
+tesseOCRBool=tesserocr!=None
 
 
 def perform_ocr(img):
@@ -95,9 +93,7 @@ def subocr(files,langcode):
         logger.logger.info(f"Execution Time {elapsed } seconds")
         return list(itertools.chain.from_iterable(output))
 def getocr_obj(langcode):
-    easyOCRBool=importEasyOCR()
-    tesseOCRBool=importTesseOSR()
-    if not easyOCRBool or tesseOCRBool:
+    if not easyOCRBool and tesseOCRBool:
         logger.print("No OCR Engine Installed")
     elif easyOCRBool==True and langcode in easyocr.config.all_lang_list:
          return easyocr.Reader([langcode],gpu=False)
