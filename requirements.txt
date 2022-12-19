@@ -19,7 +19,7 @@ exceptiongroup==1.0.0rc8
 frozenlist==1.3.1
 greenlet==2.0.1
 guessit==3.4.3
-idna==3.3
+idna==3.4
 imageio==2.19.5
 importlib-resources==5.9.0
 iniconfig==1.1.1
