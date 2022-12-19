@@ -62,7 +62,7 @@ requests-cache==0.9.5
 rich==12.6.0
 scikit-image==0.19.3
 scipy==1.8.1
-simplejson==3.17.6
+simplejson==3.18.0
 six==1.16.0
 soupsieve==2.3.2.post1
 SQLAlchemy==1.4.44
