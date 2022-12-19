@@ -33,7 +33,7 @@ marisa-trie==0.7.7
 multidict==6.0.2
 natsort==8.1.0
 networkx==2.8.5
-num2words==0.5.10
+num2words==0.5.12
 numpy==1.23.1
 opencv-python-headless==4.5.4.60
 orjson==3.7.12
