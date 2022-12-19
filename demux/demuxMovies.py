@@ -36,7 +36,7 @@ class Demux(Demux):
     def _getNewFolder(self,i=None):
         return os.path.join(self.demuxFolder)
     def _callFunction(self):
-        if self._args.splitplaylist and self._args.splitplaylist>0:
+        if self._args.splitplaylist:
             raise RuntimeError("splitplaylist Not allowed for Movie Mode")
         self.setSource()
         self._fixArgs()

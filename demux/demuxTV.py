@@ -30,7 +30,7 @@ class Demux(Demux):
             self._movieObj = movieData.MovieData("TV")
             self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
             bdObjs = self._setBdInfoData() 
-            if self._args.splitplaylist and self._args.splitplaylist>0:
+            if self._args.splitplaylist:
                 self.demuxSplitPlayList(bdObjs)
             else:
                 self.demuxPlaylist(bdObjs,multiSelect=True)
@@ -162,7 +162,9 @@ class Demux(Demux):
 
     def _saveOutput(self, trackerObjs, muxSorter):
         outdict=super()._saveOutput(trackerObjs, muxSorter)
-        outdict["Movie"]["episode"]= paths.listdir(self.demuxFolder).index(os.path.abspath("."))+1
+        currentFolders=list(map(lambda x:re.search("[0-9]+$",x).group(0),paths.listdir(self.demuxFolder)))
+        folderNum=re.search("[0-9]+$",os.path.abspath(".")).group(0)
+        outdict["Movie"]["episode"]= currentFolders.index(folderNum)+1
         return outdict
 
 
@@ -219,7 +221,7 @@ class Demux(Demux):
         demuxDataTracks=demuxData.videoitems
 
         for key,value in demuxDataTracks:
-            if i>=len(streamTracks):
+            if i>=len():
                 demuxData["tracks"].pop(key)
                 continue
             streamTrack=streamTracks[i]
