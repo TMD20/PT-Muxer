@@ -54,4 +54,4 @@ tempPrefix="PTMuxer_"
 tempFolderCleanupTime=60 #Max Value accepted is 1440 Minutes
 pythonPath='/usr/bin/python3'
 maxOCRLineCount=50
-
+maxVoiceLineCount=50

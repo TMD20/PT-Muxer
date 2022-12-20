@@ -4,11 +4,15 @@ import os
 import subprocess
 
 import langcodes
+from pymediainfo import MediaInfo
+
 
 import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import tools.commands as commands
 import tools.logger as logger
+import tools.directory as dir
+import tools.paths as paths
 
 
 
@@ -250,3 +254,6 @@ class MuxOBj():
                 choice = utils.singleSelectMenu(
                     inputs, "Is the File Correct Now\n")
         return fileName
+    def printMediaInfo(self,fileName):
+        with dir.cwd(paths.createTempDir()):
+            print(MediaInfo.parse(fileName, output="", full=False))

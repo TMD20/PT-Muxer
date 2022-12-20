@@ -35,19 +35,16 @@ class siteTrackSorter():
     # Get Forced Subs Based on Audio Preference
 
     def addForcedSubs(self, movieLang, audioPref):
-        audioLangs = self._getAudioPrefs(movieLang, audioPref)
-        if audioLangs[0].lower() != "english":
-            audioLangs = [audioLangs[0], "english"]
-        else:
-            audioLangs = audioLangs[0]
-
+        audioLangs = self._getAudioPrefs(movieLang, audioPref)[0]
+        if len(audioLangs)>=2:forcedSubLangs=audioLangs[0:2]
+        else:forcedSubLangs=audioLangs[0:1]
         primary = []
         all = []
         # Get Forced Subtitles
         if install.javaInstallCheck()==False:
             print("Could Not Get Java\nSkipping Extraction of embedded forced subs")
         for oldTrack in self._unSortedSub:
-            if oldTrack["lang"].lower() not in audioLangs:
+            if oldTrack["lang"].lower() not in forcedSubLangs:
                 continue
             oldFile = oldTrack.getTrackLocation()
             newFileName = re.sub("\.sup", ".forced.sup", oldFile)
@@ -65,34 +62,7 @@ class siteTrackSorter():
                 if re.search("Detected 0 forced captions", output):
                     continue
 
-                newTrack = copy.deepcopy(oldTrack)
-                newTrack["filename"] = newFileName
-                value = newTrack["bdinfo_title"] + \
-                    newTrack["sourceKey"] + str(newTrack["index"])+"forced"
-                key = xxhash.xxh32_hexdigest(value)
-                post = newTrack["langcode"] or "vid"
-                newTrack["key"] = f"{key}_forced_{post}"
-
-                # Force Track For Primary Langauge Comes First
-                if oldTrack["lang"].lower() == audioLangs[0]:
-                    newTrack["default"] = True
-                    newTrack["forced"] = True
-                    newTrack["site_title"] = "For Non English Parts"
-                    primary.append(newTrack)
-                    all.append(newTrack)
-
-                # Just add to the end of the list
-                else:
-                    newTrack["default"] = True
-                    newTrack["forced"] = True
-                    newTrack["site_title"] = "For Non English Parts"
-
-                    self._enabledSub.append(newTrack)
-                    all.append(newTrack)
-        primary.extend(self._enabledSub)
-        self._enabledSub = primary
-        self._unSortedSub.extend(all)
-
+                self._insertForcedSubHelper(oldTrack,forcedSubLangs,newFileName)
     """
     Setters/Getters
     """
@@ -319,11 +289,43 @@ class siteTrackSorter():
     def _getAudioPrefs(self, movieLang, audioPrefs):
         if len(audioPrefs) == 0:
             if "English" not in movieLang:
-                movieLang.append("English")
+                movieLang.insert(0,"English")
             return list(map(lambda x: x.lower(), movieLang))
         return utils.removeDupesList(audioPrefs)
    
-                
+    ###
+    # Insert Primary Language into correct place
+    ###
+    def _insertForcedSubHelper(self,oldTrack,forcedSubLangs,newFileName):
+        primary=[]
+        newTrack = copy.deepcopy(oldTrack)
+        newTrack["filename"] = newFileName
+        value = newTrack["bdinfo_title"] + \
+        newTrack["sourceKey"] + str(newTrack["index"])+"forced"
+        key = xxhash.xxh32_hexdigest(value)
+        post = newTrack["langcode"] or "vid"
+        newTrack["key"] = f"{key}_forced_{post}"
+
+        # Force Track For Primary Langauge Comes First
+        if newTrack["lang"].lower() == forcedSubLangs[0]:
+            newTrack["default"] = True
+            newTrack["forced"] = True
+            newTrack["site_title"] = "For Non English Parts"
+            templist=[newTrack]
+            templist.extend()
+            primary.append(newTrack)
+
+            # Just add to the end of the list
+        else:
+            newTrack["default"] = True
+            newTrack["forced"] = True
+            newTrack["site_title"] = "For Non English Parts"
+
+            self._enabledSub.append(newTrack)
+        self._unSortedSub.append(newTrack)
+        primary.extend(self._enabledSub)
+        self._enabledSub = primary
+
 
 
 

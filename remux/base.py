@@ -57,6 +57,7 @@ class Remux():
         else:
             self._muxGenerator.createMKV(self._fileName, title, year,
                                 None, xmlTemp, self._getPrimaryBDInfo(), self._getPrimaryEac3to())
+        self._muxGenerator.printMediaInfo(self._fileName)
     
     def _getRemuxConfig(self):
         folders = self._getRemuxFolders()

@@ -10,8 +10,8 @@ import tools.general as utils
 import mediatools.mkvtoolnix as mkvTool
 import tools.logger as logger
 import config
-
-
+import tools.directory as dir
+import tools.paths as paths
 
 class Blu(MuxOBj):
     def __init__(self):
@@ -19,27 +19,27 @@ class Blu(MuxOBj):
 
     def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
         super().createMKV(fileName, movieTitle, chapters, xml,  bdinfo, eac3to)
-        tempdir = tempfile.TemporaryDirectory()
-        mediainfoPath = os.path.join(tempdir.name, "media.txt")
-        mediainfo = MediaInfo.parse(fileName, output="", full=False)
+        with dir.cwd(paths.createTempDir()):
+            mediainfo = MediaInfo.parse(fileName, output="", full=False)
+            mediainfoPath="media.txt"
 
-        with open(mediainfoPath, "w") as p:
-            p.write(mediainfo)
-        try:
-            logger.print("\n\nRunning Blutopia Validator\n\n")
-            command = [config.pythonPath, os.path.join(config.root_dir, "vdator/vdator/main.py"),
-                    mediainfoPath, bdinfo, eac3to]
+            with open(mediainfoPath, "w") as p:
+                p.write(mediainfo)
+            try:
+                logger.print("\n\nRunning Blutopia Validator\n\n")
+                command = [config.pythonPath, os.path.join(config.root_dir, "vdator/vdator/main.py"),
+                        mediainfoPath, bdinfo, eac3to]
 
-            with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
-                for line in p.stdout:
-                    print(line, end='')
-                for line in p.stderr:
-                    print(line, end='')
-        except Exception as E:
-            logger.logger.debug(traceback.format_exc())
-            logger.logger.debug(str(E))
+                with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
+                    for line in p.stdout:
+                        print(line, end='')
+                    for line in p.stderr:
+                        print(line, end='')
+            except Exception as E:
+                logger.logger.debug(traceback.format_exc())
+                logger.logger.debug(str(E))
 
-            logger.print("Ignoring Vdator Error")
+                logger.print("Ignoring Vdator Error")
     
 
     def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None, directory=None):

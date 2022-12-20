@@ -10,16 +10,15 @@ import tools.directory as dir
 import tools.logger as logger
 import config
 
-def subreader(tracks, langs=None, keep=False):
-    maxLines = maxLines = config.maxOCRLineCount +1
+def subreader(tracks, maxLines=None,langs=None,keep=None):
+    maxLines = maxLines or config.maxOCRLineCount +1
     if keep:
-        ocrHelper(tracks, maxLines, langs)
+        _ocrHelper(tracks, maxLines, langs)
     else:
-        tmpdir=paths.createTempDir() 
-        with dir.cwd(tmpdir):
-            ocrHelper(tracks, maxLines, langs)
+        with dir.cwd(paths.createTempDir() ):
+            _ocrHelper(tracks, maxLines, langs)
 
-def ocrHelper(tracks, maxLines=None, langs=None, keep=False):
+def _ocrHelper(tracks, maxLines, langs):
     for track in tracks:
         subLocation=track.getTrackLocation()
         logger.logger.info("\n\nAttempting to OCR: ", subLocation)
@@ -51,6 +50,7 @@ def imagesOnly(tracks):
     for track in tracks:
         file=track["filename"]
         logger.logger.info(f'Working on: {file}\n\n')
+
 
         newDir=subimages.getSubImages(track.getTrackLocation())
         files = os.listdir(newDir)

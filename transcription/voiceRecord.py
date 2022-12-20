@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import traceback
 
 import transcription.transcriper as transcriberClass
 import tools.logger as logger
-import traceback
+import config as config
+
+
+
 
 
 def main(tracks,maxLines=None,langs=None,model=None,model_name=None):
-    maxLines=maxLines or 51
+    maxLines = maxLines or config.maxVoiceLineCount +1
  
 
     for track in tracks:

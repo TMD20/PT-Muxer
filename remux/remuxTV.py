@@ -38,7 +38,8 @@ class Remux(Remux):
             self._fileNames.append(self._fileName)
         for fileName in self._fileNames:
             self._fileName=fileName
-            self._processRemux()        
+            self._processRemux()     
+   
     def _getRemuxFolders(self):
         folders = paths.search(self._args.inpath ,f"/{config.demuxPrefix}[.]",dir=True,recursive=False)
         folders=list(filter(lambda x: os.path.isdir(x),folders))
