@@ -25,6 +25,7 @@ def setParser():
     parser_d.add_argument('inpath', help="Location of BDMV/ISO Files")
     parser_d.add_argument('outpath', default=os.getcwd(),
                         help="Location Raw Files Folder Should be Created")
+    parser_d.add_argument("-t",'--title',help="Manually enter title to search for")
     parser_d.add_argument('-p', '--sortpref', default="size",
                         choices=["size", "order"], help="What Order to use to Rank Tracks")
     parser_d.add_argument('-sl', '--sublang', nargs='*',

@@ -28,7 +28,7 @@ class Demux(Demux):
     def demux(self):
         with dir.cwd(self.demuxFolder):
             self._movieObj = movieData.MovieData("TV")
-            self._movieObj.setData(self._type,utils.getTitle(self.sources[0]))
+            self._movieObj.setData(self._type,(self._args.title or utils.getTitle(self.sources[0])))
             bdObjs = self._setBdInfoData() 
             if self._args.splitplaylist:
                 self.demuxSplitPlayList(bdObjs)
