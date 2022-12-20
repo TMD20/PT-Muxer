@@ -13,6 +13,8 @@ binaries/eac3to/log.txt
 fixes
 java
 conty.sh
+poetry.lock
+pyproject.toml
 
 
 
