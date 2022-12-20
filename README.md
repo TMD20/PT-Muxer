@@ -1,8 +1,8 @@
-# Docs
+# Doc
 
 https://ptmuxer.gitbook.io/api-docs/
 
-# Acknowledgement
+# Acknowledgements
 https://github.com/werrpy/vdator: For blutopia validation code
 
 https://github.com/EzraBC/pgsreader: Native Sup to image processor
