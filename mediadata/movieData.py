@@ -1183,7 +1183,14 @@ class MovieData():
             List of imdbPY Search Object 
 
         """
-        return ia.search_movie(title)
+        try:
+            return ia.search_movie(title)
+        except Exception as E:
+            logger.print(traceback.format_exc(),style="white")
+            logger.print(E,style="bold red")
+            logger.print("Skipping IMDB Search")
+            return []
+
 
     @functools.lru_cache
     def _getByIDWithSetsIMDB(self, imdbID, *args):
@@ -1259,15 +1266,11 @@ class MovieData():
         """
         results = self._getMovieList(title)
         logger.logger.debug(f"IMDB Title Results {list(map(lambda x: x['long imdb title'], results))}")
-        result = None
         msg = None
 
-        if self._type == "TV":
-            msg = 'What TV Show'
-        else:
-            msg = "What Movie"
-        if len(results) == 0:
-            return
+        if self._type == "TV":msg = 'What TV Show'
+        else:msg = "What Movie"
+        if len(results) == 0: return
         else:
             titles = list(map(lambda x: f"{x['long imdb title']}:::{x.movieID}", results))
             titles.insert(0, "None of these Titles Match")
