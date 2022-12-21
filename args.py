@@ -67,6 +67,8 @@ def setParser():
                         help="TV Folder contains special-features")                          
     parser_r.add_argument('-oa', '--outargs', default="",
                         help="Pass mkvmerge global options")
+    parser_r.add_argument('-e', '--episodetitle',action='store_true',
+                        help="Add Episode Title to filename")                     
     parser_r.set_defaults(func=remux)
 
     #This seems to be the only way to

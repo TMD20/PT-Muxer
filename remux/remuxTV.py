@@ -92,10 +92,10 @@ class Remux(Remux):
             episode = self._remuxConfig["Movie"]["episode"]
             tmdb = self._remuxConfig["Movie"]["tmdb"]
 
-            episodeTitle = self._movieObj.retriveEpisodeTitle(
+            episodeTitle = None
+            if self._args.episodetitle: episodeTitle=self._movieObj.retriveEpisodeTitle(
                 season, episode, title, year, tmdb)
            
-
             if not self._args.special:
                     return self._muxGenerator.getFileName( self._remuxConfig, self._args.group, title, year, self._args.skipnamecheck, int(season), int(episode), episodeTitle)
             else:
