@@ -33,11 +33,8 @@ class Demux():
         logger.setUpLogging(self._args.loglevel)
         self._callFunction()
         self._success=True
-     
-
     def _callFunction(self):
         None
-
 
     @property
     def success(self):

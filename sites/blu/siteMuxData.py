@@ -13,6 +13,7 @@ import config
 import tools.directory as dir
 import tools.paths as paths
 
+
 class Blu(MuxOBj):
     def __init__(self):
         super().__init__()
@@ -21,14 +22,14 @@ class Blu(MuxOBj):
         super().createMKV(fileName, movieTitle, chapters, xml,  bdinfo, eac3to)
         with dir.cwd(paths.createTempDir()):
             mediainfo = MediaInfo.parse(fileName, output="", full=False)
-            mediainfoPath="media.txt"
+            mediainfoPath = "media.txt"
 
             with open(mediainfoPath, "w") as p:
                 p.write(mediainfo)
             try:
                 logger.print("\n\nRunning Blutopia Validator\n\n")
                 command = [config.pythonPath, os.path.join(config.root_dir, "vdator/vdator/main.py"),
-                        mediainfoPath, bdinfo, eac3to]
+                           mediainfoPath, bdinfo, eac3to]
 
                 with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
                     for line in p.stdout:
@@ -40,9 +41,9 @@ class Blu(MuxOBj):
                 logger.logger.debug(str(E))
 
                 logger.print("Ignoring Vdator Error")
-    
 
-    def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None, directory=None):
+    def getFileName(self,
+                    remuxConfig, group, title, episodeTitle=None):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -54,29 +55,21 @@ class Blu(MuxOBj):
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        year = remuxConfig['Movie']['year']
+        season = remuxConfig["Movie"].get("season")
+        episode = remuxConfig["Movie"].get("episode")
         movieName = f"{title} {year}"
 
-        if episodeTitle and season and episode:
+        if season and episode:
             fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            # Normalize
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
-                remuxConfig, group, title, year, season), fileName))
-        elif episodeTitle:
+            return self._fileNameCleaner(fileName)
+        
+        else:
             fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            # Normalize
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
-                remuxConfig, group, title, year, season), fileName))
+            return self._fileNameCleaner(fileName)
+            
 
-        if not season and not episode and not episodeTitle:
-            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", fileName))
-
-        return self._confirmName(fileName, skipNameCheck)
-
-    def _getTVDir(self, remuxConfig, group, title, year, season):
+    def getTVDir(self, remuxConfig, group, title):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -88,6 +81,8 @@ class Blu(MuxOBj):
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        year = remuxConfig['Movie']['year']
+        season = remuxConfig["Movie"]["season"]
         movieName = f"{title} {year}"
         dirName = f"{movieName}.S{season:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
         # Normalize

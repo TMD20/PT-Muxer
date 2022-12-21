@@ -8,7 +8,7 @@ class BeyondHD(MuxOBj):
     def __init__(self):
         super().__init__()
 
-    def getFileName(self, remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None,directory=None):
+    def getFileName(self, remuxConfig, group, title, episodeTitle=None):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -20,27 +20,22 @@ class BeyondHD(MuxOBj):
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        year = self._remuxConfig['Movie']['year']
+        season = self._remuxConfig["Movie"]["season"]
+        episode = self._remuxConfig["Movie"]["episode"]
+
         movieName = f"{title} {year}"
-        if episodeTitle and season and episode:
+        if season and episode:
             fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
-                remuxConfig, group, title, year, season), fileName))
-        elif episodeTitle:
-            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName) 
-            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
-                remuxConfig, group, title, year, season), fileName))
-
+            return self._fileNameCleaner(fileName)
+            
         else:
-            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", fileName))            
-
-        # Normalize FileName
-        return self._confirmName(fileName,skipNameCheck)
-      
-    def _getTVDir(self, remuxConfig, group, title, year, season):
+            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            return self._fileNameCleaner(fileName)
+           
+        
+    
+    def getTVDir(self, remuxConfig, group, title):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -52,6 +47,9 @@ class BeyondHD(MuxOBj):
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        year = remuxConfig['Movie']['year']
+        season = remuxConfig["Movie"]["season"]
+
         movieName = f"{title} {year}"
         dirName = f"{movieName}.S{season:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
         # Normalize

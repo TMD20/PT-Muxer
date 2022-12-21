@@ -72,7 +72,10 @@ class Remux():
     def _getfilename(self):
          with dir.cwd(self._args.outpath):
             self._fileName = self._muxGenerator.getFileName(
-                self._remuxConfig, self._args.group, self._getTitle(), self._getYear(), self._args.skipnamecheck)
+                self._remuxConfig, self._args.group, self._getTitle(), self._getYear())
+            if not self._args.skipnamecheck:
+                self._muxGenerator.confirmName(self._fileName)
+
     def _getTitle(self):
         return self._remuxConfig['Movie'].get(
             'title') or self._remuxConfig['Movie'].get('engTitle')

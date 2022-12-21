@@ -15,7 +15,6 @@ import tools.directory as dir
 import tools.paths as paths
 
 
-
 class MuxOBj():
     def __init__(self):
         self._audio = []
@@ -23,6 +22,7 @@ class MuxOBj():
         self._sub = []
         self._out = None
         self._outputargs = []
+        self._placeholder="PlaceHolderTitleRemux"
 
     def generateMuxData(self, remuxConfig, outargs):
         self._addAudioTracks(remuxConfig)
@@ -145,7 +145,8 @@ class MuxOBj():
         self._sub = (list(itertools.chain.from_iterable(out)))
 
     def getFileName(self,
-                    remuxConfig, group, title, year, skipNameCheck, season=None, episode=None, episodeTitle=None, directory=None):
+                    remuxConfig, group,title, episodeTitle=None):
+        episodeTitle=episodeTitle or self._placeholder
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -157,27 +158,18 @@ class MuxOBj():
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        year = remuxConfig['Movie']['year']
+        season = remuxConfig["Movie"].get("season")
+        episode = remuxConfig["Movie"].get("episode")
         movieName = f"{title} {year}"
-        
-
-        if episodeTitle and season and episode:
+        if season and episode:
             fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName)
+            return self._fileNameCleaner(fileName)
 
-            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
-                remuxConfig, group, title, year, season), fileName))
-        elif episodeTitle:
-            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(".", directory or self._getTVDir(
-                remuxConfig, group, title, year, season), fileName))
         else:
-            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            fileName = self._fileNameCleaner(fileName)
-            fileName = os.path.abspath(os.path.join(
-                ".", directory or self._getMovieDir(remuxConfig, group, title, year), fileName))
+            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            return self._fileNameCleaner(fileName)
 
-        return self._confirmName(fileName, skipNameCheck)
 
     def _fileNameCleaner(self, fileName):
         fileName = re.sub(" +", " ", fileName)
@@ -186,9 +178,10 @@ class MuxOBj():
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
         fileName = re.sub("([^a-zA-Z\d])\.", ".", fileName)
         fileName = re.sub("\.([^a-zA-Z\d])", ".", fileName)
-        Noquotes=re.search('^"(.*)"$',fileName)
+        fileName = re.sub(f"{self._placeholder}.", "",fileName)
+        Noquotes = re.search('^"(.*)"$', fileName)
         if Noquotes:
-            fileName=Noquotes.group(0)
+            fileName = Noquotes.group(0)
         return fileName
 
     def _addOutPutArgs(self, outargs):
@@ -203,12 +196,13 @@ class MuxOBj():
             command = list(itertools.chain.from_iterable(
                 [commands.mkvmerge(), ["--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
         logger.logger.debug(f"Running This Command: \n{command}")
-        logger.logger.debug(f"Running This CommandString :\n{' '.join(command)}")
+        logger.logger.debug(
+            f"Running This CommandString :\n{' '.join(command)}")
         with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
             for line in p.stdout:
                 print(line, end='')
 
-    def _getTVDir(self, remuxConfig, group, title, year, season):
+    def getTVDir(self, remuxConfig, group, title):
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -220,6 +214,8 @@ class MuxOBj():
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         audioChannel = mkvTool.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+        year = remuxConfig['Movie']['year']
+        season = remuxConfig["Movie"]["season"]
         movieName = f"{title} {year}"
 
         fileName = f"{movieName}.S{season//10}{season%10}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
@@ -244,17 +240,17 @@ class MuxOBj():
         # Normalize FileName
         return self._fileNameCleaner(fileName)
 
-    def _confirmName(self, fileName, skipNameCheck):
-        if not skipNameCheck:
-            inputs = ["YES", "NO"]
+    def confirmName(self, fileName):
+        inputs = ["YES", "NO"]
+        choice = utils.singleSelectMenu(
+            inputs, f"Is this FilePath Correct: {fileName}\n")
+        while choice != "YES":
+            message = "Enter New FilePath: "
+            fileName = utils.textEnter(message, fileName)
             choice = utils.singleSelectMenu(
-                inputs, f"Is this FilePath Correct: {fileName}\n")
-            while choice != "YES":
-                message = "Enter New FilePath: "
-                fileName = utils.textEnter(message, fileName)
-                choice = utils.singleSelectMenu(
-                    inputs, "Is the File Correct Now\n")
+                inputs, "Is the File Correct Now\n")
         return fileName
-    def printMediaInfo(self,fileName):
+
+    def printMediaInfo(self, fileName):
         with dir.cwd(paths.createTempDir()):
             print(MediaInfo.parse(fileName, output="", full=False))
