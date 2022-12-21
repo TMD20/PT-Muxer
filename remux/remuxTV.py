@@ -22,7 +22,9 @@ class Remux(Remux):
         self._fileNames = []
 
     def _callFunction(self):
-        for file in paths.search(self._getRemuxConfig(), "output.json", recursive=True):
+        jsons=paths.search(self._getRemuxConfig(), "output.json", recursive=True)
+        jsonsFiltered=self._getFilteredJSONs(jsons)
+        for file in jsonsFiltered:
             logger.logger.info(f"Processing {file}")
             self._remuxConfigHelper(file)
             try:
@@ -109,5 +111,13 @@ class Remux(Remux):
             else:
                 return os.path.abspath(self._muxGenerator.getFileName(self._remuxConfig, self._args.group, title, episodeTitle=f"Special.{episode}"))
 
-    def _getJapTitle(self):
+    def _getJapTitle(self,json):
         return self._remuxConfig['Movie'].get('japTitle')
+    
+    def _getFilteredJSONs(self,jsons):
+        msg=\
+        """
+        Confirm Which JSON(s) You would like to process remux(s) for
+
+        """
+        return utils.multiSelectMenu(jsons,msg)
