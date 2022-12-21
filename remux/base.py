@@ -35,7 +35,9 @@ class Remux():
     ##########
     def _callFunction(self):
         self._getRemuxConfig()
-        self._getfilename()
+        self._fileName=self._getfilename()
+        if not self._args.skipnamecheck:
+                self._muxGenerator.confirmName(self._fileName)
         if self._overwriteexists()==False:
             self._success=True
             return
@@ -71,10 +73,10 @@ class Remux():
         self._checkMissing()    
     def _getfilename(self):
          with dir.cwd(self._args.outpath):
-            self._fileName = self._muxGenerator.getFileName(
-                self._remuxConfig, self._args.group, self._getTitle(), self._getYear())
-            if not self._args.skipnamecheck:
-                self._muxGenerator.confirmName(self._fileName)
+            return os.path.abspath(self._muxGenerator.getFileName(
+                self._remuxConfig, self._args.group, self._getTitle()))
+            
+
 
     def _getTitle(self):
         return self._remuxConfig['Movie'].get(

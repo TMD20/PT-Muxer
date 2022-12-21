@@ -93,7 +93,7 @@ class Remux(Remux):
 
     def _getfilename(self):
         with dir.cwd(self._args.outpath):
-            title = self._getTitle() or self._getJapTitle()
+            title = self._getTitle()
             year = self._remuxConfig['Movie']['year']
             season = self._remuxConfig["Movie"]["season"]
             episode = self._remuxConfig["Movie"]["episode"]

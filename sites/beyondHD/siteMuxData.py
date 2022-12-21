@@ -9,6 +9,7 @@ class BeyondHD(MuxOBj):
         super().__init__()
 
     def getFileName(self, remuxConfig, group, title, episodeTitle=None):
+        episodeTitle = episodeTitle or self._placeholder
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
