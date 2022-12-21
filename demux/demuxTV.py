@@ -221,7 +221,7 @@ class Demux(Demux):
         demuxDataTracks=demuxData.videoitems
 
         for key,value in demuxDataTracks:
-            if i>=len():
+            if i>=len(streamTracks):
                 demuxData["tracks"].pop(key)
                 continue
             streamTrack=streamTracks[i]
