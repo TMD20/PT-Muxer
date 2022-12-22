@@ -102,7 +102,7 @@ class sourceData(dict):
     def getPlaylistLocation(self,split=False):
         sourceData=self
         if split:
-            return paths.search(sourceData["sourceDir"],"STREANS",dir=True)[0]
+            return paths.search(sourceData["sourceDir"],"STREAMS",dir=True)[0]
         else:
             return paths.search(sourceData["sourceDir"],"PLAYLIST",dir=True)[0]
 
