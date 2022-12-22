@@ -17,6 +17,7 @@ conty.sh
 poetry.lock
 pyproject.toml
 __pycache__
+.prettierignore
 
 
 
