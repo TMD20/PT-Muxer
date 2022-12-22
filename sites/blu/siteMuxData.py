@@ -29,7 +29,13 @@ class Blu(MuxOBj):
 
             with open(mediainfoPath, "w") as p:
                 p.write(mediainfo)
-            self.validation(mediainfoPath,eac3to,bdinfo)
+            try:
+                self.validation(mediainfoPath,eac3to,bdinfo)
+            except Exception as E:
+                logger.logger.debug(traceback.format_exc())
+                logger.logger.debug(str(E))
+                logger.print("Vdator Failed")
+
             
     def getFileName(self,
                     remuxConfig, group, title, episodeTitle=None):
@@ -124,7 +130,7 @@ class Blu(MuxOBj):
                 p.write(paste)
             paste_parser=  PasteParser.PasteParser(BDInfoParser.BDInfoParser())
             (bdinfoData, mediainfoData, eac3to) = paste_parser.parse(paste)
-/            mediainfoData = MediaInfoParser.MediaInfoParser().parse(mediainfo)
+            mediainfoData = MediaInfoParser.MediaInfoParser().parse(mediainfoData)
             source_detector = SourceDetector.SourceDetector()
             reporter = Reporter.Reporter()
             checker = Checker.Checker(codecs_parser, source_detector, reporter)

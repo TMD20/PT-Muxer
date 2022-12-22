@@ -47,7 +47,7 @@ class Remux():
     def _processRemux(self):
         # Variables
         chaptersTemp = self._chapterListParser(self._remuxConfig["Chapters"])
-        xmlTemp = self._writeXML()
+        xmlTemp = self._createXML()
 
         self._muxGenerator.generateMuxData(self._remuxConfig, self._args.outargs)
         title = self._getTitle()
@@ -135,7 +135,7 @@ class Remux():
                 p.write(dict["name"])
                 p.write("\n")
         return chapterPath
-    def _writeXML(self):
+    def _createXML(self):
         infile = os.path.join(config.root_dir,  f"xml/movie")
         imdb=self._remuxConfig["Movie"]["imdb"]
         tmdb= self._remuxConfig["Movie"]["tmdb"]
