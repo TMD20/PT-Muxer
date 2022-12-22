@@ -118,7 +118,7 @@ class Remux():
 
     def _overwriteexists(self):
         if os.path.exists(self._fileName):
-            if utils.singleSelectMenu(["Yes","No"],f"{self._fileName} already exist\nDo you want overwrite the file(s), and continue the remux process")=="No":
+            if utils.singleSelectMenu(["Yes","No"],f"{self._fileName} already exist\nDo you want overwrite the file, and continue the remux process")=="No":
                 return False
             else:
                 return True

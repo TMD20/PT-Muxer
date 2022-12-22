@@ -1,6 +1,4 @@
 import os
-import subprocess
-import tempfile
 import traceback
 
 from pymediainfo import MediaInfo
@@ -12,6 +10,11 @@ import tools.logger as logger
 import config
 import tools.directory as dir
 import tools.paths as paths
+
+
+
+
+
 
 
 class Blu(MuxOBj):
@@ -26,22 +29,8 @@ class Blu(MuxOBj):
 
             with open(mediainfoPath, "w") as p:
                 p.write(mediainfo)
-            try:
-                logger.print("\n\nRunning Blutopia Validator\n\n")
-                command = [config.pythonPath, os.path.join(config.root_dir, "vdator/vdator/main.py"),
-                           mediainfoPath, bdinfo, eac3to]
-
-                with subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, universal_newlines=True, bufsize=1) as p:
-                    for line in p.stdout:
-                        print(line, end='')
-                    for line in p.stderr:
-                        print(line, end='')
-            except Exception as E:
-                logger.logger.debug(traceback.format_exc())
-                logger.logger.debug(str(E))
-
-                logger.print("Ignoring Vdator Error")
-
+            self.validation(mediainfoPath,eac3to,bdinfo)
+            
     def getFileName(self,
                     remuxConfig, group, title, episodeTitle=None):
         episodeTitle=episodeTitle or self._placeholder
@@ -88,3 +77,58 @@ class Blu(MuxOBj):
         dirName = f"{movieName}.S{season:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}"
         # Normalize
         return self._fileNameCleaner(dirName)
+
+    def validation(self, mediainfo, eac3to, bdinfo):
+        # Validation Specific
+        import json
+        import sys
+
+        import args as args
+     
+        os.environ["IGNORE_AFTER_LINE"] = "%%%"
+        os.environ["IGNORE_AFTER_LINE_METHOD"] = "contains"
+        os.environ["IGNORE_UNTIL_BLANK_LINE_PREFIXES"] = ""
+        os.environ["DVD_CHECK_MODE"] = "nobdinfo"
+        os.environ["FILENAME_CUTS"] = "Directors.Cut, Extended.Cut, Final.Cut, Theatrical, Uncut, Unrated"
+        os.environ["RELEASE_GROUP"] = args.setParser().group or ""
+        os.environ["TRAINEE_CHANNELS"] = "upload-review"
+        os.environ["INTERNAL_CHANNELS"] = "remux"
+        os.environ["HUNSPELL_LANG"] = "/usr/share/hunspell/en_US.dic, /usr/share/hunspell/en_US.aff"
+        os.environ["MISSPELLED_IGNORE_LIST"] = "upmix"
+        sys.path.append(os.path.join(config.root_dir, "vdator"))
+
+        import vdator.parsers.codecs_parser as CodecsParser
+        import vdator.checker as Checker
+        import vdator.reporter as Reporter
+        import vdator.source_detector as SourceDetector
+        import vdator.parsers.codecs_parser as CodecsParser
+        import vdator.parsers.bdinfo_parser as BDInfoParser
+        import vdator.parsers.paste_parser as PasteParser
+        import vdator.parsers.media_info_parser as MediaInfoParser
+
+
+    
+        with open(os.path.join(config.root_dir, "vdator/data/codecs.json")) as f:
+            codecs = json.load(f)
+            codecs_parser = CodecsParser.CodecsParser(codecs)
+        paste=""
+        with open(bdinfo, "r") as p:
+                paste=paste+p.read()
+        with open(mediainfo, "r") as p:
+                paste=paste+p.read()
+        with open(eac3to, "r") as p:
+                paste=paste+p.read()
+
+        with dir.cwd(paths.createTempDir()):
+            with open("temp.txt", "w") as p:
+                p.write(paste)
+            paste_parser=  PasteParser.PasteParser(BDInfoParser.BDInfoParser())
+            (bdinfoData, mediainfoData, eac3to) = paste_parser.parse(paste)
+/            mediainfoData = MediaInfoParser.MediaInfoParser().parse(mediainfo)
+            source_detector = SourceDetector.SourceDetector()
+            reporter = Reporter.Reporter()
+            checker = Checker.Checker(codecs_parser, source_detector, reporter)
+            checker.setup(bdinfoData, mediainfoData, eac3to, "")
+            reply = checker.run_checks()
+            reply += reporter.display_report()
+            print(reply)

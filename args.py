@@ -1,23 +1,14 @@
 import argparse
 import os
 
-import demux.action as demuxAction
-import remux.action as remuxAction
-import tools.general as utils
-def demux(args):
-    demuxAction.demux(args)
-
-
-def remux(args):
-    remuxAction.remux(args)
 
 
 def setParser():
     parser = argparse.ArgumentParser(prog='app.py', add_help=False)
 
-    subparsers = parser.add_subparsers(help='main positional commands')
+    subparsers = parser.add_subparsers(help='remux or demux')
     subparsers.required=True
-    subparsers.dest="Demux or Remux"
+    subparsers.dest="command"
 
 
     parser_d = subparsers.add_parser(
@@ -50,7 +41,6 @@ def setParser():
                         help="Which Program for extracting raw files")
    
 
-    parser_d.set_defaults(func=demux)
 
     parser_r = subparsers.add_parser(
         'remux', help='Remux Raw files into mkv(s)')
@@ -69,7 +59,6 @@ def setParser():
                         help="Pass mkvmerge global options")
     parser_r.add_argument('-e', '--episodetitle',action='store_true',
                         help="Add Episode Title to filename")                     
-    parser_r.set_defaults(func=remux)
 
     #This seems to be the only way to
     # A have positional arguments
