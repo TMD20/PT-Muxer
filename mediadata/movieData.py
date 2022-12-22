@@ -295,7 +295,7 @@ class MovieData():
             logger.print("Wiki Episode Counter Failed",style="bold red")
 
     def _userInputMovie(self):
-        if utils.singleSelectMenu(["Yes", "No"], "Is this a Anime?",default="Nott0848228") == "Yes":
+        if utils.singleSelectMenu(["Yes", "No"], "Is this a Anime?",default="No") == "Yes":
             return self._getAnimeInfo(utils.getIntInput("Enter the mal ID"))
         else:
             message = \
