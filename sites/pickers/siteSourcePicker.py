@@ -1,12 +1,12 @@
-import sites.base.siteTrackData as base
-import sites.beyondHD.siteTrackData as beyondHD
-import sites.blu.siteTrackData as blu
-import sites.animebytes.siteTrackData as anime
+import sites.base.siteSourceData as base
+import sites.beyondHD.siteSourceData as beyondHD
+import sites.blu.siteSourceData as blu
+import sites.animebytes.siteSourceData as anime
 
 
 def pickSite(site):
     if site==None:
-        return base.siteTrackData()
+        return base.siteSourceData()
     elif site.lower() in ["beyondhd","bhd"]:
         return beyondHD.BeyondHD()
     elif site.lower() in ["blu","blutopia"]:
@@ -14,4 +14,4 @@ def pickSite(site):
     elif site.lower() in ["ab","animebytes","animebyte"]:
         return anime.AnimeBytes()
     else:
-        return base.siteTrackData()
+        return base.siteSourceData()

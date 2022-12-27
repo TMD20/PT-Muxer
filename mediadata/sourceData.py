@@ -229,6 +229,8 @@ class sourceData(dict):
         if len(bdinfo) == 0:
             return
         bdinfo = bdinfo[0]
+        if re.search("(DTS Core)", bdinfo, re.IGNORECASE):
+                return
         tempdict = self._defaultMediaDict(bdinfo,source ,langcode, lang)
         tempdict["type"] = "audio"
         tempdict["compat"] = True

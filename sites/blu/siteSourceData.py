@@ -5,12 +5,12 @@ import random
 
 import xxhash
 
-from sites.base.siteTrackData import siteTrackData
+from sites.base.siteSourceData import siteSourceData
 import tools.directory as dir
 
 
 
-class Blu(siteTrackData):
+class Blu(siteSourceData):
     def __init__(self):
         super().__init__()
 

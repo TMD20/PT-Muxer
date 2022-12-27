@@ -6,7 +6,7 @@ import tools.general as utils
 
 
 
-class siteTrackData(sourceData):
+class siteSourceData(sourceData):
     def __init__(self):
         super().__init__()
 
