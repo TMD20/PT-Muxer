@@ -133,7 +133,7 @@ class Demux():
     # Helper Functions
     ############
 
-    def _getNewFolder(self):
+    def _getNewFolder(self,i=None):
         """
         Generates parentfolder inside muxFolder 
         for each selected playlist/stream 

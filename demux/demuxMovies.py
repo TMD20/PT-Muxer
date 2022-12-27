@@ -23,6 +23,11 @@ class Demux(Demux):
 
 
     def demux(self):
+        """
+        Gathers Information from a selected movie Title
+        Generates BDINFO Data for all soruces 
+        Demuxes Movie based on args and selected playlist
+        """
         with dir.cwd(self.demuxFolder):
             self._movieObj = movieData.MovieData("Movies")
             self._movieObj.setData(self._type,(self._args.title or utils.getTitle(self.sources[0])))
@@ -30,12 +35,13 @@ class Demux(Demux):
             self.demuxPlaylist(bdObjs)
 
 
-    ####
-    # Helper Functions
-    ####
-    def _getNewFolder(self,i=None):
-        return os.path.join(self.demuxFolder)
+
     def _callFunction(self):
+        """
+        Helper main function called by internal __call__ function 
+        Raises:
+            RuntimeError:Error raise if splitplaylist arg is true
+        """
         if self._args.splitplaylist:
             raise RuntimeError("splitplaylist Not allowed for Movie Mode")
         self.setSource()
@@ -43,10 +49,26 @@ class Demux(Demux):
         self.getDemuxFolder()
         self.demux()   
     def setSource(self):
+        """
+        Filters sources in input directories based on user selection
+        """
         options = self._getBDMVs(self._args.inpath)
         self.sources = self.getSources(options,self._args.inpath,self._args.sortpref)
 
     def getSources(self,options, inpath, sortpref):
+        """
+        Returns array of selected paths, based on user input
+
+        Args:
+            options (array): compatible paths from input folder
+            inpath (str): inpath used to generate options
+            sortpref (str): How Tracks should be sorted
+        Raises:
+            RuntimeError: Error raised if no valid source is found
+
+        Returns:
+            array: Array of selected tracks, and extracted ISO
+        """
         if len(options) == 0:
             raise RuntimeError("No Sources Found")
         sources = self._addMultiSource(options, sortpref)     
@@ -55,9 +77,24 @@ class Demux(Demux):
                 sources[i] = paths.extractISO(sources[i], inpath)
         return list(map(lambda x:paths.convertPathType(x,type="Linux"),sources))
     def getDemuxFolder(self):
+        """
+        Ensures outpath from args exists
+
+        sets demuxfolder property of demuxObJ
+        """
         paths.mkdirSafe(self._args.outpath)
         self.demuxFolder=self.getDemuxFolderHelper(self.sources, self._args.outpath)        
     def getDemuxFolderHelper(self,sources, outpath):
+        """
+        Returns parent demux folder path based on source and outputpath
+
+        Args:
+            sources (array): array of sources
+            outpath (str): outpath from args
+
+        Returns:
+            str : path to generated parent demux Folder
+        """
         return self._createParentDemuxFolder(sources, outpath)
 
 ###
@@ -66,10 +103,22 @@ class Demux(Demux):
 
 
     def _addMultiSource(self,paths, sortpref):
+        """
+        Takes a list of source paths, and allows users to filter list based on input
+
+        Args:
+            sources (array): List of potential sources
+            sortpref (str): user prefrences for sorting tracks/sources
+
+        Returns:
+            str
+        
+        """
+        
         msg = None
         if sortpref == "size":
             msg = \
-                """
+        """
         Pick one or more Sources to Extract Files From
 
         Controls
