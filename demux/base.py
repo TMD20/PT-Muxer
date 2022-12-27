@@ -4,6 +4,7 @@ import orjson
 
 
 from num2words import num2words
+import natsort
 
 import tools.general as utils
 import tools.paths as paths
@@ -214,7 +215,7 @@ class Demux():
     
 
         Args:
-            (obj): muxSorter filled with unsorted and sorted tracks
+            muxSorter (obj): siteMuxSorter  obj filled with unsorted and sorted tracks
         """
         # Add OCR for Subtitles
         tracks = None
@@ -255,7 +256,7 @@ class Demux():
     
 
         Args:
-            (obj): muxSorter filled with unsorted and sorted tracks
+           muxSorter (obj): siteMuxSorter obj filled with unsorted and sorted tracks
         """
         tracks = None
         langs = None
@@ -285,7 +286,7 @@ class Demux():
         Filters and sorts tracks into enabled track lists by type
 
         Args:
-             (array): array of siteSourceObjs
+             siteSourceObjs (array): array of siteSourceObj
 
         Returns:
             obj: returns muxSorter
@@ -305,7 +306,7 @@ class Demux():
         Generates a dictionary with data from sources
 
         Args:
-           (array): array of  siteSourceObjs 
+        siteSourceObjs (array): array of  siteSourceObj
 
         Returns:
             dict: dictionary with sourceData
@@ -329,7 +330,7 @@ class Demux():
         Finds the key from all enabled tracks and outputs that to list seperated by track type
 
         Args:
-        (obj):siteMuxSorter obj filled with sorted and unsorted trackdata
+        muxSorter (obj):siteMuxSorter obj filled with sorted and unsorted trackdata
 
         Returns:
             Dict: Dictionary of Lists, filled with track keys from enabled tracks
@@ -346,6 +347,16 @@ class Demux():
         return outdict
 
     def _ConvertChapterList(self, chapters):
+        """
+        Takes chapter obj and modifies output
+        into mkvmerge syntax
+
+        Args:
+            chapters (obj): chapters obj filled with chapter data
+
+        Returns:
+            _type_: _description_
+        """
         outdict = {}
         output = []
         if len(chapters) == 0:
@@ -358,6 +369,13 @@ class Demux():
         return outdict
 
     def _setBdInfoData(self):
+        """
+        Creates bdObjs from selected sources
+        Prompts User for playlist info, generates data from selected playlist
+
+        Returns:
+            array: returns an array of processed bdobjs
+        """
         bdObjs = []
         for source in self.sources:
             logger.logger.info(f"\n{source}\n")
@@ -368,6 +386,14 @@ class Demux():
         return bdObjs
 
     def _fixArgs(self):
+        """
+        Helps function to normalize arguments
+        i.e convert languages to all lower cases
+
+        Additonaly helps with converting noncompatible combinations of arguments
+        """
+
+
         logger.print("Normalize audiolang and sublang args")
         self._args.audiolang = list(
             map(lambda x: x.lower(),  self._args.audiolang))
@@ -381,15 +407,34 @@ class Demux():
     # Folder Stuff
 
     def _getBDMVs(self, path):
+        """
+        Takes a input path and searches for all BDMVs, and ISO
+
+        Args:
+            path (str): Path to search for matching files
+        Returns:
+            array: array of all matching paths
+        """
         with dir.cwd(path):
             list1 = paths.search(path, "/STREAM", dir=True, ignore=["BACKUP"])
             list2 = paths.search(path, "\.iso$")
             list1.extend(list2)
             list1 = list(
                 map(lambda x: paths.convertPathType(x, "Linux"), list1))
-            return sorted(list1)
+            return natsort.natsorted(list1)
 
     def _createParentDemuxFolder(self, sources, outpath):
+        """
+        Takes output folder from args, and generates a demuxfolder based on correct time, and first source selected
+        This folder is the basis for all generated and saved outputs during the programs run.
+
+        Args:
+            sources (array): List of sources selected
+            outpath (str): path to output folder
+
+        Returns:
+            str: full path to demuxing Folder
+        """
         with dir.cwd(outpath):
             title = utils.getTitle(sources[0])
             folder = f"{config.demuxPrefix}.{utils.getFormated('YY.MM.DD_HH.mm.ss')}.{title}"
@@ -403,6 +448,15 @@ class Demux():
             return parentDemux
 
     def _createChildDemuxFolder(self, parentDir, show):
+        """
+        Takes a parent demux folder, generates a child folder base on the path to the source being passed
+
+        Args:
+            parentDir (str): path to parent demux folder
+            show (str):modified basename generated from path
+        Returns:
+            str: path to child demux folder inside parent demux folder
+        """
         with dir.cwd(parentDir):
             show = utils.sourcetoShowName(show)
             os.mkdir(show)
