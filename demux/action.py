@@ -12,7 +12,8 @@ import tools.logger as logger
 
 def endProcess():
     """
-    Cleans up the system before program exits
+    Cleans up the system before program exits 
+    During Demuxing
     """
     paths.deleteTempDirs()
     if demuxObj == None:
@@ -29,8 +30,7 @@ def endProcess():
 
 def demux(args):
     """
-    This runner demuxes a disk
-
+    This runner uses DemuxClass to Demux Disk
     Args:
         args (argparse.ArgumentParser): Arguments pass via the commandline
     """

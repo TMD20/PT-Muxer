@@ -21,6 +21,11 @@ import tools.logger as logger
 
 
 class Demux():
+    """
+    This is the base class for the demux Classes
+    Provides some basic functionality meant 
+    to be inherited by other class
+    """
     def __init__( self,args):
         self._args=args
         self.demuxFolder=None
@@ -29,18 +34,41 @@ class Demux():
         self.movieObj=None
         self._index=0
         self._success=False
+
     def __call__(self):
+        """
+        Main Function For Class
+        """
         logger.setUpLogging(self._args.loglevel)
         self._callFunction()
         self._success=True
     def _callFunction(self):
+        """
+        Overwriten by Inheriting class
+        Main overaching function for all processes required for demuxing
+        """
         None
 
     @property
     def success(self):
+        """
+        Provides Detail on whether demuxing was finished succesfully
+
+        Returns:
+            bool: a bool based on if _call_ finishes
+        """
         return self._success
     
     def demuxPlaylist(self,bdObjs,multiSelect=False):
+        """
+        Main Function for processes Demuxing of playlist
+
+
+        Args:
+            bdObjs (bdinfo): An array of bdObjs, one for each source
+            multiSelect (bool, optional): Whether or not each source should 
+            allow for more than one playlist. Defaults to False.
+        """
         #setup bdobj
         for bdObj in bdObjs:
             logger.print(bdObj.mediaDir,style="white")
@@ -83,6 +111,19 @@ class Demux():
                     
 
     def _saveOutput(self,trackerObjs,muxSorter):
+        """
+        Generates a dictionary based on 
+        1.Data from all sources
+        2. Generated during demux process
+        3. From arguments, selections made by user
+        
+
+        Args:
+            trackerObjs (siteTrackData): array of trackerObjs, with sources added 
+            muxSorter (siteTrackSorter):obj filled with unsorted and sorted tracks
+        Returns:
+            dict: dictionary filled data from source/generated
+        """
         outdict = {}
         outdict.update(self._addSourceData(trackerObjs)) 
         outdict.update(self._ConvertChapterList(self._getChapterMedia(trackerObjs))) 
@@ -90,23 +131,11 @@ class Demux():
         outdict.update(self._addEnabledData(muxSorter))
         outdict.update(self._addTrackData(muxSorter))
         return outdict
-
-    def _saveOutputStream(self,bdObjs,trackerObjs,muxSorter):
-        outdict = {}
-        outdict.update(self._addSourceData(trackerObjs)) 
-        outdict.update(self._ConvertChapterList(self._getChapterMedia(bdObjs))) 
-        outdict["Movie"] = self._movieObj.movieObj
-        outdict.update(self._addEnabledData(muxSorter))
-        outdict.update(self._addTrackData(muxSorter))
-        self._writeFinalJSON(outdict)
-    
        
 
 
 
     
-    
-
     #################
     # Helper Functions
     ############
