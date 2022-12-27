@@ -208,11 +208,10 @@ class Demux():
                 list(map(lambda x: x["sourceDir"], siteSourceObjs)), "Which Source Has The proper Chapter File")
         return list(filter(lambda x: x["sourceDir"] == match, siteSourceObjs))[0]["chapters"]
 
-
     def _subParse(self, muxSorter):
         """
         Takes the tracks from muxSorter obj, and applies OCR/Image Generation to certain subtitle tracks based on passed args
-    
+
 
         Args:
             muxSorter (obj): siteMuxSorter  obj filled with unsorted and sorted tracks
@@ -253,7 +252,7 @@ class Demux():
     def _voiceRec(self, muxSorter):
         """
         Takes the tracks from muxSorter obj, and applies OCR to certain audio tracks based on passed args
-    
+
 
         Args:
            muxSorter (obj): siteMuxSorter obj filled with unsorted and sorted tracks
@@ -392,7 +391,6 @@ class Demux():
 
         Additonaly helps with converting noncompatible combinations of arguments
         """
-
 
         logger.print("Normalize audiolang and sublang args")
         self._args.audiolang = list(
