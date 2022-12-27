@@ -23,6 +23,11 @@ class Demux(Demux):
         self._type = "TV"
 
     def demux(self):
+        """
+        Gathers Information from a selected movie Title
+        Generates BDINFO Data for all soruces 
+        Demuxes Movie based on args and selected playlist
+        """
         with dir.cwd(self.demuxFolder):
             self._movieObj = movieData.MovieData("TV")
             self._movieObj.setData(
@@ -34,6 +39,12 @@ class Demux(Demux):
                 self.demuxPlaylist(bdObjs, multiSelect=True)
 
     def demuxSplitPlayList(self, bdObjs):
+        """
+        Performs demuxing based on splitting playlist into individual streams
+
+        Args:
+            bdObjs (array_): array of bdObjs
+        """
         for bdObj in bdObjs:
             logger.print(bdObj.mediaDir, style="white")
             bdObj.playListRangeSelect()
@@ -51,6 +62,12 @@ class Demux(Demux):
             self._dgdemuxSplitPlaylistHelper(bdObjs)
 
     def _eac3toSplitPlaylistHelper(self, bdObjs):
+        """
+        Helper Function to perform splitplaylist process with eac3to
+
+        Args:
+            bdObjs (array_): array of bdObjs
+        """
         # outter loop through every playlist
         for i in range(len(bdObjs[0].DictList)):
             startdex = len(os.listdir(self.demuxFolder))
@@ -94,6 +111,12 @@ class Demux(Demux):
                         self._saveOutput(siteSourceObjs, muxSorter))
 
     def _dgdemuxSplitPlaylistHelper(self, bdObjs):
+        """
+        Helper Function to perform splitplaylist process with dgdemux
+
+        Args:
+            bdObjs (array_): array of bdObjs
+        """
         logger.print(
             "Note in dgdemux Mode all streams will be outputted\n You will have to manually remove any short streams")
         # i represent each playlist
@@ -151,6 +174,16 @@ class Demux(Demux):
                         self._saveOutput(siteSourceObjs, muxSorter))
 
     def _saveOutput(self, siteSourceObjs, muxSorter):
+        """
+        Generates a dictionary filled with data from demuxing process
+
+        Args:
+            siteSourceObjs (array): _array of siteSourceobj
+            muxSorter (obj): siteMuxSorter Obj
+
+        Returns:
+            dictioanry: outdict dictioanry
+        """
         outdict = super()._saveOutput(siteSourceObjs, muxSorter)
         currentFolders = list(map(lambda x: re.search(
             "[0-9]+$", x).group(0), paths.listdir(self.demuxFolder)))
