@@ -11,6 +11,9 @@ import tools.logger as logger
 
 
 def endProcess():
+    """
+    Cleans up the system before program exits
+    """
     paths.deleteTempDirs()
     if demuxObj == None:
         None
@@ -25,6 +28,12 @@ def endProcess():
 
 
 def demux(args):
+    """
+    This runner demuxes a disk
+
+    Args:
+        args (argparse.ArgumentParser): Arguments pass via the commandline
+    """
     # Help user out delete all temp directories
     paths.deleteTempDirs()
     global demuxObj
