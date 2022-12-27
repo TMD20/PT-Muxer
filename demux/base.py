@@ -199,7 +199,7 @@ class Demux():
             siteSourceObjs (obj): array of siteSourceObj
 
         Returns:
-            obj: returns the chapters from the matching siteSourceObk
+            obj: returns the chapters from the matching siteSourceObj
         """
         match = siteSourceObjs[0]["sourceDir"]
         if len(siteSourceObjs) > 1:
@@ -207,13 +207,15 @@ class Demux():
                 list(map(lambda x: x["sourceDir"], siteSourceObjs)), "Which Source Has The proper Chapter File")
         return list(filter(lambda x: x["sourceDir"] == match, siteSourceObjs))[0]["chapters"]
 
-    def _filterTracks(self, demuxData):
-        tracks = demuxData.audio
-        for track in tracks:
-            if re.search("(DTS Core)", track["bdinfo_title"], re.IGNORECASE):
-                demuxData["tracks"].pop(track["key"])
 
     def _subParse(self, muxSorter):
+        """
+        Takes the tracks from muxSorter obj, and applies OCR/Image Generation to certain subtitle tracks based on passed args
+    
+
+        Args:
+            (obj): muxSorter filled with unsorted and sorted tracks
+        """
         # Add OCR for Subtitles
         tracks = None
         keep = self._args.keepocr
@@ -248,6 +250,13 @@ class Demux():
 
     # Voice Recorder
     def _voiceRec(self, muxSorter):
+        """
+        Takes the tracks from muxSorter obj, and applies OCR to certain audio tracks based on passed args
+    
+
+        Args:
+            (obj): muxSorter filled with unsorted and sorted tracks
+        """
         tracks = None
         langs = None
         if self._args.voicerec != None:
@@ -270,6 +279,17 @@ class Demux():
                     voiceRec.main([track], langs=langs)
 
     def _getMuxSorter(self, siteSourceObjs):
+        """
+        Creates and uses siteMuxSorter obj
+        To flatten all tracks from multiple source into list by track types
+        Filters and sorts tracks into enabled track lists by type
+
+        Args:
+             (array): array of siteSourceObjs
+
+        Returns:
+            obj: returns muxSorter
+        """
         muxSorter = siteSortPicker.pickSite(self._args.site)
         for siteSourceObj in siteSourceObjs:
             muxSorter.addTracks(siteSourceObj.tracks)
@@ -281,6 +301,15 @@ class Demux():
         return muxSorter
 
     def _addSourceData(self, siteSourceObjs):
+        """
+        Generates a dictionary with data from sources
+
+        Args:
+           (array): array of  siteSourceObjs 
+
+        Returns:
+            dict: dictionary with sourceData
+        """
         outdict = {}
         outdict["Sources"] = {}
         for siteSourceObj in siteSourceObjs:
@@ -296,6 +325,15 @@ class Demux():
         return outdict
 
     def _addEnabledData(self, muxSorter):
+        """
+        Finds the key from all enabled tracks and outputs that to list seperated by track type
+
+        Args:
+        (obj):siteMuxSorter obj filled with sorted and unsorted trackdata
+
+        Returns:
+            Dict: Dictionary of Lists, filled with track keys from enabled tracks
+        """
         outdict = {}
         # Enabled Track Section
         outdict["Enabled_Tracks"] = {}
