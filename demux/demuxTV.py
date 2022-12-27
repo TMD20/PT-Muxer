@@ -177,6 +177,10 @@ class Demux(Demux):
     ####
     # Helper Functions
     ####
+    def _getNewFolder(self,i=None):
+
+        return os.path.join(self.demuxFolder,str(i+1))
+ 
     def _filterStreamMedia(self,demuxData,streamTracks):
         self._videoTrackHelper(demuxData,streamTracks)
         self._audioTrackHelper(demuxData,streamTracks)

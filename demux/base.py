@@ -139,9 +139,10 @@ class Demux():
     #################
     # Helper Functions
     ############
-    def _getNewFolder(self,i=None):
-        return os.path.join(self.demuxFolder,str(i+1))
- 
+
+    def _getNewFolder(self):
+        return os.path.join(self.demuxFolder)
+   
 
 
 
