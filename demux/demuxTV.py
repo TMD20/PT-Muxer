@@ -17,6 +17,12 @@ import tools.logger as logger
 
 
 class Demux(Demux):
+    """
+    This class is for demuxing TV Shows
+
+    Args:
+        Demux (class): demuxBase class
+    """
     def __init__(self, args):
         super().__init__(args)
         self._name = "TV Shows"
