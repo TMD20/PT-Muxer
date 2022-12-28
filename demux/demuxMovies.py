@@ -12,15 +12,11 @@ import tools.directory as dir
 import tools.logger as logger
 
 
-
-
-
 class Demux(Demux):
-    def __init__(self,args):
+    def __init__(self, args):
         super().__init__(args)
-        self._name="Movies"
-        self._type="Movies"
-
+        self._name = "Movies"
+        self._type = "Movies"
 
     def demux(self):
         """
@@ -30,11 +26,10 @@ class Demux(Demux):
         """
         with dir.cwd(self.demuxFolder):
             self._movieObj = movieData.MovieData("Movies")
-            self._movieObj.setData(self._type,(self._args.title or utils.getTitle(self.sources[0])))
-            bdObjs = self._setBdInfoData() 
+            self._movieObj.setData(
+                self._type, (self._args.title or utils.getTitle(self.sources[0])))
+            bdObjs = self._setBdInfoData()
             self.demuxPlaylist(bdObjs)
-
-
 
     def _callFunction(self):
         """
@@ -46,50 +41,55 @@ class Demux(Demux):
             raise RuntimeError("splitplaylist Not allowed for Movie Mode")
         self.setSource()
         self._fixArgs()
-        self.getDemuxFolder()
-        self.demux()   
+        self.setDemuxFolder()
+        self.demux()
+
     def setSource(self):
         """
         Filters sources in input directories based on user selection
         """
         options = self._getBDMVs(self._args.inpath)
-        self.sources = self.getSources(options,self._args.inpath,self._args.sortpref)
+        self.sources = self.getSources(
+            options, self._args.inpath, self._args.sortpref)
 
-    def getSources(self,options, inpath, sortpref):
+    def getSources(self, options, inpath, sortpref):
         """
         Returns array of selected paths, based on user input
 
         Args:
             options (array): compatible paths from input folder
             inpath (str): inpath used to generate options
-            sortpref (str): How Tracks should be sorted
+            sortpref (str): How tracks should be sorted
         Raises:
             RuntimeError: Error raised if no valid source is found
 
         Returns:
-            array: Array of selected tracks, and extracted ISO
+            array: Array of selected sources, and extracted ISO
         """
         if len(options) == 0:
             raise RuntimeError("No Sources Found")
-        sources = self._addMultiSource(options, sortpref)     
+        sources = self._addMultiSource(options, sortpref)
         for i in range(0, len(sources)):
             if re.search(".iso", sources[i]):
                 sources[i] = paths.extractISO(sources[i], inpath)
-        return list(map(lambda x:paths.convertPathType(x,type="Linux"),sources))
-    def getDemuxFolder(self):
+        return list(map(lambda x: paths.convertPathType(x, type="Linux"), sources))
+
+    def setDemuxFolder(self):
         """
         Ensures outpath from args exists
 
         sets demuxfolder property of demuxObJ
         """
         paths.mkdirSafe(self._args.outpath)
-        self.demuxFolder=self.getDemuxFolderHelper(self.sources, self._args.outpath)        
-    def getDemuxFolderHelper(self,sources, outpath):
+        self.demuxFolder = self.setDemuxFolderHelper(
+            self.sources, self._args.outpath)
+
+    def setDemuxFolderHelper(self, sources, outpath):
         """
         Returns parent demux folder path based on source and outputpath
 
         Args:
-            sources (array): array of sources
+            sources (aarray): array of sources
             outpath (str): outpath from args
 
         Returns:
@@ -101,8 +101,7 @@ class Demux(Demux):
 # Select
 ##
 
-
-    def _addMultiSource(self,paths, sortpref):
+    def _addMultiSource(self, paths, sortpref):
         """
         Takes a list of source paths, and allows users to filter list based on input
 
@@ -111,14 +110,14 @@ class Demux(Demux):
             sortpref (str): user prefrences for sorting tracks/sources
 
         Returns:
-            str
-        
+            str: list of selected sources
+
         """
-        
+
         msg = None
         if sortpref == "size":
             msg = \
-        """
+                """
         Pick one or more Sources to Extract Files From
 
         Controls
@@ -155,8 +154,3 @@ class Demux(Demux):
             selection = list(filter(lambda x: x != "done" and x != None))
             selection = utils.removeDupesList(selection)
             return selection
-
-        
-
-
-    

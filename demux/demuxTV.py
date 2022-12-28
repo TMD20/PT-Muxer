@@ -22,6 +22,15 @@ class Demux(Demux):
         self._name = "TV Shows"
         self._type = "TV"
 
+    def _callFunction(self):
+        """
+        Helper main function called by internal __call__ function 
+        """
+        self.setSource()
+        self._fixArgs()
+        self.setDemuxFolder()
+        self.demux()
+
     def demux(self):
         """
         Gathers Information from a selected movie Title
@@ -43,7 +52,7 @@ class Demux(Demux):
         Performs demuxing based on splitting playlist into individual streams
 
         Args:
-            bdObjs (array_): array of bdObjs
+            bdObjs (array): array of bdObjs
         """
         for bdObj in bdObjs:
             logger.print(bdObj.mediaDir, style="white")
@@ -66,7 +75,7 @@ class Demux(Demux):
         Helper Function to perform splitplaylist process with eac3to
 
         Args:
-            bdObjs (array_): array of bdObjs
+            bdObjs (array): array of bdObjs
         """
         # outter loop through every playlist
         for i in range(len(bdObjs[0].DictList)):
@@ -115,7 +124,7 @@ class Demux(Demux):
         Helper Function to perform splitplaylist process with dgdemux
 
         Args:
-            bdObjs (array_): array of bdObjs
+            bdObjs (array): array of bdObjs
         """
         logger.print(
             "Note in dgdemux Mode all streams will be outputted\n You will have to manually remove any short streams")
@@ -178,7 +187,7 @@ class Demux(Demux):
         Generates a dictionary filled with data from demuxing process
 
         Args:
-            siteSourceObjs (array): _array of siteSourceobj
+            siteSourceObjs (array): array of siteSourceobj
             muxSorter (obj): siteMuxSorter Obj
 
         Returns:
@@ -195,16 +204,37 @@ class Demux(Demux):
     # Helper Functions
     ####
 
-    def _getNewFolder(self, i=None):
+    def _getNewFolder(self, i):
+        """
+        Generates the next incremental folder inside parent demux folder based on number of sibling folders previosuly geneated
+
+        Args:
+            i (int): Number of sibling folders
+        Returns:
+            str: path to new folder
+        """
 
         return os.path.join(self.demuxFolder, str(i+1))
 
     def _filterStreamMedia(self, demuxData, streamTracks):
+        """
+        Helper Function to filter out tracks in demuxData. Tracks that appear in the parent playlist, but are not within a
+        specicic stream
+        Args:
+             demuxData (obj):siteSourceData Object with data parsed from bdinfo
+            streamTracks (array): List of all tracks within the specific stream
+        """
         self._videoTrackHelper(demuxData, streamTracks)
         self._audioTrackHelper(demuxData, streamTracks)
         self._subTrackHelper(demuxData, streamTracks)
 
     def _audioTrackHelper(self, demuxData, streamTracks):
+        """
+        Helper Function to help filter tracks for filterStreamTracks
+        Args:
+        demuxData (obj):siteSourceData Object with data parsed from bdinfo
+            streamTracks (array): List of all tracks within the specific stream
+        """
         i = 0
         streamTracks = list(
             filter(lambda x: x["type"] == "audio", streamTracks))
@@ -229,6 +259,12 @@ class Demux(Demux):
                 demuxData["tracks"].pop(key)
 
     def _videoTrackHelper(self, demuxData, streamTracks):
+        """
+        Helper Function to help filter tracks for filterStreamTracks
+        Args:
+        demuxData (obj):siteSourceData Object with data parsed from bdinfo
+            streamTracks (array): List of all tracks within the specific stream
+        """
         i = 0
         streamTracks = list(
             filter(lambda x: x["type"] == "video", streamTracks))
@@ -245,6 +281,12 @@ class Demux(Demux):
             i = i+1
 
     def _subTrackHelper(self, demuxData, streamTracks):
+        """
+        Helper Function to help filter tracks for filterStreamTracks
+        Args:
+        demuxData (obj):siteSourceData Object with data parsed from bdinfo
+            streamTracks (array): List of all tracks within the specific stream
+        """
         i = 0
         streamTracks = list(
             filter(lambda x: x["type"] == "subtitle", streamTracks))
@@ -260,18 +302,28 @@ class Demux(Demux):
                 continue
             i = i+1
 
-    def _callFunction(self):
-        self.setSource()
-        self._fixArgs()
-        self.getDemuxFolder()
-        self.demux()
-
     def setSource(self):
+        """
+        Filters sources in input directories based on user selection
+        """
         options = self._getBDMVs(self._args.inpath)
         self.sources = self.getSources(
             options, self._args.inpath, self._args.sortpref)
 
     def getSources(self, options, inpath, sortpref):
+        """
+        Returns array of selected paths, based on user input
+
+        Args:
+            options (array): compatible paths from input folder
+            inpath (str): inpath used to generate options
+            sortpref (str): How tracks should be sorted
+        Raises:
+            RuntimeError: Error raised if no valid source is found
+
+        Returns:
+            array: Array of selected source, and extracted ISO
+        """
         if len(options) == 0:
             raise RuntimeError("No Sources Directories Found")
         sources = None
@@ -281,24 +333,17 @@ class Demux(Demux):
                 sources[i] = paths.extractISO(sources[i], inpath)
         return sources
 
-    def setStreamsLength(self, streams):
-        duration = 0
-        start = utils.convertArrow(streams[0]["start"], "hh:mm:ss.SSS")
-        end = utils.convertArrow(streams[-1]["end"], "hh:mm:ss.SSS")
-        dif = utils.subArrowTime(end, start)
-        duration = (duration+dif.hour*60)
-        duration = (duration+dif.minute)
-        duration = (duration+(dif.second/60))
-        return duration
+    def setDemuxFolderHelper(self, sources, outpath):
+        """
+        Returns parent demux folder path based on source and outputpath
 
-    def getNewStartTime(self, startTime, streams):
-        start = utils.convertArrow(streams[0]["start"], "hh:mm:ss.SSS")
-        end = utils.convertArrow(streams[-1]["end"], "hh:mm:ss.SSS")
-        dif = utils.subArrowTime(end, start)
-        startTime = utils.addArrowTime(startTime, dif)
-        return startTime
+        Args:
+            sources (array): array of sources
+            outpath (str): outpath from args
 
-    def getDemuxFolderHelper(self, sources, outpath):
+        Returns:
+            str : path to generated parent demux Folder
+        """
         if utils.singleSelectMenu(["Yes", "No"], "Continue with Previous MuxFolder", default="No") == "Yes":
             logger.print("Searching for Prior TV Mode Folders")
             folders = self._getTVMuxFolders(outpath)
@@ -315,13 +360,29 @@ class Demux(Demux):
         else:
             return self._createParentDemuxFolder(sources, outpath)
 
-    def getDemuxFolder(self):
+    def setDemuxFolder(self):
+        """
+        Ensures outpath from args exists
+
+        sets demuxfolder property of demuxObJ
+        """
         paths.mkdirSafe(self._args.outpath)
-        self.demuxFolder = self.getDemuxFolderHelper(
+        self.demuxFolder = self.setDemuxFolderHelper(
             self.sources, self._args.outpath)
 
     # Select
     def _addMultiSource(self, paths, sortpref):
+        """
+        Takes a list of source paths, and allows users to filter list based on input
+
+        Args:
+            sources (array): List of potential sources
+            sortpref (str): user prefrences for sorting tracks/sources
+
+        Returns:
+            str: list of selected sources
+
+        """    
         if len(paths) == 0:
             raise RuntimeError("No Sources Directories Found")
         msg = None
@@ -362,23 +423,18 @@ class Demux(Demux):
             selection = utils.removeDupesList(selection)
             return selection
 
-    def _addSingleSource(self, paths):
-        if len(paths) == 0:
-            raise RuntimeError("No Sources Directories Found")
-        msg = \
-            """
-        Click on the Source You Want for this Demux
 
-        TV Mode will run multiple times
-        for more advanced source selection
+    def _getTVMuxFolders(self, outpath):
+        """
+        Helper Function to get demuxFolders from prior runs
 
-        Press Enter to confirm when Done
-            """
-        return utils.singleSelectMenu(paths, msg)
-
-    def _getTVMuxFolders(self, inpath):
+        Args:
+            outpath (string): outpath which holds demux Folders
+        Returns:
+            array:  array of demuxFolders with TV Mode Structure
+        """
         folders = paths.search(
-            inpath, f"{config.demuxPrefix}[.]", dir=True, recursive=False)
+            outpath, f"{config.demuxPrefix}[.]", dir=True, recursive=False)
         emptyFolders = list(filter(lambda x: len(os.listdir(x)) == 0, folders))
         tvFolders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
         tvFolders = list(filter(lambda x: re.search(
