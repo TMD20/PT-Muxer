@@ -10,6 +10,17 @@ import config as config
 
 
 def subreader(tracks, maxLines=None, langs=None, keep=None):
+    """
+    Function for keeping subtitle images if needed
+    actual processing handled by ocrhelper
+   
+
+    Args:
+        tracks (str): list of tracks
+        maxLines (int, optional): max number of lines to perfrom ocr. Defaults to None.
+        langs (array, optional): array of languages to enable for ocr. Defaults to None.
+        keep (bool, optional): whether to keep generated subtitle images. Defaults to None.
+    """
     maxLines = maxLines or config.maxOCRLineCount + 1
     if keep:
         _ocrHelper(tracks, maxLines, langs)
@@ -19,6 +30,15 @@ def subreader(tracks, maxLines=None, langs=None, keep=None):
 
 
 def _ocrHelper(tracks, maxLines, langs):
+    """
+    Takes a list of tracks generates subtitle images
+    performs ocr on images if applicable 
+
+    Args:
+        tracks (str): list of tracks
+        maxLines (int): max number of lines to perfrom ocr on
+        langs (array): list of languages to enable for ocr
+    """
     for track in tracks:
         subLocation = track.getTrackLocation()
         logger.logger.info("\n\nAttempting to OCR: ", subLocation)
@@ -48,6 +68,12 @@ def _ocrHelper(tracks, maxLines, langs):
 
 
 def imagesOnly(tracks):
+    """
+    Function to only generate subtitle images without any ocr
+
+    Args:
+        tracks (array): list of tracks to generate images for
+    """
     logger.logger.info("Generating Subtitle Images\n\n")
     for track in tracks:
         file = track["filename"]
