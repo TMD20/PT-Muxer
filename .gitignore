@@ -6,7 +6,6 @@ man/
 include/
 .pytest_cache/
 .vscode/
-bin/
 test/
 .env
 cache.sqlite
