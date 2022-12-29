@@ -14,10 +14,10 @@ def main(tracks, maxLines=None, langs=None, model=None, model_name=None):
 
     Args:
         tracks (array): list of track dicts
-        maxLines (int, optional):Number of lines to transcribe
+        maxLines (int, optional):Number of lines to transcribe. Defaults to None
         langs (array, optional): list of languages to enavble transcripition on 
         model (str, optional): vosk variable for which model to use. Defaults to None.
-        model_name (_type_, optional):vosk variable for name of which mode use  . Defaults to None.
+        model_name (_type_, optional):vosk variable for name of which mode use. Defaults to None.
     """
     maxLines = maxLines or config.maxVoiceLineCount + 1
 

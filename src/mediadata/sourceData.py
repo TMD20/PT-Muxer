@@ -65,7 +65,7 @@ class sourceData(dict):
         Helper Function to set outputdir
         Args:
             output (str): parent output path
-            sourceDir(str,optional): full directory to source
+            sourceDir(str,optional): full directory to source. Defaults to None
         Returns:
             str: path to sources outputdir in demuxFolder
             
@@ -154,7 +154,7 @@ class sourceData(dict):
         Gets the full path to the  STREAM or PLAYLIST dir for a source
 
         Args:
-            split (bool, optional): Whether or not to look in playlist or stream
+            split (bool, optional): Whether or not to look in playlist or stream. Defaults to False
             true means to look in stream
 
         Returns:
@@ -485,8 +485,8 @@ class sourceData(dict):
         Args:
             bdinfo (str): bdinfo quick info line
             source (str): path to source
-            langcode (str,optional): 2 digit langcode
-            lang (str,optional): full lang string
+            langcode (str,optional): 2 digit langcode. Defaults to None
+            lang (str,optional): full lang string. Defaults to None
         """           
         tempdict = trackObj.TrackObJ()
         tempdict["bdinfo_title"] = bdinfo
