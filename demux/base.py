@@ -89,8 +89,8 @@ class Demux():
                     bdObj.generateData(i)
                     demuxData = siteSourcePicker.pickSite(self._args.site)
                     demuxData.addTracks(bdObj, bdObj.keys[i])
-                    self._filterTracks(demuxData)
-                    demuxData.setOutput(newFolder)
+                    demuxData.output=newFolder
+                    demuxData.setOutPutDir(newFolder)
                     siteSourceObjs.append(demuxData)
                     with dir.cwd(demuxData["outputDir"]):
                         if not self._args.dontconvert:

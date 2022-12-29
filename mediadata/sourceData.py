@@ -11,16 +11,31 @@ import mediatools.eac3to as eac3to
 import mediadata.trackObj as trackObj
 
 
-
 class sourceData(dict):
-    
+    """
+    Stores info from one source including
+    Parsing bdinfo track names into objects
+
+    Args:
+        dict (class): python built in dict class
+    """
 
     def __init__(self):
         super().__init__()
-        self._allowedKeys={"tracks","source","outputDir","sourceDir","playlistNum","playlistFile","length","streamFiles","chapters"}
-        self["tracks"]={}
-        self._source=None
+        self._allowedKeys = {"tracks", "source", "outputDir", "sourceDir",
+                             "playlistNum", "playlistFile", "length", "streamFiles", "chapters"}
+        self["tracks"] = {}
+        self._source = None
+
     def __setitem__(self, key, value):
+        """
+        built in dict method 
+        modified to only accept certain keys
+
+        Args:
+        key (str): key to set
+        value (any): value to set key to
+        """
         if key not in self._allowedKeys:
             raise AttributeError(f"sourceData does not accept {key}")
         super().__setitem__(key, value)
@@ -31,29 +46,37 @@ class sourceData(dict):
 
     ################################################################################################################
     ###### These Function adds every track from bdinfo list of tracks to a dictionary                              #
-    #It also adds data about the source of the information, and where to output it                                 #
+    # It also adds data about the source of the information, and where to output it                                 #
     ################################################################################################################
 
-    
-    def updateRawTracksDict(self,trackStrs):
-        source=self._source
-        offset=1
+    def updateRawTracksDict(self, trackStrs):
+        """
+        Parses bdinfo quickinfo string into objects
+        Args:
+            trackStrs (str): list of track strings from bdinfo quickinfo
+        """
+        source = self._source
+        offset = 1
         for index, currline in enumerate(trackStrs):
             self._appendTrack(currline, index+offset, source)
         self._setSourceDict()
 
-        
-
-    def setOutput(self,output,source=None):
-        source=source or self._source
-        self._output=output
+    def setOutPutDir(self, output,sourceDir=None):
+        """
+        Helper Function to set output dir for source with demuxFodler
+        Args:
+            output (str): parent output path
+        Returns:
+            str: path to sources outputdir in demuxFolder
+            
+        """
+        source = self._source or sourceDir
         for track in self.tracks:
-            track["outputDir"]=os.path.join(output,utils.sourcetoShowName(source))
-        self["outputDir"] = os.path.join(output,utils.sourcetoShowName(self._source))
+            track["outputDir"] = os.path.join(
+                output, utils.sourcetoShowName(source))
+        self["outputDir"] = os.path.join(
+            output, utils.sourcetoShowName(source))
 
-
-
-    
     def getVideoFileName(line, index):
         if re.search("AVC", line) != None:
             return f"00{index}.h264"
@@ -63,7 +86,6 @@ class sourceData(dict):
             return f"00{index}.vc1"
         if re.search("MPEG-2", line) != None:
             return f"00{index}.mpeg2"
-
 
     def getAudioFileName(line, langcode, index):
         # Lossless audio
@@ -90,7 +112,6 @@ class sourceData(dict):
 
         return f"00{index}-{langcode}.{codec}"
 
-
     def getSubFileName(langcode, index):
         # remove special characters
         return f"00{index}-{langcode}.sup"
@@ -99,92 +120,104 @@ class sourceData(dict):
     #   Getter Functions
     ################################################################################################################
 
-
-    def getPlaylistLocation(self,split=False):
-        sourceData=self
+    def getPlaylistLocation(self, split=False):
+        sourceData = self
         if split:
-            return paths.search(sourceData["sourceDir"],"STREAMS",dir=True)[0]
+            return paths.search(sourceData["sourceDir"], "STREAMS", dir=True)[0]
         else:
-            return paths.search(sourceData["sourceDir"],"PLAYLIST",dir=True)[0]
-
-  
+            return paths.search(sourceData["sourceDir"], "PLAYLIST", dir=True)[0]
 
     @property
     def tracks(self):
         return list(self["tracks"].values())
-        
-    def _getfilteredvalues(self,type):
-        values=self["tracks"].values()
-        return list(filter(lambda x:x["type"]==type,values))
-    
+
+    def _getfilteredvalues(self, type):
+        values = self["tracks"].values()
+        return list(filter(lambda x: x["type"] == type, values))
+
     @property
     def video(self):
         return self._getfilteredvalues("video")
-        
+
     @property
     def subtitle(self):
         return self._getfilteredvalues("subtitle")
+
     @property
     def audio(self):
         return self._getfilteredvalues("audio")
+
     @property
     def compat(self):
-        values=self._getfilteredvalues("audio")
-        return list(filter(lambda x:x["compat"]=="true",values))
+        values = self._getfilteredvalues("audio")
+        return list(filter(lambda x: x["compat"] == "true", values))
+
     @property
     def trackkey(self):
         return list(self["tracks"].keys())
-    def _getfilteredkey(self,type):
-        keys=self["tracks"].keys()
-        return list(filter(lambda x:self["tracks"][x]["type"]==type,keys))
-    
+
+    def _getfilteredkey(self, type):
+        keys = self["tracks"].keys()
+        return list(filter(lambda x: self["tracks"][x]["type"] == type, keys))
+
     @property
     def videokeys(self):
         return self._getfilteredkey("video")
-        
+
     @property
     def subtitlekeys(self):
         return self._getfilteredkey("subtitle")
+
     @property
     def audiokeys(self):
         return self._getfilteredkey("audio")
+
     @property
     def compatkeys(self):
-        keys=self._getfilteredkey("audio")
-        return list(filter(lambda x:self["tracks"][x]["compat"]==True,keys))
-     
-  
+        keys = self._getfilteredkey("audio")
+        return list(filter(lambda x: self["tracks"][x]["compat"] == True, keys))
+
     @property
     def trackitems(self):
         return list(self["tracks"].items())
-    def _getfiltereditems(self,type):
-        items=self["tracks"].items()
-        return list(filter(lambda x:x[1]["type"]==type,items))
-    
+
+    def _getfiltereditems(self, type):
+        items = self["tracks"].items()
+        return list(filter(lambda x: x[1]["type"] == type, items))
+
     @property
     def videoitems(self):
         return self._getfiltereditems("video")
-        
+
     @property
     def subtitleitems(self):
         return self._getfiltereditems("subtitle")
+
     @property
     def audioitems(self):
         return self._getfiltereditems("audio")
+
     @property
     def compatitems(self):
-        items=self._getfiltereditems("audio")
-        return list(filter(lambda x:x[1]["compat"]==True,items))      
-                  
+        items = self._getfiltereditems("audio")
+        return list(filter(lambda x: x[1]["compat"] == True, items))
+    @property
+    def output(self):
+        return self._output
+    
+    @output.setter
+    def output(self, output):
+         self._output=output
     """
    Private
     """
-    def _setUp(self,playlistNum,bdObj,streams):
-        self._playlistNum=playlistNum
-        self._bdObj=bdObj
-        self._playlistFile=bdObj.Dict[playlistNum]["playlistFile"]
-        self._source=bdObj.mediaDir
-        self._streams=streams
+
+    def _setUp(self, playlistNum, bdObj, streams):
+        self._playlistNum = playlistNum
+        self._bdObj = bdObj
+        self._playlistFile = bdObj.Dict[playlistNum]["playlistFile"]
+        self._source = bdObj.mediaDir
+        self._streams = streams
 
     def _setSourceDict(self):
         self["sourceDir"] = self._source
@@ -192,26 +225,27 @@ class sourceData(dict):
         self["playlistFile"] = self._playlistFile
         self["streamFiles"] = self._getStreamNames(self._streams)
         self["length"] = self._getStreamLength(self._streams)
-        self["chapters"]=self._bdObj.getStreamChapters(self._streams,self._playlistNum)
+        self["chapters"] = self._bdObj.getStreamChapters(
+            self._streams, self._playlistNum)
 
     ################################################################################################################
     ###### These Functions are used to parse Data from String for the corresponding Track Type i.e Video, Audio,etc#
     ################################################################################################################
 
-    def _videoParser(self, currline,source):
+    def _videoParser(self, currline, source):
         tempdict = trackObj.TrackObJ()
         bdinfo = re.search(
             "(?:.*?: (.*))", currline).group(1)
-        tempdict = self._defaultMediaDict(bdinfo,source)
+        tempdict = self._defaultMediaDict(bdinfo, source)
         tempdict["type"] = "video"
         return tempdict
 
-    def _audioParser(self, currline,source):
+    def _audioParser(self, currline, source):
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = list(filter(lambda x: x != None, list(
             re.search("(?:.*?/ )(?:(.*?) \(.*)?(.*)?", currline).groups())))[0]
-        tempdict = self._defaultMediaDict(bdinfo,source, langcode, lang)
+        tempdict = self._defaultMediaDict(bdinfo, source, langcode, lang)
         tempdict["type"] = "audio"
         tempdict["auditorydesc"] = False
         tempdict["original"] = False
@@ -219,7 +253,7 @@ class sourceData(dict):
 
         return tempdict
 
-    def _audioCompatParser(self, currline,source):
+    def _audioCompatParser(self, currline, source):
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = re.search("(?:.*?)(?:\((.*?)\))", currline)
@@ -231,8 +265,8 @@ class sourceData(dict):
             return
         bdinfo = bdinfo[0]
         if re.search("(DTS Core)", bdinfo, re.IGNORECASE):
-                return
-        tempdict = self._defaultMediaDict(bdinfo,source ,langcode, lang)
+            return
+        tempdict = self._defaultMediaDict(bdinfo, source, langcode, lang)
         tempdict["type"] = "audio"
         tempdict["compat"] = True
         tempdict["auditorydesc"] = False
@@ -240,11 +274,11 @@ class sourceData(dict):
         tempdict["commentary"] = False
         return tempdict
 
-    def _subParser(self, currline,source):
+    def _subParser(self, currline, source):
         lang = self._medialang(currline)
         bdinfo = currline
         langcode = self._mediacode(lang)
-        tempdict = self._defaultMediaDict(bdinfo,source, langcode, lang)
+        tempdict = self._defaultMediaDict(bdinfo, source, langcode, lang)
         tempdict["type"] = "subtitle"
         tempdict["sdh"] = False
         tempdict["textdesc"] = False
@@ -252,7 +286,7 @@ class sourceData(dict):
         return tempdict
 
     # Standard Track Data Helper
-    def _defaultMediaDict(self, bdinfo, source,langcode=None, lang=None):
+    def _defaultMediaDict(self, bdinfo, source, langcode=None, lang=None):
         tempdict = trackObj.TrackObJ()
         tempdict["bdinfo_title"] = bdinfo
         tempdict["langcode"] = langcode
@@ -261,10 +295,10 @@ class sourceData(dict):
         tempdict["default"] = False
         tempdict["forced"] = False
         tempdict["machine_parse"] = []
-        tempdict["machine_parse_endlines"] = []        
+        tempdict["machine_parse_endlines"] = []
         tempdict["length"] = None
         tempdict["sourceDir"] = source
-        tempdict["sourceKey"]=utils.sourcetoShowName(source)
+        tempdict["sourceKey"] = utils.sourcetoShowName(source)
         tempdict["notes"] = "Add Your Own if You want"
         tempdict["child"] = None
         tempdict["parent"] = None
@@ -295,13 +329,13 @@ class sourceData(dict):
         tempdict2 = None
         match = re.search("([a-z|A-Z]*?):", currline, re.IGNORECASE).group(1)
         if match == "Video":
-            tempdict = self._videoParser(currline,source)
+            tempdict = self._videoParser(currline, source)
         elif match == "Audio":
-            tempdict = self._audioParser(currline,source)
-            tempdict2 = self._audioCompatParser(currline,source)
+            tempdict = self._audioParser(currline, source)
+            tempdict2 = self._audioCompatParser(currline, source)
         elif match == "Subtitle":
-            tempdict = self._subParser(currline,source)
-    
+            tempdict = self._subParser(currline, source)
+
     # Try to Get Unique Key Values
         tempdict["index"] = index
         value = tempdict["bdinfo_title"] + \
@@ -311,9 +345,8 @@ class sourceData(dict):
         tempdict["key"] = f"{key}_{post}"
         tempdict["parent"] = None
         tempdict["child"] = None
-        key=tempdict["key"]
-        self["tracks"][key]=tempdict
-        
+        key = tempdict["key"]
+        self["tracks"][key] = tempdict
 
         if tempdict2 != None:
             tempdict2["index"] = index
@@ -326,36 +359,25 @@ class sourceData(dict):
             tempdict2["key"] = f"{key}_{post}"
 
             tempdict["child"] = tempdict2["bdinfo_title"]
-            tempdict["childKey"] =tempdict2["key"]
+            tempdict["childKey"] = tempdict2["key"]
 
             tempdict2["parent"] = tempdict["bdinfo_title"]
-            tempdict2["parentKey"] =tempdict["key"]
+            tempdict2["parentKey"] = tempdict["key"]
 
-          
-
-            key=tempdict2["key"]
-            self["tracks"][key]=tempdict2
-        
-
-
-  
+            key = tempdict2["key"]
+            self["tracks"][key] = tempdict2
 
     #####################################################################################################################
     #       These Functions add Addition Data to Tracks Obj
     ################################################################################################################
 
-
-            
-   
-
       ################################################################################################################
-      ###### get data from streams
+      # get data from streams
       ################################################################################################################
+
     def _getStreamNames(self, streams):
-       return list(map(lambda x: x["name"], streams))
+        return list(map(lambda x: x["name"], streams))
 
     def _getStreamLength(self, streams):
         return utils.subArrowTime(utils.convertArrow(streams[-1]["end"], "HH:mm:ss.SSS"),
                                   utils.convertArrow(streams[0]["start"], "HH:mm:ss.SSS")).format("HH [hour] mm [Minutes] ss [Seconds] SSS [MicroSeconds]")
-
-   

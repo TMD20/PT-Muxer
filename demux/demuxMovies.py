@@ -136,7 +136,8 @@ class Demux(Demux):
             msg = textwrap.dedent(
                 """
             Since you selected --sortpref order
-            You will be prompted multiple times to make a selection
+            You will be prompted multiple times to make a 
+            selection
             """)
             logger.logger.print(msg)
             list = ["I'm done selecting sources", "I want to reset my list"]

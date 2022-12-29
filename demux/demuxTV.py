@@ -23,6 +23,7 @@ class Demux(Demux):
     Args:
         Demux (class): demuxBase class
     """
+
     def __init__(self, args):
         super().__init__(args)
         self._name = "TV Shows"
@@ -103,7 +104,8 @@ class Demux(Demux):
                             bdObj, bdObj.keys[i], streams=[stream])
                         self._filterStreamMedia(
                             demuxData, bdObj.DictList[i]["streamTracks"][stream["name"]])
-                        demuxData.setOutput(newFolder)
+                        demuxData.output=newFolder
+                        demuxData.setOutPutDir(newFolder)
                         with dir.cwd(demuxData["outputDir"]):
                             if not self._args.dontconvert:
                                 demuxData.convertFlac()
@@ -170,7 +172,7 @@ class Demux(Demux):
                             bdObj, bdObj.keys[i], streams=[stream])
                         currentTracks = self._filterStreamMedia(
                             demuxData, bdObj.DictList[i]["streamTracks"][stream["name"]])
-                        demuxData.setOutput(newFolder)
+                        demuxData.setOutPutDir(newFolder)
                         # processs info into outputdir subfolder
                         with dir.cwd(demuxData["outputDir"]):
                             paths.copytree(paths.listdir(tempdir)[j], ".")
@@ -197,7 +199,7 @@ class Demux(Demux):
             muxSorter (obj): siteMuxSorter Obj
 
         Returns:
-            dictioanry: outdict dictioanry
+            dictionary: outdict dictionary
         """
         outdict = super()._saveOutput(siteSourceObjs, muxSorter)
         currentFolders = list(map(lambda x: re.search(
@@ -388,7 +390,7 @@ class Demux(Demux):
         Returns:
             str: list of selected sources
 
-        """    
+        """
         if len(paths) == 0:
             raise RuntimeError("No Sources Directories Found")
         msg = None
@@ -428,7 +430,6 @@ class Demux(Demux):
             selection = list(filter(lambda x: x != "done" and x != None))
             selection = utils.removeDupesList(selection)
             return selection
-
 
     def _getTVMuxFolders(self, outpath):
         """
