@@ -3,18 +3,12 @@ import traceback
 
 from pymediainfo import MediaInfo
 
-from sites.base.siteMuxData import MuxOBj
-import tools.general as utils
-import mediatools.mkvtoolnix as mkvTool
-import tools.logger as logger
-import config
-import tools.directory as dir
-import tools.paths as paths
-
-
-
-
-
+from src.sites.base.siteMuxData import MuxOBj
+import src.mediatools.mkvtoolnix as mkvTool
+import src.tools.logger as logger
+import config as config
+import src.tools.directory as dir
+import src.tools.paths as paths
 
 
 class Blu(MuxOBj):
@@ -30,16 +24,15 @@ class Blu(MuxOBj):
             with open(mediainfoPath, "w") as p:
                 p.write(mediainfo)
             try:
-                self.validation(mediainfoPath,eac3to,bdinfo)
+                self.validation(mediainfoPath, eac3to, bdinfo)
             except Exception as E:
                 logger.logger.debug(traceback.format_exc())
                 logger.logger.debug(str(E))
                 logger.print("Vdator Failed")
 
-            
     def getFileName(self,
                     remuxConfig, group, title, episodeTitle=None):
-        episodeTitle=episodeTitle or self._placeholder
+        episodeTitle = episodeTitle or self._placeholder
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -59,11 +52,10 @@ class Blu(MuxOBj):
         if season and episode:
             fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             return self._fileNameCleaner(fileName)
-        
+
         else:
             fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             return self._fileNameCleaner(fileName)
-            
 
     def getTVDir(self, remuxConfig, group, title):
         videoCodec = mkvTool.getVideo(
@@ -90,7 +82,7 @@ class Blu(MuxOBj):
         import sys
 
         import args as args
-     
+
         os.environ["IGNORE_AFTER_LINE"] = "%%%"
         os.environ["IGNORE_AFTER_LINE_METHOD"] = "contains"
         os.environ["IGNORE_UNTIL_BLANK_LINE_PREFIXES"] = ""
@@ -101,7 +93,7 @@ class Blu(MuxOBj):
         os.environ["INTERNAL_CHANNELS"] = "remux"
         os.environ["HUNSPELL_LANG"] = "/usr/share/hunspell/en_US.dic, /usr/share/hunspell/en_US.aff"
         os.environ["MISSPELLED_IGNORE_LIST"] = "upmix"
-        sys.path.append(os.path.join(config.root_dir, "vdator"))
+        sys.path.append(os.path.join(config.root_dir, "src/vdator"))
 
         import vdator.parsers.codecs_parser as CodecsParser
         import vdator.checker as Checker
@@ -112,23 +104,21 @@ class Blu(MuxOBj):
         import vdator.parsers.paste_parser as PasteParser
         import vdator.parsers.media_info_parser as MediaInfoParser
 
-
-    
-        with open(os.path.join(config.root_dir, "vdator/data/codecs.json")) as f:
+        with open(os.path.join(config.root_dir, "src/vdator/data/codecs.json")) as f:
             codecs = json.load(f)
             codecs_parser = CodecsParser.CodecsParser(codecs)
-        paste=""
+        paste = ""
         with open(bdinfo, "r") as p:
-                paste=paste+p.read()
+            paste = paste+p.read()
         with open(mediainfo, "r") as p:
-                paste=paste+p.read()
+            paste = paste+p.read()
         with open(eac3to, "r") as p:
-                paste=paste+p.read()
+            paste = paste+p.read()
 
         with dir.cwd(paths.createTempDir()):
             with open("temp.txt", "w") as p:
                 p.write(paste)
-            paste_parser=  PasteParser.PasteParser(BDInfoParser.BDInfoParser())
+            paste_parser = PasteParser.PasteParser(BDInfoParser.BDInfoParser())
             (bdinfoData, mediainfoData, eac3to) = paste_parser.parse(paste)
             mediainfoData = MediaInfoParser.MediaInfoParser().parse(mediainfoData)
             source_detector = SourceDetector.SourceDetector()

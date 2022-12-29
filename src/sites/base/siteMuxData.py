@@ -7,12 +7,12 @@ import langcodes
 from pymediainfo import MediaInfo
 
 
-import tools.general as utils
-import mediatools.mkvtoolnix as mkvTool
-import tools.commands as commands
-import tools.logger as logger
-import tools.directory as dir
-import tools.paths as paths
+import src.tools.general as utils
+import src.mediatools.mkvtoolnix as mkvTool
+import src.tools.commands as commands
+import src.tools.logger as logger
+import src.tools.directory as dir
+import src.tools.paths as paths
 
 
 class MuxOBj():

@@ -1,15 +1,11 @@
 import os
 import traceback
 
-import tools.logger as logger
-import tools.directory as dir
-
-import os
-
-
+import src.tools.logger as logger
+import src.tools.directory as dir
 
 try:
-    import mediatools.BDSupReader.bdsupreader as BDSup
+    import src.mediatools.BDSupReader.bdsupreader as BDSup
 except ModuleNotFoundError as E:
     BDSup=None
     logger.print(E)
@@ -24,8 +20,8 @@ except Exception as E:
 
     
 try:
-    import mediatools.PGSReader.imagemaker as imagemaker
-    import mediatools.PGSReader.pgsreader as PGSReader
+    import src.mediatools.PGSReader.imagemaker as imagemaker
+    import src.mediatools.PGSReader.pgsreader as PGSReader
 except ModuleNotFoundError:
     imagemaker=None
     PGSreader=None

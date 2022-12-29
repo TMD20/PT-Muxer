@@ -4,16 +4,16 @@ import os
 from num2words import num2words
 import langcodes
 
-import tools.general as utils
-from demux.base import Demux
-import mediadata.movieData as movieData
-import tools.paths as paths
-import tools.directory as dir
-import sites.pickers.siteSourcePicker as siteSourcePicker
-import mediatools.dgdemux as dgdemux
-import mediatools.eac3to as eac3to
-import config
-import tools.logger as logger
+from src.demux.base import Demux
+import src.tools.general as utils
+import src.mediadata.movieData as movieData
+import src.tools.paths as paths
+import src.tools.directory as dir
+import src.sites.pickers.siteSourcePicker as siteSourcePicker
+import src.mediatools.dgdemux as dgdemux
+import src.mediatools.eac3to as eac3to
+import config as config
+import src.tools.logger as logger
 
 
 class Demux(Demux):
@@ -104,7 +104,7 @@ class Demux(Demux):
                             bdObj, bdObj.keys[i], streams=[stream])
                         self._filterStreamMedia(
                             demuxData, bdObj.DictList[i]["streamTracks"][stream["name"]])
-                        demuxData.output=newFolder
+                        demuxData.output = newFolder
                         demuxData.setOutPutDir(newFolder)
                         with dir.cwd(demuxData["outputDir"]):
                             if not self._args.dontconvert:

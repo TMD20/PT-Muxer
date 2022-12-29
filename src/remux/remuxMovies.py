@@ -1,4 +1,4 @@
-from remux.base import Remux
+from src.remux.base import Remux
 
 class Remux(Remux):
     def __init__(self,args):

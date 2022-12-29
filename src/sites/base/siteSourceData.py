@@ -1,8 +1,7 @@
-import os
 import re
 
-from mediadata.sourceData import sourceData
-import tools.general as utils
+from src.mediadata.sourceData import sourceData
+import src.tools.general as utils
 
 
 

@@ -1,13 +1,13 @@
 import traceback
 
-import tools.general as utils
-import remux.remuxMovies as remuxMovies
-import remux.remuxTV as remuxTV
-import tools.general as utils
+import src.tools.general as utils
+import src.remux.remuxMovies as remuxMovies
+import src.remux.remuxTV as remuxTV
+import src.tools.general as utils
 import config as config
-import tools.paths as paths
-import tools.exit as exit
-import tools.logger as logger
+import src.tools.paths as paths
+import src.tools.exit as exit
+import src.tools.logger as logger
 
 
 def endProcess():

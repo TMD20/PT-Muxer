@@ -10,7 +10,7 @@ from PIL import Image
 import langcodes
 from timeit import default_timer as timer
 
-import tools.logger as logger
+import src.tools.logger as logger
 
 try:
     import tesserocr

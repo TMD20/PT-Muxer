@@ -3,12 +3,12 @@ import itertools
 import subprocess
 import re
 
-import tools.commands as commands
-import tools.general as utils
-import tools.paths as paths
-import tools.directory as dir
-import tools.logger as logger
-import tools.install as install
+import src.tools.commands as commands
+import src.tools.general as utils
+import src.tools.paths as paths
+import src.tools.directory as dir
+import src.tools.logger as logger
+import src.tools.install as install
     
 def process(tracks,source, file):
     if install.contyInstallCheckWine()==False:

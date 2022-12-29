@@ -1,7 +1,7 @@
-import sites.base.siteTrackSorter as base
-import sites.beyondHD.siteTrackSorter as beyondHD
-import sites.blu.siteTrackSorter as blu
-import sites.animebytes.siteTrackSorter as anime
+import src.sites.base.siteTrackSorter as base
+import src.sites.beyondHD.siteTrackSorter as beyondHD
+import src.sites.blu.siteTrackSorter as blu
+import src.sites.animebytes.siteTrackSorter as anime
 
 
 def pickSite(site):

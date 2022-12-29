@@ -1,4 +1,3 @@
-from remux.base import Remux
 import os
 import re
 from string import Template
@@ -6,13 +5,13 @@ import traceback
 
 import orjson
 
-import tools.logger as logger
-import tools.general as utils
-import tools.paths as paths
+from src.remux.base import Remux
+import src.tools.logger as logger
+import src.tools.general as utils
+import src.tools.paths as paths
 import config as config
-import tools.directory as dir
-import sites.pickers.siteMuxPicker as muxPicker
-import mediadata.movieData as movieData
+import src.tools.directory as dir
+import src.mediadata.movieData as movieData
 
 
 class Remux(Remux):
@@ -22,8 +21,9 @@ class Remux(Remux):
         self._fileNames = []
 
     def _callFunction(self):
-        jsons=paths.search(self._getRemuxConfig(), "output.json", recursive=True)
-        jsonsFiltered=self._getFilteredJSONs(jsons)
+        jsons = paths.search(self._getRemuxConfig(),
+                             "output.json", recursive=True)
+        jsonsFiltered = self._getFilteredJSONs(jsons)
         for file in jsonsFiltered:
             logger.logger.info(f"Processing {file}")
             self._remuxConfigHelper(file)
@@ -111,13 +111,13 @@ class Remux(Remux):
             else:
                 return os.path.abspath(self._muxGenerator.getFileName(self._remuxConfig, self._args.group, title, episodeTitle=f"Special.{episode}"))
 
-    def _getJapTitle(self,json):
+    def _getJapTitle(self, json):
         return self._remuxConfig['Movie'].get('japTitle')
-    
-    def _getFilteredJSONs(self,jsons):
-        msg=\
-        """
+
+    def _getFilteredJSONs(self, jsons):
+        msg =\
+            """
         Confirm Which JSON(s) You would like to process remux(s) for
 
         """
-        return utils.multiSelectMenu(jsons,msg)
+        return utils.multiSelectMenu(jsons, msg)

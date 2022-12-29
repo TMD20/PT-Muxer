@@ -1,7 +1,7 @@
-import sites.base.siteSourceData as base
-import sites.beyondHD.siteSourceData as beyondHD
-import sites.blu.siteSourceData as blu
-import sites.animebytes.siteSourceData as anime
+import src.sites.base.siteSourceData as base
+import src.sites.beyondHD.siteSourceData as beyondHD
+import src.sites.blu.siteSourceData as blu
+import src.sites.animebytes.siteSourceData as anime
 
 
 def pickSite(site):

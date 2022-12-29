@@ -2,7 +2,6 @@ import re
 
 from guessit import guessit
 
-import mediadata.movieData as movieData
 
 
 def getVideo(enabledTracks, trackDetails):

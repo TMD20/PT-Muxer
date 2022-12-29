@@ -8,9 +8,9 @@ import itertools
 import xxhash
 
 
-import tools.general as utils
-import tools.commands as commands
-import tools.install as install
+import src.tools.general as utils
+import src.tools.commands as commands
+import src.tools.install as install
 
 
 class siteTrackSorter():

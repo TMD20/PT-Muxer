@@ -5,11 +5,11 @@ import datetime as dt
 import itertools
 import shutil
 
-import tools.general as utils
-import tools.commands as commands
-import tools.paths as paths
-import tools.logger as logger
-import tools.install as install
+import src.tools.general as utils
+import src.tools.commands as commands
+import src.tools.paths as paths
+import src.tools.logger as logger
+import src.tools.install as install
 
 
 class Bdinfo():

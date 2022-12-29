@@ -4,13 +4,10 @@ import os
 import shutil
 import itertools
 
-import tools.install as install
-import tools.directory as dir
-import subtitles.nativeimage as nativeimage
-
-
-
-import tools.commands as commands
+import src.tools.install as install
+import src.tools.directory as dir
+import src.subtitles.nativeimage as nativeimage
+import src.tools.commands as commands
 
 
 def supRipSaver(supFile, outputDir):

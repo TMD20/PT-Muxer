@@ -1,4 +1,4 @@
-from sites.base.siteTrackSorter import siteTrackSorter
+from src.sites.base.siteTrackSorter import siteTrackSorter
 
 
 class BeyondHD(siteTrackSorter):

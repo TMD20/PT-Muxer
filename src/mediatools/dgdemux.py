@@ -5,11 +5,11 @@ import re
 
 import langcodes
 
-import tools.commands as commands
-import tools.paths as paths
-import tools.directory as dir
-import tools.logger as logger
-import tools.general as utils
+import src.tools.commands as commands
+import src.tools.paths as paths
+import src.tools.directory as dir
+import src.tools.logger as logger
+import src.tools.general as utils
 
 
 

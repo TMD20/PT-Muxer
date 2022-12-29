@@ -13,8 +13,8 @@ from InquirerPy import inquirer
 import arrow
 from guessit import guessit
 
-import tools.paths as paths
-import tools.logger as logger
+import src.tools.paths as paths
+import src.tools.logger as logger
 
 
 def convertArrow(input, parse=None):

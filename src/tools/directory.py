@@ -1,6 +1,8 @@
 
 import os
-import tools.paths as paths
+
+import src.tools.paths as paths
+
 class cwd:
     def __init__( self,dir ):
         self._olddir=os.getcwd()

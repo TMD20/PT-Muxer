@@ -4,12 +4,12 @@ import os
 
 from num2words import num2words
 
-import tools.general as utils
-from demux.base import Demux
-import mediadata.movieData as movieData
-import tools.paths as paths
-import tools.directory as dir
-import tools.logger as logger
+from src.demux.base import Demux
+import src.tools.general as utils
+import src.mediadata.movieData as movieData
+import src.tools.paths as paths
+import src.tools.directory as dir
+import src.tools.logger as logger
 
 
 class Demux(Demux):

@@ -1,7 +1,7 @@
 import os
 
-from sites.base.siteTrackSorter import siteTrackSorter
-import tools.general as utils
+from src.sites.base.siteTrackSorter import siteTrackSorter
+import src.tools.general as utils
 
 
 class AnimeBytes(siteTrackSorter):

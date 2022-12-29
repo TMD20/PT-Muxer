@@ -3,7 +3,7 @@ import sys
 
 import pymplschapters as mpls
 
-import tools.paths as paths
+import src.tools.paths as paths
 ####
 #Keeping this function for now
 # Eac3to Doesn't detect chapters for some reason

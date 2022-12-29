@@ -1,7 +1,7 @@
 #!/usr/bin/env python3.8
-import args as parseargs
-import demux.action as demuxAction
-import remux.action as remuxAction
+import src.args as parseargs
+import src.demux.action as demuxAction
+import src.remux.action as remuxAction
 
 def main():
     args = parseargs.setParser()

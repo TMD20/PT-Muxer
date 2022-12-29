@@ -5,10 +5,9 @@ import os
 import xxhash
 import langcodes
 
-import tools.general as utils
-import tools.paths as paths
-import mediatools.eac3to as eac3to
-import mediadata.trackObj as trackObj
+import src.tools.general as utils
+import src.tools.paths as paths
+import src.mediadata.trackObj as trackObj
 
 
 class sourceData(dict):

@@ -1,7 +1,4 @@
-import re
-import os
-
-from sites.base.siteSourceData import siteSourceData
+from src.sites.base.siteSourceData import siteSourceData
 
 
 class BeyondHD(siteSourceData):

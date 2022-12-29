@@ -1,7 +1,5 @@
-import os
-
-from sites.base.siteMuxData import MuxOBj
-import mediatools.mkvtoolnix as mkvTool
+from src.sites.base.siteMuxData import MuxOBj
+import src.mediatools.mkvtoolnix as mkvTool
 
 
 class BeyondHD(MuxOBj):

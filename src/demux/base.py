@@ -6,19 +6,19 @@ import orjson
 from num2words import num2words
 import natsort
 
-import tools.general as utils
-import tools.paths as paths
-import mediatools.bdinfo as bdinfo
+import src.tools.general as utils
+import src.tools.paths as paths
+import src.mediatools.bdinfo as bdinfo
 import config as config
-import sites.pickers.siteSourcePicker as siteSourcePicker
-import mediatools.eac3to as eac3to
-import mediatools.dgdemux as dgdemux
-import tools.paths as paths
-import sites.pickers.siteSortPicker as siteSortPicker
-import subtitles.subreader as subreader
-import transcription.voiceRecord as voiceRec
-import tools.directory as dir
-import tools.logger as logger
+import src.sites.pickers.siteSourcePicker as siteSourcePicker
+import src.mediatools.eac3to as eac3to
+import src.mediatools.dgdemux as dgdemux
+import src.tools.paths as paths
+import src.sites.pickers.siteSortPicker as siteSortPicker
+import src.subtitles.subreader as subreader
+import src.transcription.voiceRecord as voiceRec
+import src.tools.directory as dir
+import src.tools.logger as logger
 
 
 class Demux():
@@ -89,7 +89,7 @@ class Demux():
                     bdObj.generateData(i)
                     demuxData = siteSourcePicker.pickSite(self._args.site)
                     demuxData.addTracks(bdObj, bdObj.keys[i])
-                    demuxData.output=newFolder
+                    demuxData.output = newFolder
                     demuxData.setOutPutDir(newFolder)
                     siteSourceObjs.append(demuxData)
                     with dir.cwd(demuxData["outputDir"]):
@@ -133,7 +133,7 @@ class Demux():
     # Helper Functions
     ############
 
-    def _getNewFolder(self,i=None):
+    def _getNewFolder(self, i=None):
         """
         Generates parentfolder inside muxFolder 
         for each selected playlist/stream 

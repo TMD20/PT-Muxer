@@ -1,34 +1,35 @@
 import os
-import tempfile
 import re
-import shutil
 
-import subtitles.image as subimages
-import subtitles.ocr as subocr
-import tools.paths as paths
-import tools.directory as dir
-import tools.logger as logger
-import config
+import src.subtitles.image as subimages
+import src.subtitles.ocr as subocr
+import src.tools.paths as paths
+import src.tools.directory as dir
+import src.tools.logger as logger
+import config as config
 
-def subreader(tracks, maxLines=None,langs=None,keep=None):
-    maxLines = maxLines or config.maxOCRLineCount +1
+
+def subreader(tracks, maxLines=None, langs=None, keep=None):
+    maxLines = maxLines or config.maxOCRLineCount + 1
     if keep:
         _ocrHelper(tracks, maxLines, langs)
     else:
-        with dir.cwd(paths.createTempDir() ):
+        with dir.cwd(paths.createTempDir()):
             _ocrHelper(tracks, maxLines, langs)
+
 
 def _ocrHelper(tracks, maxLines, langs):
     for track in tracks:
-        subLocation=track.getTrackLocation()
+        subLocation = track.getTrackLocation()
         logger.logger.info("\n\nAttempting to OCR: ", subLocation)
         if langs and (track["lang"].lower() not in langs):
             continue
-        tmpdir=subimages.getSubImages(subLocation)
+        tmpdir = subimages.getSubImages(subLocation)
         files = os.listdir(tmpdir)
         # if for some reason no images created for OCR
         if len(files) == 0:
-            logger.logger.info("Could Not Generate Images for OCR",style="bold red")
+            logger.logger.info(
+                "Could Not Generate Images for OCR", style="bold red")
             continue
         files = list(
             sorted(files, key=lambda x: int(re.findall(r'\d+', x)[0])))
@@ -38,7 +39,8 @@ def _ocrHelper(tracks, maxLines, langs):
         maxLines = min(maxLines, len(files))-1
 
         lines = subocr.subocr(files[0:maxLines], track["langcode"])
-        lastlines = subocr.subocr(files[-1*(min(10,len(files))):], track["langcode"])
+        lastlines = subocr.subocr(
+            files[-1*(min(10, len(files))):], track["langcode"])
 
         track["machine_parse"] = lines
         track["machine_parse_endlines"] = lastlines
@@ -48,14 +50,12 @@ def _ocrHelper(tracks, maxLines, langs):
 def imagesOnly(tracks):
     logger.logger.info("Generating Subtitle Images\n\n")
     for track in tracks:
-        file=track["filename"]
+        file = track["filename"]
         logger.logger.info(f'Working on: {file}\n\n')
 
-
-        newDir=subimages.getSubImages(track.getTrackLocation())
+        newDir = subimages.getSubImages(track.getTrackLocation())
         files = os.listdir(newDir)
         # if for some reason no images created
         if len(files) == 0:
             logger.logger.info("Could Not Generate Images for OCR")
             continue
-       

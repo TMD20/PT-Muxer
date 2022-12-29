@@ -1,8 +1,7 @@
 import re
-import os
 
-from sites.base.siteTrackSorter import siteTrackSorter
-import tools.paths as paths
+from src.sites.base.siteTrackSorter import siteTrackSorter
+import src.tools.paths as paths
 
 
 class Blu(siteTrackSorter):
