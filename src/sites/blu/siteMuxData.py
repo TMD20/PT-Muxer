@@ -81,7 +81,7 @@ class Blu(MuxOBj):
         import json
         import sys
 
-        import args as args
+        import src.args as args
 
         os.environ["IGNORE_AFTER_LINE"] = "%%%"
         os.environ["IGNORE_AFTER_LINE_METHOD"] = "contains"
@@ -95,14 +95,14 @@ class Blu(MuxOBj):
         os.environ["MISSPELLED_IGNORE_LIST"] = "upmix"
         sys.path.append(os.path.join(config.root_dir, "src/vdator"))
 
-        import vdator.parsers.codecs_parser as CodecsParser
-        import vdator.checker as Checker
-        import vdator.reporter as Reporter
-        import vdator.source_detector as SourceDetector
-        import vdator.parsers.codecs_parser as CodecsParser
-        import vdator.parsers.bdinfo_parser as BDInfoParser
-        import vdator.parsers.paste_parser as PasteParser
-        import vdator.parsers.media_info_parser as MediaInfoParser
+        import src.vdator.parsers.codecs_parser as CodecsParser
+        import src.vdator.checker as Checker
+        import src.vdator.reporter as Reporter
+        import src.vdator.source_detector as SourceDetector
+        import src.vdator.parsers.codecs_parser as CodecsParser
+        import src.vdator.parsers.bdinfo_parser as BDInfoParser
+        import src.vdator.parsers.paste_parser as PasteParser
+        import src.vdator.parsers.media_info_parser as MediaInfoParser
 
         with open(os.path.join(config.root_dir, "src/vdator/data/codecs.json")) as f:
             codecs = json.load(f)
