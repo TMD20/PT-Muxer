@@ -18,12 +18,19 @@ import src.tools.logger as logger
 
 
 def convertArrow(input, parse=None):
+    """
+    converts time string into arrow object
+
+    Args:
+        input (str): time string to convert
+        parse (str, optional): parse string to pass to arrow init. Defaults to None.
+
+    Returns:
+        obj: returns arrow obj
+    """
     if parse:
         return arrow.get(input, parse)
     return arrow.get(input)
-def signal_handler(sig, frame):
-    logger.print('You pressed Ctrl+C!')
-    sys.exit(0)
 
 def subArrowTime(large, small):
     large = large.shift(hours=-small.hour)
