@@ -352,3 +352,5 @@ def getParentDir(path, level=0):
     if level >= len(parents):
         return
     return str(parents[level])
+def rmDir(path):
+    shutil.rmtree(path)

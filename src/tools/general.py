@@ -6,15 +6,14 @@ import sys
 import textwrap
 import shutil
 import sys
+import unicodedata
 
 
-import pynumparser
 from InquirerPy import inquirer
 import arrow
 from guessit import guessit
 
 import src.tools.paths as paths
-import src.tools.logger as logger
 
 
 def convertArrow(input, parse=None):
@@ -33,6 +32,16 @@ def convertArrow(input, parse=None):
     return arrow.get(input)
 
 def subArrowTime(large, small):
+    """
+    subtracts smaller arrow obj time from larger (epoch time)
+
+    Args:
+        large (obj): larger arrow obj
+        small (obj): smaller obj
+
+    Returns:
+        obj: new arrow obj
+    """
     large = large.shift(hours=-small.hour)
     large = large.shift(minutes=-small.minute)
     large = large.shift(seconds=-small.second)
@@ -41,6 +50,16 @@ def subArrowTime(large, small):
 
 
 def addArrowTime(value, value2):
+    """
+    adds two arrow objects (epoch time)
+
+    Args:
+        value (obj): first arrow object
+        value (obj): second arrow object
+
+    Returns:
+        obj: new arrow obj
+    """    
     value = value.shift(hours=+value2.hour)
     value= value.shift(minutes=+value2.minute)
     value = value.shift(seconds=+value.second)
@@ -49,9 +68,30 @@ def addArrowTime(value, value2):
 
 
 def dehumanizeArrow(input):
+    """
+    attempts to convert humanize string into arrow object
+    i.e 1hour to arrow object
+
+    Args:
+        input (str): humanized string
+
+    Returns:
+        obj: arrow object
+    """
     now = arrow.utcnow()
     return now.dehumanize(input)
 def getFormated(format,time=None):
+    """
+    Uses arrow to output time string using format as template
+    if None time is set to current
+
+    Args:
+        format (str): format for time output
+        time (str, optional): time str for arrow to process and convert. Defaults to None.
+
+    Returns:
+        str: formatted time string 
+    """
     if time==None:
         return arrow.get().format(format)
     return arrow.get(time).format(format)
@@ -61,6 +101,15 @@ def getFormated(format,time=None):
 
 
 def sourcetoShowName(path):
+    """
+    Performs a base name operation on apth
+
+    Args:
+        path (str): path to perform base name action on
+
+    Returns:
+        str: base name of path
+    """
     path = paths.convertPathType(path, "Linux")
     show=path
     if re.search(path,"D[0-9]|Disc"):
@@ -73,6 +122,15 @@ def sourcetoShowName(path):
 
 
 def requiredClassAttribute(*required):
+    """
+    Helper wrapper function for classes to require certain attributes be set before wrapped function can run
+
+    Raises:
+        RuntimeError: error if required value is not set
+
+    Returns:
+        function: returns wrapper function
+    """
     # outter decorator takes in args which is scoped to inner decorator
     # Decorator requires we return a function that expects a function argument
     def requiredAttributeHelper(func):
@@ -87,6 +145,15 @@ def requiredClassAttribute(*required):
 
 
 def removeDupesList(list):
+    """
+    Function to remove dupes from list
+
+    Args:
+        list (array): list of strs to evaluate
+
+    Returns:
+        array: deduped list
+    """
     dupe = set()
     res = []
     for ele in list:
@@ -97,6 +164,16 @@ def removeDupesList(list):
 
 
 def getIntInput(string, maxVal=float("inf")):
+    """
+    prompts user for an int input
+
+    Args:
+        string (str): message for input
+        maxVal (int, optional): max value allowed for input. Defaults to float("inf").
+
+    Returns:
+        int: value entered by user
+    """
     return int(inquirer.number(
         min_allowed=1,
         max_allowed=maxVal,
@@ -106,14 +183,32 @@ def getIntInput(string, maxVal=float("inf")):
 
 
 def singleSelectMenu(items, message,default=None):
+    """
+    Prompts use to select one option from list
+
+    Args:
+        items (array): list of items to select from
+        message (str): message for prompt
+        default (str, optional): default option selected on init. Defaults to None.
+
+    Returns:
+        any: option selected by user
+    """
     return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items,default=default).execute()
 
 
-def rawSelectMenu(items, message):
-    return inquirer.rawlist(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items).execute()
-
-
 def multiSelectMenu(items, message):
+    """
+    Prompts use to select one or more options from list
+
+    Args:
+        items (array): list of items to select from
+        message (str): message for prompt
+        default (str_, optional): default option selected on init. Defaults to None.
+
+    Returns:
+        array: options selected by user
+    """
     instructions=\
         """
         Press Space to add/remove selection
@@ -123,24 +218,31 @@ def multiSelectMenu(items, message):
 
 
 def textEnter(message, default=None):
+    """
+    Prompts user to enter str
+
+    Args:
+        message (str): message for prompt
+        default (_type_, optional): default input. Defaults to None.
+
+    Returns:
+        str: confirmed input
+    """
     if default != None:
         return inquirer.text(mandatory=True, validate=lambda x: len(x) > 0, invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n"), default=default).execute()
     return inquirer.text(mandatory=True, validate=lambda x: len(x) > 0, invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n")).execute()
 
 
-def getRangeOfNumbers(message, default=None):
-    text = textEnter(message, default)
-    parser = pynumparser.NumberSequence(numtype=int)
-    try:
-        return list(parser.parse(text))
-    except:
-        return
-
-
-
-
-
 def getTitle(source):
+    """
+    Helper function to propagate up directory tree to find  directory with title from source directory
+
+    Args:
+        source (str): path to source
+
+    Returns:
+        str: directory with title
+    """
 
     parent = str(pathlib.Path(source).parents[1])
     if re.search("(BD25|BD50)", parent, re.IGNORECASE):
@@ -151,12 +253,31 @@ def getTitle(source):
 
 
 def cleanString(val):
-    import unicodedata
+    """
+    Helper function to  perform normalization on unicode
+
+    Args:
+        val (str): str to cleanup
+
+    Returns:
+        str: cleaned str
+    """
     clean_text = unicodedata.normalize("NFKD", val)
     return clean_text
 
 
 def smart_truncate(content, length=100, suffix='...'):
+    """
+    Trunicates long str with suffix
+
+    Args:
+        content (_type_): str to trunicate
+        length (int, optional): length to trunicate at. Defaults to 100.
+        suffix (str, optional): str to use for trunication. Defaults to '...'.
+
+    Returns:
+        str: trunicated str
+    """
     if len(content) <= length:
         return content
     else:
@@ -165,15 +286,26 @@ def smart_truncate(content, length=100, suffix='...'):
 
 
 def getSystem():
+    """
+    Function to get current OS
+
+    Returns:
+        str: str of current OS
+    """
     if sys.platform == "linux":
         return "Linux"
     else:
         return "Windows"
 def getShell():
+    """
+    Function to get system shell 
+
+    Returns:
+        str: system shell
+    """
     if sys.platform=="linux":
         return "bash"
     else:
         return None
-def rmDir(path):
-    shutil.rmtree(path)
+
 
