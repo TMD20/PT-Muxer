@@ -9,11 +9,26 @@ class TrackObJ(dict):
         ,"machine_parse_endlines","parentKey","childKey"}
     #prevent 
     def __setitem__(self, key, value):
+        """
+        built in dict method 
+        modified to only accept certain keys
+
+        Args:
+        key (str): key to set
+        value (any): value to set key to
+        """
         if key not in self._allowedKeys:
             raise AttributeError(f"TrackObj does not accept {key}")
         super().__setitem__(key, value)
         
     def getTrackLocation(self):
+        """
+        Helper function to get the output for track given requried values set
+        If values not set returns empty str
+
+        Returns:
+            str: output files path
+        """
         if (self.get("outputDir")==None or self.get("filename")==None):
             return ""
         return os.path.join(self.get("outputDir"),self.get("filename"))
