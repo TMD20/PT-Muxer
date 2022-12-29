@@ -1,3 +1,6 @@
 [submodule "anime-offline-database"]
 	path = anime-offline-database
 	url = https://github.com/manami-project/anime-offline-database/
+[submodule "docs"]
+	path = docs
+	url = https://github.com/TMD20/PT-Muxer-Docs
