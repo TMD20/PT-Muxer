@@ -5,6 +5,13 @@ import src.tools.general as utils
 
 
 def bdSup2Sub():
+    """
+    generates a command array for subprocess module to run bdsup2sub 
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """
     if utils.getSystem() == "Linux":
         return [config.javaPath, "-jar", config.bdSupLinux]
     else:
@@ -12,6 +19,13 @@ def bdSup2Sub():
 
 
 def eac3to():
+    """
+    generates a command array for subprocess module to run eac3to
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """
     if utils.getSystem() == "Linux":
         if shutil.which("wine"):
             return [config.winePath, config.eac3toPath]
@@ -21,6 +35,13 @@ def eac3to():
 
 
 def bdinfo():
+    """
+    generates a command array for subprocess module to run bdinfo
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """    
     if utils.getSystem() == "Linux":
         if shutil.which("mono"):
             return [config.monoPath, config.bdinfoLinuxPath]
@@ -30,6 +51,13 @@ def bdinfo():
 
 
 def mkvmerge():
+    """
+    generates a command array for subprocess module to run mkvmerge
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """        
     if utils.getSystem() == "Linux":
         return [config.mkvMergeLinux]
     else:
@@ -37,6 +65,13 @@ def mkvmerge():
 
 
 def isoBinary():
+    """
+    generates a command array for subprocess module to run iso programs
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """         
     if utils.getSystem() == "Linux":
         return [config.isoExtractLinux]
     else:
@@ -44,6 +79,13 @@ def isoBinary():
 
 
 def dgdemux():
+    """
+    generates a command array for subprocess module to run dgdemux
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """    
     if utils.getSystem() == "Linux":
         return [config.dgDemuxLinux]
     else:
@@ -51,6 +93,13 @@ def dgdemux():
 
 
 def suprip():
+    """
+    generates a command array for subprocess module to run suprip
+    based on current OS
+
+    Returns:
+        array: command array for subprocess
+    """      
     supBin = config.supripPath
     wineBin = config.winePath
     if utils.getSystem() == "Linux":
