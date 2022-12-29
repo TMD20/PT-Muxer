@@ -48,6 +48,14 @@ tesseOCRBool=tesserocr!=None
 
 
 def perform_ocr(img):
+    """
+    Based on ocr object in thread queue performs action
+    Args:
+        img (str): image to perform ocr on
+
+    Returns:
+        function: a ocr performing function
+    """
 
     ocr_obj = ocr_queue.get(block=True, timeout=300)
     if isinstance(ocr_obj, easyocr.easyocr.Reader):
@@ -76,22 +84,34 @@ def perform_ocr(img):
  
  
 def subocr(files,langcode):
-        start_time = timer()
-        for _ in range(NUM_THREADS):
-            ocr_queue.put(getocr_obj(langcode)) 
-        if ocr_queue.queue[0]==None:
-            return ["Language Not Supported"]
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-            res=executor.map(perform_ocr, files)
-            
- 
-        output=[]
-        for r in res:
-            output.append(r)
-        ocr_queue.queue.clear()
-        elapsed = timer() - start_time
-        logger.logger.info(f"Execution Time {elapsed } seconds")
-        return list(itertools.chain.from_iterable(output))
+    """
+    Generates threads for files from subtitle images
+    performs ocr on said images
+
+    Each subtitle image should try to limit to one line
+
+    Args:
+        files (array): list of subtitle iamges
+        langcode (str): language of original .sup file for subtitle images
+    Returns:
+        array: array of generated ocr
+    """
+    start_time = timer()
+    for _ in range(NUM_THREADS):
+        ocr_queue.put(getocr_obj(langcode)) 
+    if ocr_queue.queue[0]==None:
+        return ["Language Not Supported"]
+    with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
+        res=executor.map(perform_ocr, files)
+        
+
+    output=[]
+    for r in res:
+        output.append(r)
+    ocr_queue.queue.clear()
+    elapsed = timer() - start_time
+    logger.logger.info(f"Execution Time {elapsed } seconds")
+    return list(itertools.chain.from_iterable(output))
 def getocr_obj(langcode):
     if not easyOCRBool and tesseOCRBool:
         logger.print("No OCR Engine Installed")
