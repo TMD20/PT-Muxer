@@ -15,6 +15,10 @@ import src.tools.logger as logger
 
 
 def javaInstallCheck():
+    """
+    Function to install java if needed
+    method based on OS
+    """
     if utils.getSystem() == "Windows":
         return True
     if os.path.exists(config.javaPath):
@@ -56,6 +60,9 @@ def javaInstallCheck():
 
 
 def contyInstallCheckWine():
+    """
+    Function to install conty if needed
+    """
     if utils.getSystem() == "Windows":
         return True
     elif os.path.exists(config.winePath):
@@ -67,6 +74,9 @@ def contyInstallCheckWine():
 
 
 def contyInstallCheckMono():
+    """
+    Function to install conty if needed
+    """
     if utils.getSystem() == "Windows":
         return True
     elif os.path.exists(config.monoPath):
@@ -78,6 +88,9 @@ def contyInstallCheckMono():
 
 
 def contyInstaller():
+    """
+    Walk-through function to install conty if prompted
+    """
     conty = os.path.dirname(config.contyPath)
     info =\
         f"""
@@ -116,5 +129,8 @@ def contyInstaller():
 
 
 def contyChmod():
+    """
+    Helper function to change enviromental variables for conty
+    """
     os.environ["ALLOW_ROOT"] = "1"
     os.chmod(config.contyPath, os.stat(config.contyPath).st_mode | 0o111)
