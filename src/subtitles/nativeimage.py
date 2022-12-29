@@ -40,6 +40,15 @@ BDSUPBool= (BDSup!=None)
 PGSBool=(imagemaker!=None and PGSReader!=None)
 
 def PGSFunc(supFile):
+    """
+    Uses 
+    https://github.com/EzraBC/pgsreader
+    to process sub images
+
+
+    Args:
+        supFile (str): .sup file to process
+    """
    
     t = PGSReader.PGSReader(supFile)
     i=0
@@ -65,6 +74,15 @@ def PGSFunc(supFile):
 
 
 def BDSupFunc(supFile):
+    """
+    Uses 
+    https://github.com/Sec-ant/BDSupReader
+    to process sub images
+
+
+    Args:
+        supFile (str): .sup file to process
+    """
     t=BDSup.BDSupReader(supFile)
     i=0
     try:
@@ -89,6 +107,16 @@ def BDSupFunc(supFile):
 
 
 def getSubImages(supFile):
+    """
+    Attempts to process try excepts supFile with up to two processor 
+    in cases where one processor errors out
+
+    Args:
+        supFile (str): .sup file to process
+
+    Returns:
+        str: directory with subtitle images
+    """
     outputDir=os.path.join(os.path.abspath(f"./subImages"),f"{os.path.basename(supFile)}/")
     with dir.cwd(outputDir):
         if BDSUPBool:
