@@ -8,7 +8,6 @@ import websockets
 import functools
 
 from queue import Queue
-from pathlib import Path
 from timeit import default_timer as timer
 from vosk import KaldiRecognizer, Model
 from multiprocessing.dummy import Pool
@@ -18,6 +17,12 @@ SAMPLE_RATE = 16000.0
 
 
 class Transcriber:
+    """
+    This class provides voice transcription for audio tracker
+    
+    The code provide is from 
+    https://github.com/alphacep/vosk-api/blob/master/python/vosk/transcriber/transcriber.py
+    """
 
     def __init__(self,model,model_name,lang):
         self.model = Model(model_path=model,
