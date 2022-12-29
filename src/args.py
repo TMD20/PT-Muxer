@@ -4,6 +4,13 @@ import os
 
 
 def setParser():
+    """
+    Parse commandline args with argparse
+    returns argparse.ArgumentParse object
+
+    Returns:
+        obj: argparse.ArgumentParse obj with parsed args
+    """
     parser = argparse.ArgumentParser(prog='app.py', add_help=False)
 
     subparsers = parser.add_subparsers(help='remux or demux')
