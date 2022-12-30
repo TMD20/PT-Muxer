@@ -69,7 +69,7 @@ class MovieData():
                 data = self._getAnimeInfo(id)
 
         else:
-            id = self._getIMDBID(title)
+            id = self._getIMDBHelper(title)
             if id:
                 data = self._getMovieInfo(id)
         logger.logger.debug(f"Automatic Data: {data}")
@@ -176,6 +176,34 @@ class MovieData():
     ########################################################################################
     # helpers
     ########################################################################################
+    def _getIMDBHelper(self,title):
+        # try:
+        #     return self._getIMDBID(title)
+        # except Exception as E:
+        #     utils.tracebackhelper(traceback.format_exc(),E,"imdb module failed\nTrying alt method")
+        return self._retriveimdbtmdb(title)
+    
+    def _retriveimdbtmdb(self,title):
+        if self._type == "TV":
+            msg = 'What TV Show'
+        else:
+            msg = "What Movie"
+        noMatch = "None of These Titles Match"
+        titles = [noMatch]
+        results=self._searchByStringTMDB(title, self._type)
+        if len(results)==0:
+            return
+        options=list(map(lambda x:(f"{x[0]+1}.{x[1].get('original_title') or x[1].get('title') or x[1].get('name')}\n{utils.wraptext(utils.smart_truncate(x[1]['overview'],length=150))}"),enumerate(results)))
+        titles.extend(options)
+        selection=utils.singleSelectMenu(titles,msg,default=titles[1])
+        if selection==noMatch:
+            return
+        result = results[options.index(selection)-1]
+        id=self._tmdbexternalID(self._getTMDBOBj(result["id"]),"imdb_id")
+        if id:
+            return re.sub("tt", "", id)
+        return
+    
     def _verifyData(self, data):
         if data == None:
             data = self._userInputMovie()
@@ -302,17 +330,7 @@ class MovieData():
         if utils.singleSelectMenu(["Yes", "No"], "Is this a Anime?", default="No") == "Yes":
             return self._getAnimeInfo(utils.getIntInput("Enter the mal ID"))
         else:
-            message = \
-                """
-                Enter imdb id
-                """
-            id = utils.textEnter(message)
-            try:
-                result = ia.get_movie(re.sub("tt", "", id))
-                return self._getMovieInfo(result["imdbID"])
-            except:
-                raise RuntimeError("Error with IMDBID")
-
+           return self._imdbIDInput()
     ########################################################################################
     # Wikipedia Functions
     ########################################################################################
@@ -847,8 +865,7 @@ class MovieData():
         try:
             return req.json()["data"]
         except Exception as e:
-            logger.print(traceback.format_exc(), style="white")
-            logger.print(e, style="bold red")
+            utils.tracebackhelper(traceback.format_exc(),E)
             return e
 
     def _getMalID(self, title):
@@ -884,9 +901,10 @@ class MovieData():
     def _getAnimeInfo(self, malID):
         self._movieObj["mal"] = int(malID)
         malData = self._getAnimeDataByIDMAL(self._movieObj["mal"])
-        self._movieObj["imdb"] = self._maltoIMDB(malData)
+        imdbID= self._maltoIMDB(malData)
+        self._movieObj["imdb"] =imdbID
         tmdbID = self._convertIMDBtoTMDB(
-            f"tt{self._maltoIMDB(malData)}", self._type)
+            f"tt{re.sub('tt','',imdbID)}", self._type)
         if tmdbID == None:
             moviesList = self._searchByStringTMDB(
                 malData["title_english"], self._type)
@@ -894,7 +912,7 @@ class MovieData():
             data = list(filter(lambda x: re.search(malYear, str(
                 x.get("first_air_date") or x.get("release_date"))), moviesList))
             if len(data) > 0:
-                tmdbID = data[0]
+                tmdbID = data[0]["id"]
         self._movieObj["tmdb"] = tmdbID
 
         animeJSON = self._getAnimeProjectData()
@@ -1092,9 +1110,18 @@ class MovieData():
         year = data["aired"]["prop"]["from"]["year"]
         if engTitle == None:
             return None
-        return self._matchIMDB(engTitle, year, runtime)
+        return re.sub("tt","",self._autoMatchIMDB(engTitle, year, runtime) or self._autoMatchIMDBvTMDB(engTitle,year) or self._imdbIDInput())
+    
+    def _autoMatchIMDBvTMDB(self, title, year):
+        results=self._searchByStringTMDB(title,self._type)
+        results=list(filter(lambda x:utils.convertArrow(x.get("release_date") or x.get("first_air_date")).year==year,results))
+        if len(results)==0:
+            return None
+        return self._tmdbexternalID(self._getTMDBObj(results[0]["id"],self._type),"imdb_id")
+       
 
-    def _matchIMDB(self, title, year, runtime):
+    def _autoMatchIMDB(self, title, year, runtime): 
+        return None
         """
         Tries to Find Show or Movie Based on Different criteria
 
@@ -1190,9 +1217,8 @@ class MovieData():
         try:
             return ia.search_movie(title)
         except Exception as E:
-            logger.print(traceback.format_exc(), style="white")
-            logger.print(E, style="bold red")
-            logger.print("Skipping IMDB Search")
+            utils.tracebackhelper(traceback.format_exc(),E,"Skipping IMDB Search")
+
             return []
 
     @functools.lru_cache
@@ -1329,7 +1355,19 @@ class MovieData():
             if date != None:
                 out.append(date.group(0))
         return list(sorted(out, key=lambda x: utils.convertArrow(x, "D MMMM YYYY")))
-    ########################################################################################
+    def _imdbIDInput(self):
+        message = \
+        """
+        Enter imdb id
+        """
+        id = utils.textEnter(message)
+        try:
+            result = ia.get_movie(re.sub("tt", "", id))
+            return self._getMovieInfo(result["imdbID"])
+        except:
+            raise RuntimeError("Error with IMDBID")
+
+########################################################################################
     # TMDB Functions
     ########################################################################################
 
@@ -1563,3 +1601,11 @@ class MovieData():
         if matchObj == None:
             return
         return self._getByIDIMDB(matchObj.movieID)["imdbID"]
+    def _tmdbexternalID(self,tmdbObj,type):
+
+        return tmdbObj.external_ids().get(type)
+    def _getTMDBObj(self,id,type=None):
+        type =type or self._type
+        if type=="TV":
+            return tmdb.TV(id)
+        return tmdb.Movies(id)

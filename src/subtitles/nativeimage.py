@@ -3,19 +3,17 @@ import traceback
 
 import src.tools.logger as logger
 import src.tools.directory as dir
+import src.tools.general as utils
 
 try:
     import src.mediatools.BDSupReader.bdsupreader as BDSup
 except ModuleNotFoundError as E:
     BDSup=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Missing Module Not Using BDSupReader")
+    utils.tracebackhelper(traceback.format_exc(),E,"Missing Module Not Using BDSupReader")
 except Exception as E:
     BDSup=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Error Not using BDSupReader")
+    utils.tracebackhelper(traceback.format_exc(),E,"Error Not using BDSupReader")
+
 
 
     
@@ -25,16 +23,13 @@ try:
 except ModuleNotFoundError:
     imagemaker=None
     PGSreader=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Missing Module Not Using PGSReader")
+    utils.tracebackhelper(traceback.format_exc(),E,"Missing Module Not Using PGSReader")
+
 
 except Exception as E:
     imagemaker=None
     PGSreader=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Error Not using PGSReader")
+    utils.tracebackhelper(traceback.format_exc(),E,"Error Not using PGSReader")
 
 BDSUPBool= (BDSup!=None)
 PGSBool=(imagemaker!=None and PGSReader!=None)
@@ -66,10 +61,9 @@ def PGSFunc(supFile):
 
 
     except Exception as E:
-        logger.logger.debug(traceback.format_exc())
-        logger.logger.debug(str(E))
-        logger.print("Ignoring PGSReader Error Contining")
-   
+        utils.tracebackhelper(traceback.format_exc(),E,"Ignoring PGSReader Error Contining")
+
+
 
 
 
@@ -94,9 +88,8 @@ def BDSupFunc(supFile):
                 logger.logger.debug(f"Saving {newImage}\n")
 
     except Exception as E:
-        logger.logger.debug(traceback.format_exc())
-        logger.logger.debug(str(E))
-        logger.print("Ignoring BDSup Error Contining")
+        utils.tracebackhelper(traceback.format_exc(),E,"Ignoring BDSup Error Contining")
+
   
 
 

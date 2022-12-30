@@ -35,8 +35,7 @@ def remux(args):
                 remuxObj = remuxTV.Remux(args)
             remuxObj()
         except Exception as E:
-            logger.print(traceback.format_exc(), style="white")
-            logger.print(E, style="white")
+            utils.tracebackhelper(traceback.format_exc(),E)
         quit()
         # argStr='\n'.join(list(map(lambda x:f"Argument {x[0]}: {x[1]}",vars(args).items())))
         # if utils.singleSelectMenu(["Yes", "No"], f"{argStr}\n\nRemux more Media with same commandline args") == "No":

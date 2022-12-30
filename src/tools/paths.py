@@ -204,8 +204,7 @@ def _extractISOProcessor(source, outPath):
             command()
             break
         except Exception as e:
-            logger.print(traceback.format_exc(), style="white")
-            logger.print(e)
+            utils.tracebackhelper(traceback.format_exc(),E,"Missing Module Not Using easyocr")
             rmSafe(outPath)
             continue
     if os.listdir(outPath) == 0:

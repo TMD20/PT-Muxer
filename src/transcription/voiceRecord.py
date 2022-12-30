@@ -4,6 +4,7 @@ import traceback
 
 import src.transcription.transcriper as transcriberClass
 import src.tools.logger as logger
+import src.tools.general as utils
 import config as config
 
 
@@ -40,8 +41,7 @@ def main(tracks, maxLines=None, langs=None, model=None, model_name=None):
             transcriber = transcriberClass.Transcriber(
                 model, model_name, langcode)
         except Exception as E:
-            logger.print(traceback.format_exc(), style="white")
-            logger.print(E)
+            utils.tracebackhelper(traceback.format_exc(),E)
             continue
 
         task_list = [Path(track.getTrackLocation())]

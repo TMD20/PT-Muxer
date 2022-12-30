@@ -31,8 +31,7 @@ class Remux(Remux):
                 self._checkMissing()
             except Exception as E:
                 # logger.logger.warn(E)
-                logger.print(traceback.format_exc(), style="white")
-                logger.print("Skipping", style="white")
+                utils.tracebackhelper(traceback.format_exc(),E)
                 continue
 
             self._fileName = self._getfilename()

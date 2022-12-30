@@ -14,6 +14,7 @@ import arrow
 from guessit import guessit
 
 import src.tools.paths as paths
+import src.tools.logger as logger
 
 
 def convertArrow(input, parse=None):
@@ -194,7 +195,7 @@ def singleSelectMenu(items, message,default=None):
     Returns:
         any: option selected by user
     """
-    return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items,default=default).execute()
+    return inquirer.select(mandatory=True,wrap_lines=True, message=wraptext(f"\n{message}\n"), choices=items,default=default).execute()
 
 
 def multiSelectMenu(items, message):
@@ -214,7 +215,7 @@ def multiSelectMenu(items, message):
         Press Space to add/remove selection
         Press Enter when Done
         """
-    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n{instructions}\n"), choices=items).execute()
+    return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True,wrap_lines=True, message=textwrap.dedent(f"\n{message}\n{instructions}\n"), choices=items).execute()
 
 
 def textEnter(message, default=None):
@@ -283,6 +284,19 @@ def smart_truncate(content, length=100, suffix='...'):
     else:
         return content[:length].rsplit(' ', 1)[0]+suffix
 
+def tracebackhelper(traceback,error,message=""):
+    """
+    Helper function to print Exception with traceback
+
+    Args:
+        traceback (str): string from traceback
+        error (str): error message
+        message (str, optional): additional message to print. Defaults to "".
+    """
+    logger.print(traceback, style="white")
+    logger.print(error, style="bold red")
+    logger.print(message,style="white")
+    
 
 
 def getSystem():
@@ -308,4 +322,16 @@ def getShell():
     else:
         return None
 
+def wraptext(txt,width=70):
+    """
+    helper function to wrap text
 
+    Args:
+        txt (str):text to wrap
+        width (int) : max length of line before new line
+
+    Returns:
+        str: wrapped text
+    """
+    return "\n".join(textwrap.wrap(textwrap.dedent(txt),width=width))
+    

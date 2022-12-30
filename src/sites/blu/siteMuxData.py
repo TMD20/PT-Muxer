@@ -9,6 +9,7 @@ import src.tools.logger as logger
 import config as config
 import src.tools.directory as dir
 import src.tools.paths as paths
+import src.tools.general as utils
 
 
 class Blu(MuxOBj):
@@ -26,9 +27,9 @@ class Blu(MuxOBj):
             try:
                 self.validation(mediainfoPath, eac3to, bdinfo)
             except Exception as E:
-                logger.logger.debug(traceback.format_exc())
-                logger.logger.debug(str(E))
-                logger.print("Vdator Failed")
+                utils.tracebackhelper(traceback.format_exc(),E,"Vdator Failed")
+
+        
 
     def getFileName(self,
                     remuxConfig, group, title, episodeTitle=None):

@@ -11,33 +11,29 @@ import langcodes
 from timeit import default_timer as timer
 
 import src.tools.logger as logger
+import src.tools.general as utils
 
 try:
     import tesserocr
 except ModuleNotFoundError as E:
     tesserocr=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Missing Module Not Using tesseocr")
+    utils.tracebackhelper(traceback.format_exc(),E,"Missing Module Not Using tesseocr")
 except Exception as E:
     tesserocr=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Error Not using tesseocr")
+    utils.tracebackhelper(traceback.format_exc(),E,"Error Not using tesseocr")
+
+
 
 
 try:
     import easyocr
 except ModuleNotFoundError as E:
     easyocr=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Missing Module Not Using easyocr")
+    utils.tracebackhelper(traceback.format_exc(),E,"Missing Module Not Using easyocr")
 except Exception as E:
     easyocr=None
-    logger.print(E)
-    logger.print(traceback.format_exc(),style="white")
-    logger.print("Error Not using easyocr")
+    utils.tracebackhelper(traceback.format_exc(),E,"Error Not using easyocr")
+
 
 
 NUM_THREADS = 4
@@ -121,9 +117,8 @@ def getocr_obj(langcode):
         try:
             return tesserocr.PyTessBaseAPI( lang=langcodes.Language.get(langcode).to_alpha3())
         except Exception as E:
-            logger.logger.warning(f"tesseract-ocr ran into an issue")
-            logger.logger.debug(str(E))
-            logger.logger.debug(traceback.format_exc())
+            utils.tracebackhelper(traceback.format_exc(),E,f"tesseract-ocr ran into an issue")
+
     else:
         logger.print(f"Could Not find a OCR Engine for {str(langcodes.get(langcode).display_name())}")
 
