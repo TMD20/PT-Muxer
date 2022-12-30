@@ -12,10 +12,29 @@ import src.tools.paths as paths
 
 
 class Blu(MuxOBj):
+    """
+    This class is for generating remuxes
+    for blutopia
+
+    Args:
+        MuxOBj (class): This is the base class for all remux classes
+    """
     def __init__(self):
         super().__init__()
 
     def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
+        """
+        Generates a MKV using mkvmerge in subprocess
+        Additionally runs vdator to validate remux
+
+        Args:
+            fileName (str): file name to pass to mkvmerge
+            movieTitle (str): movietitle to pass to mkvmerge
+            chapters (str): path to chapters file to pass to mkvmerge
+            xml (str): path to xml file to pass to mkvmerge
+            bdinfo (str):path to bdinfo file passed to vdator
+            eac3to (str): path to eac3t0 file passed to vdator
+        """
         super().createMKV(fileName, movieTitle, chapters, xml,  bdinfo, eac3to)
         with dir.cwd(paths.createTempDir()):
             mediainfo = MediaInfo.parse(fileName, output="", full=False)
@@ -32,6 +51,18 @@ class Blu(MuxOBj):
 
     def getFileName(self,
                     remuxConfig, group, title, episodeTitle=None):
+        """
+        Generates a filename based on blutopia naming rules and demux data
+
+        Args:
+            remuxConfig (dict):dictionary generated my PTMuxer
+            group (str): group remux is being generated for
+            title (str): Movie title
+            episodeTitle (_str, optional):Episode title. Defaults to None.
+
+        Returns:
+            str: Blutopia filename for remux
+        """
         episodeTitle = episodeTitle or self._placeholder
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
@@ -58,6 +89,17 @@ class Blu(MuxOBj):
             return self._fileNameCleaner(fileName)
 
     def getTVDir(self, remuxConfig, group, title):
+        """
+        Generates a folder name for TV remux based on blutopia naming rules and demux Data
+
+        Args:
+            remuxConfig (dict):dictionary generated my PTMuxer
+            group (str): group remux is being generated for
+            title (str):Movie title
+
+        Returns:
+            str: folder name based on blutopia rules
+        """
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -77,6 +119,15 @@ class Blu(MuxOBj):
         return self._fileNameCleaner(dirName)
 
     def validation(self, mediainfo, eac3to, bdinfo):
+        """
+        This function runs vdator on remux after
+
+
+        Args:
+            mediainfo (str): path to mediainfo 
+            eac3to (str): path to eac3to
+            bdinfo (str): path to bdinfo
+        """
         # Validation Specific
         import json
         import sys

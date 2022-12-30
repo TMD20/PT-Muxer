@@ -3,6 +3,13 @@ import src.mediatools.mkvtoolnix as mkvTool
 
 
 class BeyondHD(MuxOBj):
+    """
+    This class is for generating remuxes
+    for beyondhd
+
+    Args:
+        MuxOBj (class): This is the base class for all remux classes
+    """
     def __init__(self):
         super().__init__()
 

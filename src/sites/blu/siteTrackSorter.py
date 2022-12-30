@@ -5,10 +5,26 @@ import src.tools.paths as paths
 
 
 class Blu(siteTrackSorter):
+    """
+    This class is for sorting tracks based on blutopia sorting rules
+
+    Args:
+        siteTrackSorter (class): The base track sorter lass
+    """
     def __init__(self):
         super().__init__()
 
     def sortTracks(self, movieLangs, audioPrefs, subPrefs, sortPrefs):
+        """
+        Sorts tracks based on user prefrence and site rules on blutopia
+        adds sortred tracks into internal class arrays
+
+        Args:
+            movieLangs (_type_): languages in movie
+            audioPrefs (_type_):  users language preference
+            subPrefs (_type_): user subtitle langauge preference
+            sortPrefs (_type_): users prefence for which track should get higher priority
+        """
         super().sortTracks(movieLangs, audioPrefs, subPrefs, sortPrefs)
         i = 1
         ####

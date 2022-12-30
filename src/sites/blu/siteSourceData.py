@@ -6,17 +6,42 @@ import xxhash
 from src.sites.base.siteSourceData import siteSourceData
 
 class Blu(siteSourceData):
+    """
+    This is an extension of the siteSourceData class with modifications made to fit 
+    blutopia rules
+
+    Args:
+        siteSourceData (class): base class for all siteSource classes
+    """
     def __init__(self):
         super().__init__()
 
     
     def addTracks(self, bdinfo,playlistNum,streams=None):
+        """
+        This function handles adding tracks/sources to internal dictionaries
+
+        Args:
+            bdinfo (obj): bdinfo object
+            playlistNum (int): playlist number for tracks
+            streams (array, optional): This is the list of streams tracks are from. Defaults to None.
+
+        Returns:
+            dict: The return value is an dictionary generated from tracks
+        """
         current_tracks = super().addTracks(bdinfo,playlistNum,streams=None)
         
         self._checkPadding(current_tracks)
         return current_tracks
 
     def _checkPadding(self, current_tracks):
+        """
+        This is a helper function to check padding on 24bit audio
+
+
+        Args:
+            current_tracks (array): array of track dictionaries from addtracks function
+        """
         insertDict = []
         for i in range(len(current_tracks)):
             track = current_tracks[i]
