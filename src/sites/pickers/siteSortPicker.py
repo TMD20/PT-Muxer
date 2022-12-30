@@ -4,7 +4,18 @@ import src.sites.blu.siteTrackSorter as blu
 import src.sites.animebytes.siteTrackSorter as anime
 
 
-def pickSite(site):
+def pickSite(site=None):
+    """
+    This is a helper function to output a object pass on the site passed as an argumented
+
+
+
+    Args:
+        site (str, optional): Which site to generate an object from. Defaults to None.
+
+    Returns:
+        obj: object pass on site being pass
+    """
     if site == None:
         return base.siteTrackSorter()
     elif site.lower() in ["beyondhd","bhd"]:

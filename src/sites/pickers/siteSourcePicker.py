@@ -5,6 +5,14 @@ import src.sites.animebytes.siteSourceData as anime
 
 
 def pickSite(site):
+    """
+    This is a helper function to output a object pass on the site passed as an argumented
+    Args:
+        site (str, optional): Which site to generate an object from. Defaults to None.
+
+    Returns:
+        obj: object pass on site being pass
+    """    
     if site==None:
         return base.siteSourceData()
     elif site.lower() in ["beyondhd","bhd"]:
