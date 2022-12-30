@@ -17,6 +17,7 @@ poetry.lock
 pyproject.toml
 __pycache__
 .prettierignore
+log.txt
 
 
 
