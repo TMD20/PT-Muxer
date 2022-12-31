@@ -20,9 +20,9 @@ class Blu(siteTrackSorter):
         adds sortred tracks into internal class arrays
 
         Args:
-            movieLangs (array): languages in movie
-            audioPrefs (array):  users language preference
-            subPrefs (array): user subtitle langauge preference
+            movieLangs (array): list of languages in movie
+            audioPrefs (array):  list of users language preference
+            subPrefs (array): list of user subtitle langauge preference
             sortPrefs (str): users prefence for which track should get higher priority
         """
         super().sortTracks(movieLangs, audioPrefs, subPrefs, sortPrefs)

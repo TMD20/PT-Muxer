@@ -40,7 +40,7 @@ class Blu(siteSourceData):
 
 
         Args:
-            current_tracks (array): array of track dictionaries from addtracks function
+            current_tracks (array): list of track dictionaries from addtracks function
         """
         insertDict = []
         for i in range(len(current_tracks)):

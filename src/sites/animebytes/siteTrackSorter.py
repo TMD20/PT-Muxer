@@ -19,8 +19,8 @@ class AnimeBytes(siteTrackSorter):
         a detected track
 
         Args:
-            movieLang (array): movie language
-            audioPref (array): user preference for language
+            movieLang (array): list of movie languages
+            audioPref (array): list of user preference for language
         """
         super().addForcedSubs(movieLang, audioPref)
         #set force track
@@ -51,6 +51,17 @@ class AnimeBytes(siteTrackSorter):
 
 
     def _getAudioPrefs(self, movieLang, audioPrefs):
+        """
+        Gets audio prefrence
+        If no langauges are supply animebyes will return English and Japanese 
+
+        Args:
+            movieLang (array): movie language data from source like imdb
+            audioPrefs (array): users audio preference data
+
+        Returns:
+            _array: Finalized list of languages
+        """
         if len(audioPrefs) > 0:
              return utils.removeDupesList(audioPrefs)
         otherLangs = list(filter(lambda x: x.lower() !=
@@ -63,6 +74,15 @@ class AnimeBytes(siteTrackSorter):
     
     
     def _sortAudio(self, audioTracks, audioLang, sortPref):
+        """
+        Function to sort audio tracks
+        Preference is given to English and Japanese tracks
+
+        Args:
+            audioTracks (array): list of tracks dictionary
+            audioLang (array): list of track language preference
+            sortPref (str): users preference for track sorting
+        """
         super()._sortAudio(audioTracks, audioLang, sortPref)
         #Change Original Audio to Japanese
         #set original language flag

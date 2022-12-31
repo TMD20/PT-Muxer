@@ -58,7 +58,7 @@ class Blu(MuxOBj):
             remuxConfig (dict):dictionary generated my PTMuxer
             group (str): group remux is being generated for
             title (str): Movie title
-            episodeTitle (_str, optional):Episode title. Defaults to None.
+            episodeTitle (str, optional):Episode title. Defaults to None.
 
         Returns:
             str: Blutopia filename for remux
