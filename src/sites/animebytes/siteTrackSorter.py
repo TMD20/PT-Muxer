@@ -5,9 +5,23 @@ import src.tools.general as utils
 
 
 class AnimeBytes(siteTrackSorter):
+    """
+    This class is for sorting tracks for animebyes
+
+    Args:
+        siteTrackSorter (class): The base track sorter class
+    """
     def __init__(self):
         super().__init__()
     def addForcedSubs(self, movieLang, audioPref):
+        """
+        This function sets forced subs by extracting or setting the flag on 
+        a detected track
+
+        Args:
+            movieLang (array): movie language
+            audioPref (array): user preference for language
+        """
         super().addForcedSubs(movieLang, audioPref)
         #set force track
         forceDict={}

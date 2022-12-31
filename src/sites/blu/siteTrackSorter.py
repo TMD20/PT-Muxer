@@ -9,7 +9,7 @@ class Blu(siteTrackSorter):
     This class is for sorting tracks based on blutopia sorting rules
 
     Args:
-        siteTrackSorter (class): The base track sorter lass
+        siteTrackSorter (class): The base track sorter class
     """
     def __init__(self):
         super().__init__()
@@ -20,10 +20,10 @@ class Blu(siteTrackSorter):
         adds sortred tracks into internal class arrays
 
         Args:
-            movieLangs (_type_): languages in movie
-            audioPrefs (_type_):  users language preference
-            subPrefs (_type_): user subtitle langauge preference
-            sortPrefs (_type_): users prefence for which track should get higher priority
+            movieLangs (array): languages in movie
+            audioPrefs (array):  users language preference
+            subPrefs (array): user subtitle langauge preference
+            sortPrefs (str): users prefence for which track should get higher priority
         """
         super().sortTracks(movieLangs, audioPrefs, subPrefs, sortPrefs)
         i = 1
