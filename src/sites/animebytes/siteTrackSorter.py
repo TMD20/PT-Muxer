@@ -51,15 +51,16 @@ class AnimeBytes(siteTrackSorter):
 
 
     def _getAudioPrefs(self, movieLang, audioPrefs):
-        if len(audioPrefs) == 0:
-            otherLangs = list(filter(lambda x: x.lower() !=
-                                     "english" and x.lower() != "japanese", movieLang))
-            # Prioritize japanese and english
-            langs = ["English","Japanese"]
-            langs.extend(otherLangs)
-            return list(map(lambda x: x.lower(), langs))
+        if len(audioPrefs) > 0:
+             return utils.removeDupesList(audioPrefs)
+        otherLangs = list(filter(lambda x: x.lower() !=
+                                    "english" and x.lower() != "japanese", movieLang))
+        # Prioritize japanese and english
+        langs = ["English","Japanese"]
+        langs.extend(otherLangs)
+        return list(map(lambda x: x.lower(), langs))
 
-        return utils.removeDupesList(audioPrefs)
+    
     
     def _sortAudio(self, audioTracks, audioLang, sortPref):
         super()._sortAudio(audioTracks, audioLang, sortPref)
