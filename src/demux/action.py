@@ -8,9 +8,9 @@ import config as config
 import src.tools.paths as paths
 import src.tools.exit as exit
 import src.tools.logger as logger
+import src.tools.typing as typinghint
 
-
-def endProcess():
+def endProcess()->None:
     """
     Cleans up the system before program exits 
     During Demuxing
@@ -28,7 +28,7 @@ def endProcess():
         logger.logger.info("Demux Complete\n")
 
 
-def demux(args):
+def demux(args:typinghint.argparse.Namespace)->None:
     """
     This runner uses DemuxClass to Demux Disk
     Args:

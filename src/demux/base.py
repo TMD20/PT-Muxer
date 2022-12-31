@@ -19,6 +19,7 @@ import src.subtitles.subreader as subreader
 import src.transcription.voiceRecord as voiceRec
 import src.tools.directory as dir
 import src.tools.logger as logger
+import src.tools.typing as typinghint
 
 
 class Demux():
@@ -28,7 +29,7 @@ class Demux():
     to be inherited by other class
     """
 
-    def __init__(self, args):
+    def __init__(self, args: typinghint.argparse.Namespace) -> None:
         self._args = args
         self.demuxFolder = None
         self._name = None
@@ -37,7 +38,7 @@ class Demux():
         self._index = 0
         self._success = False
 
-    def __call__(self):
+    def __call__(self) -> None:
         """
         Main Function For Class
         """
@@ -45,7 +46,7 @@ class Demux():
         self._callFunction()
         self._success = True
 
-    def _callFunction(self):
+    def _callFunction(self) -> None:
         """
         Overwriten by Inheriting class
         Runs "main" function for instances of class
@@ -53,7 +54,7 @@ class Demux():
         None
 
     @property
-    def success(self):
+    def success(self) -> bool:
         """
         Provides Detail on whether demuxing was finished succesfully
 
@@ -62,11 +63,11 @@ class Demux():
         """
         return self._success
 
-    def demuxPlaylist(self, bdObjs, multiSelect=False):
+    def demuxPlaylist(self, bdObjs: typinghint.bdArray, multiSelect: bool = False) -> None:
         """
         Main Function for processes Demuxing of playlist
 
-
+=
         Args:
             bdObjs (array): An array of bdObjs, one for each source
             multiSelect (bool, optional): Whether or not each source should 
@@ -110,7 +111,7 @@ class Demux():
                 self._writeFinalJSON(
                     self._saveOutput(siteSourceObjs, muxSorter))
 
-    def _saveOutput(self, siteSourceObjs, muxSorter):
+    def _saveOutput(self, siteSourceObjs: typinghint.siteSourceDataArray, muxSorter: typinghint.siteTrackSorter) -> dict:
         """
         Generates a dictionary filled with data from demuxing process
 
@@ -133,7 +134,7 @@ class Demux():
     # Helper Functions
     ############
 
-    def _getNewFolder(self, i=None):
+    def _getNewFolder(self, i: int = None) -> typinghint.filePath:
         """
         Generates parentfolder inside muxFolder 
         for each selected playlist/stream 
@@ -143,7 +144,7 @@ class Demux():
         """
         return os.path.join(self.demuxFolder)
 
-    def _addTrackData(self, muxSorter):
+    def _addTrackData(self, muxSorter: typinghint.siteTrackSorter) -> dict:
         """
         Helper function for added details from each sources tracks parsed
         during the demux class
@@ -177,7 +178,7 @@ class Demux():
 
         return outdict
 
-    def _writeFinalJSON(self, outdict):
+    def _writeFinalJSON(self, outdict: dict) -> None:
         """
         Takes a dictionary as input
         Writes to file based on current path
@@ -191,7 +192,7 @@ class Demux():
             data = orjson.dumps(outdict, option=orjson.OPT_INDENT_2)
             p.write(data)
 
-    def _getChapterMedia(self, siteSourceObjs):
+    def _getChapterMedia(self, siteSourceObjs: typinghint.siteSourceDataArray) -> typinghint.dictList:
         """
         Helper Function to get which source to use as the basis for generating chapter data
 
@@ -208,7 +209,7 @@ class Demux():
                 list(map(lambda x: x["sourceDir"], siteSourceObjs)), "Which Source Has The proper Chapter File")
         return list(filter(lambda x: x["sourceDir"] == match, siteSourceObjs))[0]["chapters"]
 
-    def _subParse(self, muxSorter):
+    def _subParse(self, muxSorter: typinghint.siteTrackSorter) -> None:
         """
         Takes the tracks from muxSorter obj, and applies OCR/Image Generation to certain subtitle tracks based on passed args
 
@@ -249,7 +250,7 @@ class Demux():
                     subreader.imagesOnly([track])
 
     # Voice Recorder
-    def _voiceRec(self, muxSorter):
+    def _voiceRec(self, muxSorter: typinghint.siteTrackSorter) -> None:
         """
         Takes the tracks from muxSorter obj, and applies OCR to certain audio tracks based on passed args
 
@@ -278,7 +279,7 @@ class Demux():
                 with dir.cwd(track["outputDir"]):
                     voiceRec.main([track], langs=langs)
 
-    def _getMuxSorter(self, siteSourceObjs):
+    def _getMuxSorter(self, siteSourceObjs: typinghint.siteSourceDataArray) -> typinghint.siteTrackSorter:
         """
         Creates and uses siteMuxSorter obj
         To flatten all tracks from multiple source into list by track types
@@ -300,7 +301,7 @@ class Demux():
             muxSorter.addForcedSubs(languages, self._args.audiolang)
         return muxSorter
 
-    def _addSourceData(self, siteSourceObjs):
+    def _addSourceData(self, siteSourceObjs: typinghint.siteSourceDataArray) -> dict:
         """
         Generates a dictionary with data from sources
 
@@ -324,7 +325,7 @@ class Demux():
 
         return outdict
 
-    def _addEnabledData(self, muxSorter):
+    def _addEnabledData(self, muxSorter: typinghint.siteTrackSorter) -> dict:
         """
         Finds the key from all enabled tracks and outputs that to list seperated by track type
 
@@ -345,7 +346,7 @@ class Demux():
             map(lambda x: x["key"], muxSorter.enabledSub))
         return outdict
 
-    def _ConvertChapterList(self, chapters):
+    def _ConvertChapterList(self, chapters: typinghint.dictList) -> dict:
         """
         Takes chapter obj and modifies output
         into mkvmerge syntax
@@ -367,7 +368,7 @@ class Demux():
         outdict["Chapters"] = output
         return outdict
 
-    def _setBdInfoData(self):
+    def _setBdInfoData(self) -> typinghint.bdArray:
         """
         Creates bdObjs from selected sources
         Prompts User for playlist info, generates data from selected playlist
@@ -384,7 +385,7 @@ class Demux():
             bdObjs.append(bdObj)
         return bdObjs
 
-    def _fixArgs(self):
+    def _fixArgs(self) -> None:
         """
         Helps function to normalize arguments
         i.e convert languages to all lower cases
@@ -404,7 +405,7 @@ class Demux():
         logger.logger.debug(str(self._args))
     # Folder Stuff
 
-    def _getBDMVs(self, path):
+    def _getBDMVs(self, path: str) -> typinghint.filePathList:
         """
         Takes a input path and searches for all BDMVs, and ISO
 
@@ -421,7 +422,7 @@ class Demux():
                 map(lambda x: paths.convertPathType(x, "Linux"), list1))
             return natsort.natsorted(list1)
 
-    def _createParentDemuxFolder(self, sources, outpath):
+    def _createParentDemuxFolder(self, sources: typinghint.strList, outpath: str) -> typinghint.filePath:
         """
         Takes output folder from args, and generates a demuxfolder based on correct time, and first source selected
         This folder is the basis for all generated and saved outputs during the programs run.
@@ -445,7 +446,7 @@ class Demux():
             os.mkdir(parentDemux)
             return parentDemux
 
-    def _createChildDemuxFolder(self, parentDir, show):
+    def _createChildDemuxFolder(self, parentDir: typinghint.filePath, show: str) -> typinghint.filePath:
         """
         Takes a parent demux folder, generates a child folder base on the path to the source being passed
 

@@ -10,6 +10,7 @@ import src.mediadata.movieData as movieData
 import src.tools.paths as paths
 import src.tools.directory as dir
 import src.tools.logger as logger
+import src.tools.typing as typinghint
 
 
 class Demux(Demux):
@@ -19,12 +20,12 @@ class Demux(Demux):
     Args:
         Demux (class): demuxBase class
     """
-    def __init__(self, args):
+    def __init__(self, args:typinghint.argparse.Namespace)->None:
         super().__init__(args)
         self._name = "Movies"
         self._type = "Movies"
 
-    def demux(self):
+    def demux(self)->None:
         """
         Gathers Information from a selected movie Title
         Generates BDINFO Data for all soruces 
@@ -37,7 +38,7 @@ class Demux(Demux):
             bdObjs = self._setBdInfoData()
             self.demuxPlaylist(bdObjs)
 
-    def _callFunction(self):
+    def _callFunction(self)->None:
         """
         Helper main function called by internal __call__ function 
         Raises:
@@ -50,7 +51,7 @@ class Demux(Demux):
         self.setDemuxFolder()
         self.demux()
 
-    def setSource(self):
+    def setSource(self)->None:
         """
         Filters sources in input directories based on user selection
         """
@@ -58,7 +59,7 @@ class Demux(Demux):
         self.sources = self.getSources(
             options, self._args.inpath, self._args.sortpref)
 
-    def getSources(self, options, inpath, sortpref):
+    def getSources(self, options:typinghint.filePathList, inpath:typinghint.filePath, sortpref:str)->typinghint.filePathList:
         """
         Returns array of selected paths, based on user input
 
@@ -80,7 +81,7 @@ class Demux(Demux):
                 sources[i] = paths.extractISO(sources[i], inpath)
         return list(map(lambda x: paths.convertPathType(x, type="Linux"), sources))
 
-    def setDemuxFolder(self):
+    def setDemuxFolder(self)->None:
         """
         Ensures outpath from args exists
 
@@ -90,12 +91,12 @@ class Demux(Demux):
         self.demuxFolder = self.setDemuxFolderHelper(
             self.sources, self._args.outpath)
 
-    def setDemuxFolderHelper(self, sources, outpath):
+    def setDemuxFolderHelper(self, sources:typinghint.filePathList, outpath:typinghint.filePath)->typinghint.filePath:
         """
         Returns parent demux folder path based on source and outputpath
 
         Args:
-            sources (aarray): array of sources
+            sources (array): array of sources
             outpath (str): outpath from args
 
         Returns:
@@ -107,7 +108,7 @@ class Demux(Demux):
 # Select
 ##
 
-    def _addMultiSource(self, paths, sortpref):
+    def _addMultiSource(self, paths:typinghint.filePathList, sortpref:str)->typinghint.filePath:
         """
         Takes a list of source paths, and allows users to filter list based on input
 

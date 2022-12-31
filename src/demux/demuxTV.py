@@ -14,6 +14,7 @@ import src.mediatools.dgdemux as dgdemux
 import src.mediatools.eac3to as eac3to
 import config as config
 import src.tools.logger as logger
+import src.tools.typing as typinghint
 
 
 class Demux(Demux):
@@ -24,12 +25,12 @@ class Demux(Demux):
         Demux (class): demuxBase class
     """
 
-    def __init__(self, args):
+    def __init__(self, args: typinghint.argparse.Namespace) -> None:
         super().__init__(args)
         self._name = "TV Shows"
         self._type = "TV"
 
-    def _callFunction(self):
+    def _callFunction(self) -> None:
         """
         Helper main function called by internal __call__ function 
         """
@@ -38,7 +39,7 @@ class Demux(Demux):
         self.setDemuxFolder()
         self.demux()
 
-    def demux(self):
+    def demux(self) -> None:
         """
         Gathers Information from a selected movie Title
         Generates BDINFO Data for all soruces 
@@ -54,7 +55,7 @@ class Demux(Demux):
             else:
                 self.demuxPlaylist(bdObjs, multiSelect=True)
 
-    def demuxSplitPlayList(self, bdObjs):
+    def demuxSplitPlayList(self, bdObjs: typinghint.bdArray) -> None:
         """
         Performs demuxing based on splitting playlist into individual streams
 
@@ -77,7 +78,7 @@ class Demux(Demux):
         else:
             self._dgdemuxSplitPlaylistHelper(bdObjs)
 
-    def _eac3toSplitPlaylistHelper(self, bdObjs):
+    def _eac3toSplitPlaylistHelper(self, bdObjs: typinghint.bdArray):
         """
         Helper Function to perform splitplaylist process with eac3to
 
@@ -127,7 +128,7 @@ class Demux(Demux):
                     self._writeFinalJSON(
                         self._saveOutput(siteSourceObjs, muxSorter))
 
-    def _dgdemuxSplitPlaylistHelper(self, bdObjs):
+    def _dgdemuxSplitPlaylistHelper(self, bdObjs: typinghint.bdArray):
         """
         Helper Function to perform splitplaylist process with dgdemux
 
@@ -190,7 +191,7 @@ class Demux(Demux):
                     self._writeFinalJSON(
                         self._saveOutput(siteSourceObjs, muxSorter))
 
-    def _saveOutput(self, siteSourceObjs, muxSorter):
+    def _saveOutput(self, siteSourceObjs: typinghint.siteSourceDataArray, muxSorter:typinghint.siteTrackSorter)->dict:
         """
         Generates a dictionary filled with data from demuxing process
 
@@ -212,7 +213,7 @@ class Demux(Demux):
     # Helper Functions
     ####
 
-    def _getNewFolder(self, i):
+    def _getNewFolder(self, i:int)->typinghint.filePath:
         """
         Generates the next incremental folder inside parent demux folder based on number of sibling folders previosuly geneated
 
