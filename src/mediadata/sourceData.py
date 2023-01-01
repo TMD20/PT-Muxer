@@ -167,16 +167,16 @@ class sourceData(dict):
             return paths.search(sourceData["sourceDir"], "PLAYLIST", dir=True)[0]
 
     @property
-    def tracks(self)->List[dict]:
+    def tracks(self)->List[trackObj.TrackObJ]:
         """
-        getter function for tracks dict
+        getter function for tracks dict values
 
         Returns:
             array: returns the values from the tracks dict
         """
         return list(self["tracks"].values())
 
-    def _getfilteredvalues(self, type:str)->List[dict]:
+    def _getfilteredvalues(self, type:str)->List[trackObj.TrackObJ]:
         """
         getter function for tracks dict filtered by type
 
@@ -187,9 +187,9 @@ class sourceData(dict):
         return list(filter(lambda x: x["type"] == type, values))
 
     @property
-    def video(self)->List[str]:
+    def video(self)->List[trackObj.TrackObJ]:
         """
-        getter function for tracks dict filtered by type
+        get video tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by video type
@@ -199,7 +199,7 @@ class sourceData(dict):
     @property
     def subtitle(self)->List[dict]:
         """
-        getter function for tracks dict filtered by type
+        get subtitle tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by subtitle type
@@ -209,7 +209,7 @@ class sourceData(dict):
     @property
     def audio(self)->List[dict]:
         """
-        getter function for tracks dict filtered by type
+        get audio tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by audio type
@@ -219,7 +219,7 @@ class sourceData(dict):
     @property
     def compat(self)->List[dict]:
         """
-        getter function for tracks dict filtered by type
+        get compat tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by compat audio type
@@ -230,7 +230,7 @@ class sourceData(dict):
     @property
     def trackkey(self)->List[str]:
         """
-        getter function for tracks dict
+        getter function for tracks dict key
 
         Returns:
             array: returns the keys from the tracks dict
@@ -239,7 +239,7 @@ class sourceData(dict):
 
     def _getfilteredkey(self, type:str)->List[str]:
         """
-        getter function for tracks dict
+        getter function for tracks dict filtered by type
 
         Returns:
             array: returns the keys from the tracks dict filtered by type
@@ -250,7 +250,7 @@ class sourceData(dict):
     @property
     def videokeys(self)->List[str]:
         """
-        getter function for tracks dict
+        get video track keys
 
         Returns:
             array: returns the keys from the tracks dict filtered by video type
@@ -260,7 +260,7 @@ class sourceData(dict):
     @property
     def subtitlekeys(self)->List[str]:
         """
-        getter function for tracks dict
+        get subtitle track keys
 
         Returns:
             array: returns the keys from the tracks dict filtered by subtitle type
@@ -270,7 +270,7 @@ class sourceData(dict):
     @property
     def audiokeys(self)->List[str]:
         """
-        getter function for tracks dict
+        get audio track keys
 
         Returns:
             array: returns the keys from the tracks dict filtered by audio type
@@ -280,7 +280,7 @@ class sourceData(dict):
     @property
     def compatkeys(self)->List[str]:
         """
-        getter function for tracks dict
+        get compat track keys
 
         Returns:
             array: returns the keys from the tracks dict filtered by compat type
@@ -291,7 +291,7 @@ class sourceData(dict):
     @property
     def trackitems(self)->List[dict]:
         """
-        getter function for tracks dict
+        getter function for tracks dict items
 
         Returns:
             array: returns keys,value tuples from the tracks dict
@@ -300,7 +300,7 @@ class sourceData(dict):
 
     def _getfiltereditems(self, type:str)->List[dict]:
         """
-        getter function for tracks dict
+        getter function for tracks dict filtered by type
 
         Returns:
             array: returns keys,value tuples from the tracks dict filtered by type
@@ -311,7 +311,7 @@ class sourceData(dict):
     @property
     def videoitems(self)->List[tuple]:
         """
-        getter function for tracks dict
+        get video track items
 
         Returns:
             array: returns keys,value tuples from the tracks dict filered by video type 
@@ -321,7 +321,7 @@ class sourceData(dict):
     @property
     def subtitleitems(self)->List[tuple]:
         """
-        getter function for tracks dict
+        get subtitle track items
 
         Returns:
             array: returns keys,value tuples from the tracks dict filered by subtitle type 
@@ -331,7 +331,7 @@ class sourceData(dict):
     @property
     def audioitems(self)->List[tuple]:
         """
-        getter function for tracks dict
+        get audio track items
 
         Returns:
             array: returns keys,value tuples from the tracks dict filered by audio type 
@@ -341,7 +341,7 @@ class sourceData(dict):
     @property
     def compatitems(self)->List[tuple]:
         """
-        getter function for tracks dict
+        get compat track items
         Returns:
             array: returns keys,value tuples from the tracks dict filered by compat audio type 
         """      
