@@ -1,5 +1,7 @@
 import os
 import traceback
+from typing import Union
+
 
 from pymediainfo import MediaInfo
 
@@ -19,10 +21,10 @@ class Blu(MuxOBj):
     Args:
         MuxOBj (class): This is the base class for all remux classes
     """
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
 
-    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
+    def createMKV(self, fileName:Union[str, bytes, os.PathLike], movieTitle:str, chapters:Union[str, bytes, os.PathLike], xml:Union[str, bytes, os.PathLike],  bdinfo:Union[str, bytes, os.PathLike], eac3to:Union[str, bytes, os.PathLike])->None:
         """
         Generates a MKV using mkvmerge in subprocess
         Additionally runs vdator to validate remux
@@ -50,7 +52,7 @@ class Blu(MuxOBj):
                 logger.print("Vdator Failed")
 
     def getFileName(self,
-                    remuxConfig, group, title, episodeTitle=None):
+                    remuxConfig:dict, group:str, title, episodeTitle:Union[str,None]=None)->str:
         """
         Generates a filename based on blutopia naming rules and demux data
 
@@ -88,7 +90,7 @@ class Blu(MuxOBj):
             fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             return self._fileNameCleaner(fileName)
 
-    def getTVDir(self, remuxConfig, group, title):
+    def getTVDir(self, remuxConfig:dict, group:str, title:str)->str:
         """
         Generates a folder name for TV remux based on blutopia naming rules and demux Data
 
@@ -118,7 +120,7 @@ class Blu(MuxOBj):
         # Normalize
         return self._fileNameCleaner(dirName)
 
-    def validation(self, mediainfo, eac3to, bdinfo):
+    def validation(self, mediainfo:Union[str, bytes, os.PathLike], eac3to:Union[str, bytes, os.PathLike], bdinfo:Union[str, bytes, os.PathLike])->None:
         """
         This function runs vdator on remux after
 

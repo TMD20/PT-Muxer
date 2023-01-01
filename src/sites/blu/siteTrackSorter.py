@@ -1,4 +1,6 @@
 import re
+from typing import List
+
 
 from src.sites.base.siteTrackSorter import siteTrackSorter
 import src.tools.paths as paths
@@ -11,10 +13,10 @@ class Blu(siteTrackSorter):
     Args:
         siteTrackSorter (class): The base track sorter class
     """
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
 
-    def sortTracks(self, movieLangs, audioPrefs, subPrefs, sortPrefs):
+    def sortTracks(self, movieLangs:List[str], audioPrefs:List[str], subPrefs:List[str], sortPrefs:str)->None:
         """
         Sorts tracks based on user prefrence and site rules on blutopia
         adds sortred tracks into internal class arrays

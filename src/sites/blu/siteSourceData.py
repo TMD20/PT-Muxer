@@ -1,9 +1,15 @@
+from __future__ import annotations 
 import re
 import copy
+from typing import TYPE_CHECKING, List,Union
 
 import xxhash
 
 from src.sites.base.siteSourceData import siteSourceData
+if TYPE_CHECKING:
+    import mediatools.bdinfo as bdinfo
+    import mediadata.trackObj as trackObj
+ 
 
 class Blu(siteSourceData):
     """
@@ -13,11 +19,11 @@ class Blu(siteSourceData):
     Args:
         siteSourceData (class): base class for all siteSource classes
     """
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
 
     
-    def addTracks(self, bdinfo,playlistNum,streams=None):
+    def addTracks(self, bdinfo:bdinfo.Bdinfo,playlistNum:int,streams:Union[List[dict],None]=None)->List[trackObj.TrackObJ]:
         """
         This function handles adding tracks/sources to internal dictionaries
 
@@ -34,13 +40,13 @@ class Blu(siteSourceData):
         self._checkPadding(current_tracks)
         return current_tracks
 
-    def _checkPadding(self, current_tracks):
+    def _checkPadding(self, current_tracks:List[trackObj.TrackObJ])->None:
         """
         This is a helper function to check padding on 24bit audio
 
 
         Args:
-            current_tracks (array): list of track dictionaries from addtracks function
+            current_tracks (array): list of trackObjs from addtracks function
         """
         insertDict = []
         for i in range(len(current_tracks)):
