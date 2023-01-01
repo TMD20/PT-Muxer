@@ -1,13 +1,17 @@
+from __future__ import annotations 
 import logging
 from rich import print
 from rich.console import Console
 from rich.markdown import Markdown
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from rich.console import Capture
 
 
 
 logger=logging.getLogger("PTMuxer")
 
-def print(message,style="bold green"):
+def print(message:str,style:str="bold green")->None:
     """
     Uses rich module to print a normal output to console
 
@@ -20,7 +24,7 @@ def print(message,style="bold green"):
 
 
 
-def handleLogMessage(message, markup=True,style="bold green",**kwargs):
+def handleLogMessage(message:str, markup:str=True,style:str="bold green",**kwargs)->Capture:
     """
     Helper function to levage rich to enhance printing of logs
 
@@ -40,7 +44,7 @@ def handleLogMessage(message, markup=True,style="bold green",**kwargs):
         console.print(markdown)
     return capture.get()
         
-def loggingRevamp(function,style=None):
+def loggingRevamp(function,style:str=None)->function:
     """
     returns a console capture
 
@@ -54,7 +58,7 @@ def loggingRevamp(function,style=None):
     return lambda message,markup=True,style=style:  function(handleLogMessage(message,markup,style=style))
     
 
-def setUpLogging(levelArg):
+def setUpLogging(levelArg:str)->None:
     """
     Changes default log function to modified log functions with rich enhanchment
     sets logger default

@@ -15,8 +15,6 @@ import src.tools.logger as logger
 from typing import TYPE_CHECKING, List,Union
 if TYPE_CHECKING:
     import argparse
-    import sites.base.siteSourceData as siteSourceData
-    import sites.base.siteTrackSorter as siteTrackSorter
 
 
 class Demux(Demux):

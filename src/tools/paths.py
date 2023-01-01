@@ -9,6 +9,8 @@ import itertools
 import traceback
 
 import natsort
+from typing import Any,List,Union
+
 
 import config as config
 import src.tools.general as utils
@@ -18,7 +20,7 @@ import src.tools.logger as logger
 tempDirs = []
 
 
-def createTempDir():
+def createTempDir()->str:
     """
     Creates a tempdirectory
     modified to create directory and default location or location at config.py
@@ -36,7 +38,7 @@ def createTempDir():
     return tempDir
 
 
-def getOldTempPathDirs():
+def getOldTempPathDirs()->List[str]:
     """
     List of all directories match config.py tempPrefix within configured temp directory
     Limits to configured time limit
@@ -53,7 +55,7 @@ def getOldTempPathDirs():
     return list(filter(lambda x: utils.convertArrow(os.stat(x).st_mtime) > criticalTime, results))
 
 
-def getTempDirs():
+def getTempDirs()->List[str]:
     """
     returns all temp directories created during current run
 
@@ -63,7 +65,7 @@ def getTempDirs():
     return list(map(lambda x: convertPathType(x, type="Linux"), tempDirs))
 
 
-def deleteTempDirs():
+def deleteTempDirs()->None:
     """
     Generates list of temp directories
     removes all
@@ -76,7 +78,7 @@ def deleteTempDirs():
         shutil.rmtree(folder)
 
 
-def search(path, query, case=False, dir=False, ignore=[], fullMatch=False, recursive=True):
+def search(path:Union[str, bytes, os.PathLike], query:str, case:bool=False, dir:bool=False, ignore:List[str]=[], fullMatch:bool=False, recursive:bool=True)->List[str]:
     """
     Function to search recursively in a directory for files or directories based on query
 
@@ -110,7 +112,7 @@ def search(path, query, case=False, dir=False, ignore=[], fullMatch=False, recur
         return list(filter(lambda x: searchMethod(query, x, re.IGNORECASE), filtered))
 
 
-def _excludeHelper(paths, dir, ignore):
+def _excludeHelper(paths:List[Union[str, bytes, os.PathLike]], dir:bool, ignore:List[str])->List[str]:
     """
     Helper function for removing paths that match generated regex from array of words to ignore
 
@@ -128,7 +130,7 @@ def _excludeHelper(paths, dir, ignore):
     return filtered
 
 
-def mkdirSafe(target):
+def mkdirSafe(target:Union[str, bytes, os.PathLike])->None:
     """
     Helper function to create path if not present
     Additionally creates parent paths of target if not present
@@ -144,7 +146,7 @@ def mkdirSafe(target):
             os.mkdir(ele)
 
 
-def rmSafe(path):
+def rmSafe(path:Union[str, bytes, os.PathLike])->None:
     """
     Helper function to remove path if present
 
@@ -159,7 +161,7 @@ def rmSafe(path):
         shutil.rmtree(path)
 
 
-def extractISO(source, path):
+def extractISO(source:Union[str, bytes, os.PathLike], path:Union[str, bytes, os.PathLike])->str:
     """
     Manages extraction of ISO, and delection of conflicting files
 
@@ -181,7 +183,7 @@ def extractISO(source, path):
     return _extractISOProcessor(source, outPath)
 
 
-def _extractISOProcessor(source, outPath):
+def _extractISOProcessor(source:Union[str, bytes, os.PathLike], outPath:Union[str, bytes, os.PathLike])->str:
     """
     Extracts ISO
 
@@ -216,7 +218,7 @@ def _extractISOProcessor(source, outPath):
     return search(outPath, "STREAM", dir=True)[0]
 
 
-def _ISOBinaryExtractHelper(source, outPath):
+def _ISOBinaryExtractHelper(source:Union[str, bytes, os.PathLike], outPath:Union[str, bytes, os.PathLike])->None:
     """
     Uses 7z to extract ISO
 
@@ -235,7 +237,7 @@ def _ISOBinaryExtractHelper(source, outPath):
             raise Exception("7z Extraction Error")
 
 
-def _udevilExtractHelper(source, outPath):
+def _udevilExtractHelper(source:Union[str, bytes, os.PathLike], outPath:Union[str, bytes, os.PathLike])->None:
     """
     Uses udevil to extract ISO
 
@@ -258,7 +260,7 @@ def _udevilExtractHelper(source, outPath):
         ["udevil", "umount", mountpoint], subprocess.PIPE)
 
 
-def convertPathType(folder, type):
+def convertPathType(folder:Union[str, bytes, os.PathLike], type:str)->str:
     """
     convert path type to Windows or Unix Type Paths
 
@@ -275,7 +277,7 @@ def convertPathType(folder, type):
         return str(pathlib.PureWindowsPath(folder))
 
 
-def switchPathType(folder):
+def switchPathType(folder:Union[str, bytes, os.PathLike])->str:
     """
     Queries current system as Windows or Linux
     Switches to other system type
@@ -290,7 +292,7 @@ def switchPathType(folder):
     return convertPathType(folder, "Linux")
 
 
-def listdir(path="."):
+def listdir(path:Union[str, bytes, os.PathLike]=".")->List[str]:
     """
     list directories 
     modified to use natural sorting, and to use linux type paths
@@ -314,7 +316,7 @@ def listdir(path="."):
     return []
 
 
-def copytree(source, dest):
+def copytree(source:Union[str, bytes, os.PathLike], dest:Union[str, bytes, os.PathLike])->None:
     """
     Function to copy one directory to path
 
@@ -325,7 +327,7 @@ def copytree(source, dest):
     shutil.copytree(source, dest, dirs_exist_ok=True)
 
 
-def move(source, dest):
+def move(source:Union[str, bytes, os.PathLike], dest:Union[str, bytes, os.PathLike])->None:
     """
     Function to move one directory to path
 
@@ -336,7 +338,7 @@ def move(source, dest):
     shutil.move(source, dest)
 
 
-def getParentDir(path, level=0):
+def getParentDir(path:Union[str, bytes, os.PathLike], level:int=0)->str:
     """
     Function to move up directory tree by level height
     level 0 is direct parent
@@ -352,5 +354,5 @@ def getParentDir(path, level=0):
     if level >= len(parents):
         return
     return str(parents[level])
-def rmDir(path):
+def rmDir(path:Union[str, bytes, os.PathLike])->None:
     shutil.rmtree(path)

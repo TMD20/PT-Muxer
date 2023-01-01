@@ -2,9 +2,11 @@ import shutil
 
 import config as config
 import src.tools.general as utils
+from typing import List
 
 
-def bdSup2Sub():
+
+def bdSup2Sub()->List[str]:
     """
     generates a command array for subprocess module to run bdsup2sub 
     based on current OS
@@ -18,7 +20,7 @@ def bdSup2Sub():
         return [config.bdSupWindows]
 
 
-def eac3to():
+def eac3to()->List[str]:
     """
     generates a command array for subprocess module to run eac3to
     based on current OS
@@ -34,7 +36,7 @@ def eac3to():
         return [config.eac3toPath]
 
 
-def bdinfo():
+def bdinfo()->List[str]:
     """
     generates a command array for subprocess module to run bdinfo
     based on current OS
@@ -50,7 +52,7 @@ def bdinfo():
         return [config.bdinfoWindowsPath]
 
 
-def mkvmerge():
+def mkvmerge()->List[str]:
     """
     generates a command array for subprocess module to run mkvmerge
     based on current OS
@@ -64,7 +66,7 @@ def mkvmerge():
         return [config.mkvMergeWindows]
 
 
-def isoBinary():
+def isoBinary()->List[str]:
     """
     generates a command array for subprocess module to run iso programs
     based on current OS
@@ -78,7 +80,7 @@ def isoBinary():
         return [config.isoExtractWindows]
 
 
-def dgdemux():
+def dgdemux()->List[str]:
     """
     generates a command array for subprocess module to run dgdemux
     based on current OS
@@ -92,7 +94,7 @@ def dgdemux():
         return [config.dgDemuxWindow]
 
 
-def suprip():
+def suprip()->List[str]:
     """
     generates a command array for subprocess module to run suprip
     based on current OS

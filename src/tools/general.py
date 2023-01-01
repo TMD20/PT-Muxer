@@ -4,9 +4,10 @@ import functools
 import pathlib
 import sys
 import textwrap
-import shutil
 import sys
 import unicodedata
+from typing import Any,List,Union
+
 
 
 from InquirerPy import inquirer
@@ -16,7 +17,7 @@ from guessit import guessit
 import src.tools.paths as paths
 
 
-def convertArrow(input, parse=None):
+def convertArrow(input:str, parse:str=None)->arrow:
     """
     converts time string into arrow object
 
@@ -31,7 +32,7 @@ def convertArrow(input, parse=None):
         return arrow.get(input, parse)
     return arrow.get(input)
 
-def subArrowTime(large, small):
+def subArrowTime(large:arrow, small:arrow)->arrow:
     """
     subtracts smaller arrow obj time from larger (epoch time)
 
@@ -49,7 +50,7 @@ def subArrowTime(large, small):
     return large
 
 
-def addArrowTime(value, value2):
+def addArrowTime(value:arrow, value2:arrow)->arrow:
     """
     adds two arrow objects (epoch time)
 
@@ -67,7 +68,7 @@ def addArrowTime(value, value2):
     return value
 
 
-def dehumanizeArrow(input):
+def dehumanizeArrow(input:str)->arrow:
     """
     attempts to convert humanize string into arrow object
     i.e 1hour to arrow object
@@ -80,7 +81,7 @@ def dehumanizeArrow(input):
     """
     now = arrow.utcnow()
     return now.dehumanize(input)
-def getFormated(format,time=None):
+def getFormated(format:str,time:Union[str,None]=None)->str:
     """
     Uses arrow to output time string using format as template
     if None time is set to current
@@ -100,7 +101,7 @@ def getFormated(format,time=None):
         
 
 
-def sourcetoShowName(path):
+def sourcetoShowName(path:Union[str, bytes, os.PathLike])->str:
     """
     Performs a base name operation on apth
 
@@ -121,7 +122,7 @@ def sourcetoShowName(path):
     return show
 
 
-def requiredClassAttribute(*required):
+def requiredClassAttribute(*required:Union[List[any],any])->function:
     """
     Helper wrapper function for classes to require certain attributes be set before wrapped function can run
 
@@ -144,7 +145,7 @@ def requiredClassAttribute(*required):
     return requiredAttributeHelper
 
 
-def removeDupesList(list):
+def removeDupesList(list:List[str])->List[str]:
     """
     Function to remove dupes from list
 
@@ -163,7 +164,7 @@ def removeDupesList(list):
     return res
 
 
-def getIntInput(string, maxVal=float("inf")):
+def getIntInput(string:str, maxVal:int=float("inf"))->int:
     """
     prompts user for an int input
 
@@ -182,7 +183,7 @@ def getIntInput(string, maxVal=float("inf")):
     ).execute())
 
 
-def singleSelectMenu(items, message,default=None):
+def singleSelectMenu(items:List[Any], message:str,default:Any=None)->Any:
     """
     Prompts use to select one option from list
 
@@ -197,7 +198,7 @@ def singleSelectMenu(items, message,default=None):
     return inquirer.select(mandatory=True, message=textwrap.dedent(f"\n{message}\n"), choices=items,default=default).execute()
 
 
-def multiSelectMenu(items, message):
+def multiSelectMenu(items:List[Any], message:str)->List[Any]:
     """
     Prompts use to select one or more options from list
 
@@ -217,7 +218,7 @@ def multiSelectMenu(items, message):
     return inquirer.checkbox(validate=lambda x: len(x) > 0, invalid_message="Must Select at Least One item", mandatory=True, message=textwrap.dedent(f"\n{message}\n{instructions}\n"), choices=items).execute()
 
 
-def textEnter(message, default=None):
+def textEnter(message:str, default:Union[str,None]=None)->str:
     """
     Prompts user to enter str
 
@@ -233,7 +234,7 @@ def textEnter(message, default=None):
     return inquirer.text(mandatory=True, validate=lambda x: len(x) > 0, invalid_message="Input can not be empty", message=textwrap.dedent(f"\n{message}\n")).execute()
 
 
-def getTitle(source):
+def getTitle(source:Union[str, bytes, os.PathLike])->str:
     """
     Helper function to propagate up directory tree to find  directory with title from source directory
 
@@ -252,7 +253,7 @@ def getTitle(source):
     return guessit(parent)["title"]
 
 
-def cleanString(val):
+def cleanString(val:str)->str:
     """
     Helper function to  perform normalization on unicode
 
@@ -266,7 +267,7 @@ def cleanString(val):
     return clean_text
 
 
-def smart_truncate(content, length=100, suffix='...'):
+def smart_truncate(content:str, length:int=100, suffix:str='...')->str:
     """
     Trunicates long str with suffix
 
@@ -285,7 +286,7 @@ def smart_truncate(content, length=100, suffix='...'):
 
 
 
-def getSystem():
+def getSystem()->str:
     """
     Function to get current OS
 
@@ -296,7 +297,7 @@ def getSystem():
         return "Linux"
     else:
         return "Windows"
-def getShell():
+def getShell()->str:
     """
     Function to get system shell 
 

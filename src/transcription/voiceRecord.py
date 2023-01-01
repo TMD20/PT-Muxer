@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 from pathlib import Path
+import os
 import traceback
+from typing import Any,List,Union
 
 import src.transcription.transcriper as transcriberClass
 import src.tools.logger as logger
 import config as config
 
 
-def main(tracks, maxLines=None, langs=None, model=None, model_name=None):
+def main(tracks:List[dict], maxLines:int=None, langs:str=None, model:Union[str, bytes, os.PathLike]=None, model_name:str=None):
     """
     Uses transcriper to add transcription to tracks dictionary 
     optionally

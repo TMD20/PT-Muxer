@@ -1,6 +1,5 @@
 import argparse
 import os
-import typing
 
 
 def setParser()->argparse.Namespace:

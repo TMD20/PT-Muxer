@@ -14,7 +14,7 @@ import src.tools.directory as dirs
 import src.tools.logger as logger
 
 
-def javaInstallCheck():
+def javaInstallCheck()->bool:
     """
     Function to install java if needed
     method based on OS
@@ -59,7 +59,7 @@ def javaInstallCheck():
     return True
 
 
-def contyInstallCheckWine():
+def contyInstallCheckWine()->function:
     """
     Function to install conty if needed
     """
@@ -73,7 +73,7 @@ def contyInstallCheckWine():
     return contyInstaller()
 
 
-def contyInstallCheckMono():
+def contyInstallCheckMono()->function:
     """
     Function to install conty if needed
     """
@@ -87,7 +87,7 @@ def contyInstallCheckMono():
     return contyInstaller()
 
 
-def contyInstaller():
+def contyInstaller()->bool:
     """
     Walk-through function to install conty if prompted
     """
@@ -128,7 +128,7 @@ def contyInstaller():
     return True
 
 
-def contyChmod():
+def contyChmod()->None:
     """
     Helper function to change enviromental variables for conty
     """
