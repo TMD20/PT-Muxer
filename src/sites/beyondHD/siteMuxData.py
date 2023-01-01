@@ -1,6 +1,10 @@
+from __future__ import annotations 
+from typing import TYPE_CHECKING, List,Union
+
 from src.sites.base.siteMuxData import MuxOBj
 import src.mediatools.mkvtoolnix as mkvTool
-
+if TYPE_CHECKING:
+    import os
 
 class BeyondHD(MuxOBj):
     """
@@ -10,10 +14,10 @@ class BeyondHD(MuxOBj):
     Args:
         MuxOBj (class): This is the base class for all remux classes
     """
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
 
-    def getFileName(self, remuxConfig, group, title, episodeTitle=None):
+    def getFileName(self, remuxConfig:List[dict], group:str, title:Union[str, bytes, os.PathLike], episodeTitle:Union[Union[str, bytes, os.PathLike],None]=None)->str:
         episodeTitle = episodeTitle or self._placeholder
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
@@ -41,7 +45,7 @@ class BeyondHD(MuxOBj):
            
         
     
-    def getTVDir(self, remuxConfig, group, title):
+    def getTVDir(self, remuxConfig:List[dict], group:str, title:str)->str:
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(

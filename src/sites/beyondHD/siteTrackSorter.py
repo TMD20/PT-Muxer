@@ -9,7 +9,7 @@ class BeyondHD(siteTrackSorter):
     Args:
         siteTrackSorter (class): The base track sorter class
     """ 
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
    
     
