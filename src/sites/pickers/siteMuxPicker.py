@@ -1,10 +1,12 @@
+from typing import Union
+
 import src.sites.base.siteMuxData as base
 import src.sites.beyondHD.siteMuxData as beyondHD
 import src.sites.blu.siteMuxData as blu
 import src.sites.animebytes.siteMuxData as anime
 
 
-def pickSite(site=None):
+def pickSite(site:Union[str,None]=None)->base.MuxOBj:
     """
     This is a helper function to output a object pass on the site passed as an argumented
 

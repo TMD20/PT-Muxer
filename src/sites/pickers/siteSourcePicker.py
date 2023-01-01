@@ -1,10 +1,12 @@
+from typing import Union
+
 import src.sites.base.siteSourceData as base
 import src.sites.beyondHD.siteSourceData as beyondHD
 import src.sites.blu.siteSourceData as blu
 import src.sites.animebytes.siteSourceData as anime
 
 
-def pickSite(site):
+def pickSite(site:Union[str,None]=None)->base.siteSourceData:
     """
     This is a helper function to output a object pass on the site passed as an argumented
     Args:

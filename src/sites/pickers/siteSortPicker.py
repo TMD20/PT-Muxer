@@ -1,10 +1,12 @@
+from typing import Union
+
 import src.sites.base.siteTrackSorter as base
 import src.sites.beyondHD.siteTrackSorter as beyondHD
 import src.sites.blu.siteTrackSorter as blu
 import src.sites.animebytes.siteTrackSorter as anime
 
 
-def pickSite(site=None):
+def pickSite(site:Union[str,None]=None)->base.siteTrackSorter:
     """
     This is a helper function to output a object pass on the site passed as an argumented
 
