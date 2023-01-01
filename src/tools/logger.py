@@ -42,6 +42,7 @@ def handleLogMessage(message:str, markup:str=True,style:str="bold green",**kwarg
     markdown=Markdown(message,style=style)
     with console.capture() as capture:
         console.print(markdown)
+
     return capture.get()
         
 def loggingRevamp(function,style:str=None)->function:

@@ -6,7 +6,7 @@ import sys
 import textwrap
 import sys
 import unicodedata
-from typing import Any,List,Union
+from typing import Any,List,Union,Callable
 
 
 
@@ -122,7 +122,7 @@ def sourcetoShowName(path:Union[str, bytes, os.PathLike])->str:
     return show
 
 
-def requiredClassAttribute(*required:Union[List[any],any])->function:
+def requiredClassAttribute(*required:Union[List[any],any])-> Callable[..., Any]:
     """
     Helper wrapper function for classes to require certain attributes be set before wrapped function can run
 

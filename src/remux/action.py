@@ -11,6 +11,10 @@ import src.tools.logger as logger
 
 
 def endProcess():
+    """
+    Cleans up the system before program exits 
+    During Remuxing
+    """
     if remuxObj != None and remuxObj.success == True:
         logger.print("Remuxing Complete")
         paths.deleteTempDirs()
@@ -19,7 +23,11 @@ def endProcess():
 
 
 def remux(args):
-    # Help user out delete all temp directories
+    """
+    This runner uses remuxClass to remux
+    Args:
+        args (argparse.ArgumentParser): Arguments pass via the commandline
+    """
     paths.deleteTempDirs()
     global remuxObj
     remuxObj = None

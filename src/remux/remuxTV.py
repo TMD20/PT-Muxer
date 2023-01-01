@@ -2,6 +2,9 @@ import os
 import re
 from string import Template
 import traceback
+from typing import Union,List
+
+
 
 import orjson
 
@@ -15,12 +18,22 @@ import src.mediadata.movieData as movieData
 
 
 class Remux(Remux):
-    def __init__(self, args):
+    """
+    Remux Class for TV Remux
+    Extension of base Remux class
+
+    Args:
+        Remux (class): base Remux Class
+    """
+    def __init__(self, args)->None:
         super().__init__(args)
         self._movieObj = movieData.MovieData("TV")
         self._fileNames = []
 
-    def _callFunction(self):
+    def _callFunction(self)->None:
+        """
+        Function used by internal __call__ function
+        """
         jsons = paths.search(self._getRemuxConfig(),
                              "output.json", recursive=True)
         jsonsFiltered = self._getFilteredJSONs(jsons)
@@ -47,7 +60,13 @@ class Remux(Remux):
             self._fileName = fileName
             self._processRemux()
 
-    def _getRemuxFolders(self):
+    def _getRemuxFolders(self)->None:
+        """
+        Retrives demux folders from demux TV Mode
+
+        Returns:
+            array: an array of filepaths to demux folders
+        """
         folders = paths.search(
             self._args.inpath, f"/{config.demuxPrefix}[.]", dir=True, recursive=False)
         folders = list(filter(lambda x: os.path.isdir(x), folders))
@@ -56,65 +75,48 @@ class Remux(Remux):
             "^[0-9]+$", os.listdir(x)[0]) != None, folders))
         return folders
 
-    def _getRemuxConfig(self):
+    def _getRemuxConfig(self)->None:
+        """
+        Returns user selected demuxFolder
+
+        Raises:
+            RuntimeError: Error if no folders to pick from
+        Returns:
+            str: user selected demuxFolder
+        """
         folders = self._getRemuxFolders()
         if len(folders) == 0:
             raise RuntimeError(
                 "You need to demux a folder with Movie Mode first")
         return utils.singleSelectMenu(folders, "Pick the folder with the files you want to remux")
 
-    def _remuxConfigHelper(self, remuxConfigPath):
+    def _remuxConfigHelper(self, remuxConfigPath:Union[str, bytes, os.PathLike]=None)->None:
+        """
+        converts remuxConfig json into python dict
+        Retrives fullpaths to file pased on remuxConfig json location
+
+
+        Args:
+            remuxConfigPath (str): path to remuxConfig Json
+        """
         with open(remuxConfigPath, "r") as p:
             self._remuxConfig = orjson.loads(p.read())
         logger.logger.debug(f"Remux Config: {self._remuxConfig}")
         self._getFullPaths()
 
-    def _writeXML(self):
+    
 
-        imdb = self._remuxConfig["Movie"]["imdb"]
-        tmdb = self._remuxConfig["Movie"]["tmdb"]
-        season = self._remuxConfig["Movie"]["season"]
-        episode = self._remuxConfig["Movie"]["episode"]
-        year = self._getYear()
-        title = self._getTitle()
-        epIMDB = self._movieObj.retriveEpisodeIMDB(
-            imdb, tmdb, season, episode, title, year)
-        epCount = self._movieObj.retriveNumberofEpisodes(
-            season,  title, year, tmdb)
+    
 
-        tempData = paths.createTempDir()
-        infile = os.path.join(config.root_dir,  f"xml/tv")
-        xmlPath = os.path.join(tempData, "xml.txt")
-        with open(infile, 'r') as f:
-            src = Template(f.read())
-            result = src.substitute(
-                {"imdb": imdb, "tmdb": tmdb, "imdbEP": epIMDB, "totalEP": epCount, "season": season, "episode": episode})
-        with open(xmlPath, "w") as p:
-            p.writelines(result)
-        return xmlPath
 
-    def _getfilename(self):
-        with dir.cwd(self._args.outpath):
-            title = self._getTitle()
-            year = self._remuxConfig['Movie']['year']
-            season = self._remuxConfig["Movie"]["season"]
-            episode = self._remuxConfig["Movie"]["episode"]
-            tmdb = self._remuxConfig["Movie"]["tmdb"]
-            if not self._args.special:
-                with dir.cwd(os.path.join(".", self._muxGenerator.getTVDir(self._remuxConfig, self._args.group, title))):
-                    self._movieObj.type = self._remuxConfig['Movie']["type"]
-                    episodeTitle = None
-                    if self._args.episodetitle:
-                        episodeTitle = self._movieObj.retriveEpisodeTitle(
-                            season, episode, title, year, tmdb)
-                    return os.path.abspath(self._muxGenerator.getFileName(self._remuxConfig, self._args.group, title, episodeTitle))
-            else:
-                return os.path.abspath(self._muxGenerator.getFileName(self._remuxConfig, self._args.group, title, episodeTitle=f"Special.{episode}"))
-
-    def _getJapTitle(self, json):
-        return self._remuxConfig['Movie'].get('japTitle')
-
-    def _getFilteredJSONs(self, jsons):
+    def _getFilteredJSONs(self, jsons:List[Union[str, bytes, os.PathLike]])->List[str]:
+        """
+        Filters jsons based on user input
+        Args:
+            json (array):an array of paths to json
+        Returns
+            array: returns filtered array of jsons
+        """
         msg =\
             """
         Confirm Which JSON(s) You would like to process remux(s) for

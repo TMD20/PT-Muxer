@@ -2,6 +2,7 @@ import os
 import tarfile
 import requests
 import stat
+from typing import Callable
 
 from rich.progress import track
 from tqdm import tqdm
@@ -59,7 +60,7 @@ def javaInstallCheck()->bool:
     return True
 
 
-def contyInstallCheckWine()->function:
+def contyInstallCheckWine()-> Callable[..., bool]:
     """
     Function to install conty if needed
     """
@@ -73,7 +74,7 @@ def contyInstallCheckWine()->function:
     return contyInstaller()
 
 
-def contyInstallCheckMono()->function:
+def contyInstallCheckMono()->Callable[..., bool]:
     """
     Function to install conty if needed
     """
