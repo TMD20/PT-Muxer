@@ -3,7 +3,7 @@ import src.args as parseargs
 import src.demux.action as demuxAction
 import src.remux.action as remuxAction
 
-def main():
+def main()->None:
     args = parseargs.setParser()
     if args.command=="demux":
         demuxAction.demux(args)

@@ -3,7 +3,7 @@ import os
 import typing
 
 
-def setParser():
+def setParser()->argparse.Namespace:
     """
     Parse commandline args with argparse
     returns argparse.ArgumentParse object
