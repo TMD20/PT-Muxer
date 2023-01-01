@@ -2,6 +2,8 @@ import itertools
 import re
 import os
 import subprocess
+from typing import  List,Union
+
 
 import langcodes
 from pymediainfo import MediaInfo
@@ -16,7 +18,7 @@ import src.tools.paths as paths
 
 
 class MuxOBj():
-    def __init__(self):
+    def __init__(self)->None:
         self._audio = []
         self._video = []
         self._sub = []
@@ -24,7 +26,7 @@ class MuxOBj():
         self._outputargs = []
         self._placeholder="PlaceHolderTitleRemux"
 
-    def generateMuxData(self, remuxConfig, outargs):
+    def generateMuxData(self, remuxConfig:dict, outargs:List[str])->None:
         self._addAudioTracks(remuxConfig)
         self._addVideoTracks(remuxConfig)
         self._addSubTracks(remuxConfig)
@@ -33,10 +35,10 @@ class MuxOBj():
             [self._video, self._audio, self._sub, self._outputargs]))
 
     @property
-    def out(self):
+    def out(self)->List[str]:
         return self._out
 
-    def _addVideoTracks(self, remuxConfig):
+    def _addVideoTracks(self, remuxConfig:dict)->None:
         out = []
         langcode = None
         try:
@@ -64,7 +66,7 @@ class MuxOBj():
             out.append(temp)
         self._video = list(itertools.chain.from_iterable(out))
 
-    def _addAudioTracks(self, remuxConfig):
+    def _addAudioTracks(self, remuxConfig:dict)->None:
         out = []
         for i in range(len(remuxConfig["Enabled_Tracks"]["Audio"])):
             key = remuxConfig["Enabled_Tracks"]["Audio"][i]
@@ -101,7 +103,7 @@ class MuxOBj():
             out.append(temp)
         self._audio = list(itertools.chain.from_iterable(out))
 
-    def _addSubTracks(self, remuxConfig):
+    def _addSubTracks(self, remuxConfig:dict)->None:
         out = []
         for i in range(len(remuxConfig["Enabled_Tracks"]["Sub"])):
             key = remuxConfig["Enabled_Tracks"]["Sub"][i]
@@ -145,7 +147,7 @@ class MuxOBj():
         self._sub = (list(itertools.chain.from_iterable(out)))
 
     def getFileName(self,
-                    remuxConfig, group,title, episodeTitle=None):
+                    remuxConfig:dict, group:str,title:str, episodeTitle:Union[str,None]=None)->str:
         episodeTitle=episodeTitle or self._placeholder
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
@@ -171,7 +173,7 @@ class MuxOBj():
             return self._fileNameCleaner(fileName)
 
 
-    def _fileNameCleaner(self, fileName):
+    def _fileNameCleaner(self, fileName:str)->str:
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
         fileName = re.sub("\.+", ".", fileName)
@@ -184,10 +186,10 @@ class MuxOBj():
             fileName = Noquotes.group(0)
         return fileName
 
-    def _addOutPutArgs(self, outargs):
+    def _addOutPutArgs(self, outargs:str)->List[str]:
         self._outputargs = outargs.split()
 
-    def createMKV(self, fileName, movieTitle, chapters, xml,  bdinfo, eac3to):
+    def createMKV(self, fileName:str, movieTitle:str, chapters:Union[str, bytes, os.PathLike], xml:Union[str, bytes, os.PathLike],  bdinfo:Union[Union[str, bytes, os.PathLike],None]=None, eac3to:Union[Union[str, bytes, os.PathLike],None]=None)->None:
         if os.path.exists(fileName):
             os.remove(fileName)
         command = list(itertools.chain.from_iterable(
@@ -202,7 +204,7 @@ class MuxOBj():
             for line in p.stdout:
                 print(line, end='')
 
-    def getTVDir(self, remuxConfig, group, title):
+    def getTVDir(self, remuxConfig:dict, group:str, title:str)->str:
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -222,7 +224,7 @@ class MuxOBj():
         # Normalize FileName
         return self._fileNameCleaner(fileName)
 
-    def _getMovieDir(self, remuxConfig, group, title, year):
+    def _getMovieDir(self, remuxConfig:dict, group:str, title:str, year:int)->str:
         videoCodec = mkvTool.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
         mediaType = mkvTool.getMediaType(
@@ -240,7 +242,7 @@ class MuxOBj():
         # Normalize FileName
         return self._fileNameCleaner(fileName)
 
-    def confirmName(self, fileName):
+    def confirmName(self, fileName:str)->str:
         inputs = ["YES", "NO"]
         choice = utils.singleSelectMenu(
             inputs, f"Is this FilePath Correct: {fileName}\n")
@@ -251,6 +253,6 @@ class MuxOBj():
                 inputs, "Is the File Correct Now\n")
         return fileName
 
-    def printMediaInfo(self, fileName):
+    def printMediaInfo(self, fileName:str)->None:
         with dir.cwd(paths.createTempDir()):
             print(MediaInfo.parse(fileName, output="", full=False))

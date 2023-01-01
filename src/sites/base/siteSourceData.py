@@ -1,12 +1,19 @@
+from __future__ import annotations 
+
 import re
+from typing import TYPE_CHECKING, List,Union
+
 
 from src.mediadata.sourceData import sourceData
 import src.tools.general as utils
+if TYPE_CHECKING:
+    import mediatools.bdinfo as bdinfo
+    import mediadata.trackObj as trackObj
 
 
 
 class siteSourceData(sourceData):
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
 
 
@@ -24,7 +31,7 @@ class siteSourceData(sourceData):
 
 
 
-    def addTracks(self,bdinfo,playlistNum,streams=None):
+    def addTracks(self,bdinfo:bdinfo.Bdinfo,playlistNum:int,streams:Union[List[dict],None]=None)->List[trackObj.TrackObJ]:
         bdObjDict=bdinfo.Dict[playlistNum]
         if streams==None:
             streams=bdObjDict["playlistStreams"]
@@ -42,7 +49,7 @@ class siteSourceData(sourceData):
     #  This Function will convert certain lossless Tracks to flac
     ########################################################################
 
-    def convertFlac(self):
+    def convertFlac(self)->None:
         current_tracks=self.tracks
         for i in range(len(current_tracks)):
             track = current_tracks[i]
@@ -67,10 +74,10 @@ class siteSourceData(sourceData):
     ################################################################################################################
 
     @property
-    def source(self):
+    def source(self)->str:
         return self.get("source")
     @property 
-    def showname(self):
+    def showname(self)->Union[str,None]:
         if self.get("source"):
             return utils.sourcetoShowName(self.get("source"))
         return
@@ -83,7 +90,7 @@ class siteSourceData(sourceData):
     #       These Functions add Addition Data to Tracks Obj
     ################################################################################################################
 
-    def _updateTrackDictNames(self):
+    def _updateTrackDictNames(self)->None:
         tracks=self.tracks
         for track in tracks:
             type = track["type"]
@@ -99,7 +106,7 @@ class siteSourceData(sourceData):
                 track["site_title"] = self._getSubName(bdinfo)
 
    
-    def _updateTrackDictFileNames(self):
+    def _updateTrackDictFileNames(self)->None:
         tracks=self.tracks
         for track in tracks:
             type = track["type"]
@@ -124,16 +131,16 @@ class siteSourceData(sourceData):
     #       Like Sorting Functions These May have to be overwritten based on Specific Site Rules
     ################################################################################################################
 
-    def _getAudioName(self, bdinfo, compat, parent):
+    def _getAudioName(self, bdinfo:str, compat:bool, parent:str)->str:
         if compat:
             return self._getCompatTrack(bdinfo, parent)
         else:
             return self._getNormalTrack(bdinfo)
 
-    def _getSubName(self, bdinfo):
+    def _getSubName(self, bdinfo:str)->None:
         return
 
-    def _getVideoName(self, bdinfo):
+    def _getVideoName(self, bdinfo:str)->None:
         codec = re.search(".*?(?= /)", bdinfo).group(0)
         other = re.search("(?<=/ )[0-9].*", bdinfo).group(0)
         return re.sub(" +", " ", f"{codec} / {other}")
@@ -141,7 +148,7 @@ class siteSourceData(sourceData):
   #     Track Name Helpers
   ################################################################################################################
 
-    def _getCompatTrack(self, bdinfo, parent):
+    def _getCompatTrack(self, bdinfo:str, parent:str)->str:
         bdinfo = bdinfo.rstrip().lstrip()
         bdinfo = re.sub("/ *", "/ ", bdinfo)
         site_title = None
@@ -159,7 +166,7 @@ class siteSourceData(sourceData):
 
         return re.sub(" +", " ", site_title).strip()
 
-    def _getNormalTrack(self, bdinfo):
+    def _getNormalTrack(self, bdinfo:str)->str:
         bdinfo = bdinfo.strip()
         site_title = None
 
