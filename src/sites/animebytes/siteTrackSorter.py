@@ -1,4 +1,5 @@
 import os
+from typing import List
 
 from src.sites.base.siteTrackSorter import siteTrackSorter
 import src.tools.general as utils
@@ -11,9 +12,9 @@ class AnimeBytes(siteTrackSorter):
     Args:
         siteTrackSorter (class): The base track sorter class
     """
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
-    def addForcedSubs(self, movieLang, audioPref):
+    def addForcedSubs(self, movieLang:List[str], audioPref:List[str])->None:
         """
         This function sets forced subs by extracting or setting the flag on 
         a detected track
@@ -50,7 +51,7 @@ class AnimeBytes(siteTrackSorter):
 
 
 
-    def _getAudioPrefs(self, movieLang, audioPrefs):
+    def _getAudioPrefs(self, movieLang:List[str], audioPrefs:List[str])->List[str]:
         """
         Gets audio prefrence
         If no langauges are supply animebyes will return English and Japanese 
@@ -73,7 +74,7 @@ class AnimeBytes(siteTrackSorter):
 
     
     
-    def _sortAudio(self, audioTracks, audioLang, sortPref):
+    def _sortAudio(self, audioTracks:List[str], audioLang:List[str], sortPref:str)->None:
         """
         Function to sort audio tracks
         Preference is given to English and Japanese tracks

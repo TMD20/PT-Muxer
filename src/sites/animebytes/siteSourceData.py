@@ -9,7 +9,7 @@ class AnimeBytes(siteSourceData):
     Args:
         siteSourceData (class): base class for all siteSource classes
     """
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
 
 
