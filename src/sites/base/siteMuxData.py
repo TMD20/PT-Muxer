@@ -18,6 +18,9 @@ import src.tools.paths as paths
 
 
 class MuxOBj():
+    """
+    Base class for generating mkvmerge
+    """
     def __init__(self)->None:
         self._audio = []
         self._video = []
