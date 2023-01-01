@@ -1,9 +1,11 @@
- 
+from __future__ import annotations 
 import queue
 import itertools
 import concurrent
 import concurrent.futures
 import traceback
+from typing import Union,TYPE_CHECKING,List
+
 
 
 from PIL import Image
@@ -11,6 +13,10 @@ import langcodes
 from timeit import default_timer as timer
 
 import src.tools.logger as logger
+if TYPE_CHECKING:
+    import os
+
+
 
 try:
     import tesserocr
@@ -47,7 +53,7 @@ easyOCRBool=easyocr!=None
 tesseOCRBool=tesserocr!=None
 
 
-def perform_ocr(img):
+def perform_ocr(img:Union[str, bytes, os.PathLike])->None:
     """
     Based on ocr object in thread queue performs action
     Args:
@@ -83,7 +89,7 @@ def perform_ocr(img):
     
  
  
-def subocr(files,langcode):
+def subocr(files:List[Union[str, bytes, os.PathLike]],langcode:str)->List[str]:
     """
     Generates threads for files from subtitle images
     performs ocr on said images
@@ -112,7 +118,17 @@ def subocr(files,langcode):
     elapsed = timer() - start_time
     logger.logger.info(f"Execution Time {elapsed } seconds")
     return list(itertools.chain.from_iterable(output))
-def getocr_obj(langcode):
+def getocr_obj(langcode:str)->object:
+    """
+    Returns ocr object based on succesful imports 
+    and language compatiblility 
+
+    Args:
+        langcode (str): langcode to use when init ocr object
+
+    Returns:
+        object: ocr object to perform action with
+    """
     if not easyOCRBool and tesseOCRBool:
         logger.print("No OCR Engine Installed")
     elif easyOCRBool==True and langcode in easyocr.config.all_lang_list:

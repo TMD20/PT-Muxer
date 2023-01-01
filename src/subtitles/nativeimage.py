@@ -1,5 +1,7 @@
 import os
 import traceback
+from typing import Union
+
 
 import src.tools.logger as logger
 import src.tools.directory as dir
@@ -39,7 +41,7 @@ except Exception as E:
 BDSUPBool= (BDSup!=None)
 PGSBool=(imagemaker!=None and PGSReader!=None)
 
-def PGSFunc(supFile):
+def PGSFunc(supFile:Union[str, bytes, os.PathLike])->None:
     """
     Uses 
     https://github.com/EzraBC/pgsreader
@@ -73,7 +75,7 @@ def PGSFunc(supFile):
 
 
 
-def BDSupFunc(supFile):
+def BDSupFunc(supFile:Union[str, bytes, os.PathLike])->None:
     """
     Uses 
     https://github.com/Sec-ant/BDSupReader
@@ -106,7 +108,7 @@ def BDSupFunc(supFile):
 
 
 
-def getSubImages(supFile):
+def getSubImages(supFile:Union[str, bytes, os.PathLike])->str:
     """
     Attempts to process try excepts supFile with up to two processor 
     in cases where one processor errors out

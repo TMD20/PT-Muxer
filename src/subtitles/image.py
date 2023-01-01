@@ -3,6 +3,8 @@ import subprocess
 import os
 import shutil
 import itertools
+from typing import List,Union
+
 
 import src.tools.install as install
 import src.tools.directory as dir
@@ -10,7 +12,7 @@ import src.subtitles.nativeimage as nativeimage
 import src.tools.commands as commands
 
 
-def supRipSaver(supFile, outputDir):
+def supRipSaver(supFile:Union[str, bytes, os.PathLike], outputDir:Union[str, bytes, os.PathLike])->None:
     """
     Uses bdsup2sub to generate subtitle images to ouput dir
 
@@ -28,7 +30,7 @@ def supRipSaver(supFile, outputDir):
 
 
 
-def getSubImages(supFile):
+def getSubImages(supFile:Union[str, bytes, os.PathLike])->str:
     """
     Checks if bdsup2sup can process sup file 
     else uses native suptitle ripers to try to process
