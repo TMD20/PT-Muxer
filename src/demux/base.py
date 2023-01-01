@@ -1,3 +1,4 @@
+from __future__ import annotations 
 import os
 import re
 import orjson
@@ -19,9 +20,13 @@ import src.subtitles.subreader as subreader
 import src.transcription.voiceRecord as voiceRec
 import src.tools.directory as dir
 import src.tools.logger as logger
-import src.tools.typing as typinghint
 
 
+from typing import TYPE_CHECKING, List,Union
+if TYPE_CHECKING:
+    import argparse
+    import sites.base.siteSourceData as siteSourceData
+    import sites.base.siteTrackSorter as siteTrackSorter
 class Demux():
     """
     This is the base class for the demux Classes
@@ -29,7 +34,7 @@ class Demux():
     to be inherited by other class
     """
 
-    def __init__(self, args: typinghint.argparse.Namespace) -> None:
+    def __init__(self, args: argparse.Namespace) -> None:
         self._args = args
         self.demuxFolder = None
         self._name = None
@@ -63,7 +68,7 @@ class Demux():
         """
         return self._success
 
-    def demuxPlaylist(self, bdObjs: typinghint.bdArray, multiSelect: bool = False) -> None:
+    def demuxPlaylist(self, bdObjs: List[bdinfo.Bdinfo], multiSelect: bool = False) -> None:
         """
         Main Function for processes Demuxing of playlist
 
@@ -111,7 +116,7 @@ class Demux():
                 self._writeFinalJSON(
                     self._saveOutput(siteSourceObjs, muxSorter))
 
-    def _saveOutput(self, siteSourceObjs: typinghint.siteSourceDataArray, muxSorter: typinghint.siteTrackSorter) -> dict:
+    def _saveOutput(self, siteSourceObjs: List[siteSourceData.siteSourceData], muxSorter: siteTrackSorter.siteTrackSorter) -> dict:
         """
         Generates a dictionary filled with data from demuxing process
 
@@ -134,7 +139,7 @@ class Demux():
     # Helper Functions
     ############
 
-    def _getNewFolder(self, i: int = None) -> typinghint.filePath:
+    def _getNewFolder(self, i: int = None) -> str:
         """
         Generates parentfolder inside muxFolder 
         for each selected playlist/stream 
@@ -144,7 +149,7 @@ class Demux():
         """
         return os.path.join(self.demuxFolder)
 
-    def _addTrackData(self, muxSorter: typinghint.siteTrackSorter) -> dict:
+    def _addTrackData(self, muxSorter: siteTrackSorter.siteTrackSorter) -> dict:
         """
         Helper function for added details from each sources tracks parsed
         during the demux class
@@ -192,7 +197,7 @@ class Demux():
             data = orjson.dumps(outdict, option=orjson.OPT_INDENT_2)
             p.write(data)
 
-    def _getChapterMedia(self, siteSourceObjs: typinghint.siteSourceDataArray) -> typinghint.dictList:
+    def _getChapterMedia(self, siteSourceObjs:  List[siteSourceData.siteSourceData]) -> List[dict]:
         """
         Helper Function to get which source to use as the basis for generating chapter data
 
@@ -209,7 +214,7 @@ class Demux():
                 list(map(lambda x: x["sourceDir"], siteSourceObjs)), "Which Source Has The proper Chapter File")
         return list(filter(lambda x: x["sourceDir"] == match, siteSourceObjs))[0]["chapters"]
 
-    def _subParse(self, muxSorter: typinghint.siteTrackSorter) -> None:
+    def _subParse(self, muxSorter: siteTrackSorter.siteTrackSorter) -> None:
         """
         Takes the tracks from muxSorter obj, and applies OCR/Image Generation to certain subtitle tracks based on passed args
 
@@ -250,7 +255,7 @@ class Demux():
                     subreader.imagesOnly([track])
 
     # Voice Recorder
-    def _voiceRec(self, muxSorter: typinghint.siteTrackSorter) -> None:
+    def _voiceRec(self, muxSorter: siteTrackSorter.siteTrackSorter) -> None:
         """
         Takes the tracks from muxSorter obj, and applies OCR to certain audio tracks based on passed args
 
@@ -279,7 +284,7 @@ class Demux():
                 with dir.cwd(track["outputDir"]):
                     voiceRec.main([track], langs=langs)
 
-    def _getMuxSorter(self, siteSourceObjs: typinghint.siteSourceDataArray) -> typinghint.siteTrackSorter:
+    def _getMuxSorter(self, siteSourceObjs:  List[siteSourceData.siteSourceData]) -> siteTrackSorter.siteTrackSorter:
         """
         Creates and uses siteMuxSorter obj
         To flatten all tracks from multiple source into list by track types
@@ -301,7 +306,7 @@ class Demux():
             muxSorter.addForcedSubs(languages, self._args.audiolang)
         return muxSorter
 
-    def _addSourceData(self, siteSourceObjs: typinghint.siteSourceDataArray) -> dict:
+    def _addSourceData(self, siteSourceObjs:  List[siteSourceData.siteSourceData]) -> dict:
         """
         Generates a dictionary with data from sources
 
@@ -325,7 +330,7 @@ class Demux():
 
         return outdict
 
-    def _addEnabledData(self, muxSorter: typinghint.siteTrackSorter) -> dict:
+    def _addEnabledData(self, muxSorter: siteTrackSorter.siteTrackSorter) -> dict:
         """
         Finds the key from all enabled tracks and outputs that to list seperated by track type
 
@@ -346,7 +351,7 @@ class Demux():
             map(lambda x: x["key"], muxSorter.enabledSub))
         return outdict
 
-    def _ConvertChapterList(self, chapters: typinghint.dictList) -> dict:
+    def _ConvertChapterList(self, chapters: List[dict]) -> dict:
         """
         Takes chapter obj and modifies output
         into mkvmerge syntax
@@ -368,7 +373,7 @@ class Demux():
         outdict["Chapters"] = output
         return outdict
 
-    def _setBdInfoData(self) -> typinghint.bdArray:
+    def _setBdInfoData(self) -> List[bdinfo.Bdinfo]:
         """
         Creates bdObjs from selected sources
         Prompts User for playlist info, generates data from selected playlist
@@ -405,7 +410,7 @@ class Demux():
         logger.logger.debug(str(self._args))
     # Folder Stuff
 
-    def _getBDMVs(self, path: str) -> typinghint.filePathList:
+    def _getBDMVs(self, path: Union[str, bytes, os.PathLike]) -> List[str]:
         """
         Takes a input path and searches for all BDMVs, and ISO
 
@@ -422,7 +427,7 @@ class Demux():
                 map(lambda x: paths.convertPathType(x, "Linux"), list1))
             return natsort.natsorted(list1)
 
-    def _createParentDemuxFolder(self, sources: typinghint.strList, outpath: str) -> typinghint.filePath:
+    def _createParentDemuxFolder(self, sources: List[Union[str, bytes, os.PathLike]], outpath: Union[str, bytes, os.PathLike]) -> str:
         """
         Takes output folder from args, and generates a demuxfolder based on correct time, and first source selected
         This folder is the basis for all generated and saved outputs during the programs run.
@@ -446,7 +451,7 @@ class Demux():
             os.mkdir(parentDemux)
             return parentDemux
 
-    def _createChildDemuxFolder(self, parentDir: typinghint.filePath, show: str) -> typinghint.filePath:
+    def _createChildDemuxFolder(self, parentDir: Union[str, bytes, os.PathLike], show: str) -> str:
         """
         Takes a parent demux folder, generates a child folder base on the path to the source being passed
 

@@ -1,3 +1,4 @@
+from __future__ import annotations 
 import re
 import os
 
@@ -14,7 +15,13 @@ import src.mediatools.dgdemux as dgdemux
 import src.mediatools.eac3to as eac3to
 import config as config
 import src.tools.logger as logger
-import src.tools.typing as typinghint
+from typing import TYPE_CHECKING, List,Union
+if TYPE_CHECKING:
+    import argparse
+    import sites.base.siteSourceData as siteSourceData
+    import sites.base.siteTrackSorter as siteTrackSorter
+    import mediatools.bdinfo as bdinfo
+
 
 
 class Demux(Demux):
@@ -25,7 +32,7 @@ class Demux(Demux):
         Demux (class): demuxBase class
     """
 
-    def __init__(self, args: typinghint.argparse.Namespace) -> None:
+    def __init__(self, args: argparse.Namespace) -> None:
         super().__init__(args)
         self._name = "TV Shows"
         self._type = "TV"
@@ -55,7 +62,7 @@ class Demux(Demux):
             else:
                 self.demuxPlaylist(bdObjs, multiSelect=True)
 
-    def demuxSplitPlayList(self, bdObjs: typinghint.bdArray) -> None:
+    def demuxSplitPlayList(self, bdObjs: List[bdinfo.Bdinfo]) -> None:
         """
         Performs demuxing based on splitting playlist into individual streams
 
@@ -78,7 +85,7 @@ class Demux(Demux):
         else:
             self._dgdemuxSplitPlaylistHelper(bdObjs)
 
-    def _eac3toSplitPlaylistHelper(self, bdObjs: typinghint.bdArray):
+    def _eac3toSplitPlaylistHelper(self, bdObjs: List[bdinfo.Bdinfo]) -> None:
         """
         Helper Function to perform splitplaylist process with eac3to
 
@@ -128,7 +135,7 @@ class Demux(Demux):
                     self._writeFinalJSON(
                         self._saveOutput(siteSourceObjs, muxSorter))
 
-    def _dgdemuxSplitPlaylistHelper(self, bdObjs: typinghint.bdArray):
+    def _dgdemuxSplitPlaylistHelper(self, bdObjs: List[bdinfo.Bdinfo]) -> None:
         """
         Helper Function to perform splitplaylist process with dgdemux
 
@@ -191,7 +198,7 @@ class Demux(Demux):
                     self._writeFinalJSON(
                         self._saveOutput(siteSourceObjs, muxSorter))
 
-    def _saveOutput(self, siteSourceObjs: typinghint.siteSourceDataArray, muxSorter:typinghint.siteTrackSorter)->dict:
+    def _saveOutput(self, siteSourceObjs: List[siteSourceData.siteSourceData], muxSorter: siteTrackSorter.siteTrackSorter) -> dict:
         """
         Generates a dictionary filled with data from demuxing process
 
@@ -213,7 +220,7 @@ class Demux(Demux):
     # Helper Functions
     ####
 
-    def _getNewFolder(self, i:int)->typinghint.filePath:
+    def _getNewFolder(self, i: int) -> str:
         """
         Generates the next incremental folder inside parent demux folder based on number of sibling folders previosuly geneated
 
@@ -225,7 +232,7 @@ class Demux(Demux):
 
         return os.path.join(self.demuxFolder, str(i+1))
 
-    def _filterStreamMedia(self, demuxData, streamTracks):
+    def _filterStreamMedia(self, demuxData: siteSourceData.siteSourceData, streamTracks: List[dict]) -> None:
         """
         Helper Function to filter out tracks in demuxData. Tracks that appear in the parent playlist, but are not within a
         specicic stream
@@ -237,7 +244,7 @@ class Demux(Demux):
         self._audioTrackHelper(demuxData, streamTracks)
         self._subTrackHelper(demuxData, streamTracks)
 
-    def _audioTrackHelper(self, demuxData, streamTracks):
+    def _audioTrackHelper(self, demuxData: siteSourceData.siteSourceData, streamTracks: List[dict]) -> None:
         """
         Helper Function to help filter tracks for filterStreamTracks
         Args:
@@ -267,7 +274,7 @@ class Demux(Demux):
             if demuxData["tracks"].get(value["parentKey"]) == None:
                 demuxData["tracks"].pop(key)
 
-    def _videoTrackHelper(self, demuxData, streamTracks):
+    def _videoTrackHelper(self, demuxData: siteSourceData.siteSourceData, streamTracks: List[dict]) -> None:
         """
         Helper Function to help filter tracks for filterStreamTracks
         Args:
@@ -289,7 +296,7 @@ class Demux(Demux):
                 continue
             i = i+1
 
-    def _subTrackHelper(self, demuxData, streamTracks):
+    def _subTrackHelper(self, demuxData: siteSourceData.siteSourceData, streamTracks: List[dict]) -> None:
         """
         Helper Function to help filter tracks for filterStreamTracks
         Args:
@@ -311,7 +318,7 @@ class Demux(Demux):
                 continue
             i = i+1
 
-    def setSource(self):
+    def setSource(self) -> None:
         """
         Filters sources in input directories based on user selection
         """
@@ -319,7 +326,7 @@ class Demux(Demux):
         self.sources = self.getSources(
             options, self._args.inpath, self._args.sortpref)
 
-    def getSources(self, options, inpath, sortpref):
+    def getSources(self, options: List[Union[str, bytes, os.PathLike]], inpath: Union[str, bytes, os.PathLike], sortpref: str) -> List[str]:
         """
         Returns array of selected paths, based on user input
 
@@ -342,7 +349,7 @@ class Demux(Demux):
                 sources[i] = paths.extractISO(sources[i], inpath)
         return sources
 
-    def setDemuxFolderHelper(self, sources, outpath):
+    def setDemuxFolderHelper(self, sources: List[Union[str, bytes, os.PathLike]], outpath: Union[str, bytes, os.PathLike]) -> str:
         """
         Returns parent demux folder path based on source and outputpath
 
@@ -369,7 +376,7 @@ class Demux(Demux):
         else:
             return self._createParentDemuxFolder(sources, outpath)
 
-    def setDemuxFolder(self):
+    def setDemuxFolder(self) -> None:
         """
         Ensures outpath from args exists
 
@@ -380,7 +387,7 @@ class Demux(Demux):
             self.sources, self._args.outpath)
 
     # Select
-    def _addMultiSource(self, paths, sortpref):
+    def _addMultiSource(self, paths: List[Union[str, bytes, os.PathLike]], sortpref: str) -> List[str]:
         """
         Takes a list of source paths, and allows users to filter list based on input
 
@@ -432,7 +439,7 @@ class Demux(Demux):
             selection = utils.removeDupesList(selection)
             return selection
 
-    def _getTVMuxFolders(self, outpath):
+    def _getTVMuxFolders(self, outpath: Union[str, bytes, os.PathLike]) -> List[str]:
         """
         Helper Function to get demuxFolders from prior runs
 

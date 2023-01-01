@@ -1,6 +1,8 @@
 import os
+from typing import Any,List,Union
+
 class TrackObJ(dict):
-    def __init__(self):
+    def __init__(self)->None:
         super().__init__()
         self._allowedKeys={"filename","site_title","bdinfo_title",
         "type","index","compat","forced","default","lang","auditorydesc"
@@ -8,7 +10,7 @@ class TrackObJ(dict):
         "key","parent","child","sdh","sourceDir","sourceKey","outputDir","notes"
         ,"machine_parse_endlines","parentKey","childKey"}
     #prevent 
-    def __setitem__(self, key, value):
+    def __setitem__(self, key:str, value:Any)->str:
         """
         built in dict method 
         modified to only accept certain keys
@@ -21,7 +23,7 @@ class TrackObJ(dict):
             raise AttributeError(f"TrackObj does not accept {key}")
         super().__setitem__(key, value)
         
-    def getTrackLocation(self):
+    def getTrackLocation(self)->str:
         """
         Helper function to get the output for track given requried values set
         If values not set returns empty str
