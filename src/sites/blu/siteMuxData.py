@@ -21,10 +21,11 @@ class Blu(MuxOBj):
     Args:
         MuxOBj (class): This is the base class for all remux classes
     """
-    def __init__(self)->None:
+
+    def __init__(self) -> None:
         super().__init__()
 
-    def createMKV(self, fileName:Union[str, bytes, os.PathLike], movieTitle:str, chapters:Union[str, bytes, os.PathLike], xml:Union[str, bytes, os.PathLike],  bdinfo:Union[str, bytes, os.PathLike], eac3to:Union[str, bytes, os.PathLike])->None:
+    def createMKV(self, fileName: Union[str, bytes, os.PathLike], movieTitle: str, chapters: Union[str, bytes, os.PathLike], xml: Union[str, bytes, os.PathLike],  bdinfo: Union[str, bytes, os.PathLike], eac3to: Union[str, bytes, os.PathLike]) -> None:
         """
         Generates a MKV using mkvmerge in subprocess
         Additionally runs vdator to validate remux
@@ -52,7 +53,7 @@ class Blu(MuxOBj):
                 logger.print("Vdator Failed")
 
     def getFileName(self,
-                    remuxConfig:dict, group:str, title, episodeTitle:Union[str,None]=None)->str:
+                    remuxConfig: dict, group: str, title, episodeTitle: Union[str, None] = None) -> str:
         """
         Generates a filename based on blutopia naming rules and demux data
 
@@ -66,16 +67,16 @@ class Blu(MuxOBj):
             str: Blutopia filename for remux
         """
         episodeTitle = episodeTitle or self._placeholder
-        videoCodec = mkvTool.getVideo(
+        videoCodec = self.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = mkvTool.getMediaType(
+        mediaType = self.getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = mkvTool.getVideoResolution(
+        videoRes = self.getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = mkvTool.getAudio(
+        audioCodec = self.getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = mkvTool.getAudioChannel(
+        audioChannel = self.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"].get("season")
@@ -90,7 +91,7 @@ class Blu(MuxOBj):
             fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             return self._fileNameCleaner(fileName)
 
-    def getTVDir(self, remuxConfig:dict, group:str, title:str)->str:
+    def getTVDir(self, remuxConfig: dict, group: str, title: str) -> str:
         """
         Generates a folder name for TV remux based on blutopia naming rules and demux Data
 
@@ -102,16 +103,16 @@ class Blu(MuxOBj):
         Returns:
             str: folder name based on blutopia rules
         """
-        videoCodec = mkvTool.getVideo(
+        videoCodec = self.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = mkvTool.getMediaType(
+        mediaType = self.getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = mkvTool.getVideoResolution(
+        videoRes = self.getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = mkvTool.getAudio(
+        audioCodec = self.getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = mkvTool.getAudioChannel(
+        audioChannel = self.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"]["season"]
@@ -120,7 +121,7 @@ class Blu(MuxOBj):
         # Normalize
         return self._fileNameCleaner(dirName)
 
-    def validation(self, mediainfo:Union[str, bytes, os.PathLike], eac3to:Union[str, bytes, os.PathLike]=None, bdinfo:Union[str, bytes, os.PathLike]=None)->None:
+    def validation(self, mediainfo: Union[str, bytes, os.PathLike], eac3to: Union[str, bytes, os.PathLike] = None, bdinfo: Union[str, bytes, os.PathLike] = None) -> None:
         """
         This function runs vdator on remux after
 

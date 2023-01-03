@@ -7,10 +7,10 @@ from typing import  List,Union
 
 import langcodes
 from pymediainfo import MediaInfo
+from guessit import guessit
 
 
 import src.tools.general as utils
-import src.mediatools.mkvtoolnix as mkvTool
 import src.tools.commands as commands
 import src.tools.logger as logger
 import src.tools.directory as dir
@@ -196,16 +196,16 @@ class MuxOBj():
         """        
        
         episodeTitle=episodeTitle or self._placeholder
-        videoCodec = mkvTool.getVideo(
+        videoCodec = self.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = mkvTool.getMediaType(
+        mediaType = self.getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = mkvTool.getVideoResolution(
+        videoRes = self.getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = mkvTool.getAudio(
+        audioCodec = self.getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = mkvTool.getAudioChannel(
+        audioChannel = self.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"].get("season")
@@ -289,16 +289,16 @@ class MuxOBj():
         Returns:
             str: folder name
         """        
-        videoCodec = mkvTool.getVideo(
+        videoCodec = self.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = mkvTool.getMediaType(
+        mediaType = self.getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = mkvTool.getVideoResolution(
+        videoRes = self.getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = mkvTool.getAudio(
+        audioCodec = self.getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = mkvTool.getAudioChannel(
+        audioChannel = self.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"]["season"]
@@ -321,16 +321,16 @@ class MuxOBj():
         Returns:
             str: folder name
         """  
-        videoCodec = mkvTool.getVideo(
+        videoCodec = self.getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = mkvTool.getMediaType(
+        mediaType = self.getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = mkvTool.getVideoResolution(
+        videoRes = self.getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = mkvTool.getAudio(
+        audioCodec = self.getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = mkvTool.getAudioChannel(
+        audioChannel = self.getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         movieName = f"{title} {year}"
 
@@ -366,3 +366,94 @@ class MuxOBj():
         """
         with dir.cwd(paths.createTempDir()):
             print(MediaInfo.parse(fileName, output="", full=False))
+
+    """
+    Title Helpers
+    """
+    def getVideo(self,enabledTracks:List[dict], trackDetails:dict)->str:
+        """
+        Returns video codec information on matched video 
+        track(first enabled video)
+
+        Args:
+            enabledTracks (array): List of video tracks enabled
+            trackDetails (dict): Track details for all video tracks
+
+        Returns:
+            str: codec information for match video track
+        """
+        if len(enabledTracks)==0:
+            return ""
+        key = str(enabledTracks[0])
+        trackinfo = trackDetails[key]["bdinfo_title"]
+        if re.search("AVC", trackinfo) != None:
+            return "AVC"
+        elif re.search("VC-1", trackinfo) != None:
+            return "VC-1"
+        elif re.search("HEVC", trackinfo) != None:
+            return "HEVC"
+        elif re.search("MPEG-2", trackinfo) != None:
+            return "MPEG-2"
+
+
+    def getAudio(self,enabledTracks, trackDetails):
+        """
+        Returns audio codec information on matched audio
+        track(first enabled audio)
+
+        Args:
+            enabledTracks (array): List of audio tracks enabled
+            trackDetails (dict): Track details for all audio tracks
+
+        Returns:
+            str: codec information for match video track
+        """
+        if len(enabledTracks)==0:
+            return ""
+        key = str(enabledTracks[0])
+        trackinfo = trackDetails[key]["site_title"]
+        
+        
+        if re.search("FLAC", trackinfo):
+            return "FLAC"
+        elif re.search("ATMOS", trackinfo):
+            return "ATMOS"
+        elif re.search("DTS-HD Master", trackinfo) or re.search("Dolby Digital", trackinfo):
+            return "DTS-HD.MA"
+        elif re.search("TrueHD", trackinfo):
+            return "TrueHD"
+        elif re.search("PCM", trackinfo):
+            return "PCM"
+
+
+    def getAudioChannel(self,enabledTracks, trackDetails):
+        if len(enabledTracks)==0:
+            return ""
+        key = str(enabledTracks[0])
+        trackinfo = trackDetails[key]["site_title"]
+        return re.search("/ (.*?) /", trackinfo).group(1)
+
+
+    def getVideoResolution(self,enabledTracks,trackDetails):
+        key = str(enabledTracks[0])
+        trackinfo = trackDetails[key]["bdinfo_title"]
+        return re.search("[0-9]{3,4}[p|i]", trackinfo).group(0)
+
+
+    def getMediaType(self,enabledTracks, trackDetails):
+
+        key = str(enabledTracks[0])
+        trackinfo = trackDetails[key]["bdinfo_title"]
+        if guessit(trackinfo).get("source") == "Ultra HD Blu-ray":
+            return "UHD.BluRay"
+        else:
+            return "BluRay"
+
+
+    def getHDR(self,enabledTracks, trackDetails):
+        key = str(enabledTracks[0])
+        trackinfo = trackDetails[key]["bdinfo_title"]
+        if re.search("BT.2020", trackinfo):
+            return "HDR"
+        else:
+            return "SDR"
