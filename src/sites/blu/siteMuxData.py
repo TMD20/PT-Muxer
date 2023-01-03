@@ -6,7 +6,6 @@ from typing import Union
 from pymediainfo import MediaInfo
 
 from src.sites.base.siteMuxData import MuxOBj
-import src.mediatools.mkvtoolnix as mkvTool
 import src.tools.logger as logger
 import config as config
 import src.tools.directory as dir

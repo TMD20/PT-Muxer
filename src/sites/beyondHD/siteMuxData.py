@@ -2,7 +2,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, List, Union
 
 from src.sites.base.siteMuxData import MuxOBj
-import src.mediatools.mkvtoolnix as mkvTool
 if TYPE_CHECKING:
     import os
 

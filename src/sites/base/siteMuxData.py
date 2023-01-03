@@ -380,7 +380,7 @@ class MuxOBj():
             trackDetails (dict): Track details for all video tracks
 
         Returns:
-            str: codec information for match video track
+            str: codec information for matched video track
         """
         if len(enabledTracks)==0:
             return ""
@@ -396,7 +396,7 @@ class MuxOBj():
             return "MPEG-2"
 
 
-    def getAudio(self,enabledTracks, trackDetails):
+    def getAudio(self,enabledTracks:List[dict], trackDetails:dict)->str:
         """
         Returns audio codec information on matched audio
         track(first enabled audio)
@@ -406,7 +406,7 @@ class MuxOBj():
             trackDetails (dict): Track details for all audio tracks
 
         Returns:
-            str: codec information for match video track
+            str: codec information for matched audio track
         """
         if len(enabledTracks)==0:
             return ""
@@ -426,7 +426,18 @@ class MuxOBj():
             return "PCM"
 
 
-    def getAudioChannel(self,enabledTracks, trackDetails):
+    def getAudioChannel(self,enabledTracks:List[dict], trackDetails:dict)->str:
+        """
+        Returns audio channel information on matched audio
+        track(first enabled audio)
+
+        Args:
+            enabledTracks (array): List of audio tracks enabled
+            trackDetails (dict): Track details for all audio tracks
+
+        Returns:
+            str: channel information for matched audio track
+        """
         if len(enabledTracks)==0:
             return ""
         key = str(enabledTracks[0])
@@ -434,14 +445,35 @@ class MuxOBj():
         return re.search("/ (.*?) /", trackinfo).group(1)
 
 
-    def getVideoResolution(self,enabledTracks,trackDetails):
+    def getVideoResolution(self,enabledTracks:List[dict], trackDetails:dict)->str:
+        """
+        Returns video res information on matched video
+        track(first enabled video)
+
+        Args:
+            enabledTracks (array): List of video tracks enabled
+            trackDetails (dict): Track details for all video tracks
+
+        Returns:
+            str: codec information for matched video track
+        """
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["bdinfo_title"]
         return re.search("[0-9]{3,4}[p|i]", trackinfo).group(0)
 
 
-    def getMediaType(self,enabledTracks, trackDetails):
+    def getMediaType(self,enabledTracks:List[dict], trackDetails:dict)->str:
+        """
+        Returns the disk type based on video track information from matched
+        track(first enabled video)
 
+        Args:
+            enabledTracks (array): List of video tracks enabled
+            trackDetails (dict): Track details for all video tracks
+
+        Returns:
+            str: disk type
+        """
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["bdinfo_title"]
         if guessit(trackinfo).get("source") == "Ultra HD Blu-ray":
@@ -450,7 +482,18 @@ class MuxOBj():
             return "BluRay"
 
 
-    def getHDR(self,enabledTracks, trackDetails):
+    def getHDR(self,enabledTracks:List[dict], trackDetails:dict)->str:
+        """
+        Returns HDR|SDR based on video track information from matched
+        track(first enabled video)
+
+        Args:
+            enabledTracks (array): List of video tracks enabled
+            trackDetails (dict): Track details for all video tracks
+
+        Returns:
+            str: HDR|SDR information
+        """    
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["bdinfo_title"]
         if re.search("BT.2020", trackinfo):
