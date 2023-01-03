@@ -252,7 +252,7 @@ class MuxOBj():
         """
         self._outputargs = outargs.split()
 
-    def createMKV(self, fileName:str, movieTitle:str, chapters:Union[str, bytes, os.PathLike], xml:Union[str, bytes, os.PathLike],  bdinfo:Union[Union[str, bytes, os.PathLike],None]=None, eac3to:Union[Union[str, bytes, os.PathLike],None]=None)->None:
+    def createMKV(self, fileName:str, movieTitle:str, chapters:Union[str, bytes, os.PathLike], xml:Union[str, bytes, os.PathLike])->None:
         """
         Generates a MKV using mkvmerge in subprocess
         Additionally runs vdator to validate remux
@@ -262,8 +262,6 @@ class MuxOBj():
             movieTitle (str): movietitle to pass to mkvmerge
             chapters (str): path to chapters file to pass to mkvmerge
             xml (str): path to xml file to pass to mkvmerge
-            bdinfo (str):path to bdinfo file passed to vdator
-            eac3to (str): path to eac3t0 file passed to vdator
         """
         if os.path.exists(fileName):
             os.remove(fileName)

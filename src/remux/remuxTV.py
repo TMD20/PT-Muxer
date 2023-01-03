@@ -118,7 +118,7 @@ class Remux(Remux):
             array: returns filtered array of jsons
         """
         msg =\
-            """
+             """
         Confirm Which JSON(s) You would like to process remux(s) for
 
         """

@@ -37,7 +37,7 @@ class Blu(MuxOBj):
             bdinfo (str):path to bdinfo file passed to vdator
             eac3to (str): path to eac3t0 file passed to vdator
         """
-        super().createMKV(fileName, movieTitle, chapters, xml,  bdinfo, eac3to)
+        super().createMKV(fileName, movieTitle, chapters, xml)
         with dir.cwd(paths.createTempDir()):
             mediainfo = MediaInfo.parse(fileName, output="", full=False)
             mediainfoPath = "media.txt"
@@ -120,7 +120,7 @@ class Blu(MuxOBj):
         # Normalize
         return self._fileNameCleaner(dirName)
 
-    def validation(self, mediainfo:Union[str, bytes, os.PathLike], eac3to:Union[str, bytes, os.PathLike], bdinfo:Union[str, bytes, os.PathLike])->None:
+    def validation(self, mediainfo:Union[str, bytes, os.PathLike], eac3to:Union[str, bytes, os.PathLike]=None, bdinfo:Union[str, bytes, os.PathLike]=None)->None:
         """
         This function runs vdator on remux after
 
