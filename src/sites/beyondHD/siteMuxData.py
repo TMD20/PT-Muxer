@@ -1,9 +1,8 @@
-from __future__ import annotations
-from typing import TYPE_CHECKING, List, Union
+from typing import  List, Union
+import os
 
 from src.sites.base.siteMuxData import MuxOBj
-if TYPE_CHECKING:
-    import os
+
 
 
 class BeyondHD(MuxOBj):
@@ -20,41 +19,41 @@ class BeyondHD(MuxOBj):
 
     def getFileName(self, remuxConfig: List[dict], group: str, title: Union[str, bytes, os.PathLike], episodeTitle: Union[Union[str, bytes, os.PathLike], None] = None) -> str:
         episodeTitle = episodeTitle or self._placeholder
-        videoCodec = self.getVideo(
+        videoCodec = self._getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
+        mediaType = self._getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
+        videoRes = self._getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = self.getAudio(
+        audioCodec = self._getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
+        audioChannel = self._getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        year = self._remuxConfig['Movie']['year']
-        season = self._remuxConfig["Movie"]["season"]
-        episode = self._remuxConfig["Movie"]["episode"]
+        year = remuxConfig['Movie']['year']
+        season = remuxConfig["Movie"].get("season")
+        episode = remuxConfig["Movie"].get("episode")
 
         movieName = f"{title} {year}"
         if season and episode:
             fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            return self._fileNameCleaner(fileName)
+            return os.path.join(self._getTVDir(remuxConfig,group,title),self._fileNameCleaner(fileName))
 
         else:
-            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             return self._fileNameCleaner(fileName)
 
-    def getTVDir(self, remuxConfig: List[dict], group: str, title: str) -> str:
-        videoCodec = self.getVideo(
+    def _getTVDir(self, remuxConfig: List[dict], group: str, title: str) -> str:
+        videoCodec = self._getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
+        mediaType = self._getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
+        videoRes = self._getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = self.getAudio(
+        audioCodec = self._getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
+        audioChannel = self._getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"]["season"]

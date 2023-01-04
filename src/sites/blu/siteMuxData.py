@@ -24,7 +24,7 @@ class Blu(MuxOBj):
     def __init__(self) -> None:
         super().__init__()
 
-    def createMKV(self, fileName: Union[str, bytes, os.PathLike], movieTitle: str, chapters: Union[str, bytes, os.PathLike], xml: Union[str, bytes, os.PathLike],  bdinfo: Union[str, bytes, os.PathLike], eac3to: Union[str, bytes, os.PathLike]) -> None:
+    def createMKV(self, fileName: Union[str, bytes, os.PathLike], movieTitle: str, chapters: Union[str, bytes, os.PathLike], xml: Union[str, bytes, os.PathLike], **kwargs) -> None:
         """
         Generates a MKV using mkvmerge in subprocess
         Additionally runs vdator to validate remux
@@ -38,6 +38,8 @@ class Blu(MuxOBj):
             eac3to (str): path to eac3t0 file passed to vdator
         """
         super().createMKV(fileName, movieTitle, chapters, xml)
+        bdinfo=kwargs.pop("bdinfo",None)
+        eac3to=kwargs.pop("eac3to",None)
         with dir.cwd(paths.createTempDir()):
             mediainfo = MediaInfo.parse(fileName, output="", full=False)
             mediainfoPath = "media.txt"
@@ -66,16 +68,16 @@ class Blu(MuxOBj):
             str: Blutopia filename for remux
         """
         episodeTitle = episodeTitle or self._placeholder
-        videoCodec = self.getVideo(
+        videoCodec = self._getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
+        mediaType = self._getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
+        videoRes = self._getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = self.getAudio(
+        audioCodec = self._getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
+        audioChannel = self._getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"].get("season")
@@ -84,13 +86,14 @@ class Blu(MuxOBj):
 
         if season and episode:
             fileName = f"{movieName}.S{season:02d}.E{episode:02d}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            return self._fileNameCleaner(fileName)
+            return os.path.join(self._getTVDir(remuxConfig,group,title),self._fileNameCleaner(fileName))
+
 
         else:
-            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+            fileName = f"{movieName}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
             return self._fileNameCleaner(fileName)
 
-    def getTVDir(self, remuxConfig: dict, group: str, title: str) -> str:
+    def _getTVDir(self, remuxConfig: dict, group: str, title: str) -> str:
         """
         Generates a folder name for TV remux based on blutopia naming rules and demux Data
 
@@ -102,16 +105,16 @@ class Blu(MuxOBj):
         Returns:
             str: folder name based on blutopia rules
         """
-        videoCodec = self.getVideo(
+        videoCodec = self._getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
+        mediaType = self._getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
+        videoRes = self._getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = self.getAudio(
+        audioCodec = self._getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
+        audioChannel = self._getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"]["season"]

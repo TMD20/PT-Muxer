@@ -7,7 +7,7 @@ import langcodes
 import src.tools.general as utils
 import src.tools.paths as paths
 import src.mediadata.trackObj as trackObj
-from typing import Any,List,Union
+from typing import Any, List, Union
 
 
 class sourceData(dict):
@@ -19,14 +19,14 @@ class sourceData(dict):
         dict (class): python built in dict class
     """
 
-    def __init__(self)->None:
+    def __init__(self) -> None:
         super().__init__()
         self._allowedKeys = {"tracks", "source", "outputDir", "sourceDir",
                              "playlistNum", "playlistFile", "length", "streamFiles", "chapters"}
         self["tracks"] = {}
         self._source = None
 
-    def __setitem__(self, key:str, value:Any)->None:
+    def __setitem__(self, key: str, value: Any) -> None:
         """
         built in dict method 
         modified to only accept certain keys
@@ -48,7 +48,7 @@ class sourceData(dict):
     # It also adds data about the source of the information, and where to output it                                 #
     ################################################################################################################
 
-    def updateRawTracksDict(self, trackStrs:List[str])->None:
+    def updateRawTracksDict(self, trackStrs: List[str]) -> None:
         """
         Parses bdinfo quickinfo string into objects
         Args:
@@ -60,7 +60,7 @@ class sourceData(dict):
             self._appendTrack(currline, index+offset, source)
         self._setSourceDict()
 
-    def setOutPutDir(self, output:Union[str, bytes, os.PathLike],sourceDir:Union[str, bytes, os.PathLike]=None)->None:
+    def setOutPutDir(self, output: Union[str, bytes, os.PathLike], sourceDir: Union[str, bytes, os.PathLike] = None) -> None:
         """
         Helper Function to set outputdir
         Args:
@@ -68,7 +68,7 @@ class sourceData(dict):
             sourceDir(str,optional): full directory to source. Defaults to None
         Returns:
             str: path to sources outputdir in demuxFolder
-            
+
         """
         source = self._source or sourceDir
         for track in self.tracks:
@@ -77,7 +77,7 @@ class sourceData(dict):
         self["outputDir"] = os.path.join(
             output, utils.sourcetoShowName(source))
 
-    def getVideoFileName(line:str ,index:Union[int,str])->str:
+    def getVideoFileName(line: str, index: Union[int, str]) -> str:
         """
         Gets video filename base on parsed video type
 
@@ -97,7 +97,7 @@ class sourceData(dict):
         if re.search("MPEG-2", line) != None:
             return f"00{index}.mpeg2"
 
-    def getAudioFileName(line:str, langcode:str, index:Union[int,str])->str:
+    def _getAudioFileName(line: str, langcode: str, index: Union[int, str]) -> str:
         """
         Gets audio filename base on parsed video type
 
@@ -132,7 +132,7 @@ class sourceData(dict):
 
         return f"00{index}-{langcode}.{codec}"
 
-    def getSubFileName(langcode:str, index:Union[int,str])->str:
+    def getSubFileName(langcode: str, index: Union[int, str]) -> str:
         """
         Gets audio filename base on parsed video type
 
@@ -142,14 +142,14 @@ class sourceData(dict):
 
         Returns:
             str: str for filename
-        """    
+        """
         return f"00{index}-{langcode}.sup"
 
     ################################################################################################################
     #   Getter/Setter Functions
     ################################################################################################################
 
-    def getPlaylistLocation(self, split:bool=False)->str:
+    def getPlaylistLocation(self, split: bool = False) -> str:
         """
         Gets the full path to the  STREAM or PLAYLIST dir for a source
 
@@ -167,7 +167,7 @@ class sourceData(dict):
             return paths.search(sourceData["sourceDir"], "PLAYLIST", dir=True)[0]
 
     @property
-    def tracks(self)->List[trackObj.TrackObJ]:
+    def tracks(self) -> List[trackObj.TrackObJ]:
         """
         getter function for tracks dict values
 
@@ -176,7 +176,7 @@ class sourceData(dict):
         """
         return list(self["tracks"].values())
 
-    def _getfilteredvalues(self, type:str)->List[trackObj.TrackObJ]:
+    def _getfilteredvalues(self, type: str) -> List[trackObj.TrackObJ]:
         """
         getter function for tracks dict filtered by type
 
@@ -187,57 +187,57 @@ class sourceData(dict):
         return list(filter(lambda x: x["type"] == type, values))
 
     @property
-    def video(self)->List[trackObj.TrackObJ]:
+    def video(self) -> List[trackObj.TrackObJ]:
         """
         get video tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by video type
-        """        
+        """
         return self._getfilteredvalues("video")
 
     @property
-    def subtitle(self)->List[dict]:
+    def subtitle(self) -> List[dict]:
         """
         get subtitle tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by subtitle type
-        """        
+        """
         return self._getfilteredvalues("subtitle")
 
     @property
-    def audio(self)->List[dict]:
+    def audio(self) -> List[dict]:
         """
         get audio tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by audio type
-        """        
+        """
         return self._getfilteredvalues("audio")
 
     @property
-    def compat(self)->List[dict]:
+    def compat(self) -> List[dict]:
         """
         get compat tracks values
 
         Returns:
             array: returns the values from the tracks dict filtered by compat audio type
-        """        
+        """
         values = self._getfilteredvalues("audio")
         return list(filter(lambda x: x["compat"] == "true", values))
 
     @property
-    def trackkey(self)->List[str]:
+    def trackkey(self) -> List[str]:
         """
         getter function for tracks dict key
 
         Returns:
             array: returns the keys from the tracks dict
-        """        
+        """
         return list(self["tracks"].keys())
 
-    def _getfilteredkey(self, type:str)->List[str]:
+    def _getfilteredkey(self, type: str) -> List[str]:
         """
         getter function for tracks dict filtered by type
 
@@ -248,7 +248,7 @@ class sourceData(dict):
         return list(filter(lambda x: self["tracks"][x]["type"] == type, keys))
 
     @property
-    def videokeys(self)->List[str]:
+    def videokeys(self) -> List[str]:
         """
         get video track keys
 
@@ -258,7 +258,7 @@ class sourceData(dict):
         return self._getfilteredkey("video")
 
     @property
-    def subtitlekeys(self)->List[str]:
+    def subtitlekeys(self) -> List[str]:
         """
         get subtitle track keys
 
@@ -268,91 +268,91 @@ class sourceData(dict):
         return self._getfilteredkey("subtitle")
 
     @property
-    def audiokeys(self)->List[str]:
+    def audiokeys(self) -> List[str]:
         """
         get audio track keys
 
         Returns:
             array: returns the keys from the tracks dict filtered by audio type
-        """        
+        """
         return self._getfilteredkey("audio")
 
     @property
-    def compatkeys(self)->List[str]:
+    def compatkeys(self) -> List[str]:
         """
         get compat track keys
 
         Returns:
             array: returns the keys from the tracks dict filtered by compat type
-        """        
+        """
         keys = self._getfilteredkey("audio")
         return list(filter(lambda x: self["tracks"][x]["compat"] == True, keys))
 
     @property
-    def trackitems(self)->List[dict]:
+    def trackitems(self) -> List[dict]:
         """
         getter function for tracks dict items
 
         Returns:
             array: returns keys,value tuples from the tracks dict
-        """        
+        """
         return list(self["tracks"].items())
 
-    def _getfiltereditems(self, type:str)->List[dict]:
+    def _getfiltereditems(self, type: str) -> List[dict]:
         """
         getter function for tracks dict filtered by type
 
         Returns:
             array: returns keys,value tuples from the tracks dict filtered by type
-        """          
+        """
         items = self["tracks"].items()
         return list(filter(lambda x: x[1]["type"] == type, items))
 
     @property
-    def videoitems(self)->List[tuple]:
+    def videoitems(self) -> List[tuple]:
         """
         get video track items
 
         Returns:
             array: returns keys,value tuples from the tracks dict filered by video type 
-        """          
+        """
         return self._getfiltereditems("video")
 
     @property
-    def subtitleitems(self)->List[tuple]:
+    def subtitleitems(self) -> List[tuple]:
         """
         get subtitle track items
 
         Returns:
             array: returns keys,value tuples from the tracks dict filered by subtitle type 
-        """           
+        """
         return self._getfiltereditems("subtitle")
 
     @property
-    def audioitems(self)->List[tuple]:
+    def audioitems(self) -> List[tuple]:
         """
         get audio track items
 
         Returns:
             array: returns keys,value tuples from the tracks dict filered by audio type 
-        """            
+        """
         return self._getfiltereditems("audio")
 
     @property
-    def compatitems(self)->List[tuple]:
+    def compatitems(self) -> List[tuple]:
         """
         get compat track items
         Returns:
             array: returns keys,value tuples from the tracks dict filered by compat audio type 
-        """      
+        """
         items = self._getfiltereditems("audio")
         return list(filter(lambda x: x[1]["compat"] == True, items))
- 
+
     """
    Private
     """
 
-    def _setUp(self, playlistNum:int, bdObj:str, streams:List[dict])->None:
+    def _setUp(self, playlistNum: int, bdObj: str, streams: List[dict]) -> None:
         """
         Helper function to setup some required attributes
 
@@ -367,7 +367,7 @@ class sourceData(dict):
         self._source = bdObj.mediaDir
         self._streams = streams
 
-    def _setSourceDict(self)->None:
+    def _setSourceDict(self) -> None:
         """
         sets some values for the main root dict of class
         """
@@ -383,7 +383,7 @@ class sourceData(dict):
     ###### These Functions are used to parse Data from String for the corresponding Track Type i.e Video, Audio,etc#
     ################################################################################################################
 
-    def _videoParser(self, currline:str, source:Union[str, bytes, os.PathLike])->str:
+    def _videoParser(self, currline: str, source: Union[str, bytes, os.PathLike]) -> str:
         """
         creates a track dict for video bdinfo lines
 
@@ -401,7 +401,7 @@ class sourceData(dict):
         tempdict["type"] = "video"
         return tempdict
 
-    def _audioParser(self, currline:str, source:Union[str, bytes, os.PathLike])->dict:
+    def _audioParser(self, currline: str, source: Union[str, bytes, os.PathLike]) -> dict:
         """
         creates a track dict for audio bdinfo lines
 
@@ -424,7 +424,7 @@ class sourceData(dict):
 
         return tempdict
 
-    def _audioCompatParser(self, currline:str, source:Union[str, bytes, os.PathLike])->dict:
+    def _audioCompatParser(self, currline: str, source: Union[str, bytes, os.PathLike]) -> dict:
         """
         creates a track dict for compat audio bdinfo lines
 
@@ -434,7 +434,7 @@ class sourceData(dict):
 
         Returns:
             str: trackdict
-        """        
+        """
         lang = self._medialang(currline)
         langcode = self._mediacode(lang)
         bdinfo = re.search("(?:.*?)(?:\((.*?)\))", currline)
@@ -455,7 +455,7 @@ class sourceData(dict):
         tempdict["commentary"] = False
         return tempdict
 
-    def _subParser(self, currline:str, source:Union[str, bytes, os.PathLike])->dict:
+    def _subParser(self, currline: str, source: Union[str, bytes, os.PathLike]) -> dict:
         """
         creates a track dict for subtitle audio bdinfo lines
 
@@ -465,7 +465,7 @@ class sourceData(dict):
 
         Returns:
             str: trackdict
-        """           
+        """
         lang = self._medialang(currline)
         bdinfo = currline
         langcode = self._mediacode(lang)
@@ -477,7 +477,7 @@ class sourceData(dict):
         return tempdict
 
     # Standard Track Data Helper
-    def _defaultMediaDict(self, bdinfo:str, source:Union[str,None]=None,langcode:Union[str,None]=None, lang:Union[str,None]=None)->dict:
+    def _defaultMediaDict(self, bdinfo: str, source: Union[str, None] = None, langcode: Union[str, None] = None, lang: Union[str, None] = None) -> dict:
         """
         Helper function for shared values amount all trackdict types
 
@@ -486,7 +486,7 @@ class sourceData(dict):
             source (str): path to source
             langcode (str,optional): 2 digit langcode. Defaults to None
             lang (str,optional): full lang string. Defaults to None
-        """           
+        """
         tempdict = trackObj.TrackObJ()
         tempdict["bdinfo_title"] = bdinfo
         tempdict["langcode"] = langcode
@@ -511,7 +511,7 @@ class sourceData(dict):
         ###### These Functions are Used to get the Language/Code of a Track                                            #
         ################################################################################################################
 
-    def _medialang(self, currline:str)-> str:
+    def _medialang(self, currline: str) -> str:
         """
         Parses bdinfo quickinfo line for language information_
 
@@ -523,7 +523,7 @@ class sourceData(dict):
         """
         return re.search("(?:.*?: )(.*?)(?: /.*)", currline).group(1)
 
-    def _mediacode(self, lang:str)->Union[str,None]:
+    def _mediacode(self, lang: str) -> Union[str, None]:
         """
         converts language str to 2 digit langcode
 
@@ -532,7 +532,7 @@ class sourceData(dict):
 
         Returns:
             str: returns 2 digit langcode
-        """    
+        """
         try:
             return langcodes.standardize_tag(langcodes.find(lang))
         except:
@@ -542,7 +542,7 @@ class sourceData(dict):
         ###### Adds Track to List                                                                                     #
         ################################################################################################################
 
-    def _appendTrack(self, currline:str, index:Union[str,int], source:Union[str, bytes, os.PathLike])->None:
+    def _appendTrack(self, currline: str, index: Union[str, int], source: Union[str, bytes, os.PathLike]) -> None:
         """
         Helper function to add quickinfo line as a dict within parent tracks dict
 
@@ -553,7 +553,7 @@ class sourceData(dict):
 
         Returns:
             str: returns 2 digit langcode
-        """  
+        """
         tempdict = None
         tempdict2 = None
         match = re.search("([a-z|A-Z]*?):", currline, re.IGNORECASE).group(1)
@@ -600,7 +600,7 @@ class sourceData(dict):
     #       Additional Function
     ################################################################################################################
 
-    def _getStreamNames(self, streams:List[dict])->List[str]:
+    def _getStreamNames(self, streams: List[dict]) -> List[str]:
         """
         get the stream files from streamdict
 
@@ -612,7 +612,7 @@ class sourceData(dict):
         """
         return list(map(lambda x: x["name"], streams))
 
-    def _getStreamLength(self, streams:List[dict])->str:
+    def _getStreamLength(self, streams: List[dict]) -> str:
         """
         caluculates the full length of all streams passed
         prints as strings

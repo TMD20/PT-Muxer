@@ -1,7 +1,7 @@
-from __future__ import annotations 
+from __future__ import annotations
 
 import re
-from typing import TYPE_CHECKING, List,Union
+from typing import TYPE_CHECKING, List, Union
 
 
 from src.mediadata.sourceData import sourceData
@@ -9,7 +9,6 @@ import src.tools.general as utils
 if TYPE_CHECKING:
     import mediatools.bdinfo as bdinfo
     import mediadata.trackObj as trackObj
-
 
 
 class siteSourceData(sourceData):
@@ -21,9 +20,9 @@ class siteSourceData(sourceData):
     Args:
         sourceData (class): source and track data class
     """
-    def __init__(self)->None:
-        super().__init__()
 
+    def __init__(self) -> None:
+        super().__init__()
 
     """
     Public Functions
@@ -37,9 +36,7 @@ class siteSourceData(sourceData):
     #       Tracksdata Dict is split by source
     ################################################################################################################
 
-
-
-    def addTracks(self,bdinfo:bdinfo.Bdinfo,playlistNum:int,streams:Union[List[dict],None]=None)->List[trackObj.TrackObJ]:
+    def addTracks(self, bdinfo: bdinfo.Bdinfo, playlistNum: int, streams: Union[List[dict], None] = None) -> List[trackObj.TrackObJ]:
         """
         This function handles adding tracks/sources to internal dictionaries
 
@@ -50,30 +47,29 @@ class siteSourceData(sourceData):
 
         Returns:
             dict: The return value is an dictionary generated from tracks
-        """        
-        bdObjDict=bdinfo.Dict[playlistNum]
-        if streams==None:
-            streams=bdObjDict["playlistStreams"]
+        """
+        bdObjDict = bdinfo.Dict[playlistNum]
+        if streams == None:
+            streams = bdObjDict["playlistStreams"]
         self._setUp(playlistNum, bdinfo, streams)
 
-        quicksum=bdObjDict["quickSum"]
+        quicksum = bdObjDict["quickSum"]
 
         self.updateRawTracksDict(quicksum)
         self._updateTrackDictFileNames()
         self._updateTrackDictNames()
         return self.tracks
-  
 
      #######################################################################
     #  This Function will convert certain lossless Tracks to flac
     ########################################################################
 
-    def convertFlac(self)->None:
+    def convertFlac(self) -> None:
         """
         Converts certain lossless tracks to FLAC
         based on common tracker rules
         """
-        current_tracks=self.tracks
+        current_tracks = self.tracks
         for i in range(len(current_tracks)):
             track = current_tracks[i]
             if track["type"] != "audio":
@@ -97,7 +93,7 @@ class siteSourceData(sourceData):
     ################################################################################################################
 
     @property
-    def source(self)->str:
+    def source(self) -> str:
         """
         returns path to source used to generate object
 
@@ -105,8 +101,9 @@ class siteSourceData(sourceData):
             str: path to source
         """
         return self.get("source")
-    @property 
-    def showname(self)->Union[str,None]:
+
+    @property
+    def showname(self) -> Union[str, None]:
         """
         returns showname or modifified basename of source
         Returns:
@@ -124,11 +121,11 @@ class siteSourceData(sourceData):
     #       These Functions add Addition Data to Tracks Obj
     ################################################################################################################
 
-    def _updateTrackDictNames(self)->None:
+    def _updateTrackDictNames(self) -> None:
         """
         Updates tracks with site Names or title that should appear on final mkv
         """
-        tracks=self.tracks
+        tracks = self.tracks
         for track in tracks:
             type = track["type"]
             bdinfo = track["bdinfo_title"]
@@ -142,12 +139,11 @@ class siteSourceData(sourceData):
             elif type == "subtitle":
                 track["site_title"] = self._getSubName(bdinfo)
 
-   
-    def _updateTrackDictFileNames(self)->None:
+    def _updateTrackDictFileNames(self) -> None:
         """
         Generates filenames for tracks
         """
-        tracks=self.tracks
+        tracks = self.tracks
         for track in tracks:
             type = track["type"]
             line = track.get("site_title") or track.get("bdinfo_title")
@@ -155,7 +151,7 @@ class siteSourceData(sourceData):
             langcode = track["langcode"]
             index = track["index"]
             if type == "audio":
-                track["filename"] = sourceData.getAudioFileName(
+                track["filename"] = sourceData._getAudioFileName(
                     line, langcode, index)
             elif type == "video":
                 track["filename"] = sourceData.getVideoFileName(line, index)
@@ -163,15 +159,12 @@ class siteSourceData(sourceData):
                 track["filename"] = sourceData.getSubFileName(
                     langcode, index)
 
-
-
-   
     #####################################################################################################################
     #       These Functions Will make a best effort to Give the Track the Proper Name.
     #       Like Sorting Functions These May have to be overwritten based on Specific Site Rules
     ################################################################################################################
 
-    def _getAudioName(self, bdinfo:str, compat:bool, parent:str)->str:
+    def _getAudioName(self, bdinfo: str, compat: bool, parent: str) -> str:
         """
         Helper function to genreate audio track site Name
 
@@ -188,7 +181,7 @@ class siteSourceData(sourceData):
         else:
             return self._getNormalTrack(bdinfo)
 
-    def _getSubName(self, bdinfo:str)->None:
+    def _getSubName(self, bdinfo: str) -> None:
         """
         Generates subtitle track site Name
 
@@ -197,7 +190,7 @@ class siteSourceData(sourceData):
         """
         return
 
-    def _getVideoName(self, bdinfo:str)->None:
+    def _getVideoName(self, bdinfo: str) -> None:
         codec = re.search(".*?(?= /)", bdinfo).group(0)
         other = re.search("(?<=/ )[0-9].*", bdinfo).group(0)
         return re.sub(" +", " ", f"{codec} / {other}")
@@ -205,7 +198,7 @@ class siteSourceData(sourceData):
   #     Track Name Helpers
   ################################################################################################################
 
-    def _getCompatTrack(self, bdinfo:str, parent:str)->str:
+    def _getCompatTrack(self, bdinfo: str, parent: str) -> str:
         """
         Helper function to get compat track site Name
 
@@ -233,7 +226,7 @@ class siteSourceData(sourceData):
 
         return re.sub(" +", " ", site_title).strip()
 
-    def _getNormalTrack(self, bdinfo:str)->str:
+    def _getNormalTrack(self, bdinfo: str) -> str:
         """
         Function to get site Name for normal Tracks
 
@@ -257,5 +250,3 @@ class siteSourceData(sourceData):
             site_title = f"{codec} / {other}"
         site_title = re.sub("/ DN.*dB", "", site_title)
         return re.sub(" +", " ", site_title).strip()
-
-

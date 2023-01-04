@@ -1,11 +1,10 @@
-from __future__ import annotations 
+from __future__ import annotations
 import copy
 import os
 import re
 import subprocess
 import itertools
-from typing import TYPE_CHECKING, List,Union
-
+from typing import TYPE_CHECKING, List, Union
 
 
 import xxhash
@@ -21,7 +20,8 @@ if TYPE_CHECKING:
 class siteTrackSorter():
     """
     Base class for sorting tracks
-    """    
+    """
+
     def __init__(self):
         self._unSortedAudio = []
         self._unSortedVideo = []
@@ -33,16 +33,17 @@ class siteTrackSorter():
     """
     Public Functions
     """
-    def addTracks(self,tracks:List[trackObj.TrackObJ])->None:
+
+    def addTracks(self, tracks: List[trackObj.TrackObJ]) -> None:
         self._tracks.extend(tracks)
         """
         Extends internal tracks list with new Tracks
 
         Args:
             tracks (array): An array of trackObjs
-        """ 
-    
-    def sortTracks(self, movieLangs:List[str], audioPrefs:List[str], subPrefs:List[str], sortPref:str)->None:
+        """
+
+    def sortTracks(self, movieLangs: List[str], audioPrefs: List[str], subPrefs: List[str], sortPref: str) -> None:
         """
         Sorts tracks based on user prefrence
         adds sortred tracks into internal class arrays
@@ -52,28 +53,30 @@ class siteTrackSorter():
             audioPrefs (array):  list of users language preference
             subPrefs (array): list of user subtitle langauge preference
             sortPrefs (str): users prefence for which track should get higher priority
-        """        
+        """
         self._groupTracks()
         self._sortTracksHelper(movieLangs, audioPrefs, subPrefs, sortPref)
 
     # Get Forced Subs Based on Audio Preference
 
-    def addForcedSubs(self, movieLang:List[str], audioPref:List[str])->None:
+    def addForcedSubs(self, movieLang: List[str], audioPref: List[str]) -> None:
         """
         Extends tracks list with forced subs
 
         Args:
             movieLangs (array): list of languages in movie
             audioPrefs (array):  list of users language preference
-        """    
-            
+        """
+
         audioLangs = self._getAudioPrefs(movieLang, audioPref)[0]
-        if len(audioLangs)>=2:forcedSubLangs=audioLangs[0:2]
-        else:forcedSubLangs=audioLangs[0:1]
+        if len(audioLangs) >= 2:
+            forcedSubLangs = audioLangs[0:2]
+        else:
+            forcedSubLangs = audioLangs[0:1]
         primary = []
         all = []
         # Get Forced Subtitles
-        if install.javaInstallCheck()==False:
+        if install.javaInstallCheck() == False:
             print("Could Not Get Java\nSkipping Extraction of embedded forced subs")
         for oldTrack in self._unSortedSub:
             if oldTrack["lang"].lower() not in forcedSubLangs:
@@ -87,19 +90,20 @@ class siteTrackSorter():
                 for line in p.stdout:
                     print(line, end='')
                     output = output+line
-    
+
                 p.wait()
 
                 # Forced Sub Not Even made
                 if re.search("Detected 0 forced captions", output):
                     continue
 
-                self._insertForcedSubHelper(oldTrack,forcedSubLangs,newFileName)
+                self._insertForcedSubHelper(
+                    oldTrack, forcedSubLangs, newFileName)
     """
     Setters/Getters
     """
     @property
-    def tracks(self)->List[trackObj.TrackObJ]:
+    def tracks(self) -> List[trackObj.TrackObJ]:
         """
         returns all tracks added to object
         Returns:
@@ -107,59 +111,58 @@ class siteTrackSorter():
         """
         return self._tracks
 
-
     @property
-    def unSortedAudio(self)->List[trackObj.TrackObJ]:
+    def unSortedAudio(self) -> List[trackObj.TrackObJ]:
         """
         returns all audio tracks added to object
         Returns:
             array: An array of audio trackObjs
-        """    
+        """
         return self._unSortedAudio
 
     @property
-    def unSortedVideo(self)->List[trackObj.TrackObJ]:
+    def unSortedVideo(self) -> List[trackObj.TrackObJ]:
         """
         returns all video tracks added to object
         Returns:
             array: An array of video trackObjs
-        """   
+        """
         return self._unSortedVideo
 
     @property
-    def unSortedSub(self)->List[trackObj.TrackObJ]:
+    def unSortedSub(self) -> List[trackObj.TrackObJ]:
         """
         returns all sub tracks added to object
         Returns:
             array: An array of sub trackObjs
-        """ 
+        """
         return self._unSortedSub
 
     @property
-    def enabledAudio(self)->List[trackObj.TrackObJ]:
+    def enabledAudio(self) -> List[trackObj.TrackObJ]:
         """
         returns sorted and filtered audio tracks
         Returns:
             array: An array of sorted and filtered audio tracks
-        """         
+        """
         return self._enabledAudio
 
     @property
-    def enabledVideo(self)->List[trackObj.TrackObJ]:
+    def enabledVideo(self) -> List[trackObj.TrackObJ]:
         """
         returns sorted and filtered video tracks
         Returns:
             array: An array of sorted and filtered video tracks
-        """                
+        """
         return self._enabledVideo
 
     @property
-    def enabledSub(self)->List[trackObj.TrackObJ]:
+    def enabledSub(self) -> List[trackObj.TrackObJ]:
         """
         returns sorted and filtered sub tracks
         Returns:
             array: An array of sorted and filtered sub tracks
-        """         
+        """
         return self._enabledSub
 
     """
@@ -170,7 +173,7 @@ class siteTrackSorter():
     #       Adds Tracks to Unsorted List based on Type
     ################################################################################################################
 
-    def _groupTracks(self)->None:
+    def _groupTracks(self) -> None:
         """
         Adds tracks into arrays based on type
         """
@@ -187,7 +190,7 @@ class siteTrackSorter():
     #       Sort Track Helpers
     ################################################################################################################
 
-    def _sortTracksHelper(self, movieLangs:List[str], audioPrefs:List[str], subPrefs:List[str], sortPref:str)->None:
+    def _sortTracksHelper(self, movieLangs: List[str], audioPrefs: List[str], subPrefs: List[str], sortPref: str) -> None:
         """
         Sort tracks and filter tracks into arrays based on type
 
@@ -210,7 +213,7 @@ class siteTrackSorter():
         self._sortSub(subTracks, subPrefs, audioLang)
         self._sortVideo(vidTracks, sortPref)
 
-    def _removeDupes(self, tracks:List[trackObj.TrackObJ])->List[trackObj.TrackObJ]:
+    def _removeDupes(self, tracks: List[trackObj.TrackObJ]) -> List[trackObj.TrackObJ]:
         """
         Removes tracks that are found to have enough similar attributes (Dupes)
 
@@ -245,7 +248,7 @@ class siteTrackSorter():
     #        will have to be overwritten based on Site.
     ############################################
 
-    def _sortAudio(self, audioTracks:List[trackObj.TrackObJ], audioLang:List[str], sortPref:str)->None:
+    def _sortAudio(self, audioTracks: List[trackObj.TrackObJ], audioLang: List[str], sortPref: str) -> None:
         """
         Sorts and filters audio tracks
 
@@ -279,13 +282,13 @@ class siteTrackSorter():
             mainTracks[0]["default"] = True
         self._enabledAudio.extend(mainTracks)
 
-    def _sortCompatAudio(self, audioTracks:List[trackObj.TrackObJ])->None:
+    def _sortCompatAudio(self, audioTracks: List[trackObj.TrackObJ]) -> None:
         """
         Sorts and filters compat audio tracks
 
         Args:
             audoTracks (array): array of compat audio trackObjs
-        """        
+        """
         # Get all compat tracks
         tracks = list(
             filter(lambda x: x["compat"] == True, audioTracks))
@@ -305,7 +308,7 @@ class siteTrackSorter():
 
                     break
 
-    def _sortSub(self, subTracks:List[trackObj.TrackObJ], subPrefs:List[str], audioLang:List[str])->None:
+    def _sortSub(self, subTracks: List[trackObj.TrackObJ], subPrefs: List[str], audioLang: List[str]) -> None:
         # tempdict for tracks to add
         """
         Sorts and filters sub tracks
@@ -315,7 +318,7 @@ class siteTrackSorter():
             subPrefs (array): list of user subtitle langauge preference
 
             audioLang (array):  list of languages
-        """        
+        """
         mainTracks = []
         if subPrefs:
             for lang in subPrefs:
@@ -359,19 +362,19 @@ class siteTrackSorter():
                 newTracks.extend(mainTracks)
                 self._enabledSub.extend(newTracks)
 
-    def _sortVideo(self, vidTracks:List[trackObj.TrackObJ], sortPref:List[str])->None:
+    def _sortVideo(self, vidTracks: List[trackObj.TrackObJ], sortPref: List[str]) -> None:
         """
         Sorts and filters video tracks
 
         Args:
             vidTracks (array): list of video trackObjs
             sortPrefs (str): users prefence for which track should get higher priority
-        """        
+        """
         newTracks = copy.deepcopy(vidTracks)
         if sortPref == "size":
             newTracks = sorted(newTracks,
                                key=self._VideoRankingSize, reverse=True)
-        if len(newTracks)>0:
+        if len(newTracks) > 0:
             newTracks[0]["default"] = True
             self._enabledVideo.append(newTracks[0])
 
@@ -380,7 +383,7 @@ class siteTrackSorter():
     #
     ##########################################################################################
 
-    def _AudioRankingSize(self, track:trackObj.TrackObJ)->int:
+    def _AudioRankingSize(self, track: trackObj.TrackObJ) -> int:
         """
         returns audio track size
 
@@ -388,7 +391,7 @@ class siteTrackSorter():
             track (obj): audio track
         Returns:
              int: int for track size
-        """     
+        """
         title = track["bdinfo_title"]
         size = os.path.getsize(track.getTrackLocation())
         # lossless
@@ -398,7 +401,7 @@ class siteTrackSorter():
         else:
             return 10+(size/100*100000000)
 
-    def _VideoRankingSize(self, track:trackObj.TrackObJ)->int:
+    def _VideoRankingSize(self, track: trackObj.TrackObJ) -> int:
         """
         returns video track size
 
@@ -406,11 +409,11 @@ class siteTrackSorter():
             track (obj): video track
         Returns:
              int: int for track size
-        """          
+        """
         size = os.path.getsize(track.getTrackLocation())
         return size
 
-    def _subAlphaOrder(self, track:trackObj.TrackObJ)->str:
+    def _subAlphaOrder(self, track: trackObj.TrackObJ) -> str:
         """
         returns sub track language 
 
@@ -418,7 +421,7 @@ class siteTrackSorter():
             track (obj): video track
         Returns:
              str: language for subtitle track
-        """              
+        """
         return track["lang"]
 
 
@@ -427,7 +430,7 @@ class siteTrackSorter():
 #
 ##################################################################################
 
-    def _getAudioPrefs(self, movieLang:List[str], audioPrefs:List[str])->List[str]:
+    def _getAudioPrefs(self, movieLang: List[str], audioPrefs: List[str]) -> List[str]:
         """
         Generates audio preferences based on user args and movie language
 
@@ -440,14 +443,14 @@ class siteTrackSorter():
         """
         if len(audioPrefs) == 0:
             if "English" not in movieLang:
-                movieLang.insert(0,"English")
+                movieLang.insert(0, "English")
             return list(map(lambda x: x.lower(), movieLang))
         return utils.removeDupesList(audioPrefs)
-   
+
     ###
     # Insert Primary Language into correct place
     ###
-    def _insertForcedSubHelper(self,oldTrack:trackObj.TrackObJ,forcedSubLangs:List[str],newFileName:Union[str, bytes, os.PathLike])->None:
+    def _insertForcedSubHelper(self, oldTrack: trackObj.TrackObJ, forcedSubLangs: List[str], newFileName: Union[str, bytes, os.PathLike]) -> None:
         """
         Inserts extracted force subs into sorted and unsorted arrays
 
@@ -456,11 +459,11 @@ class siteTrackSorter():
             forcedSubLangs (array():  List of audio languages for enabled trcks
             newFileName (str): FileName for forced subs
         """
-        primary=[]
+        primary = []
         newTrack = copy.deepcopy(oldTrack)
         newTrack["filename"] = newFileName
         value = newTrack["bdinfo_title"] + \
-        newTrack["sourceKey"] + str(newTrack["index"])+"forced"
+            newTrack["sourceKey"] + str(newTrack["index"])+"forced"
         key = xxhash.xxh32_hexdigest(value)
         post = newTrack["langcode"] or "vid"
         newTrack["key"] = f"{key}_forced_{post}"
@@ -470,7 +473,7 @@ class siteTrackSorter():
             newTrack["default"] = True
             newTrack["forced"] = True
             newTrack["site_title"] = "For Non English Parts"
-            templist=[newTrack]
+            templist = [newTrack]
             templist.extend()
             primary.append(newTrack)
 
@@ -484,7 +487,3 @@ class siteTrackSorter():
         self._unSortedSub.append(newTrack)
         primary.extend(self._enabledSub)
         self._enabledSub = primary
-
-
-
-

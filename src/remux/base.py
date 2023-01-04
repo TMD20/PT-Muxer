@@ -77,10 +77,10 @@ class Remux():
         movieTitle = f"{title} ({year})"
         if chaptersTemp:
             self._muxGenerator.createMKV(self._fileName, movieTitle,
-                                         chaptersTemp, xmlTemp, self._getPrimaryBDInfo(), self._getPrimaryEac3to())
+                                         chaptersTemp, xmlTemp, bdinfo=self._getPrimaryBDInfo(), eac3to=self._getPrimaryEac3to())
         else:
             self._muxGenerator.createMKV(self._fileName, title, year,
-                                         None, xmlTemp, self._getPrimaryBDInfo(), self._getPrimaryEac3to())
+                                         None, xmlTemp, bdinfo=self._getPrimaryBDInfo(), eac3to=self._getPrimaryEac3to())
         self._muxGenerator.printMediaInfo(self._fileName)
 
     def _getRemuxConfig(self)->None:

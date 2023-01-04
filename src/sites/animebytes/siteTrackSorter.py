@@ -12,9 +12,11 @@ class AnimeBytes(siteTrackSorter):
     Args:
         siteTrackSorter (class): The base track sorter class
     """
-    def __init__(self)->None:
+
+    def __init__(self) -> None:
         super().__init__()
-    def addForcedSubs(self, movieLang:List[str], audioPref:List[str])->None:
+
+    def addForcedSubs(self, movieLang: List[str], audioPref: List[str]) -> None:
         """
         This function sets forced subs by extracting or setting the flag on 
         a detected track
@@ -24,12 +26,12 @@ class AnimeBytes(siteTrackSorter):
             audioPref (array): list of user preference for language
         """
         super().addForcedSubs(movieLang, audioPref)
-        #set force track
-        forceDict={}
+        # set force track
+        forceDict = {}
         for track in self._unSortedSub:
-            key=track["sourceKey"]
-            if forceDict.get(key)==None:
-                forceDict[key]=[track]
+            key = track["sourceKey"]
+            if forceDict.get(key) == None:
+                forceDict[key] = [track]
             else:
                 forceDict[key].append(track)
         for key in list(forceDict.keys()):
@@ -37,9 +39,9 @@ class AnimeBytes(siteTrackSorter):
                 filter(lambda x: (x["sourceKey"] == key and x["lang"].lower() == "english"), self._unSortedSub))
             # Check if a source already has forced subs
             if len(list(
-                filter(lambda x: (x["forced"] == True), keyTracks)))>0:
+                    filter(lambda x: (x["forced"] == True), keyTracks))) > 0:
                 continue
-            #Try to find force track
+            # Try to find force track
             if len(keyTracks) < 2:
                 continue
             forcedTrack = keyTracks[0]
@@ -49,9 +51,7 @@ class AnimeBytes(siteTrackSorter):
             forcedTrack["forced"] = True
             forcedTrack["site_title"] = "For Non English Parts"
 
-
-
-    def _getAudioPrefs(self, movieLang:List[str], audioPrefs:List[str])->List[str]:
+    def _getAudioPrefs(self, movieLang: List[str], audioPrefs: List[str]) -> List[str]:
         """
         Gets audio prefrence
         If no langauges are supply animebyes will return English and Japanese 
@@ -64,17 +64,15 @@ class AnimeBytes(siteTrackSorter):
             _array: Finalized list of languages
         """
         if len(audioPrefs) > 0:
-             return utils.removeDupesList(audioPrefs)
+            return utils.removeDupesList(audioPrefs)
         otherLangs = list(filter(lambda x: x.lower() !=
-                                    "english" and x.lower() != "japanese", movieLang))
+                                 "english" and x.lower() != "japanese", movieLang))
         # Prioritize japanese and english
-        langs = ["English","Japanese"]
+        langs = ["English", "Japanese"]
         langs.extend(otherLangs)
         return list(map(lambda x: x.lower(), langs))
 
-    
-    
-    def _sortAudio(self, audioTracks:List[str], audioLang:List[str], sortPref:str)->None:
+    def _sortAudio(self, audioTracks: List[str], audioLang: List[str], sortPref: str) -> None:
         """
         Function to sort audio tracks
         Preference is given to English and Japanese tracks
@@ -85,11 +83,13 @@ class AnimeBytes(siteTrackSorter):
             sortPref (str): users preference for track sorting
         """
         super()._sortAudio(audioTracks, audioLang, sortPref)
-        #Change Original Audio to Japanese
-        #set original language flag
+        # Change Original Audio to Japanese
+        # set original language flag
         newTracks = [ele for ele in audioTracks if ele["lang"].lower()
                      == "japanese" and ele["compat"] == False]
-        for track in newTracks: track["original"]=True
+        for track in newTracks:
+            track["original"] = True
         newTracks = [ele for ele in audioTracks if ele["lang"].lower()
                      == "english" and ele["compat"] == False]
-        for track in newTracks: track["original"]=False
+        for track in newTracks:
+            track["original"] = False

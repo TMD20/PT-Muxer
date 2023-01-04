@@ -21,7 +21,7 @@ def pickSite(site:Union[str,None]=None)->base.MuxOBj:
 
     if site==None:
         return base.MuxOBj()
-    elif site.lower() ==  ["beyondhd","bhd"]:
+    elif site.lower() in ["beyondhd","bhd"]:
         return beyondHD.BeyondHD()
 
     elif site.lower() in ["blu","blutopia"]:

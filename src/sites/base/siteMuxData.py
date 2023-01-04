@@ -2,7 +2,7 @@ import itertools
 import re
 import os
 import subprocess
-from typing import  List,Union
+from typing import List, Union
 
 
 import langcodes
@@ -21,15 +21,16 @@ class MuxOBj():
     """
     Base class for generating mkvmerge
     """
-    def __init__(self)->None:
+
+    def __init__(self) -> None:
         self._audio = []
         self._video = []
         self._sub = []
         self._out = None
         self._outputargs = []
-        self._placeholder="PlaceHolderTitleRemux"
+        self._placeholder = "PlaceHolderTitleRemux"
 
-    def generateMuxData(self, remuxConfig:dict, outargs:List[str])->None:
+    def generateMuxData(self, remuxConfig: dict, outargs: List[str]) -> None:
         """
         Generates mkvmerge command
 
@@ -46,15 +47,113 @@ class MuxOBj():
             [self._video, self._audio, self._sub, self._outputargs]))
 
     @property
-    def out(self)->List[str]:
+    def out(self) -> List[str]:
         """
         Helper function to get out parameter
         Returns:
             array: array of outargs
         """
         return self._out
+    def createMKV(self, fileName: str, movieTitle: str, chapters: Union[str, bytes, os.PathLike], xml: Union[str, bytes, os.PathLike],**kwargs) -> None:
+        """
+        Generates a MKV using mkvmerge in subprocess
+        Additionally runs vdator to validate remux
 
-    def _addVideoTracks(self, remuxConfig:dict)->None:
+        Args:
+            fileName (str): file name to pass to mkvmerge
+            movieTitle (str): movietitle to pass to mkvmerge
+            chapters (str): path to chapters file to pass to mkvmerge
+            xml (str): path to xml file to pass to mkvmerge
+        """
+        if os.path.exists(fileName):
+            os.remove(fileName)
+        command = list(itertools.chain.from_iterable(
+            [commands.mkvmerge(), ["--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
+        if chapters == None:
+            command = list(itertools.chain.from_iterable(
+                [commands.mkvmerge(), ["--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
+        logger.logger.debug(f"Running This Command: \n{command}")
+        logger.logger.debug(
+            f"Running This CommandString :\n{' '.join(command)}")
+        with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
+            for line in p.stdout:
+                print(line, end='')
+    def getFileName(self,
+                        remuxConfig: dict, group: str, title: str, episodeTitle: Union[str, None] = None) -> str:
+            """
+            Generates a filename based on demux data
+
+            Args:
+                remuxConfig (dict):dictionary generated my PTMuxer
+                group (str): group remux is being generated for
+                title (str): Movie title
+                episodeTitle (str, optional):Episode title. Defaults to None.
+
+            Returns:
+                str: filename for remux
+            """
+
+            episodeTitle = episodeTitle or self._placeholder
+            videoCodec = self._getVideo(
+                remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+            mediaType = self._getMediaType(
+                remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+            videoRes = self._getVideoResolution(
+                remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
+
+            audioCodec = self._getAudio(
+                remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+            audioChannel = self._getAudioChannel(
+                remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
+            year = remuxConfig['Movie']['year']
+            season = remuxConfig["Movie"].get("season")
+            episode = remuxConfig["Movie"].get("episode")
+            movieName = f"{title} {year}"
+            if season and episode:
+                fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+                return os.path.join(self._getTVDir(remuxConfig,group,title),self._fileNameCleaner(fileName))
+
+
+            else:
+                fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
+                return os.path.join(self._getMovieDir(remuxConfig,group,title,year),self._fileNameCleaner(fileName))
+
+    def printMediaInfo(self, fileName: str) -> None:
+        """
+        Takes fileName and prints mediainfo 
+        Args:
+            fileName (str): fileName to process and pass to mediainfo
+        """
+        with dir.cwd(paths.createTempDir()):
+            print(MediaInfo.parse(fileName, output="", full=False))
+    def confirmName(self, fileName: str) -> str:
+        """
+        Provides prompt to confirm or fileName change attribute
+
+        Args:
+            fileName (str): initial fileName
+
+        Returns:
+            str: confirmed fileName
+        """
+        inputs = ["YES", "NO"]
+        choice = utils.singleSelectMenu(
+            inputs, f"Is this FilePath Correct: {fileName}\n")
+        while choice != "YES":
+            message = "Enter New FilePath: "
+            fileName = utils.textEnter(message, fileName)
+            choice = utils.singleSelectMenu(
+                inputs, "Is the File Correct Now\n")
+        return fileName
+         
+                             
+    ######################################################
+    # Private Functions
+    #
+    #####################################################
+    
+    
+    def _addVideoTracks(self, remuxConfig: dict) -> None:
         """
         Generates video tracks arguments for mkvmerge
 
@@ -88,13 +187,13 @@ class MuxOBj():
             out.append(temp)
         self._video = list(itertools.chain.from_iterable(out))
 
-    def _addAudioTracks(self, remuxConfig:dict)->None:
+    def _addAudioTracks(self, remuxConfig: dict) -> None:
         """
         Generates audio track arguments for mkvmerge
 
         Args:
             remuxConfig (dict): remuxConfig dict from demux
-        """        
+        """
         out = []
         for i in range(len(remuxConfig["Enabled_Tracks"]["Audio"])):
             key = remuxConfig["Enabled_Tracks"]["Audio"][i]
@@ -131,13 +230,13 @@ class MuxOBj():
             out.append(temp)
         self._audio = list(itertools.chain.from_iterable(out))
 
-    def _addSubTracks(self, remuxConfig:dict)->None:
+    def _addSubTracks(self, remuxConfig: dict) -> None:
         """
         Generates sub track arguments for mkvmerge
 
         Args:
             remuxConfig (dict): remuxConfig dict from demux
-        """             
+        """
         out = []
         for i in range(len(remuxConfig["Enabled_Tracks"]["Sub"])):
             key = remuxConfig["Enabled_Tracks"]["Sub"][i]
@@ -180,67 +279,29 @@ class MuxOBj():
             out.append(temp)
         self._sub = (list(itertools.chain.from_iterable(out)))
 
-    def getFileName(self,
-                    remuxConfig:dict, group:str,title:str, episodeTitle:Union[str,None]=None)->str:
-        """
-        Generates a filename based on demux data
+    
 
-        Args:
-            remuxConfig (dict):dictionary generated my PTMuxer
-            group (str): group remux is being generated for
-            title (str): Movie title
-            episodeTitle (str, optional):Episode title. Defaults to None.
-
-        Returns:
-            str: filename for remux
-        """        
-       
-        episodeTitle=episodeTitle or self._placeholder
-        videoCodec = self.getVideo(
-            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
-            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
-            remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-
-        audioCodec = self.getAudio(
-            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
-            remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        year = remuxConfig['Movie']['year']
-        season = remuxConfig["Movie"].get("season")
-        episode = remuxConfig["Movie"].get("episode")
-        movieName = f"{title} {year}"
-        if season and episode:
-            fileName = f"{movieName}.S{season//10}{season%10}E{episode//10}{episode%10}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            return self._fileNameCleaner(fileName)
-
-        else:
-            fileName = f"{movieName}.{episodeTitle}.{videoRes}.{mediaType}.REMUX.{videoCodec}.{audioCodec}.{audioChannel}-{group}.mkv"
-            return self._fileNameCleaner(fileName)
-
-
-    def _fileNameCleaner(self, fileName:str)->str:
+    def _fileNameCleaner(self, fileName: str) -> str:
         """
         This function removes extraniosu characters from filenames
         Args:
             fileName (str): filename to clean
         Returns:
             str: cleaned filename
-        """        
+        """
         fileName = re.sub(" +", " ", fileName)
         fileName = re.sub(" ", ".", fileName)
         fileName = re.sub("\.+", ".", fileName)
         fileName = re.sub("[@_!#$%^&*()<>?/\|}{~:]", "", fileName)
         fileName = re.sub("([^a-zA-Z\d])\.", ".", fileName)
         fileName = re.sub("\.([^a-zA-Z\d])", ".", fileName)
-        fileName = re.sub(f"{self._placeholder}.", "",fileName)
+        fileName = re.sub(f"{self._placeholder}.", "", fileName)
         Noquotes = re.search('^"(.*)"$', fileName)
         if Noquotes:
             fileName = Noquotes.group(0)
         return fileName
 
-    def _addOutPutArgs(self, outargs:str)->List[str]:
+    def _addOutPutArgs(self, outargs: str) -> List[str]:
         """
         splits a string of mkvmerge global output args into an array
 
@@ -252,32 +313,9 @@ class MuxOBj():
         """
         self._outputargs = outargs.split()
 
-    def createMKV(self, fileName:str, movieTitle:str, chapters:Union[str, bytes, os.PathLike], xml:Union[str, bytes, os.PathLike])->None:
-        """
-        Generates a MKV using mkvmerge in subprocess
-        Additionally runs vdator to validate remux
 
-        Args:
-            fileName (str): file name to pass to mkvmerge
-            movieTitle (str): movietitle to pass to mkvmerge
-            chapters (str): path to chapters file to pass to mkvmerge
-            xml (str): path to xml file to pass to mkvmerge
-        """
-        if os.path.exists(fileName):
-            os.remove(fileName)
-        command = list(itertools.chain.from_iterable(
-            [commands.mkvmerge(), ["--title", movieTitle, "--chapters", chapters, "--output", fileName, "--global-tags", xml], self._out]))
-        if chapters == None:
-            command = list(itertools.chain.from_iterable(
-                [commands.mkvmerge(), ["--title", movieTitle, "--output", fileName, "--global-tags", xml], self._out]))
-        logger.logger.debug(f"Running This Command: \n{command}")
-        logger.logger.debug(
-            f"Running This CommandString :\n{' '.join(command)}")
-        with subprocess.Popen(command, universal_newlines=True, stdout=subprocess.PIPE, bufsize=1) as p:
-            for line in p.stdout:
-                print(line, end='')
 
-    def getTVDir(self, remuxConfig:dict, group:str, title:str)->str:
+    def _getTVDir(self, remuxConfig: dict, group: str, title: str) -> str:
         """
         Generates a folder name for TV remux based on demux Data
 
@@ -288,17 +326,17 @@ class MuxOBj():
 
         Returns:
             str: folder name
-        """        
-        videoCodec = self.getVideo(
+        """
+        videoCodec = self._getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
+        mediaType = self._getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
+        videoRes = self._getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = self.getAudio(
+        audioCodec = self._getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
+        audioChannel = self._getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         year = remuxConfig['Movie']['year']
         season = remuxConfig["Movie"]["season"]
@@ -308,7 +346,7 @@ class MuxOBj():
         # Normalize FileName
         return self._fileNameCleaner(fileName)
 
-    def _getMovieDir(self, remuxConfig:dict, group:str, title:str, year:int)->str:
+    def _getMovieDir(self, remuxConfig: dict, group: str, title: str, year: int) -> str:
         """
         Generates a folder name for movie remux based on demux Data
 
@@ -320,17 +358,17 @@ class MuxOBj():
 
         Returns:
             str: folder name
-        """  
-        videoCodec = self.getVideo(
+        """
+        videoCodec = self._getVideo(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        mediaType = self.getMediaType(
+        mediaType = self._getMediaType(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
-        videoRes = self.getVideoResolution(
+        videoRes = self._getVideoResolution(
             remuxConfig["Enabled_Tracks"]["Video"], remuxConfig["Tracks_Details"]["Video"])
 
-        audioCodec = self.getAudio(
+        audioCodec = self._getAudio(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
-        audioChannel = self.getAudioChannel(
+        audioChannel = self._getAudioChannel(
             remuxConfig["Enabled_Tracks"]["Audio"], remuxConfig["Tracks_Details"]["Audio"])
         movieName = f"{title} {year}"
 
@@ -338,39 +376,13 @@ class MuxOBj():
         # Normalize FileName
         return self._fileNameCleaner(fileName)
 
-    def confirmName(self, fileName:str)->str:
-        """
-        Provides prompt to confirm or fileName change attribute
 
-        Args:
-            fileName (str): initial fileName
-
-        Returns:
-            str: confirmed fileName
-        """
-        inputs = ["YES", "NO"]
-        choice = utils.singleSelectMenu(
-            inputs, f"Is this FilePath Correct: {fileName}\n")
-        while choice != "YES":
-            message = "Enter New FilePath: "
-            fileName = utils.textEnter(message, fileName)
-            choice = utils.singleSelectMenu(
-                inputs, "Is the File Correct Now\n")
-        return fileName
-
-    def printMediaInfo(self, fileName:str)->None:
-        """
-        Takes fileName and prints mediainfo 
-        Args:
-            fileName (str): fileName to process and pass to mediainfo
-        """
-        with dir.cwd(paths.createTempDir()):
-            print(MediaInfo.parse(fileName, output="", full=False))
 
     """
     Title Helpers
     """
-    def getVideo(self,enabledTracks:List[dict], trackDetails:dict)->str:
+
+    def _getVideo(self, enabledTracks: List[dict], trackDetails: dict) -> str:
         """
         Returns video codec information on matched video 
         track(first enabled video)
@@ -382,7 +394,7 @@ class MuxOBj():
         Returns:
             str: codec information for matched video track
         """
-        if len(enabledTracks)==0:
+        if len(enabledTracks) == 0:
             return ""
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["bdinfo_title"]
@@ -395,8 +407,7 @@ class MuxOBj():
         elif re.search("MPEG-2", trackinfo) != None:
             return "MPEG-2"
 
-
-    def getAudio(self,enabledTracks:List[dict], trackDetails:dict)->str:
+    def _getAudio(self, enabledTracks: List[dict], trackDetails: dict) -> str:
         """
         Returns audio codec information on matched audio
         track(first enabled audio)
@@ -408,12 +419,11 @@ class MuxOBj():
         Returns:
             str: codec information for matched audio track
         """
-        if len(enabledTracks)==0:
+        if len(enabledTracks) == 0:
             return ""
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["site_title"]
-        
-        
+
         if re.search("FLAC", trackinfo):
             return "FLAC"
         elif re.search("ATMOS", trackinfo):
@@ -425,8 +435,7 @@ class MuxOBj():
         elif re.search("PCM", trackinfo):
             return "PCM"
 
-
-    def getAudioChannel(self,enabledTracks:List[dict], trackDetails:dict)->str:
+    def _getAudioChannel(self, enabledTracks: List[dict], trackDetails: dict) -> str:
         """
         Returns audio channel information on matched audio
         track(first enabled audio)
@@ -438,14 +447,13 @@ class MuxOBj():
         Returns:
             str: channel information for matched audio track
         """
-        if len(enabledTracks)==0:
+        if len(enabledTracks) == 0:
             return ""
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["site_title"]
         return re.search("/ (.*?) /", trackinfo).group(1)
 
-
-    def getVideoResolution(self,enabledTracks:List[dict], trackDetails:dict)->str:
+    def _getVideoResolution(self, enabledTracks: List[dict], trackDetails: dict) -> str:
         """
         Returns video res information on matched video
         track(first enabled video)
@@ -461,8 +469,7 @@ class MuxOBj():
         trackinfo = trackDetails[key]["bdinfo_title"]
         return re.search("[0-9]{3,4}[p|i]", trackinfo).group(0)
 
-
-    def getMediaType(self,enabledTracks:List[dict], trackDetails:dict)->str:
+    def _getMediaType(self, enabledTracks: List[dict], trackDetails: dict) -> str:
         """
         Returns the disk type based on video track information from matched
         track(first enabled video)
@@ -481,8 +488,7 @@ class MuxOBj():
         else:
             return "BluRay"
 
-
-    def getHDR(self,enabledTracks:List[dict], trackDetails:dict)->str:
+    def _getHDR(self, enabledTracks: List[dict], trackDetails: dict) -> str:
         """
         Returns HDR|SDR based on video track information from matched
         track(first enabled video)
@@ -493,7 +499,7 @@ class MuxOBj():
 
         Returns:
             str: HDR|SDR information
-        """    
+        """
         key = str(enabledTracks[0])
         trackinfo = trackDetails[key]["bdinfo_title"]
         if re.search("BT.2020", trackinfo):
