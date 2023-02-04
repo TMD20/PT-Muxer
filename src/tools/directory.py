@@ -14,7 +14,7 @@ class cwd:
         self._olddir=os.getcwd()
         self._dir=dir
     def __enter__(self)->None:
-        paths.mkdirSafe(os.path.join(self._dir,""))
+        paths.mkdirSafe(self._dir)
         self._dir=paths.convertPathType(self._dir,type="Linux")
         os.chdir(self._dir)
     def __exit__(self, exc_type, exc_value, tb)->None:

@@ -3,8 +3,8 @@ from typing import Union
 import src.sites.base.siteTrackSorter as base
 import src.sites.beyondHD.siteTrackSorter as beyondHD
 import src.sites.blu.siteTrackSorter as blu
+import src.sites.ptp.siteTrackSorter as ptp
 import src.sites.animebytes.siteTrackSorter as anime
-
 
 def pickSite(site:Union[str,None]=None)->base.siteTrackSorter:
     """
@@ -24,7 +24,8 @@ def pickSite(site:Union[str,None]=None)->base.siteTrackSorter:
         return beyondHD.BeyondHD()
     elif site.lower() in ["blu","blutopia"]:
         return blu.Blu()
-    
+    elif site.lower() in ["ptp","passthepopcorn"]:
+        return ptp.PTP()    
     elif site.lower() in ["ab","animebytes","animebyte"]:
         return anime.AnimeBytes()
     else:

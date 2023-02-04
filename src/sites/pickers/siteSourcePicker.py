@@ -4,6 +4,7 @@ import src.sites.base.siteSourceData as base
 import src.sites.beyondHD.siteSourceData as beyondHD
 import src.sites.blu.siteSourceData as blu
 import src.sites.animebytes.siteSourceData as anime
+import src.sites.ptp.siteSourceData as ptp
 
 
 def pickSite(site:Union[str,None]=None)->base.siteSourceData:
@@ -21,6 +22,8 @@ def pickSite(site:Union[str,None]=None)->base.siteSourceData:
         return beyondHD.BeyondHD()
     elif site.lower() in ["blu","blutopia"]:
         return blu.Blu()
+    elif site.lower() in ["ptp","passthepopcorn"]:
+        return ptp.PTP()
     elif site.lower() in ["ab","animebytes","animebyte"]:
         return anime.AnimeBytes()
     else:

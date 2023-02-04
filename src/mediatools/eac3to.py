@@ -207,7 +207,7 @@ def get_eac3toPath(output:Union[str, bytes, os.PathLike], source:Union[str, byte
     """
     show=utils.sourcetoShowName(source)
     txtPath= os.path.join(output, "output_logs", f"Eac3to.{show}.txt")
-    paths.mkdirSafe(txtPath)
+    paths.mkdirSafe(os.path.dirname(txtPath))
     return txtPath
 
 

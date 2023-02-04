@@ -31,7 +31,7 @@ def createTempDir()->str:
     Returns:
         str: path to created temp directory
     """
-    mkdirSafe(os.path.join(config.tempFolder, "x"))
+    mkdirSafe(config.tempFolder)
 
     tempDir = tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
     tempDirs.append(tempDir)
@@ -136,14 +136,9 @@ def mkdirSafe(target:Union[str, bytes, os.PathLike])->None:
     Additionally creates parent paths of target if not present
 
     Args:
-        target (str): target path to create directory for, assumed to be a file 
+        target (str): target path to create directory
     """
-    directories = list(reversed(pathlib.Path(target).parents))
-    if len(os.path.splitext(target)[1]) == 0:
-        directories.append(target)
-    for ele in directories:
-        if not os.path.exists(ele):
-            os.mkdir(ele)
+    pathlib.Path(target).mkdir(exist_ok=True,parents=True)
 
 
 def rmSafe(path:Union[str, bytes, os.PathLike])->None:
