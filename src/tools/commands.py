@@ -120,15 +120,13 @@ def avisynth(video)->List[str]:
     Returns:
         array: command array for subprocess
     """ 
-    tempDir=paths.createTempDir()
-    with open(os.path.join(tempDir,"chapter.avs"),"w") as p:
+    with open(os.path.join(paths.createTempDir(),"chapter.avs"),"w") as p:
         if utils.getSystem()=="Linux":
+            # p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
+            # f'FFVideoSource("{video}")','Info(size=50=,text_color=$DC143C)'])
             my_env = os.environ.copy()
             my_env["LD_LIBRARY_PATH"]=config.AVISYNTH_LINUX_LIB
-            # p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
-            # f'FFVideoSource("{video}")','FFInfo(framenum=true,frametype=true,cfrtime=true,vfrtime=false, \
-            # version=false,cropping=false,colorrange=false,colorspace=false,sar=false)'])
             p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
-            f'FFVideoSource("{video}")','Info(size=40,text_color=$DC143C)'])
-            outFile=os.path.join(tempDir,"out.mkv")
-            return [config.FFMPEG_LINUX,"-i",p.name,outFile],outFile
+            f'FFVideoSource("{video}")','FFInfo(framenum=true,frametype=true,cfrtime=true,vfrtime=false, \
+            version=false,cropping=false,colorrange=false,colorspace=false,sar=false)'])
+            return [config.FFMPEG_LINUX,"-i",p.name,video.replace("mkv","AVS_CHAPTER.mkv")]

@@ -148,12 +148,11 @@ def rmSafe(path:Union[str, bytes, os.PathLike])->None:
     Args:
         path (str): path to attempt removal on
     """
-    if not os.path.exists(path):
-        return
+
     if os.path.isfile(path):
-        os.remove(path)
+        pathlib.Path(path).unlink(missing_ok=True)
     else:
-        shutil.rmtree(path)
+        shutil.rmtree(path,ignore_errors=True)
 
 
 def extractISO(source:Union[str, bytes, os.PathLike], path:Union[str, bytes, os.PathLike])->str:

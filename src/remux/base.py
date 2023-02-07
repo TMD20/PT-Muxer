@@ -86,9 +86,10 @@ class Remux():
                                          None, xmlTemp, bdinfo=self._getPrimaryBDInfo(), eac3to=self._getPrimaryEac3to())
         self._muxGenerator.printMediaInfo(self._fileName)
         if self._args.synthchapter:
-            command,outfile=commands.avisynth(self._fileName)
-            subprocess.run(command)
-            os.replace(outfile,self._fileName.replace("mkv","AVS_CHAPTER.mkv"))
+            subprocess.run(commands.avisynth(self._fileName))
+            paths.rmSafe(f"{self._fileName}.ffindex")
+
+            
 
            
             
