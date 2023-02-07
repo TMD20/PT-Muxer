@@ -21,7 +21,7 @@ def subreader(tracks, maxLines=None, langs=None, keep=None):
         langs (array, optional): array of languages to enable for ocr. Defaults to None.
         keep (bool, optional): whether to keep generated subtitle images. Defaults to None.
     """
-    maxLines = maxLines or config.maxOCRLineCount + 1
+    maxLines = maxLines or config.MAXOCRLINECOUNT + 1
     if keep:
         _ocrHelper(tracks, maxLines, langs)
     else:

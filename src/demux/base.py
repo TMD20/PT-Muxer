@@ -441,7 +441,7 @@ class Demux():
         """
         with dir.cwd(outpath):
             title = utils.getTitle(sources[0])
-            folder = f"{config.demuxPrefix}.{utils.getFormated('YY.MM.DD_HH.mm.ss')}.{title}"
+            folder = f"{config.DEMUXPREFIX}.{utils.getFormated('YY.MM.DD_HH.mm.ss')}.{title}"
             parentDemux = os.path.join(outpath, folder)
             parentDemux = re.sub(" +", " ", parentDemux)
             parentDemux = re.sub(" ", ".", parentDemux)

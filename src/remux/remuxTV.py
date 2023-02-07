@@ -68,7 +68,7 @@ class Remux(Remux):
             array: an array of filepaths to demux folders
         """
         folders = paths.search(
-            self._args.inpath, f"/{config.demuxPrefix}[.]", dir=True, recursive=False)
+            self._args.inpath, f"/{config.DEMUXPREFIX}[.]", dir=True, recursive=False)
         folders = list(filter(lambda x: os.path.isdir(x), folders))
         folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
         folders = list(filter(lambda x: re.search(

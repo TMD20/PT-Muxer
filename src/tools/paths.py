@@ -31,27 +31,27 @@ def createTempDir()->str:
     Returns:
         str: path to created temp directory
     """
-    mkdirSafe(config.tempFolder)
+    mkdirSafe(config.TEMPFOLDER)
 
-    tempDir = tempfile.mkdtemp(prefix=config.tempPrefix, dir=config.tempFolder)
+    tempDir = tempfile.mkdtemp(prefix=config.TEMPPREFIX, dir=config.TEMPFOLDER)
     tempDirs.append(tempDir)
     return tempDir
 
 
 def getOldTempPathDirs()->List[str]:
     """
-    List of all directories match config.py tempPrefix within configured temp directory
+    List of all directories match config.py TEMPPREFIX within configured temp directory
     Limits to configured time limit
 
     Returns:
         array: list of directories
     """
-    timeLimit = min(config.tempFolderCleanupTime, 1440)
+    timeLimit = min(config.TEMPFOLDERMINCLEANUPTIME, 1440)
     hour = timeLimit//60
     minute = timeLimit-(60*hour)
     criticalTime = utils.convertArrow(f"{hour:02d}:{minute:02d}", "hh:mm")
-    results = search(config.tempFolder,
-                     f"/{config.tempPrefix}[^/]*$", dir=True)
+    results = search(config.TEMPFOLDER,
+                     f"/{config.TEMPPREFIX}[^/]*$", dir=True)
     return list(filter(lambda x: utils.convertArrow(os.stat(x).st_mtime) > criticalTime, results))
 
 

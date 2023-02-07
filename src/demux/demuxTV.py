@@ -449,7 +449,7 @@ class Demux(Demux):
             array:  array of demuxFolders with TV Mode Structure
         """
         folders = paths.search(
-            outpath, f"{config.demuxPrefix}[.]", dir=True, recursive=False)
+            outpath, f"{config.DEMUXPREFIX}[.]", dir=True, recursive=False)
         emptyFolders = list(filter(lambda x: len(os.listdir(x)) == 0, folders))
         tvFolders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
         tvFolders = list(filter(lambda x: re.search(

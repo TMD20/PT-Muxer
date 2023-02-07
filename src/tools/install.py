@@ -22,9 +22,9 @@ def javaInstallCheck()->bool:
     """
     if utils.getSystem() == "Windows":
         return True
-    if os.path.exists(config.javaPath):
+    if os.path.exists(config.JAVAPATH):
         return True
-    java = config.javaPath
+    java = config.JAVAPATH
     msg =\
         f"""
         Java was not found
@@ -66,9 +66,9 @@ def contyInstallCheckWine()-> Callable[..., bool]:
     """
     if utils.getSystem() == "Windows":
         return True
-    elif os.path.exists(config.winePath):
+    elif os.path.exists(config.WINEPATH):
         return True
-    elif os.path.exists(config.contyPath):
+    elif os.path.exists(config.CONTYPATH):
         contyChmod()
         return True
     return contyInstaller()
@@ -80,9 +80,9 @@ def contyInstallCheckMono()->Callable[..., bool]:
     """
     if utils.getSystem() == "Windows":
         return True
-    elif os.path.exists(config.monoPath):
+    elif os.path.exists(config.MONOPATH):
         return True
-    elif os.path.exists(config.contyPath):
+    elif os.path.exists(config.CONTYPATH):
         contyChmod()
         return True
     return contyInstaller()
@@ -92,7 +92,7 @@ def contyInstaller()->bool:
     """
     Walk-through function to install conty if prompted
     """
-    conty = os.path.dirname(config.contyPath)
+    conty = os.path.dirname(config.CONTYPATH)
     info =\
         f"""
         Wine is not installed and is required to run eac3to/BDInfo on Linux
@@ -134,4 +134,4 @@ def contyChmod()->None:
     Helper function to change enviromental variables for conty
     """
     os.environ["ALLOW_ROOT"] = "1"
-    os.chmod(config.contyPath, os.stat(config.contyPath).st_mode | 0o111)
+    os.chmod(config.CONTYPATH, os.stat(config.CONTYPATH).st_mode | 0o111)

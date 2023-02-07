@@ -32,9 +32,9 @@ def process(tracks:List[trackObj.TrackObJ],source:Union[str, bytes, os.PathLike]
     if install.contyInstallCheckWine()==False:
         raise Exception("Wine or Conky Required for eac3to on Linux")
     output=os.path.abspath(".") 
-    eac3toPath = get_eac3toPath(output, source)
+    EACTOPATH = get_EACTOPATH(output, source)
     playlistLocation=_getFileHelper(source,playlistfile)
-    run(playlistLocation, tracks,eac3toPath)
+    run(playlistLocation, tracks,EACTOPATH)
 
 
 def eac3toTrack(index:int,name:str,bdinfotitle:str,type:List[str])->str:
@@ -131,14 +131,14 @@ def getChaptersBool(playlistLocation:Union[str, bytes, os.PathLike])->bool:
 
 
 
-def run(playlistLocation:Union[str, bytes, os.PathLike], tracks:List[trackObj.TrackObJ],eac3toPath:Union[str, bytes, os.PathLike])->None:
+def run(playlistLocation:Union[str, bytes, os.PathLike], tracks:List[trackObj.TrackObJ],EACTOPATH:Union[str, bytes, os.PathLike])->None:
     """
     Generates eac3to commands and runs in subprocess
 
     Args:
         playlistLocation (str): location of playlist to pass to eac3to must match tracks
         tracks (array): list of tracksObjs to pass to eac3to
-        eac3toPath (str): path for eac3to log file
+        EACTOPATH (str): path for eac3to log file
     """
 
     # get list of files
@@ -148,9 +148,9 @@ def run(playlistLocation:Union[str, bytes, os.PathLike], tracks:List[trackObj.Tr
     trackArgs=_addTracks(normalTracks,compatTracks,playlistLocation)
     logger.logger.debug(str(trackArgs))
     command1 = list(itertools.chain.from_iterable([commands.eac3to(), [
-                    playlistLocation], trackArgs, ["-progressnumbers", f"-log={eac3toPath}"]]))
+                    playlistLocation], trackArgs, ["-progressnumbers", f"-log={EACTOPATH}"]]))
     command2 = list(itertools.chain.from_iterable([commands.eac3to(), [
-                    playlistLocation], trackArgs, ["-progressnumbers", "-demux",f"-log={eac3toPath}"]]))
+                    playlistLocation], trackArgs, ["-progressnumbers", "-demux",f"-log={EACTOPATH}"]]))
     commandslist = [command1, command2]               
     status = 1
     for command in commandslist:
@@ -195,7 +195,7 @@ def _addTracks(normalTracks:List[trackObj.TrackObJ],compatTracks:List[trackObj.T
 
 
 
-def get_eac3toPath(output:Union[str, bytes, os.PathLike], source:Union[str, bytes, os.PathLike])->str:
+def get_EACTOPATH(output:Union[str, bytes, os.PathLike], source:Union[str, bytes, os.PathLike])->str:
     """
     Gets an path within output folder to store eac3to log
 

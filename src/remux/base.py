@@ -2,6 +2,7 @@ import os
 import re
 from string import Template
 from typing import Union,List
+import subprocess
 
 
 import orjson
@@ -12,6 +13,8 @@ import src.tools.paths as paths
 import config as config
 import src.tools.directory as dir
 import src.sites.pickers.siteMuxPicker as muxPicker
+import src.tools.commands as commands
+import src.tools.paths as paths
 
 
 class Remux():
@@ -82,6 +85,13 @@ class Remux():
             self._muxGenerator.createMKV(self._fileName, title, year,
                                          None, xmlTemp, bdinfo=self._getPrimaryBDInfo(), eac3to=self._getPrimaryEac3to())
         self._muxGenerator.printMediaInfo(self._fileName)
+        if self._args.synthchapter:
+            command,outfile=commands.avisynth(self._fileName)
+            subprocess.run(command)
+            os.replace(outfile,self._fileName.replace("mkv","AVS_CHAPTER.mkv"))
+
+           
+            
 
     def _getRemuxConfig(self)->None:
         """
@@ -139,7 +149,7 @@ class Remux():
             array: array of demux Movie Mode output folders
         """
         folders = paths.search(
-            self._args.inpath, f"/{config.demuxPrefix}[.]", dir=True, recursive=False)
+            self._args.inpath, f"/{config.DEMUXPREFIX}[.]", dir=True, recursive=False)
         folders = list(filter(lambda x: os.path.isdir(x), folders))
         folders = list(filter(lambda x: len(os.listdir(x)) > 0, folders))
         folders = list(filter(lambda x: re.search(
@@ -247,7 +257,7 @@ class Remux():
         Returns:
             str: path to xml file
         """
-        infile = os.path.join(config.root_dir,  f"xml/movie")
+        infile = os.path.join(config.ROOT_DIR,  f"txt/movie.xml")
         imdb = self._remuxConfig["Movie"]["imdb"]
         tmdb = self._remuxConfig["Movie"]["tmdb"]
         tempData = paths.createTempDir()
@@ -263,7 +273,6 @@ class Remux():
         """
         Helper function to get bdinfo file for main source of remux
         based on first video track enabled
-
 
         Returns:
             str: returns path to bdinfo for source

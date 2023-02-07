@@ -17,7 +17,7 @@ import src.tools.general as utils
 # Globals
 ia = imdb()
 tmdb.API_KEY = os.environ.get("TMDB") or "e7f961054134e132e994eb5e611e454c"
-tmdb.REQUESTS_SESSION = config.session
+tmdb.REQUESTS_SESSION = config.SESSION
 
 
 class MovieData():
@@ -422,7 +422,7 @@ class MovieData():
                 "action": "parse",
                 "redirects": "1"
             }
-            req = config.session.get(url, params=PARAMS)
+            req = config.SESSION.get(url, params=PARAMS)
             if req.json().get("error"):
                 continue
 
@@ -489,7 +489,7 @@ class MovieData():
                 "action": "parse",
                 "redirects": "1"
             }
-            req = config.session.get(url, params=PARAMS)
+            req = config.SESSION.get(url, params=PARAMS)
             if req.json().get("error"):
                 continue
             sections = req.json()["parse"]["sections"]
@@ -549,7 +549,7 @@ class MovieData():
                 "action": "parse",
                 "redirects": "1"
             }
-            req = config.session.get(url, params=PARAMS)
+            req = config.SESSION.get(url, params=PARAMS)
             if req.json().get("error"):
                 continue
             data.extend(list(filter(lambda x: re.search(
@@ -579,7 +579,7 @@ class MovieData():
             "format": "json",
             "action": "parse"
         }
-        req = config.session.get(url, params=PARAMS)
+        req = config.SESSION.get(url, params=PARAMS)
         sections = req.json()["parse"]["sections"]
         seasons = list(filter(lambda x: re.search(
             self._filterWord, x["line"], re.IGNORECASE), sections))
@@ -614,7 +614,7 @@ class MovieData():
             "format": "json",
             "action": "parse"
         }
-        req = config.session.get(self._episodesURL, params=PARAMS)
+        req = config.SESSION.get(self._episodesURL, params=PARAMS)
         episodesHTML = req.json()["parse"]["text"]["*"]
         soup = BeautifulSoup(episodesHTML, "html.parser")
         output = soup.find_all("tr", attrs={"class": "summary"})
@@ -833,7 +833,7 @@ class MovieData():
             "action": "parse",
         }
 
-        req = config.session.get(self._showURL, params=PARAMS)
+        req = config.SESSION.get(self._showURL, params=PARAMS)
         episodesHTML = req.json()["parse"]["text"]["*"]
 
         if episodesHTML.find(
@@ -843,7 +843,7 @@ class MovieData():
 
     def _getAnimeProjectData(self):
         url = "https://github.com/manami-project/anime-offline-database/raw/master/anime-offline-database-minified.json"
-        req = config.session.get(url)
+        req = config.SESSION.get(url)
         try:
             return req.json()["data"]
         except Exception as e:
@@ -936,7 +936,7 @@ class MovieData():
             Dictionary of Result matches search
         """
         url = f"https://api.jikan.moe/v4/anime?q={title}"
-        req = config.session.get(url)
+        req = config.SESSION.get(url)
         data = req.json()["data"]
         return data
 
@@ -1162,7 +1162,7 @@ class MovieData():
 
         """
         url = f"https://api.jikan.moe/v4/anime/{id}"
-        req = config.session.get(url)
+        req = config.SESSION.get(url)
         data = req.json()["data"]
         return data
 

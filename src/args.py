@@ -58,7 +58,7 @@ def setParser()->argparse.Namespace:
     parser_r.add_argument('-sn', '--skipnamecheck',
                         action='store_true', help="Skip Verification of Filenames")
     parser_r.add_argument('-g', '--group', default="Unknown",
-                        help="Change the Group Tag For Final mkv(s")
+                        help="Set the Group Tag For Final mkv(s")
     parser_r.add_argument('-fm', '--forcemovie',  action='store_true',
                         help="Force the output mkv to use movie syntax")
     parser_r.add_argument('-sp', '--special',  action='store_true',
@@ -66,8 +66,8 @@ def setParser()->argparse.Namespace:
     parser_r.add_argument('-oa', '--outargs', default="",
                         help="Pass mkvmerge global options")
     parser_r.add_argument('-e', '--episodetitle',action='store_true',
-                        help="Add Episode Title to filename")                     
-
+                        help="Add Episode Title to filename")    
+    parser_r.add_argument('-sy', '--synthchapter',default="eac3to",required=False,action='store_true',help="output mkv as avisynth frame check file\nFor Chapter Time Verification")                 
     #This seems to be the only way to
     # A have positional arguments
     #Easily Apply some argumetns to all subgroups

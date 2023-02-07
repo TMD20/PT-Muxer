@@ -4,54 +4,57 @@ import tempfile
 import shutil
 
 
-root_dir = os.path.dirname(os.path.realpath(__file__))
+ROOT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 ###
 #bin
 ###
-winePath = shutil.which("wine")
-javaPath=shutil.which("java")  or os.path.join(root_dir,"bin","java/bin/java")
-monoPath=shutil.which("mono")
-contyPath= os.path.join(root_dir,"bin","conty/conty.sh")
+WINEPATH = shutil.which("wine")
+JAVAPATH=shutil.which("java")  or os.path.join(ROOT_DIR,"bin","java/bin/java")
+MONOPATH=shutil.which("mono")
+CONTYPATH= os.path.join(ROOT_DIR,"bin","conty/conty.sh")
 
-eac3toPath = shutil.which("eac3to.exe") or os.path.join(root_dir, "bin/eac3to/eac3to.exe")
-dgDemuxLinux=shutil.which("dgdemux") or os.path.join(root_dir,"bin/dgdemux/Linux/dgdemux")
-dgDemuxWindow=shutil.which("dgdemux") or os.path.join(root_dir,"bin/dgdemux/Windows/DGDemux.exe")
-
-
-
-
-mkvMergeLinux = shutil.which("mkvmerge") or os.path.join(root_dir, "bin/mkvmerge/Linux/mkvmerge")
-mkvMergeWindows =  shutil.which("mkvmerge") or os.path.join(
-    root_dir, "bin/mkvmerge/Windows/mkvmerge.exe")
-
-bdSupLinux= os.path.join(root_dir, "bin/bdsup2sub/Linux/BDSup2Sub512.jar")
-bdSupWindows= os.path.join(root_dir, "bin/bdsup2sub.exe")
+EACTOPATH = shutil.which("eac3to.exe") or os.path.join(ROOT_DIR, "bin/eac3to/eac3to.exe")
+DGDEMUXLINUX=shutil.which("dgdemux") or os.path.join(ROOT_DIR,"bin/dgdemux/Linux/dgdemux")
+DGDEMUXWINDOW=shutil.which("dgdemux") or os.path.join(ROOT_DIR,"bin/dgdemux/Windows/DGDemux.exe")
 
 
 
-bdinfoWindowsPath = os.path.join(
-    root_dir, "bin/bdinfo/BDInfo.exe")
-bdinfoLinuxPath = os.path.join(
-    root_dir, "bin/bdinfo/BDInfo.exe")    
 
-isoExtractWindows = os.path.join(root_dir, "bin/7z/Windows/7za.exe")
-isoExtractLinux= os.path.join(root_dir, "bin/7z/Linux/7zzs")
+MKVMERGELINUX = shutil.which("mkvmerge") or os.path.join(ROOT_DIR, "bin/mkvmerge/Linux/mkvmerge")
+MKVMERGEWINDOWS =  shutil.which("mkvmerge") or os.path.join(
+    ROOT_DIR, "bin/mkvmerge/Windows/mkvmerge.exe")
+
+BDSUPLINUX= os.path.join(ROOT_DIR, "bin/bdsup2sub/Linux/BDSup2Sub512.jar")
+BDSUPWINDOWS= os.path.join(ROOT_DIR, "bin/bdsup2sub.exe")
 
 
-supripPath = shutil.which("Subrip.exe") or  os.path.join(
-    root_dir, "bin/suprip/SupRip.exe")
 
+BDINFOWINDOWSPATH = os.path.join(
+    ROOT_DIR, "bin/bdinfo/BDInfo.exe")
+BDINFOLINUXPATH= os.path.join(
+    ROOT_DIR, "bin/bdinfo/BDInfo.exe")    
+
+ISOEXTRACTWINDOWS = os.path.join(ROOT_DIR, "bin/7z/Windows/7za.exe")
+ISOEXTRACTLINUX= os.path.join(ROOT_DIR, "bin/7z/Linux/7zzs")
+
+
+SUPRIPPATH = shutil.which("Subrip.exe") or  os.path.join(
+    ROOT_DIR, "bin/suprip/SupRip.exe")
+
+AVISYNTH_LINUX_LIB= os.path.join(ROOT_DIR, "bin/avisynth/Linux/Lib")
+FFMS2_LINUX_LIB=os.path.join(ROOT_DIR, "bin/avisynth/Linux/libffms2.so.5.0.0")
+FFMS2=os.path.join(ROOT_DIR, "bin/avisynth/FFMS2.avsi")
+FFMPEG_LINUX=os.path.join(ROOT_DIR, "bin/avisynth/ffmpeg")
 
 ###
 #Global Settings
 ###
-demuxPrefix = "Mux"
-cacheDir = os.path.join(os.path.expanduser("~"), ".cache","remuxer_cache")
-session = requests_cache.CachedSession(cacheDir)
-tempFolder=tempfile.gettempdir()
-tempPrefix="PTMuxer_"
-tempFolderCleanupTime=60 #Max Value accepted is 1440 Minutes
-pythonPath='/usr/bin/python3'
-maxOCRLineCount=50
-maxVoiceLineCount=50
+DEMUXPREFIX= "Mux"
+CACHEDIR = os.path.join(os.path.expanduser("~"), ".cache","remuxer_cache")
+SESSION = requests_cache.CachedSession(CACHEDIR)
+TEMPFOLDER=tempfile.gettempdir()
+TEMPPREFIX="PTMuxer_"
+TEMPFOLDERMINCLEANUPTIME=60 #Max Value accepted is 1440 Minutes
+MAXOCRLINECOUNT=50
+MAXVOICELINECOUNT=50

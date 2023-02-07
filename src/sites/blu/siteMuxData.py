@@ -149,7 +149,7 @@ class Blu(MuxOBj):
         os.environ["INTERNAL_CHANNELS"] = "remux"
         os.environ["HUNSPELL_LANG"] = "/usr/share/hunspell/en_US.dic, /usr/share/hunspell/en_US.aff"
         os.environ["MISSPELLED_IGNORE_LIST"] = "upmix"
-        sys.path.append(os.path.join(config.root_dir, "src/vdator"))
+        sys.path.append(os.path.join(config.ROOT_DIR, "src/vdator"))
 
         import src.vdator.parsers.codecs_parser as CodecsParser
         import src.vdator.checker as Checker
@@ -160,7 +160,7 @@ class Blu(MuxOBj):
         import src.vdator.parsers.paste_parser as PasteParser
         import src.vdator.parsers.media_info_parser as MediaInfoParser
 
-        with open(os.path.join(config.root_dir, "src/vdator/data/codecs.json")) as f:
+        with open(os.path.join(config.ROOT_DIR, "src/vdator/data/codecs.json")) as f:
             codecs = json.load(f)
             codecs_parser = CodecsParser.CodecsParser(codecs)
         paste = ""

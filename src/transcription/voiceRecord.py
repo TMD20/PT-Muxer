@@ -21,7 +21,7 @@ def main(tracks:List[dict], maxLines:int=None, langs:str=None, model:Union[str, 
         model (str, optional): vosk variable for which model to use. Defaults to None.
         model_name (_type_, optional):vosk variable for name of which mode use. Defaults to None.
     """
-    maxLines = maxLines or config.maxVoiceLineCount + 1
+    maxLines = maxLines or config.MAXVOICELINECOUNT + 1
 
     for track in tracks:
         logger.logger.info(

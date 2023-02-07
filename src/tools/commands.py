@@ -1,8 +1,10 @@
 import shutil
-
+import os
 import config as config
 import src.tools.general as utils
+import src.tools.paths as paths
 from typing import List
+
 
 
 
@@ -15,9 +17,9 @@ def bdSup2Sub()->List[str]:
         array: command array for subprocess
     """
     if utils.getSystem() == "Linux":
-        return [config.javaPath, "-jar", config.bdSupLinux]
+        return [config.JAVAPATH, "-jar", config.BDSUPLINUX]
     else:
-        return [config.bdSupWindows]
+        return [config.BDSUPWINDOWS]
 
 
 def eac3to()->List[str]:
@@ -30,10 +32,10 @@ def eac3to()->List[str]:
     """
     if utils.getSystem() == "Linux":
         if shutil.which("wine"):
-            return [config.winePath, config.eac3toPath]
-        return [config.contyPath, "wine", config.eac3toPath]
+            return [config.WINEPATH, config.EACTOPATH]
+        return [config.CONTYPATH, "wine", config.EACTOPATH]
     else:
-        return [config.eac3toPath]
+        return [config.EACTOPATH]
 
 
 def bdinfo()->List[str]:
@@ -46,10 +48,10 @@ def bdinfo()->List[str]:
     """    
     if utils.getSystem() == "Linux":
         if shutil.which("mono"):
-            return [config.monoPath, config.bdinfoLinuxPath]
-        return [config.contyPath, "wine", config.bdinfoLinuxPath]
+            return [config.MONOPATH, config.BDINFOLINUXPATH]
+        return [config.CONTYPATH, "wine", config.BDINFOLINUXPATH]
     else:
-        return [config.bdinfoWindowsPath]
+        return [config.BDINFOWINDOWSPATH]
 
 
 def mkvmerge()->List[str]:
@@ -61,9 +63,9 @@ def mkvmerge()->List[str]:
         array: command array for subprocess
     """        
     if utils.getSystem() == "Linux":
-        return [config.mkvMergeLinux]
+        return [config.MKVMERGELINUX]
     else:
-        return [config.mkvMergeWindows]
+        return [config.MKVMERGEWINDOWS]
 
 
 def isoBinary()->List[str]:
@@ -75,9 +77,9 @@ def isoBinary()->List[str]:
         array: command array for subprocess
     """         
     if utils.getSystem() == "Linux":
-        return [config.isoExtractLinux]
+        return [config.ISOEXTRACTLINUX]
     else:
-        return [config.isoExtractWindows]
+        return [config.ISOEXTRACTWINDOWS]
 
 
 def dgdemux()->List[str]:
@@ -89,9 +91,9 @@ def dgdemux()->List[str]:
         array: command array for subprocess
     """    
     if utils.getSystem() == "Linux":
-        return [config.dgDemuxLinux]
+        return [config.DGDEMUXLINUX]
     else:
-        return [config.dgDemuxWindow]
+        return [config.DGDEMUXWINDOW]
 
 
 def suprip()->List[str]:
@@ -102,9 +104,31 @@ def suprip()->List[str]:
     Returns:
         array: command array for subprocess
     """      
-    supBin = config.supripPath
-    wineBin = config.winePath
+    supBin = config.SUPRIPPATH
+    wineBin = config.WINEPATH
     if utils.getSystem() == "Linux":
         return [wineBin, supBin]
     else:
         return [supBin]
+
+def avisynth(video)->List[str]:
+    """
+    generates a command array for subprocess module to run avisynthcommand
+    based on current OS
+    Args:
+        video (str): Path to video file to input to ffmpeg
+    Returns:
+        array: command array for subprocess
+    """ 
+    tempDir=paths.createTempDir()
+    with open(os.path.join(tempDir,"chapter.avs"),"w") as p:
+        if utils.getSystem()=="Linux":
+            my_env = os.environ.copy()
+            my_env["LD_LIBRARY_PATH"]=config.AVISYNTH_LINUX_LIB
+            # p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
+            # f'FFVideoSource("{video}")','FFInfo(framenum=true,frametype=true,cfrtime=true,vfrtime=false, \
+            # version=false,cropping=false,colorrange=false,colorspace=false,sar=false)'])
+            p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
+            f'FFVideoSource("{video}")','Info(size=40,text_color=$DC143C)'])
+            outFile=os.path.join(tempDir,"out.mkv")
+            return [config.FFMPEG_LINUX,"-i",p.name,outFile],outFile
