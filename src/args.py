@@ -48,7 +48,7 @@ def setParser()->argparse.Namespace:
     parser_d.add_argument('-ep', '--extractprogram',choices=["eac3to","dgdemux"],default="eac3to",required=False,
                         help="Which Program for extracting raw files")
    
-
+    parser_d.add_argument('-ex', '--extra',required=False,help="Add Extra subs,audio, or video from this folder\n Information will be blank")
 
     parser_r = subparsers.add_parser(
         'remux', help='Remux Raw files into mkv(s)')
@@ -63,11 +63,13 @@ def setParser()->argparse.Namespace:
                         help="Force the output mkv to use movie syntax")
     parser_r.add_argument('-sp', '--special',  action='store_true',
                         help="TV Folder contains special-features")                          
-    parser_r.add_argument('-oa', '--outargs', default="",
-                        help="Pass mkvmerge global options")
+    parser_r.add_argument('-oa', '--otherargs', default="",
+                        help="Pass mkvmerge additional options")
     parser_r.add_argument('-e', '--episodetitle',action='store_true',
                         help="Add Episode Title to filename")    
-    parser_r.add_argument('-sy', '--synthchapter',default="eac3to",required=False,action='store_true',help="output mkv as avisynth frame check file\nFor Chapter Time Verification")                 
+    parser_r.add_argument('-sc', '--scale',required=False,default=None,choices=["avisynth","native"],help="output smaller video for transfer to local machine i.e for syncing chapters to I frames\navisynth outputs video with framerate count, and type information\nnative scales the video by 1/4")                 
+
+    
     #This seems to be the only way to
     # A have positional arguments
     #Easily Apply some argumetns to all subgroups

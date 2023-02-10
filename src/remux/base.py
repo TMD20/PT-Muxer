@@ -1,7 +1,7 @@
 import os
 import re
 from string import Template
-from typing import Union,List
+from typing import Union, List
 import subprocess
 
 
@@ -22,14 +22,15 @@ class Remux():
     Base Remux Class
     For processing remuxes
     """
-    def __init__(self, args)->None:
+
+    def __init__(self, args) -> None:
         self._args = args
         self._remuxConfig = None
         self._fileName = None
         self._muxGenerator = muxPicker.pickSite(self._args.site)
         self._success = False
 
-    def __call__(self)->None:
+    def __call__(self) -> None:
         """
         Internal function for python object
         """
@@ -38,7 +39,7 @@ class Remux():
         self._success = True
 
     @property
-    def success(self)->bool:
+    def success(self) -> bool:
         """
         Returns bool based on succesful call
 
@@ -51,20 +52,20 @@ class Remux():
     #
     # Private
     ##########
-    def _callFunction(self)->None:
+    def _callFunction(self) -> None:
         """
         Function used by internal call function to process remux
         """
         self._getRemuxConfig()
         self._fileName = self._getfilename()
         if not self._args.skipnamecheck:
-            self._muxGenerator.confirmName(self._fileName)
+            self._fileName=self._muxGenerator.confirmName(self._fileName)
         if self._overwriteexists() == False:
             self._success = True
             return
         self._processRemux()
 
-    def _processRemux(self)->None:
+    def _processRemux(self) -> None:
         """
         Gathers information to send to muxGenerator 
         for final mkvmerge processing
@@ -74,7 +75,7 @@ class Remux():
         xmlTemp = self._createXML()
 
         self._muxGenerator.generateMuxData(
-            self._remuxConfig, self._args.outargs)
+            self._remuxConfig, self._args.otherargs)
         title = self._getTitle()
         year = self._getYear()
         movieTitle = f"{title} ({year})"
@@ -85,16 +86,22 @@ class Remux():
             self._muxGenerator.createMKV(self._fileName, title, year,
                                          None, xmlTemp, bdinfo=self._getPrimaryBDInfo(), eac3to=self._getPrimaryEac3to())
         self._muxGenerator.printMediaInfo(self._fileName)
-        if self._args.synthchapter:
-            subprocess.run(commands.avisynth(self._fileName))
-            paths.rmSafe(f"{self._fileName}.ffindex")
+        if self._args.scale:
+            logger.print("Generating Scaled Video")
+            procs = 1
+            if self._args.scale == "avisynth":
+                procs = subprocess.run(commands.avisynth(
+                    self._fileName), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                paths.rmSafe(f"{self._fileName}.ffindex")
+            elif self._args.scale == "native":
+                procs = subprocess.run(commands.scale(
+                    self._fileName), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-            
+            if procs.returncode != 0:
+                logger.print("Error running ffmpeg command")
+                logger.print(procs.stdout.decode())
 
-           
-            
-
-    def _getRemuxConfig(self)->None:
+    def _getRemuxConfig(self) -> None:
         """
         Retrives remux json based on user input
 
@@ -123,7 +130,8 @@ class Remux():
         with dir.cwd(self._args.outpath):
             return os.path.abspath(self._muxGenerator.getFileName(
                 self._remuxConfig, self._args.group, self._getTitle()))
-    def _getTitle(self)->str:
+
+    def _getTitle(self) -> str:
         """
         Retrives title with priority on english title
 
@@ -133,7 +141,7 @@ class Remux():
         return self._remuxConfig['Movie'].get(
             'title') or self._remuxConfig['Movie'].get('engTitle')
 
-    def _getYear(self)->int:
+    def _getYear(self) -> int:
         """
         Retrieves release year of movie
 
@@ -142,7 +150,7 @@ class Remux():
         """
         return self._remuxConfig['Movie']['year']
 
-    def _getRemuxFolders(self)->str:
+    def _getRemuxFolders(self) -> str:
         """
         Retrieves all output folders from demux Movie Mode
 
@@ -157,7 +165,7 @@ class Remux():
             "^[0-9]+$", os.listdir(x)[0]) == None, folders))
         return folders
 
-    def _getFullPaths(self)->None:
+    def _getFullPaths(self) -> None:
         """
         Updates filepaths in remuxConfig dict with full filepath, based on outputdir key
         of source json file
@@ -175,7 +183,7 @@ class Remux():
             self._remuxConfig["Tracks_Details"]["Sub"][key]["filename"] = self._getPathHelper(
                 self._remuxConfig["Tracks_Details"]["Sub"][key])
 
-    def _getPathHelper(self, track:dict)->str:
+    def _getPathHelper(self, track: dict) -> str:
         """
         Uses outputdir key to get final location of file
 
@@ -187,7 +195,7 @@ class Remux():
         outputDir = self._remuxConfig["Sources"][track["sourceKey"]]["outputDir"]
         return os.path.abspath(os.path.join(outputDir, track["filename"]))
 
-    def _checkMissing(self)->None:
+    def _checkMissing(self) -> None:
         """
         Validates that output directory is correct for all files
         by checking if the files exist
@@ -203,7 +211,7 @@ class Remux():
                 "No Sources Found For this item\nSkipping to Next Item")
             return
 
-    def _validateFilesExists(self, fileList:List[Union[str, bytes, os.PathLike]])->None:
+    def _validateFilesExists(self, fileList: List[Union[str, bytes, os.PathLike]]) -> None:
         """
         Helper function to check existance of each file within a list
 
@@ -217,7 +225,7 @@ class Remux():
             if not os.path.exists(file):
                 raise Exception(f"Remuxing File Missing {file}")
 
-    def _overwriteexists(self)->None:
+    def _overwriteexists(self) -> None:
         """
         Provides prompt to overwrite file or quit program
         """
@@ -228,7 +236,7 @@ class Remux():
             else:
                 return True
 
-    def _chapterListParser(self, chapterList)->str:
+    def _chapterListParser(self, chapterList) -> str:
         """
         Parses remuxConfig chapter list array into mkvmerge compatabile file 
 
@@ -251,7 +259,7 @@ class Remux():
                 p.write("\n")
         return chapterPath
 
-    def _createXML(self)->None:
+    def _createXML(self) -> None:
         """
         Uses xml template and data from remuxConfig to write xml to temp location
 
@@ -270,7 +278,7 @@ class Remux():
             p.writelines(result)
         return xmlPath
 
-    def _getPrimaryBDInfo(self)->str:
+    def _getPrimaryBDInfo(self) -> str:
         """
         Helper function to get bdinfo file for main source of remux
         based on first video track enabled
@@ -285,7 +293,7 @@ class Remux():
             return
         return bdinfoList[0]
 
-    def _getPrimaryEac3to(self)->str:
+    def _getPrimaryEac3to(self) -> str:
         """
         Helper function to get eac3to file for main source of remux
         based on first video track enabled
@@ -293,7 +301,7 @@ class Remux():
 
         Returns:
             str: returns path to eac3to for source
-        """        
+        """
         key = str(self._remuxConfig["Enabled_Tracks"]["Video"][0])
         outputDir = self._remuxConfig["Tracks_Details"]["Video"][key]["outputDir"]
         eac3toList = paths.search(outputDir, "Eac3to*")

@@ -50,7 +50,7 @@ class Remux(Remux):
 
             self._fileName = self._getfilename()
             if self._args.skipnamecheck == False:
-                self._muxGenerator.confirmName(self._fileName)
+                self._fileName=self._muxGenerator.confirmName(self._fileName)
             if self._overwriteexists() == False:
                 self._success = True
                 continue

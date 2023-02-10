@@ -122,11 +122,19 @@ def avisynth(video)->List[str]:
     """ 
     with open(os.path.join(paths.createTempDir(),"chapter.avs"),"w") as p:
         if utils.getSystem()=="Linux":
-            # p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
-            # f'FFVideoSource("{video}")','Info(size=50=,text_color=$DC143C)'])
             my_env = os.environ.copy()
             my_env["LD_LIBRARY_PATH"]=config.AVISYNTH_LINUX_LIB
             p.writelines([f'import("{config.FFMS2}")',f'LoadPlugin("{config.FFMS2_LINUX_LIB}")',
             f'FFVideoSource("{video}")','FFInfo(framenum=true,frametype=true,cfrtime=true,vfrtime=false, \
             version=false,cropping=false,colorrange=false,colorspace=false,sar=false)'])
-            return [config.FFMPEG_LINUX,"-i",p.name,video.replace("mkv","AVS_CHAPTER.mkv")]
+            return [config.FFMPEG_LINUX,"-i",p.name,"-y",video.replace("mkv","AVS_CHAPTER.mkv")]
+def scale(video)->List[str]:
+    """
+    generates a command array for subprocess module to run ffmpeg scaled video
+    based on current OS
+    Args:
+        video (str): Path to video file to input to ffmpeg
+    Returns:
+        array: command array for subprocess
+    """ 
+    return [config.FFMPEG_LINUX,"-i",video,"-vf","scale=iw/2:ih/2","-y",video.replace("mkv","AVS_SCALED.mkv")]

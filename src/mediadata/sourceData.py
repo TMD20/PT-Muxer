@@ -96,6 +96,9 @@ class sourceData(dict):
             return f"00{index}.vc1"
         if re.search("MPEG-2", line) != None:
             return f"00{index}.mpeg2"
+    
+ 
+
 
     def _getAudioFileName(line: str, langcode: str, index: Union[int, str]) -> str:
         """
@@ -504,6 +507,7 @@ class sourceData(dict):
         tempdict["parent"] = None
         tempdict["parentKey"] = None
         tempdict["childKey"] = None
+        tempdict["extra_options"]=None
 
         return tempdict
 

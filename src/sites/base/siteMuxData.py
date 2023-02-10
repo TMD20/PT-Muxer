@@ -162,6 +162,7 @@ class MuxOBj():
         """
         out = []
         langcode = None
+        trackjsons=[]
         try:
             langcodeKey = str(remuxConfig["Enabled_Tracks"]["Audio"][0])
             langcode = remuxConfig["Tracks_Details"]["Audio"][langcodeKey]["langcode"]
@@ -171,22 +172,25 @@ class MuxOBj():
         for i in range(len(remuxConfig["Enabled_Tracks"]["Video"])):
             key = remuxConfig["Enabled_Tracks"]["Video"][i]
             key = str(key)
-            trackjson = remuxConfig["Tracks_Details"]["Video"][key]
+            trackjsons.append(remuxConfig["Tracks_Details"]["Video"][key]) 
+        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="Video",remuxConfig["extra_tracks"])))    
+        for trackjson in trackjsons:
             name = trackjson["site_title"]
             file = trackjson["filename"]
 
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
             if name:
                 temp.extend(["--track-name", f"0:{name}"])
-
             default = ["--default-track-flag", "0:0"]
             if trackjson.get("default") == True:
                 default = ["--default-track-flag", "0:1"]
             temp.extend(default)
+            if trackjson.get("extra_options")!=None and trackjson.get("extra_options")!="":
+                temp.extend(trackjson.get("extra_options").split(" "))
             temp.append(file)
             out.append(temp)
         self._video = list(itertools.chain.from_iterable(out))
-
+   
     def _addAudioTracks(self, remuxConfig: dict) -> None:
         """
         Generates audio track arguments for mkvmerge
@@ -195,11 +199,15 @@ class MuxOBj():
             remuxConfig (dict): remuxConfig dict from demux
         """
         out = []
+        trackjsons=[]
         for i in range(len(remuxConfig["Enabled_Tracks"]["Audio"])):
             key = remuxConfig["Enabled_Tracks"]["Audio"][i]
             key = str(key)
-            trackjson = remuxConfig["Tracks_Details"]["Audio"][key]
-            langcode = trackjson["langcode"]
+            trackjsons.append(remuxConfig["Tracks_Details"]["Audio"][key])
+        # get extra tracks
+        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="Audio",remuxConfig["extra_tracks"])))    
+        for trackjson in trackjsons:  
+            langcode = trackjson["langcode"] or langcodes.standardize_tag(langcodes.find(trackjson["lang"]))
             name = trackjson["site_title"]
             file = trackjson["filename"]
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
@@ -226,6 +234,8 @@ class MuxOBj():
             temp.extend(forced)
             temp.extend(auditorydesc)
             temp.extend(commentary)
+            if trackjson.get("extra_options")!=None and trackjson.get("extra_options")!="":
+                temp.extend(trackjson.get("extra_options").split(" "))
             temp.append(file)
             out.append(temp)
         self._audio = list(itertools.chain.from_iterable(out))
@@ -238,13 +248,14 @@ class MuxOBj():
             remuxConfig (dict): remuxConfig dict from demux
         """
         out = []
+        trackjsons=[]
         for i in range(len(remuxConfig["Enabled_Tracks"]["Sub"])):
             key = remuxConfig["Enabled_Tracks"]["Sub"][i]
             key = str(key)
-
-            # get base data
-            trackjson = remuxConfig["Tracks_Details"]["Sub"][key]
-            langcode = trackjson["langcode"]
+            trackjsons.append(remuxConfig["Tracks_Details"]["Sub"][key]) 
+        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="Sub",remuxConfig["extra_tracks"])))    
+        for trackjson in trackjsons:
+            langcode = trackjson.get("langcode") or langcodes.standardize_tag(langcodes.find(trackjson["lang"]))
             file = trackjson["filename"]
             name = trackjson.get("site_title")
             temp = ["--language", f"0:{langcode}", "--compression", f"0:None"]
@@ -275,6 +286,8 @@ class MuxOBj():
             temp.extend(sdh)
             temp.extend(commentary)
             temp.extend(textdesc)
+            if trackjson.get("extra_options")!=None and trackjson.get("extra_options")!="":
+                temp.extend(trackjson.get("extra_options").split(" "))
             temp.append(file)
             out.append(temp)
         self._sub = (list(itertools.chain.from_iterable(out)))

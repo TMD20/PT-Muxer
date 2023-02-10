@@ -20,7 +20,7 @@ import src.subtitles.subreader as subreader
 import src.transcription.voiceRecord as voiceRec
 import src.tools.directory as dir
 import src.tools.logger as logger
-
+import src.mediadata.trackObj as trackObj
 
 from typing import TYPE_CHECKING, List,Union
 if TYPE_CHECKING:
@@ -133,6 +133,7 @@ class Demux():
         outdict["Movie"] = self._movieObj.movieObj
         outdict.update(self._addEnabledData(muxSorter))
         outdict.update(self._addTrackData(muxSorter))
+        outdict["extra_tracks"]=list(map(lambda x:self._getunboundedtrackData(x),paths.listdir(self._args.extra)))
         return outdict
 
     #################
@@ -465,3 +466,24 @@ class Demux():
             show = utils.sourcetoShowName(show)
             os.mkdir(show)
             return paths.convertPathType(os.path.join(parentDir, show), "Linux")
+    def _getunboundedtrackData(self,track:object)->list:
+        """
+        creates a list for Tracks not bounded to a demuxed source
+
+        Args:
+            track (_type_): _description_
+        """
+        data=trackObj.TrackObJ()
+        
+        data["filename"]=str(track)
+        data["site_title"]="placeholder"
+        data["bdinfo_title"]="placeholder"
+        data["enabled"]=False
+        data["type"]="placeholder"
+        data["langcode"] = "placeholder"
+        data["lang"] = "placeholder"
+        data["default"] = False
+        data["forced"] = False
+        data["notes"] = "Add Your Own if You want"
+        data["extra_options"]=None
+        return data

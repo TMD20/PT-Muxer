@@ -8,7 +8,7 @@ class TrackObJ(dict):
         "type","index","compat","forced","default","lang","auditorydesc"
         ,"original","commentary","textdesc","langcode","machine_parse","length",
         "key","parent","child","sdh","sourceDir","sourceKey","outputDir","notes"
-        ,"machine_parse_endlines","parentKey","childKey"}
+        ,"machine_parse_endlines","parentKey","childKey","extra_options","enabled","type"}
     #prevent 
     def __setitem__(self, key:str, value:Any)->str:
         """
