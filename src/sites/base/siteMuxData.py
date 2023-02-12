@@ -173,7 +173,7 @@ class MuxOBj():
             key = remuxConfig["Enabled_Tracks"]["Video"][i]
             key = str(key)
             trackjsons.append(remuxConfig["Tracks_Details"]["Video"][key]) 
-        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="Video",remuxConfig["extra_tracks"])))    
+        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="video",remuxConfig.get("extra_tracks",[]))))    
         for trackjson in trackjsons:
             name = trackjson["site_title"]
             file = trackjson["filename"]
@@ -205,7 +205,7 @@ class MuxOBj():
             key = str(key)
             trackjsons.append(remuxConfig["Tracks_Details"]["Audio"][key])
         # get extra tracks
-        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="Audio",remuxConfig["extra_tracks"])))    
+        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="audio",remuxConfig.get("extra_tracks",[]))))    
         for trackjson in trackjsons:  
             langcode = trackjson["langcode"] or langcodes.standardize_tag(langcodes.find(trackjson["lang"]))
             name = trackjson["site_title"]
@@ -253,7 +253,7 @@ class MuxOBj():
             key = remuxConfig["Enabled_Tracks"]["Sub"][i]
             key = str(key)
             trackjsons.append(remuxConfig["Tracks_Details"]["Sub"][key]) 
-        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="Sub",remuxConfig["extra_tracks"])))    
+        trackjsons.extend(list(filter(lambda x: x["enabled"]==True and x["type"]=="sub",remuxConfig.get("extra_tracks",[]))))    
         for trackjson in trackjsons:
             langcode = trackjson.get("langcode") or langcodes.standardize_tag(langcodes.find(trackjson["lang"]))
             file = trackjson["filename"]

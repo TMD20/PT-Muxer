@@ -474,7 +474,6 @@ class Demux():
             track (_type_): _description_
         """
         data=trackObj.TrackObJ()
-        
         data["filename"]=str(track)
         data["site_title"]="placeholder"
         data["bdinfo_title"]="placeholder"
@@ -484,6 +483,11 @@ class Demux():
         data["lang"] = "placeholder"
         data["default"] = False
         data["forced"] = False
+        data["sdh"] = False
+        data["textdesc"] = False
+        data["commentary"] = False
+        data["auditorydesc"] = False
+        data["original"] = False
         data["notes"] = "Add Your Own if You want"
         data["extra_options"]=None
         return data
