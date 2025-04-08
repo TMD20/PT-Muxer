@@ -9,6 +9,4 @@ https://github.com/EzraBC/pgsreader => Native sup to image processor
 
 https://github.com/Sec-ant/BDSupReader => Native sup to image processor
 
-# Old Commits
-https://github.com/tmd201/PTMuxer
 
